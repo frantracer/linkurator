@@ -1,5 +1,10 @@
 import { MenuItem } from "./MenuItem";
 import useTopics from "../hooks/useTopics";
+import { useState } from "react";
+
+type LateralMenuProps = {
+  onClickTopic: (topicId: string) => void;
+};
 
 const Title = () => (
   <div className="flex flex-row items-center justify-between flex-shrink-0 px-8 py-4">
@@ -15,11 +20,22 @@ const Title = () => (
   </div>
 );
 
-const LateralMenu = () => {
+const LateralMenu = (props: LateralMenuProps) => {
   const topics = useTopics();
+  const [selectedTopic, setSelectedTopic] = useState<string>("");
+
+  const handleClick = (topicId: string) => {
+    setSelectedTopic(topicId);
+    props.onClickTopic(topicId);
+  };
 
   const items = topics.map((topic) => (
-    <MenuItem title={topic.name} key={topic.id} />
+    <MenuItem
+      title={topic.name}
+      key={topic.id}
+      onClick={() => handleClick(topic.id)}
+      selected={topic.id === selectedTopic}
+    />
   ));
 
   return (

@@ -14,7 +14,9 @@ const Home: NextPage = () => {
       </Head>
 
       <main>
-        <LateralMenu />
+        <LateralMenu
+          onClickTopic={(topic) => console.log(`Clicked on ${topic}`)}
+        />
       </main>
 
       <footer className={styles.footer}>Footer</footer>
