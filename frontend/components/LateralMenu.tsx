@@ -15,11 +15,7 @@ const Title = () => (
   </div>
 );
 
-type LateralMenuProps = {
-  items: string[];
-};
-
-const LateralMenu = (props: LateralMenuProps) => {
+const LateralMenu = () => {
   const topics = useTopics();
 
   const items = topics.map((topic) => (
