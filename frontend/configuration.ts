@@ -1,4 +1,4 @@
-const TOPICS_URL = "http://api.linkurator.com/topics/";
+const TOPICS_URL = "https://api.linkurator.com/topics/";
 
 export default {
   TOPICS_URL,
