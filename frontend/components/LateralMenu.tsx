@@ -1,5 +1,8 @@
+import { MenuItem } from "./MenuItem";
+import useTopics from "../hooks/useTopics";
+
 const Title = () => (
-  <div className="flex-shrink-0 px-8 py-4 flex flex-row items-center justify-between">
+  <div className="flex flex-row items-center justify-between flex-shrink-0 px-8 py-4">
     <a
       href="#"
       className="text-lg font-semibold tracking-widest text-gray-900 uppercase rounded-lg focus:outline-none focus:shadow-outline"
@@ -12,29 +15,22 @@ const Title = () => (
   </div>
 );
 
-const MenuItem = (props: { title: string }) => (
-  <a
-    className="block px-4 py-2 mt-2 text-sm font-semibold text-gray-900 rounded-lg hover:bg-blue-400 focus:bg-blue-400 focus:outline-none focus:shadow-outline"
-    href="#"
-  >
-    {props.title}
-  </a>
-);
-
 type LateralMenuProps = {
   items: string[];
 };
 
 const LateralMenu = (props: LateralMenuProps) => {
-  const items = props.items.map((item, index) => (
-    <MenuItem title={item} key={index} />
+  const topics = useTopics();
+
+  const items = topics.map((topic) => (
+    <MenuItem title={topic.name} key={topic.id} />
   ));
 
   return (
-    <div className="md:flex flex-col md:flex-row md:min-h-screen w-full bg-white">
-      <div className="flex flex-col w-full md:w-64 text-gray-700 bg-blue-300 flex-shrink-0">
+    <div className="flex-col w-full bg-white md:flex md:flex-row md:min-h-screen">
+      <div className="flex flex-col flex-shrink-0 w-full text-gray-700 bg-blue-300 md:w-64">
         <Title />
-        <nav className="flex-grow md:block px-4 pb-4 md:pb-0 md:overflow-y-auto">
+        <nav className="flex-grow px-4 pb-4 md:block md:pb-0 md:overflow-y-auto">
           {items}
         </nav>
       </div>
