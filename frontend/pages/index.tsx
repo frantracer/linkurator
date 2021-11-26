@@ -14,7 +14,7 @@ const Home: NextPage = () => {
       </Head>
 
       <main>
-        <LateralMenu items={["Blog", "Portfolio", "About", "Contact"]} />
+        <LateralMenu />
       </main>
 
       <footer className={styles.footer}>Footer</footer>

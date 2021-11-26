@@ -18,8 +18,12 @@ const useTopics = () => {
 
   useEffect(() => {
     const fetchTopics = async () => {
-      const { data } = await axios(configuration.TOPICS_URL);
-      setTopics(data);
+      try {
+        const { data } = await axios(configuration.TOPICS_URL);
+        setTopics(data);
+      } catch (error: any) {
+        console.error("Error retrieving topics", error);
+      }
     };
 
     fetchTopics();
