@@ -16,12 +16,11 @@ const Home: NextPage = () => {
   const topicName = selectedTopic?.name ?? "No topic";
   for (let i = 0; i < 25; i++) {
     cards.push(
-      <div className="m-4">
+      <div className="m-4" key={i}>
         <VideoCard
           img={`https://cataas.com/cat/gif?fff=${Math.random()}`}
           name={topicName}
           description={`Description for ${topicName}`}
-          key={i}
         />
       </div>
     );
