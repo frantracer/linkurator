@@ -21,9 +21,7 @@ const VideoCard = (props: VideoCardProps) => {
         }}
       ></div>
       <div className="flex flex-col justify-start w-full p-4">
-        <h4 className="text-3xl border-b-2" id="whoobe-3mr7n">
-          {name}
-        </h4>
+        <h4 className="text-3xl border-b-2">{name}</h4>
         <p className="my-4">{description}</p>
       </div>
     </div>

@@ -13,7 +13,7 @@ const Home: NextPage = () => {
   const topics = useTopics();
   const cards = [];
 
-  const topicName = selectedTopic?.name ?? "No selected topic";
+  const topicName = selectedTopic?.name ?? "No topic";
   for (let i = 0; i < 25; i++) {
     cards.push(
       <div className="m-4">

@@ -1,7 +1,7 @@
 import { render, screen, waitFor, fireEvent } from "@testing-library/react";
 import React from "react";
 import LateralMenu from "./LateralMenu";
-import { clickOnText } from "../utilities/tests";
+import { clickOnText } from "../utilities/tests/actions";
 
 const topics = [
   {
