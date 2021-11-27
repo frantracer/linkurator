@@ -15,7 +15,7 @@ const Home: NextPage = () => {
     cards.push(
       <div className="m-4">
         <VideoCard
-          img="https://via.placeholder.com/150"
+          img={`https://cataas.com/cat?fff=${Math.random()}`}
           name={selectedTopic}
           description={`Description for ${selectedTopic}`}
           key={i}
@@ -32,13 +32,11 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main className="flex">
+      <main className="flex bg-gray-100">
         <LateralMenu onClickTopic={(topic) => setSelectedTopic(topic)} />
 
-        <div className="flex flex-row flex-wrap">{cards}</div>
+        <div className="flex flex-row flex-wrap m-6">{cards}</div>
       </main>
-
-      <footer className={styles.footer}>Footer</footer>
     </div>
   );
 };

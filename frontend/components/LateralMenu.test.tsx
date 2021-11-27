@@ -8,26 +8,26 @@ describe("LateralMenu should", () => {
     render(<LateralMenu onClickTopic={jest.fn()} />);
 
     await waitFor(() => {
-      expect(screen.getByText("Blog"));
-      expect(screen.getByText("Portfolio"));
-      expect(screen.getByText("About"));
-      expect(screen.getByText("Contact"));
+      expect(screen.getByText("Technology"));
+      expect(screen.getByText("Sports"));
+      expect(screen.getByText("Videogames"));
+      expect(screen.getByText("Psychology"));
     });
   });
 
   it("select an item when clicked", async () => {
     render(<LateralMenu onClickTopic={jest.fn()} />);
 
-    await clickOnText("Blog");
+    await clickOnText("Technology");
 
-    expect(screen.getByText("Blog")).toHaveClass("focus:bg-blue-400");
+    expect(screen.getByText("Technology")).toHaveClass("bg-gray-200");
   });
 
   it("report when an item is clicked", async () => {
     const onClick = jest.fn();
     render(<LateralMenu onClickTopic={onClick} />);
 
-    await clickOnText("Blog");
+    await clickOnText("Technology");
 
     expect(onClick).toHaveBeenCalledWith(
       "3fa85f64-5717-4562-b3fc-2c963f66afa1"
@@ -37,8 +37,8 @@ describe("LateralMenu should", () => {
   it("select an item when clicked", async () => {
     render(<LateralMenu onClickTopic={jest.fn()} />);
 
-    await clickOnText("Blog");
+    await clickOnText("Technology");
 
-    expect(screen.getByText("Blog")).toHaveClass("focus:bg-blue-400");
+    expect(screen.getByText("Technology")).toHaveClass("bg-gray-200");
   });
 });

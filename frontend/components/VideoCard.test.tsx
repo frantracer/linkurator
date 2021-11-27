@@ -14,14 +14,12 @@ describe("VideoCard should", () => {
     renderCard({ name: "Card Name" });
 
     const name = screen.getByText("Card Name");
-    expect(name).toHaveTextContent("Card Name");
   });
 
   it("render description", () => {
     renderCard({ description: "Card Description" });
 
     const description = screen.getByText("Card Description");
-    expect(description).toHaveTextContent("Card Description");
   });
 });
 

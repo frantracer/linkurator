@@ -1,7 +1,7 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import { MenuItem } from "./MenuItem";
 
-const SELECTED_CLASS = "focus:bg-blue-400";
+const SELECTED_CLASS = "bg-gray-200";
 
 describe("MenuItem should", () => {
   it("show item name", () => {

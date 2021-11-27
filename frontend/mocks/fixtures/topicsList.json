@@ -1,7 +1,7 @@
 [
   {
     "id": "3fa85f64-5717-4562-b3fc-2c963f66afa1",
-    "name": "Blog",
+    "name": "Technology",
     "subscriptions": [
       {
         "id": "3fa85f64-5717-4562-b3fc-2c963f66afa1",
@@ -11,7 +11,7 @@
   },
   {
     "id": "3fa85f64-5717-4562-b3fc-2c963f66afa2",
-    "name": "Portfolio",
+    "name": "Sports",
     "subscriptions": [
       {
         "id": "3fa85f64-5717-4562-b3fc-2c963f66afa2",
@@ -21,7 +21,7 @@
   },
   {
     "id": "3fa85f64-5717-4562-b3fc-2c963f66afa3",
-    "name": "About",
+    "name": "Videogames",
     "subscriptions": [
       {
         "id": "3fa85f64-5717-4562-b3fc-2c963f66afa3",
@@ -31,7 +31,7 @@
   },
   {
     "id": "3fa85f64-5717-4562-b3fc-2c963f66afa4",
-    "name": "Contact",
+    "name": "Psychology",
     "subscriptions": [
       {
         "id": "3fa85f64-5717-4562-b3fc-2c963f66afa4",
