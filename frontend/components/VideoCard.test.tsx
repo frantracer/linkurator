@@ -6,8 +6,9 @@ describe("VideoCard should", () => {
   it("render image", () => {
     renderCard({ img: "https://myImage.com/image.jpeg" });
 
-    const image = screen.getByRole("img");
-    expect(image).toHaveAttribute("src", "https://myImage.com/image.jpeg");
+    expect(screen.getByTestId("video-card-image")).toHaveStyle(
+      "background-image: url(https://myImage.com/image.jpeg)"
+    );
   });
 
   it("render name", () => {
