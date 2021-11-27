@@ -15,7 +15,7 @@ const Home: NextPage = () => {
     cards.push(
       <div className="m-4">
         <VideoCard
-          img={`https://cataas.com/cat?fff=${Math.random()}`}
+          img={`https://cataas.com/cat/gif?fff=${Math.random()}`}
           name={selectedTopic}
           description={`Description for ${selectedTopic}`}
           key={i}
