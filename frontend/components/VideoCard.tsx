@@ -9,7 +9,7 @@ type VideoCardProps = {
 const VideoCard = (props: VideoCardProps) => {
   const { img, name, description } = props;
   return (
-    <div className="flex flex-col items-center justify-center bg-white rounded-lg shadow-lg md:w-64">
+    <div className="flex flex-col items-center justify-center transition-transform transform bg-white rounded-lg shadow-lg md:w-64 hover:scale-105">
       <img
         src={img}
         alt="img"
