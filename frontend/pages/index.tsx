@@ -5,19 +5,22 @@ import Image from "next/image";
 import { useState } from "react";
 import LateralMenu from "../components/LateralMenu";
 import VideoCard from "../components/VideoCard";
+import useTopics, { Topic } from "../hooks/useTopics";
 import styles from "../styles/Home.module.css";
 
 const Home: NextPage = () => {
-  const [selectedTopic, setSelectedTopic] = useState("No selected topic");
+  const [selectedTopic, setSelectedTopic] = useState<Topic | undefined>();
+  const topics = useTopics();
   const cards = [];
 
+  const topicName = selectedTopic?.name ?? "No selected topic";
   for (let i = 0; i < 25; i++) {
     cards.push(
       <div className="m-4">
         <VideoCard
           img={`https://cataas.com/cat/gif?fff=${Math.random()}`}
-          name={selectedTopic}
-          description={`Description for ${selectedTopic}`}
+          name={topicName}
+          description={`Description for ${topicName}`}
           key={i}
         />
       </div>
@@ -33,7 +36,10 @@ const Home: NextPage = () => {
       </Head>
 
       <main className="flex bg-gray-100">
-        <LateralMenu onClickTopic={(topic) => setSelectedTopic(topic)} />
+        <LateralMenu
+          topics={topics}
+          onClickTopic={(topic) => setSelectedTopic(topic)}
+        />
 
         <div className="flex flex-row flex-wrap m-6">{cards}</div>
       </main>

@@ -7,7 +7,7 @@ type Subscription = {
   name: string;
 };
 
-type Topic = {
+export type Topic = {
   id: string;
   name: string;
   subscriptions: Subscription[];

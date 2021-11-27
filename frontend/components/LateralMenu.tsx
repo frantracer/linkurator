@@ -1,9 +1,10 @@
 import { MenuItem } from "./MenuItem";
-import useTopics from "../hooks/useTopics";
+import useTopics, { Topic } from "../hooks/useTopics";
 import { useState } from "react";
 
 type LateralMenuProps = {
-  onClickTopic: (topicId: string) => void;
+  topics: Topic[];
+  onClickTopic: (topic: Topic) => void;
 };
 
 const Title = () => (
@@ -21,12 +22,15 @@ const Title = () => (
 );
 
 const LateralMenu = (props: LateralMenuProps) => {
-  const topics = useTopics();
-  const [selectedTopic, setSelectedTopic] = useState<string>("");
+  const { topics, onClickTopic } = props;
+  const [selectedTopic, setSelectedTopic] = useState<Topic>();
 
   const handleClick = (topicId: string) => {
-    setSelectedTopic(topicId);
-    props.onClickTopic(topicId);
+    const topic = topics.find((topic) => topic.id === topicId);
+    if (topic) {
+      setSelectedTopic(topic);
+      props.onClickTopic(topic);
+    }
   };
 
   const items = topics.map((topic) => (
@@ -34,7 +38,7 @@ const LateralMenu = (props: LateralMenuProps) => {
       title={topic.name}
       key={topic.id}
       onClick={() => handleClick(topic.id)}
-      selected={topic.id === selectedTopic}
+      selected={topic.id === selectedTopic?.id}
     />
   ));
 

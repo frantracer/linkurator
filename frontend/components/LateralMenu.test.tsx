@@ -3,9 +3,36 @@ import React from "react";
 import LateralMenu from "./LateralMenu";
 import { clickOnText } from "../utilities/tests";
 
+const topics = [
+  {
+    id: "1",
+    name: "Technology",
+    description: "Technology description",
+    subscriptions: [],
+  },
+  {
+    id: "2",
+    name: "Sports",
+    description: "Sports description",
+    subscriptions: [],
+  },
+  {
+    id: "3",
+    name: "Videogames",
+    description: "Videogames description",
+    subscriptions: [],
+  },
+  {
+    id: "4",
+    name: "Psychology",
+    description: "Videogames",
+    subscriptions: [],
+  },
+];
+
 describe("LateralMenu should", () => {
   it("show all topics", async () => {
-    render(<LateralMenu onClickTopic={jest.fn()} />);
+    render(<LateralMenu topics={topics} onClickTopic={jest.fn()} />);
 
     await waitFor(() => {
       expect(screen.getByText("Technology"));
@@ -16,7 +43,7 @@ describe("LateralMenu should", () => {
   });
 
   it("select an item when clicked", async () => {
-    render(<LateralMenu onClickTopic={jest.fn()} />);
+    render(<LateralMenu topics={topics} onClickTopic={jest.fn()} />);
 
     await clickOnText("Technology");
 
@@ -25,17 +52,15 @@ describe("LateralMenu should", () => {
 
   it("report when an item is clicked", async () => {
     const onClick = jest.fn();
-    render(<LateralMenu onClickTopic={onClick} />);
+    render(<LateralMenu topics={topics} onClickTopic={onClick} />);
 
     await clickOnText("Technology");
 
-    expect(onClick).toHaveBeenCalledWith(
-      "3fa85f64-5717-4562-b3fc-2c963f66afa1"
-    );
+    expect(onClick).toHaveBeenCalledWith(topics[0]);
   });
 
   it("select an item when clicked", async () => {
-    render(<LateralMenu onClickTopic={jest.fn()} />);
+    render(<LateralMenu topics={topics} onClickTopic={jest.fn()} />);
 
     await clickOnText("Technology");
 
