@@ -1,6 +1,7 @@
 import { MenuItem } from "./MenuItem";
 import useTopics, { Topic } from "../hooks/useTopics";
 import { useState } from "react";
+import useProfile from "../hooks/useProfile";
 
 type LateralMenuProps = {
   topics: Topic[];
@@ -24,6 +25,7 @@ const Title = () => (
 const LateralMenu = (props: LateralMenuProps) => {
   const { topics, onClickTopic } = props;
   const [selectedTopic, setSelectedTopic] = useState<Topic>();
+  const profile = useProfile();
 
   const handleClick = (topicId: string) => {
     const topic = topics.find((topic) => topic.id === topicId);
@@ -63,7 +65,7 @@ const LateralMenu = (props: LateralMenuProps) => {
   const Avatar = (props: { img: string }) => (
     <img
       className="inline-block rounded-full w-7 h-7 ring-1 ring-white"
-      src={props.img}
+      src={profile?.avatar}
       alt=""
     />
   );
@@ -72,7 +74,7 @@ const LateralMenu = (props: LateralMenuProps) => {
     <div className="sticky top-0 flex-col h-screen bg-white shadow-lg md:flex md:flex-row">
       <div className="flex flex-col flex-shrink-0 w-full text-gray-700 bg-white md:w-64">
         <div className="flex flex-row justify-between py-4 px-7">
-          <h2 className="text-2xl font-bold">Ruben</h2>
+          <h2 className="text-2xl font-bold">{profile?.firstName}</h2>
           <div className="flex">
             <Notification />
             <Avatar img="https://lh3.googleusercontent.com/a-/AOh14Gg16Z9DCQfFWPpsnO7ULEv_c7tvMo-_uFcpMTq8pA=s576-p-rw-no" />
