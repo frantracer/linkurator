@@ -39,7 +39,7 @@ const LateralMenu = (props: LateralMenuProps) => {
   ));
 
   return (
-    <div className="flex-col w-full bg-white md:flex md:flex-row md:min-h-screen">
+    <div className="flex-col bg-white md:flex md:flex-row md:min-h-screen">
       <div className="flex flex-col flex-shrink-0 w-full text-gray-700 bg-blue-300 md:w-64">
         <Title />
         <nav className="flex-grow px-4 pb-4 md:block md:pb-0 md:overflow-y-auto">
