@@ -1,20 +1,20 @@
-import { rest } from "msw";
+import {rest} from "msw";
 import configuration from "../../configuration";
-import { Profile } from "../../hooks/useProfile";
-import { Topic } from "../../hooks/useTopics";
-import { server } from "../../mocks/tests";
+import {Profile} from "../../hooks/useProfile";
+import {SubscriptionResponse} from "../../hooks/useSubscriptions";
+import {server} from "../../mocks/tests";
 
-export const givenTopics = (topics: Topic[]) => {
+export const givenSubscriptions = (subscriptionResponse: SubscriptionResponse) => {
   server.use(
-    rest.get(configuration.TOPICS_URL, (req, res, ctx) => {
-      return res(ctx.status(200), ctx.json(topics));
+    rest.get(configuration.SUBSCRIPTIONS_URL, (req, res, ctx) => {
+      return res(ctx.status(200), ctx.json(subscriptionResponse));
     })
   );
 };
 
-export const givenApiReturningErrorWhileRetrievingTopics = () => {
+export const givenApiReturningErrorWhileRetrievingSubscriptions = () => {
   server.use(
-    rest.get(configuration.TOPICS_URL, (req, res, ctx) => {
+    rest.get(configuration.SUBSCRIPTIONS_URL, (req, res, ctx) => {
       return res(ctx.status(500));
     })
   );

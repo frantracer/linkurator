@@ -1,14 +1,14 @@
-import { screen, render, waitFor } from "@testing-library/react";
+import {screen, render, waitFor} from "@testing-library/react";
 import {
   givenApiReturningErrorWhileRetrievingProfile,
   givenProfile,
 } from "../utilities/tests/preconditions";
-import useProfile, { Profile } from "./useProfile";
+import useProfile, {Profile} from "./useProfile";
 
 const profile: Profile = {
-  firstName: "Rafael",
-  lastName: "Guilherme",
-  avatar: "https://avatars.com/my-avatar.jpeg",
+  first_name: "Rafael",
+  last_name: "Guilherme",
+  avatar_url: "https://avatars.com/my-avatar.jpeg",
 };
 
 const DummyComponent = () => {
@@ -18,9 +18,9 @@ const DummyComponent = () => {
 
   return (
     <>
-      <div>{profile?.firstName}</div>
-      <div>{profile?.lastName}</div>
-      <div>{profile?.avatar}</div>
+      <div>{profile?.first_name}</div>
+      <div>{profile?.last_name}</div>
+      <div>{profile?.avatar_url}</div>
     </>
   );
 };
@@ -29,7 +29,7 @@ describe("useProfile should", () => {
   it("return profile information coming from API", async () => {
     givenProfile(profile);
 
-    render(<DummyComponent />);
+    render(<DummyComponent/>);
 
     await waitFor(() => {
       expect(screen.getByText("Rafael"));
@@ -41,7 +41,7 @@ describe("useProfile should", () => {
   it("return undefined if cannot load profile", () => {
     givenApiReturningErrorWhileRetrievingProfile();
 
-    const { container } = render(<DummyComponent />);
+    const {container} = render(<DummyComponent/>);
 
     expect(container.firstChild).toBeNull();
   });

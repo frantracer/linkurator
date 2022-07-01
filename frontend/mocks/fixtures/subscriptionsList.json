@@ -1,0 +1,26 @@
+[
+  {
+    "uid": "3fa85f64-5717-4562-b3fc-2c963f66afa1",
+    "name": "Technology",
+    "thumbnail": "https://cdn.pixabay.com/photo/2016/11/18/23/38/technology-1837375_960_720.jpg",
+    "url": "https://cdn.pixabay.com/photo/2016/11/18/23/38/technology-1837375_960_720.jpg"
+  },
+  {
+    "id": "3fa85f64-5717-4562-b3fc-2c963f66afa2",
+    "name": "Sports",
+    "thumbnail": "https://cdn.pixabay.com/photo/2016/11/18/23/38/technology-1837375_960_720.jpg",
+    "url": "https://cdn.pixabay.com/photo/2016/11/18/23/38/technology-1837375_960_720.jpg"
+  },
+  {
+    "id": "3fa85f64-5717-4562-b3fc-2c963f66afa3",
+    "name": "Videogames",
+    "thumbnail": "https://cdn.pixabay.com/photo/2016/11/18/23/38/technology-1837375_960_720.jpg",
+    "url": "https://cdn.pixabay.com/photo/2016/11/18/23/38/technology-1837375_960_720.jpg"
+  },
+  {
+    "id": "3fa85f64-5717-4562-b3fc-2c963f66afa4",
+    "name": "Psychology",
+    "thumbnail": "https://cdn.pixabay.com/photo/2016/11/18/23/38/technology-1837375_960_720.jpg",
+    "url": "https://cdn.pixabay.com/photo/2016/11/18/23/38/technology-1837375_960_720.jpg"
+  }
+]

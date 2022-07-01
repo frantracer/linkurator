@@ -1,14 +1,16 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
+import {useEffect, useState} from "react";
 import configuration from "../configuration";
+
+export interface ProfileResponse {
+  first_name: string
+  last_name: string
+  avatar_url: string
+}
 
 export type Profile =
   | undefined
-  | {
-      firstName: string;
-      lastName: string;
-      avatar: string;
-    };
+  | ProfileResponse;
 
 const useProfile = () => {
   const [profile, setProfile] = useState<Profile>();
@@ -16,7 +18,7 @@ const useProfile = () => {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const { data } = await axios(configuration.PROFILE_URL);
+        const {data} = await axios.get<ProfileResponse>(configuration.PROFILE_URL, {withCredentials: true});
         setProfile(data);
       } catch (error: any) {
         console.error("Error retrieving profile", error);

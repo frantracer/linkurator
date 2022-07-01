@@ -1,38 +1,38 @@
-import { render, screen, waitFor, fireEvent } from "@testing-library/react";
+import {render, screen, waitFor} from "@testing-library/react";
 import React from "react";
 import LateralMenu from "./LateralMenu";
-import { clickOnText } from "../utilities/tests/actions";
+import {clickOnText} from "../utilities/tests/actions";
 
-const topics = [
+const subscriptions = [
   {
-    id: "1",
+    uuid: "1",
     name: "Technology",
-    description: "Technology description",
-    subscriptions: [],
+    thumbnail: "https://via.placeholder.com/1",
+    url: "https://www.youtube.com/channel/1",
   },
   {
-    id: "2",
+    uuid: "2",
     name: "Sports",
-    description: "Sports description",
-    subscriptions: [],
+    thumbnail: "https://via.placeholder.com/2",
+    url: "https://www.youtube.com/channel/2",
   },
   {
-    id: "3",
+    uuid: "3",
     name: "Videogames",
-    description: "Videogames description",
-    subscriptions: [],
+    thumbnail: "https://via.placeholder.com/3",
+    url: "https://www.youtube.com/channel/3",
   },
   {
-    id: "4",
+    uuid: "4",
     name: "Psychology",
-    description: "Videogames",
-    subscriptions: [],
+    thumbnail: "https://via.placeholder.com/4",
+    url: "https://www.youtube.com/channel/4",
   },
 ];
 
 describe("LateralMenu should", () => {
-  it("show all topics", async () => {
-    render(<LateralMenu topics={topics} onClickTopic={jest.fn()} />);
+  it("show all subscriptions", async () => {
+    render(<LateralMenu subscriptions={subscriptions} onClickSubscription={jest.fn()} />);
 
     await waitFor(() => {
       expect(screen.getByText("Technology"));
@@ -43,7 +43,7 @@ describe("LateralMenu should", () => {
   });
 
   it("select an item when clicked", async () => {
-    render(<LateralMenu topics={topics} onClickTopic={jest.fn()} />);
+    render(<LateralMenu subscriptions={subscriptions} onClickSubscription={jest.fn()} />);
 
     await clickOnText("Technology");
 
@@ -52,15 +52,15 @@ describe("LateralMenu should", () => {
 
   it("report when an item is clicked", async () => {
     const onClick = jest.fn();
-    render(<LateralMenu topics={topics} onClickTopic={onClick} />);
+    render(<LateralMenu subscriptions={subscriptions} onClickSubscription={onClick} />);
 
     await clickOnText("Technology");
 
-    expect(onClick).toHaveBeenCalledWith(topics[0]);
+    expect(onClick).toHaveBeenCalledWith(subscriptions[0]);
   });
 
   it("select an item when clicked", async () => {
-    render(<LateralMenu topics={topics} onClickTopic={jest.fn()} />);
+    render(<LateralMenu subscriptions={subscriptions} onClickSubscription={jest.fn()} />);
 
     await clickOnText("Technology");
 
