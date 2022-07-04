@@ -1,5 +1,5 @@
-const WEB_BASE_URL = 'https://www.linkurator.com';
-const API_BASE_URL = 'https://api.linkurator.com:9000';
+const WEB_BASE_URL = process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : 'https://www.linkurator.com';
+const API_BASE_URL = process.env.NODE_ENV === 'development' ? 'http://localhost:9000' : 'https://api.linkurator.com:9000';
 const SUBSCRIPTIONS_URL = `${API_BASE_URL}/subscriptions/`;
 const PROFILE_URL = `${API_BASE_URL}/profile/`;
 const LOGIN_URL = `${API_BASE_URL}/login/?redirect_uri=${encodeURI(WEB_BASE_URL)}`;
