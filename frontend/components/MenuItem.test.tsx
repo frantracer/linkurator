@@ -5,13 +5,13 @@ const SELECTED_CLASS = "bg-gray-200";
 
 describe("MenuItem should", () => {
   it("show item name", () => {
-    render(<MenuItem title="Item Title" />);
+    render(<MenuItem onClick={() => {}} title="Item Title" />);
 
     expect(screen.getByText("Item Title"));
   });
 
   it("be selected if specified", () => {
-    render(<MenuItem title="Item Title" selected={true} />);
+    render(<MenuItem onClick={() => {}} title="Item Title" selected={true} />);
 
     const item = screen.getByText("Item Title");
 

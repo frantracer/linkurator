@@ -2,6 +2,13 @@ import {render, screen, waitFor} from "@testing-library/react";
 import React from "react";
 import LateralMenu from "./LateralMenu";
 import {clickOnText} from "../utilities/tests/actions";
+import {Profile} from "../hooks/useProfile";
+
+const dummyProfile: Profile = {
+  last_name: "Dummy",
+  first_name: "Dummy",
+  avatar_url: "https://dummy.com"
+}
 
 const subscriptions = [
   {
@@ -32,7 +39,7 @@ const subscriptions = [
 
 describe("LateralMenu should", () => {
   it("show all subscriptions", async () => {
-    render(<LateralMenu subscriptions={subscriptions} onClickSubscription={jest.fn()} />);
+    render(<LateralMenu profile={dummyProfile} subscriptions={subscriptions} onClickSubscription={jest.fn()} />);
 
     await waitFor(() => {
       expect(screen.getByText("Technology"));
@@ -43,7 +50,7 @@ describe("LateralMenu should", () => {
   });
 
   it("select an item when clicked", async () => {
-    render(<LateralMenu subscriptions={subscriptions} onClickSubscription={jest.fn()} />);
+    render(<LateralMenu profile={dummyProfile} subscriptions={subscriptions} onClickSubscription={jest.fn()} />);
 
     await clickOnText("Technology");
 
@@ -52,7 +59,7 @@ describe("LateralMenu should", () => {
 
   it("report when an item is clicked", async () => {
     const onClick = jest.fn();
-    render(<LateralMenu subscriptions={subscriptions} onClickSubscription={onClick} />);
+    render(<LateralMenu profile={dummyProfile} subscriptions={subscriptions} onClickSubscription={onClick} />);
 
     await clickOnText("Technology");
 
@@ -60,7 +67,7 @@ describe("LateralMenu should", () => {
   });
 
   it("select an item when clicked", async () => {
-    render(<LateralMenu subscriptions={subscriptions} onClickSubscription={jest.fn()} />);
+    render(<LateralMenu profile={dummyProfile} subscriptions={subscriptions} onClickSubscription={jest.fn()} />);
 
     await clickOnText("Technology");
 

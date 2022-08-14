@@ -4,9 +4,16 @@ import {
   givenSubscriptions,
 } from "../utilities/tests/preconditions";
 import useSubscriptions, {SubscriptionResponse} from "./useSubscriptions";
+import {Profile} from "./useProfile";
 
 const DummyComponent = () => {
-  const subscriptions = useSubscriptions();
+  const profile: Profile = {
+    avatar_url: "",
+    first_name: "",
+    last_name: "",
+  }
+
+  const subscriptions = useSubscriptions(profile);
 
   const subscriptionsIds = subscriptions.map((t) => <div key={t.uuid}>{t.uuid}</div>);
 
