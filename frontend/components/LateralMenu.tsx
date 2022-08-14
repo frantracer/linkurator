@@ -66,7 +66,7 @@ const LateralMenu = (props: LateralMenuProps) => {
     </button>
   );
 
-  const Avatar = (props: { img: string }) => (
+  const Avatar = (props: { img: string, userName: string }) => (
     <img
       className="inline-block rounded-full w-7 h-7 ring-1 ring-white"
       src={props.img}
@@ -82,7 +82,7 @@ const LateralMenu = (props: LateralMenuProps) => {
           <h2 className="text-2xl font-bold">{profile ? profile.first_name : "Guest"}</h2>
           <div className="flex">
             <LoginButton/>
-            <Avatar img={profile ? profile.avatar_url : ""}/>
+            {profile && <Avatar img={profile.avatar_url} userName={profile.first_name}/>}
           </div>
         </div>
         <nav className="flex-grow pb-4 px-7 md:block md:pb-0 md:overflow-y-auto">
