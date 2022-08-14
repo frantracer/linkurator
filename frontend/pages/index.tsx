@@ -22,6 +22,7 @@ const Home: NextPage = () => {
           img={subscriptionsItems[i].thumbnail}
           name={subscriptionName}
           description={subscriptionsItems[i].name}
+          url={subscriptionsItems[i].url}
         />
       </div>
     );

@@ -1,9 +1,8 @@
-import Image from "next/image";
-
 type VideoCardProps = {
   img: string;
   name: string;
   description: string;
+  url: string;
 };
 
 const VideoCard = (props: VideoCardProps) => {
@@ -11,6 +10,7 @@ const VideoCard = (props: VideoCardProps) => {
   return (
     <div className="flex flex-col items-center justify-center transition-transform transform bg-white rounded-lg shadow-lg md:w-64 hover:scale-105">
       <div
+        onClick={() => window.open(props.url, "_blank")}
         className="w-full bg-center bg-no-repeat bg-cover rounded-t-lg"
         data-testid="video-card-image"
         style={{

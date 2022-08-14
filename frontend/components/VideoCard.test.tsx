@@ -15,12 +15,16 @@ describe("VideoCard should", () => {
     renderCard({ name: "Card Name" });
 
     const name = screen.getByText("Card Name");
+
+    expect(name).toBeInTheDocument();
   });
 
   it("render description", () => {
     renderCard({ description: "Card Description" });
 
     const description = screen.getByText("Card Description");
+
+    expect(description).toBeInTheDocument();
   });
 });
 
@@ -34,6 +38,7 @@ function renderCard(props: {
       img={props.img ? props.img : ""}
       name={props.name ? props.name : ""}
       description={props.description ? props.description : ""}
+      url={props.img ? props.img : ""}
     />
   );
 }
