@@ -54,8 +54,8 @@ const LateralMenu = (props: LateralMenuProps) => {
       title={profile ? "Logout" : "Login"}
       onClick={() => {
         profile ?
-          window.open(configuration.LOGOUT_URL + '?redirect_uri=http%3A%2F%2Flocalhost%3A3000', '_self') :
-          window.open(configuration.LOGIN_URL + '?redirect_uri=http%3A%2F%2Flocalhost%3A3000', '_self')
+          window.open(configuration.LOGOUT_URL, '_self') :
+          window.open(configuration.LOGIN_URL, '_self')
       }}>
       <svg
         xmlns="http://www.w3.org/2000/svg"
