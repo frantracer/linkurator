@@ -1,11 +1,12 @@
 import {MenuItem} from "./MenuItem";
 import {Subscription} from "../hooks/useSubscriptions";
 import {useState} from "react";
-import useProfile from "../hooks/useProfile";
+import {Profile} from "../hooks/useProfile";
 import configuration from "../configuration";
 
 type LateralMenuProps = {
   subscriptions: Subscription[];
+  profile: Profile;
   onClickSubscription: (subscription: Subscription) => void;
 };
 
@@ -24,9 +25,8 @@ const Title = () => (
 );
 
 const LateralMenu = (props: LateralMenuProps) => {
-  const {subscriptions} = props;
+  const {subscriptions, profile} = props;
   const [selectedSubscription, setSelectedSubscription] = useState<Subscription>();
-  const profile = useProfile();
 
   const handleClick = (subscriptionId: string) => {
     const subscription = subscriptions.find((subscription) => subscription.uuid === subscriptionId);

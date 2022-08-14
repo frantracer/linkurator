@@ -5,10 +5,12 @@ import LateralMenu from "../components/LateralMenu";
 import VideoCard from "../components/VideoCard";
 import useSubscriptions, {Subscription} from "../hooks/useSubscriptions";
 import useSubscriptionItems from "../hooks/useSubscriptionItems";
+import useProfile from "../hooks/useProfile";
 
 const Home: NextPage = () => {
   const [selectedSubscription, setSelectedSubscription] = useState<Subscription | undefined>();
-  const subscriptions = useSubscriptions();
+  const profile = useProfile();
+  const subscriptions = useSubscriptions(profile);
   const subscriptionsItems = useSubscriptionItems(selectedSubscription);
   const cards = [];
 
@@ -37,6 +39,7 @@ const Home: NextPage = () => {
         <LateralMenu
           subscriptions={subscriptions}
           onClickSubscription={(subscription) => setSelectedSubscription(subscription)}
+          profile={profile}
         />
 
         <div className="flex flex-row flex-wrap m-6">{cards}</div>
