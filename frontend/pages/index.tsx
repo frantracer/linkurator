@@ -39,7 +39,8 @@ const Home: NextPage = () => {
       <main className="flex bg-gray-100">
         <LateralMenu
           subscriptions={subscriptions}
-          onClickSubscription={(subscription) => setSelectedSubscription(subscription)}
+          selectedSubscription={selectedSubscription}
+          setSelectedSubscription={(subscription) => setSelectedSubscription(subscription)}
           profile={profile}
         />
 

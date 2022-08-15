@@ -1,13 +1,15 @@
-import {MenuItem} from "./MenuItem";
 import {Subscription} from "../hooks/useSubscriptions";
 import {useState} from "react";
 import {Profile} from "../hooks/useProfile";
 import configuration from "../configuration";
+import LateralSearchBar from "./LateralSearchBar";
+import LateralItemList from "./LateralItemList";
 
 type LateralMenuProps = {
   subscriptions: Subscription[];
   profile: Profile;
-  onClickSubscription: (subscription: Subscription) => void;
+  selectedSubscription: Subscription | undefined;
+  setSelectedSubscription: (subscription: Subscription | undefined) => void;
 };
 
 const Title = () => (
@@ -26,24 +28,7 @@ const Title = () => (
 
 const LateralMenu = (props: LateralMenuProps) => {
   const {subscriptions, profile} = props;
-  const [selectedSubscription, setSelectedSubscription] = useState<Subscription>();
-
-  const handleClick = (subscriptionId: string) => {
-    const subscription = subscriptions.find((subscription) => subscription.uuid === subscriptionId);
-    if (subscription) {
-      setSelectedSubscription(subscription);
-      props.onClickSubscription(subscription);
-    }
-  };
-
-  const items = subscriptions.map((subscription) => (
-    <MenuItem
-      title={subscription.name}
-      key={subscription.uuid}
-      onClick={() => handleClick(subscription.uuid)}
-      selected={subscription.uuid === selectedSubscription?.uuid}
-    />
-  ));
+  const [searchValue, setSearchValue] = useState<string>('');
 
   const loginSvg = "M416 448h-84c-6.6 0-12-5.4-12-12v-40c0-6.6 5.4-12 12-12h84c17.7 0 32-14.3 32-32V160c0-17.7-14.3-32-32-32h-84c-6.6 0-12-5.4-12-12V76c0-6.6 5.4-12 12-12h84c53 0 96 43 96 96v192c0 53-43 96-96 96zm-47-201L201 79c-15-15-41-4.5-41 17v96H24c-13.3 0-24 10.7-24 24v96c0 13.3 10.7 24 24 24h136v96c0 21.5 26 32 41 17l168-168c9.3-9.4 9.3-24.6 0-34z"
   const logoutSvg = "M497 273L329 441c-15 15-41 4.5-41-17v-96H152c-13.3 0-24-10.7-24-24v-96c0-13.3 10.7-24 24-24h136V88c0-21.4 25.9-32 41-17l168 168c9.3 9.4 9.3 24.6 0 34zM192 436v-40c0-6.6-5.4-12-12-12H96c-17.7 0-32-14.3-32-32V160c0-17.7 14.3-32 32-32h84c6.6 0 12-5.4 12-12V76c0-6.6-5.4-12-12-12H96c-53 0-96 43-96 96v192c0 53 43 96 96 96h84c6.6 0 12-5.4 12-12z"
@@ -85,9 +70,12 @@ const LateralMenu = (props: LateralMenuProps) => {
             {profile && <Avatar img={profile.avatar_url} userName={profile.first_name}/>}
           </div>
         </div>
-        <nav className="flex-grow pb-4 px-7 md:block md:pb-0 md:overflow-y-auto">
-          {items}
-        </nav>
+        <LateralSearchBar searchBarQuery={searchValue} setSearchBarQuery={setSearchValue}/>
+        <LateralItemList
+          searchValue={searchValue}
+          subscriptions={subscriptions}
+          setSelectedSubscription={props.setSelectedSubscription}
+          selectedSubscription={props.selectedSubscription} />
       </div>
     </div>
   );
