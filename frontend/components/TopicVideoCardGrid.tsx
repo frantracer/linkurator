@@ -1,17 +1,17 @@
-import {SubscriptionItem} from "../hooks/useSubscriptionItems";
 import VideoCard from "./VideoCard";
-import {Subscription} from "../hooks/useSubscriptions";
 import {readableAgoUnits} from "../utilities/dateFormatter";
+import {Topic} from "../hooks/useTopics";
+import {TopicItem} from "../hooks/useTopicItems";
 
-type SubscriptionVideoCardGridProps = {
-  subscription: Subscription | undefined;
-  items: SubscriptionItem[];
+type TopicVideoCardGridProps = {
+  topic: Topic | undefined;
+  items: TopicItem[];
 }
 
-const SubscriptionVideoCardGrid = (props: SubscriptionVideoCardGridProps) => {
+const TopicVideoCardGrid = (props: TopicVideoCardGridProps) => {
   const cards = [];
 
-  if (props.subscription) {
+  if (props.topic) {
     for (let i = 0; i < props.items.length; i++) {
       cards.push(
         <div className="m-4" key={i}>
@@ -28,10 +28,10 @@ const SubscriptionVideoCardGrid = (props: SubscriptionVideoCardGridProps) => {
 
   return (
     <div>
-      <div className="text-3xl text-center text-gray-800">{props.subscription ? props.subscription.name : ""}</div>
+      <div className="text-3xl text-center text-gray-800">{props.topic ? props.topic.name : ""}</div>
       <div className="flex flex-row flex-wrap m-6">{cards}</div>
     </div>
   )
 }
 
-export default SubscriptionVideoCardGrid;
+export default TopicVideoCardGrid;

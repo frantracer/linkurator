@@ -8,7 +8,7 @@ type LateralItemListProps = {
   searchValue: string;
 }
 
-const LateralItemList = (props: LateralItemListProps) => {
+const LateralSubscriptionList = (props: LateralItemListProps) => {
   const handleClick = (subscriptionId: string) => {
     const subscription = props.subscriptions.find((subscription) => subscription.uuid === subscriptionId);
     if (subscription) {
@@ -37,4 +37,4 @@ const LateralItemList = (props: LateralItemListProps) => {
   )
 }
 
-export default LateralItemList;
+export default LateralSubscriptionList;

@@ -2,14 +2,23 @@ import {Subscription} from "../hooks/useSubscriptions";
 import {useState} from "react";
 import {Profile} from "../hooks/useProfile";
 import LateralSearchBar from "./LateralSearchBar";
-import LateralItemList from "./LateralItemList";
+import LateralSubscriptionList from "./LateralSubscriptionList";
 import ProfileMenu from "./ProfileMenu";
+import {SectionType} from "../entities/SectionType";
+import SectionDropdown from "./SectionDropdown";
+import {Topic} from "../hooks/useTopics";
+import LateralTopicList from "./LateralTopicList";
 
 type LateralMenuProps = {
-  subscriptions: Subscription[];
   profile: Profile;
+  topics: Topic[];
+  selectedTopic: Topic | undefined;
+  setSelectedTopic: (topic: Topic | undefined) => void;
+  subscriptions: Subscription[];
   selectedSubscription: Subscription | undefined;
   setSelectedSubscription: (subscription: Subscription | undefined) => void;
+  section: SectionType;
+  setSection: (section: SectionType) => void;
 };
 
 const Title = () => (
@@ -35,14 +44,24 @@ const LateralMenu = (props: LateralMenuProps) => {
         <Title/>
         <ProfileMenu
           profile={props.profile}/>
+        <SectionDropdown section={props.section} setSection={props.setSection}/>
         <LateralSearchBar
           searchBarQuery={searchValue}
           setSearchBarQuery={setSearchValue}/>
-        <LateralItemList
-          searchValue={searchValue}
-          subscriptions={props.subscriptions}
-          setSelectedSubscription={props.setSelectedSubscription}
-          selectedSubscription={props.selectedSubscription}/>
+        {props.section === SectionType.Subscriptions &&
+            <LateralSubscriptionList
+                searchValue={searchValue}
+                subscriptions={props.subscriptions}
+                setSelectedSubscription={props.setSelectedSubscription}
+                selectedSubscription={props.selectedSubscription}/>
+        }
+        {props.section === SectionType.Topics &&
+            <LateralTopicList
+                topics={props.topics}
+                setSelectedTopic={props.setSelectedTopic}
+                selectedTopic={props.selectedTopic}
+                searchValue={searchValue}/>
+        }
       </div>
     </div>
   );
