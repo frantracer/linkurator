@@ -8,7 +8,7 @@ type VideoCardProps = {
 const VideoCard = (props: VideoCardProps) => {
   const { img, name, description } = props;
   return (
-    <div className="flex flex-col items-center justify-center transition-transform transform bg-white rounded-lg shadow-lg md:w-64 hover:scale-105">
+    <div className="flex flex-col items-center justify-center transition-transform transform bg-white rounded-lg shadow-lg md:w-64 hover:scale-105 cursor-pointer">
       <div
         onClick={() => window.open(props.url, "_blank")}
         className="w-full bg-center bg-no-repeat bg-cover rounded-t-lg"
