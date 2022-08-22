@@ -1,6 +1,6 @@
 import type {NextPage} from "next";
 import Head from "next/head";
-import {useState} from "react";
+import React, {useState} from "react";
 import LateralMenu from "../components/LateralMenu";
 import useSubscriptions, {Subscription} from "../hooks/useSubscriptions";
 import useSubscriptionItems from "../hooks/useSubscriptionItems";
@@ -10,7 +10,7 @@ import {SectionType} from "../entities/SectionType";
 import useTopics, {Topic} from "../hooks/useTopics";
 import useTopicItems from "../hooks/useTopicItems";
 import TopicVideoCardGrid from "../components/TopicVideoCardGrid";
-
+import NewTopicModal from "../components/NewTopicModal";
 
 const Home: NextPage = () => {
   const [selectedSubscription, setSelectedSubscription] = useState<Subscription | undefined>();
@@ -31,6 +31,8 @@ const Home: NextPage = () => {
       </Head>
 
       <main className="flex bg-gray-100">
+        <NewTopicModal/>
+
         <LateralMenu
           topics={topics}
           selectedTopic={selectedTopic}

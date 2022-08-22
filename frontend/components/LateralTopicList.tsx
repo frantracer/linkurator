@@ -1,5 +1,8 @@
 import {MenuItem} from "./MenuItem";
 import {Topic} from "../hooks/useTopics";
+import {NewTopicModalId} from "./NewTopicModal";
+import React from "react";
+import CustomButton, {IconForButton} from "./atoms/CustomButton";
 
 type LateralTopicListProps = {
   topics: Topic[];
@@ -9,6 +12,7 @@ type LateralTopicListProps = {
 }
 
 const LateralTopicList = (props: LateralTopicListProps) => {
+
   const handleClick = (topicId: string) => {
     const topic = props.topics.find((topic) => topic.uuid === topicId);
     if (topic) {
@@ -30,10 +34,15 @@ const LateralTopicList = (props: LateralTopicListProps) => {
     ))
 
   return (
-    <nav className="flex-grow pb-4 px-7 md:block md:pb-0 md:overflow-y-auto">
-      {items}
-    </nav>
+    <div className="flex flex-col flex-shrink-0 w-full text-gray-700 bg-white md:w-64">
+      <CustomButton text={"New Topic"} icon={IconForButton.add} relatedModalId={NewTopicModalId} clickAction={() => {
+      }}/>
+      <nav className="flex-grow pb-4 px-7 md:block md:pb-0 md:overflow-y-auto">
+        {items}
+      </nav>
+    </div>
   )
 }
+
 
 export default LateralTopicList;
