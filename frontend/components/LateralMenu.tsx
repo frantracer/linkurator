@@ -6,8 +6,8 @@ import LateralSubscriptionList from "./LateralSubscriptionList";
 import ProfileMenu from "./ProfileMenu";
 import {SectionType} from "../entities/SectionType";
 import SectionDropdown from "./SectionDropdown";
-import {Topic} from "../hooks/useTopics";
 import LateralTopicList from "./LateralTopicList";
+import {Topic} from "../entities/Topic";
 
 type LateralMenuProps = {
   profile: Profile;
@@ -40,7 +40,7 @@ const LateralMenu = (props: LateralMenuProps) => {
 
   return (
     <div className="sticky top-0 flex-col h-screen bg-white shadow-lg md:flex md:flex-row">
-      <div className="flex flex-col flex-shrink-0 w-full text-gray-700 bg-white md:w-64">
+      <div className="flex flex-col flex-shrink-0 w-full bg-white md:w-64">
         <Title/>
         <ProfileMenu
           profile={props.profile}/>

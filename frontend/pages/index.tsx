@@ -7,17 +7,18 @@ import useSubscriptionItems from "../hooks/useSubscriptionItems";
 import useProfile from "../hooks/useProfile";
 import SubscriptionVideoCardGrid from "../components/SubscriptionVideoCardGrid";
 import {SectionType} from "../entities/SectionType";
-import useTopics, {Topic} from "../hooks/useTopics";
 import useTopicItems from "../hooks/useTopicItems";
 import TopicVideoCardGrid from "../components/TopicVideoCardGrid";
 import NewTopicModal from "../components/NewTopicModal";
+import {useTopics} from "../hooks/useTopics";
+import {Topic} from "../entities/Topic";
 
 const Home: NextPage = () => {
   const [selectedSubscription, setSelectedSubscription] = useState<Subscription | undefined>();
   const profile = useProfile();
   const subscriptions = useSubscriptions(profile);
   const subscriptionsItems = useSubscriptionItems(selectedSubscription);
-  const topics = useTopics(profile);
+  const [topics, setTopics] = useTopics(profile);
   const [selectedTopic, setSelectedTopic] = useState<Topic | undefined>();
   const topicItems = useTopicItems(selectedTopic)
   const [section, setSection] = useState<SectionType>(SectionType.Subscriptions);
@@ -31,7 +32,7 @@ const Home: NextPage = () => {
       </Head>
 
       <main className="flex bg-gray-100">
-        <NewTopicModal/>
+        <NewTopicModal setTopics={setTopics}/>
 
         <LateralMenu
           topics={topics}

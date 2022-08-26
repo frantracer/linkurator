@@ -1,39 +1,17 @@
-import axios from "axios";
-import {useEffect, useState} from "react";
-import configuration from "../configuration";
+import {Dispatch, SetStateAction, useEffect, useState} from "react";
 import {Profile} from "./useProfile";
+import {Topic} from "../entities/Topic";
+import {getTopics} from "../services/topicService";
 
-export type Topic = {
-  uuid: string;
-  name: string;
-};
 
-export interface TopicResponse {
-  elements: Topic[];
-  next_page: string;
-}
-
-const useTopics = (profile: Profile) => {
+export function useTopics(profile: Profile): [Topic[], Dispatch<SetStateAction<Topic[]>>] {
   const [topics, setTopics] = useState<Topic[]>([]);
 
   useEffect(() => {
     const fetchTopics = async () => {
       try {
         if (profile) {
-          let topics: Topic[] = []
-          let nextPage = configuration.TOPICS_URL;
-          while (nextPage !== "") {
-            const {data, status} = await axios.get<TopicResponse>(
-              nextPage, {withCredentials: true});
-            if (status === 200) {
-              topics = topics.concat(data.elements);
-              nextPage = data.next_page || "";
-            } else {
-              console.error("Error retrieving subscriptions", data);
-              nextPage = "";
-            }
-          }
-          setTopics(topics);
+          getTopics().then(topics => setTopics(topics));
         } else {
           setTopics([]);
         }
@@ -45,7 +23,5 @@ const useTopics = (profile: Profile) => {
     fetchTopics();
   }, [profile]);
 
-  return topics;
-};
-
-export default useTopics;
+  return [topics, setTopics];
+}

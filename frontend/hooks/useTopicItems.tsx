@@ -1,7 +1,7 @@
 import axios from "axios";
 import {useEffect, useState} from "react";
 import configuration from "../configuration";
-import {Topic} from "./useTopics";
+import {Topic} from "../entities/Topic";
 
 export type TopicItem = {
   uuid: string;
