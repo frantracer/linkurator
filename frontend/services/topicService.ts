@@ -35,3 +35,13 @@ export async function createTopic(uuid: string, name: string, subscriptions: str
     console.error("Error creating topic", data);
   }
 }
+
+export async function deleteTopic(uuid: string) {
+  const {data, status} = await axios.delete(
+    configuration.TOPICS_URL + uuid, {withCredentials: true});
+  if (status === 204) {
+    return data;
+  } else {
+    console.error("Error deleting topic", data);
+  }
+}

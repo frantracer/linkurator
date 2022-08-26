@@ -47,7 +47,7 @@ const Home: NextPage = () => {
         {section === SectionType.Subscriptions &&
             <SubscriptionVideoCardGrid subscription={selectedSubscription} items={subscriptionsItems}/>}
         {section === SectionType.Topics &&
-            <TopicVideoCardGrid topic={selectedTopic} items={topicItems}/>}
+            <TopicVideoCardGrid topic={selectedTopic} items={topicItems} setTopics={setTopics} setSelectedTopic={setSelectedTopic}/>}
       </main>
     </div>
   );

@@ -1,11 +1,20 @@
 import VideoCard from "./VideoCard";
 import {readableAgoUnits} from "../utilities/dateFormatter";
-import {Topic} from "../hooks/useTopics";
 import {TopicItem} from "../hooks/useTopicItems";
+import {Topic} from "../entities/Topic";
+import CustomButton, {IconForButton} from "./atoms/CustomButton";
+import {deleteTopic, getTopics} from "../services/topicService";
 
 type TopicVideoCardGridProps = {
+  setTopics: (topics: Topic[]) => void,
+  setSelectedTopic: (topic: Topic | undefined) => void,
   topic: Topic | undefined;
   items: TopicItem[];
+}
+
+async function DeleteTopicAndGetAllTopics(uuid: string): Promise<Topic[]> {
+  await deleteTopic(uuid);
+  return await getTopics();
 }
 
 const TopicVideoCardGrid = (props: TopicVideoCardGridProps) => {
@@ -26,12 +35,33 @@ const TopicVideoCardGrid = (props: TopicVideoCardGridProps) => {
     }
   }
 
-  return (
-    <div>
-      <div className="text-3xl text-center text-gray-800">{props.topic ? props.topic.name : ""}</div>
-      <div className="flex flex-row flex-wrap m-6">{cards}</div>
-    </div>
-  )
+  let topicGrid = <div></div>
+  if (props.topic) {
+    const topic = props.topic;
+
+    topicGrid = (
+      <div className="w-full">
+        <div className="flex flex-row justify-center items-center">
+          <h1 className="text-4xl text-center text-gray-800">{topic.name}</h1>
+          <CustomButton
+            text={"Delete"}
+            icon={IconForButton.trash}
+            relatedModalId={undefined}
+            clickAction={() => {
+              DeleteTopicAndGetAllTopics(topic.uuid)
+                .then(topics => {
+                    props.setTopics(topics);
+                    props.setSelectedTopic(undefined);
+                  }
+                );
+            }}/>
+        </div>
+        <div className="flex flex-row flex-wrap m-6">{cards}</div>
+      </div>
+    )
+  }
+
+  return topicGrid
 }
 
 export default TopicVideoCardGrid;
