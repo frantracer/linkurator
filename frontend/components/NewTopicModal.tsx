@@ -1,22 +1,32 @@
 import CustomButton from "./atoms/CustomButton";
 import React, {useState} from "react";
 import {createTopic, getTopics} from "../services/topicService";
-import { v4 as uuidv4 } from 'uuid';
+import {v4 as uuidv4} from 'uuid';
 import {Topic} from "../entities/Topic";
+import {Subscription} from "../hooks/useSubscriptions";
 
 export const NewTopicModalId = "new-topic-modal";
 
 type NewTopicModalProps = {
+  subscriptions: Subscription[];
   setTopics: (topics: Topic[]) => void;
 }
 
-async function createAndGetTopics(topicName: string) {
-    await createTopic(uuidv4(), topicName, []);
-    return await getTopics();
+async function createAndGetTopics(topicName: string, subscriptionsIds: string[]) {
+  await createTopic(uuidv4(), topicName, subscriptionsIds);
+  return await getTopics();
 }
 
 const NewTopicModal = (props: NewTopicModalProps) => {
   const [newTopicName, setNewTopicName] = useState("");
+  const [selectedSubscriptionId, setSelectedSubscriptionId] = useState<string>("0")
+  const [subscriptionsToAdd, setSubscriptionsToAdd] = useState<Subscription[]>([])
+
+  const options = props.subscriptions.map(subscription => {
+    return <option key={subscription.uuid} value={subscription.uuid}>{subscription.name}</option>
+  })
+
+  const subscriptionBadges = subscriptionsToAdd.map(s => subscriptionToBadge(s))
 
   return (
     <div className="text-white">
@@ -31,20 +41,52 @@ const NewTopicModal = (props: NewTopicModalProps) => {
             <input type="text" placeholder="New Topic" className="input input-bordered w-full max-w-xs"
                    value={newTopicName} onChange={(e) => setNewTopicName(e.target.value)}/>
           </div>
+          <div className="form-control">
+            <div className="input-group">
+              <select className="select select-bordered" value={selectedSubscriptionId}
+                      onChange={e => setSelectedSubscriptionId(e.target.value)}>
+                <option disabled value={"0"}>Pick subscription</option>
+                {options}
+              </select>
+              <button className="btn" onClick={() => {
+                const subscription = props.subscriptions.find(subscription => subscription.uuid === selectedSubscriptionId);
+                if (subscription && !subscriptionsToAdd.map(s => s.uuid).includes(subscription.uuid)) {
+                  setSubscriptionsToAdd([...subscriptionsToAdd, subscription]);
+                }
+              }}>
+                Add
+              </button>
+            </div>
+          </div>
+          <div className="flex flex-wrap">
+            {subscriptionBadges}
+          </div>
           <div className="modal-action">
             <CustomButton text={"Close"} icon={undefined} relatedModalId={NewTopicModalId}
-                          clickAction={() => {}}/>
+                          clickAction={() => {
+                          }}/>
             <CustomButton text={"Create"} icon={undefined} relatedModalId={NewTopicModalId}
                           clickAction={async () => {
-                            createAndGetTopics(newTopicName)
+                            createAndGetTopics(newTopicName, subscriptionsToAdd.map(s => s.uuid))
                               .then(props.setTopics)
                               .catch(error => console.log(error))
+                            setSubscriptionsToAdd([])
                           }}/>
           </div>
         </div>
       </div>
     </div>
   )
+}
+
+function subscriptionToBadge(subscription: Subscription) {
+  return <div key={subscription.uuid} className="badge mx-2">
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+         className="inline-block w-4 h-4 stroke-current">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path>
+    </svg>
+    {subscription.name}
+  </div>
 }
 
 export default NewTopicModal;

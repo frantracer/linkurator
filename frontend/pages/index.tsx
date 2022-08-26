@@ -32,7 +32,7 @@ const Home: NextPage = () => {
       </Head>
 
       <main className="flex bg-gray-100">
-        <NewTopicModal setTopics={setTopics}/>
+        <NewTopicModal setTopics={setTopics} subscriptions={subscriptions}/>
 
         <LateralMenu
           topics={topics}
