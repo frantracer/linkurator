@@ -34,7 +34,8 @@ const subscriptionsResponse: SubscriptionResponse = {
       thumbnail: "https://via.placeholder.com/2",
       url: "https://www.youtube.com/channel/2",
     },
-  ]
+  ],
+  next_page: ""
 }
 
 describe("useSubscriptions should", () => {
