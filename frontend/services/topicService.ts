@@ -29,7 +29,7 @@ export async function createTopic(uuid: string, name: string, subscriptions: str
     configuration.TOPICS_URL,
     {uuid: uuid, name: name, subscriptions_ids: subscriptions},
     {withCredentials: true});
-  if (status === 200) {
+  if (status === 201) {
     return data;
   } else {
     console.error("Error creating topic", data);
