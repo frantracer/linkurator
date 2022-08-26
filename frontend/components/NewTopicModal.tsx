@@ -17,16 +17,32 @@ async function createAndGetTopics(topicName: string, subscriptionsIds: string[])
   return await getTopics();
 }
 
+function useSubscriptionsToAdd(subscriptions: Subscription[]):
+  [Subscription[], (subscription: Subscription) => void, (subscription: Subscription) => void, () => void] {
+  const [subscriptionsToAdd, setSubscriptionsToAdd] = useState<Subscription[]>(subscriptions);
+
+  const addSubscription = (subscription: Subscription) => {
+    setSubscriptionsToAdd([...subscriptionsToAdd, subscription]);
+  }
+  const removeSubscription = (subscription: Subscription) => {
+    setSubscriptionsToAdd(subscriptionsToAdd.filter(s => s.uuid !== subscription.uuid));
+  }
+  const clearSubscriptions = () => {
+    setSubscriptionsToAdd([]);
+  }
+  return [subscriptionsToAdd, addSubscription, removeSubscription, clearSubscriptions];
+}
+
 const NewTopicModal = (props: NewTopicModalProps) => {
   const [newTopicName, setNewTopicName] = useState("");
   const [selectedSubscriptionId, setSelectedSubscriptionId] = useState<string>("0")
-  const [subscriptionsToAdd, setSubscriptionsToAdd] = useState<Subscription[]>([])
+  const [subscriptionsToAdd, addSubscription, removeSubscription, clearSubscriptions] = useSubscriptionsToAdd([])
 
   const options = props.subscriptions.map(subscription => {
     return <option key={subscription.uuid} value={subscription.uuid}>{subscription.name}</option>
   })
 
-  const subscriptionBadges = subscriptionsToAdd.map(s => subscriptionToBadge(s))
+  const subscriptionBadges = subscriptionsToAdd.map(s => subscriptionToBadge(s, removeSubscription))
 
   return (
     <div className="text-white">
@@ -51,7 +67,7 @@ const NewTopicModal = (props: NewTopicModalProps) => {
               <button className="btn" onClick={() => {
                 const subscription = props.subscriptions.find(subscription => subscription.uuid === selectedSubscriptionId);
                 if (subscription && !subscriptionsToAdd.map(s => s.uuid).includes(subscription.uuid)) {
-                  setSubscriptionsToAdd([...subscriptionsToAdd, subscription]);
+                  addSubscription(subscription);
                 }
               }}>
                 Add
@@ -64,13 +80,14 @@ const NewTopicModal = (props: NewTopicModalProps) => {
           <div className="modal-action">
             <CustomButton text={"Close"} icon={undefined} relatedModalId={NewTopicModalId}
                           clickAction={() => {
+                            clearSubscriptions()
                           }}/>
             <CustomButton text={"Create"} icon={undefined} relatedModalId={NewTopicModalId}
                           clickAction={async () => {
                             createAndGetTopics(newTopicName, subscriptionsToAdd.map(s => s.uuid))
                               .then(props.setTopics)
                               .catch(error => console.log(error))
-                            setSubscriptionsToAdd([])
+                            clearSubscriptions()
                           }}/>
           </div>
         </div>
@@ -79,10 +96,10 @@ const NewTopicModal = (props: NewTopicModalProps) => {
   )
 }
 
-function subscriptionToBadge(subscription: Subscription) {
+function subscriptionToBadge(subscription: Subscription, removeSubscription: (subscription: Subscription) => void) {
   return <div key={subscription.uuid} className="badge mx-2">
     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-         className="inline-block w-4 h-4 stroke-current">
+         className="inline-block w-4 h-4 stroke-current cursor-pointer" onClick={() => removeSubscription(subscription)}>
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path>
     </svg>
     {subscription.name}
