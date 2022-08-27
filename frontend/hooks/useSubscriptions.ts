@@ -2,7 +2,7 @@ import axios from "axios";
 import {useEffect, useState} from "react";
 import configuration from "../configuration";
 import {Profile} from "./useProfile";
-import {Subscription} from "../entities/Subscription";
+import {Subscription, subscriptionSorting} from "../entities/Subscription";
 
 export interface SubscriptionResponse {
   elements: Subscription[];
@@ -29,6 +29,7 @@ const useSubscriptions = (profile: Profile) => {
               nextPage = "";
             }
           }
+          subscriptions.sort(subscriptionSorting)
           setSubscriptions(subscriptions);
         } else {
           setSubscriptions([]);

@@ -5,7 +5,7 @@ import {Topic} from "../entities/Topic";
 import useSubscriptionsToAdd from "../hooks/useSubscriptionsToAdd";
 import {TopicItem} from "../entities/TopicItem";
 import {useTopicName} from "../hooks/useTopicName";
-import {Subscription, subscriptionSorting} from "../entities/Subscription";
+import {Subscription} from "../entities/Subscription";
 
 export const EditTopicModalId = "update-topic-modal";
 
@@ -26,7 +26,7 @@ const EditTopicModal = (props: EditTopicModalProps) => {
   const [selectedSubscriptionId, setSelectedSubscriptionId] = useState<string>("0")
   const [subscriptionsToAdd, addSubscription, removeSubscription] = useSubscriptionsToAdd(props.subscriptions, props.topic)
 
-  const options = props.subscriptions.sort(subscriptionSorting).map(subscription => {
+  const options = props.subscriptions.map(subscription => {
     return <option key={subscription.uuid} value={subscription.uuid}>{subscription.name}</option>
   })
 

@@ -4,7 +4,7 @@ import {createTopic, getTopics} from "../services/topicService";
 import {v4 as uuidv4} from 'uuid';
 import {Topic} from "../entities/Topic";
 import useSubscriptionsToAdd from "../hooks/useSubscriptionsToAdd";
-import {Subscription, subscriptionSorting} from "../entities/Subscription";
+import {Subscription} from "../entities/Subscription";
 
 export const NewTopicModalId = "new-topic-modal";
 
@@ -23,7 +23,7 @@ const NewTopicModal = (props: NewTopicModalProps) => {
   const [selectedSubscriptionId, setSelectedSubscriptionId] = useState<string>("0")
   const [subscriptionsToAdd, addSubscription, removeSubscription, clearSubscriptions] = useSubscriptionsToAdd([], undefined)
 
-  const options = props.subscriptions.sort(subscriptionSorting).map(subscription => {
+  const options = props.subscriptions.map(subscription => {
     return <option key={subscription.uuid} value={subscription.uuid}>{subscription.name}</option>
   })
 
