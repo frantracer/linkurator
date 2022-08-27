@@ -1,7 +1,7 @@
 import {MenuItem} from "./MenuItem";
 import {NewTopicModalId} from "./NewTopicModal";
 import React from "react";
-import CustomButton, {IconForButton} from "./atoms/CustomButton";
+import CustomButton, {IconForButton} from "./CustomButton";
 import {Topic} from "../entities/Topic";
 
 type LateralTopicListProps = {

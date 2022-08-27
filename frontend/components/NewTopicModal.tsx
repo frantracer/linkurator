@@ -1,4 +1,4 @@
-import CustomButton from "./atoms/CustomButton";
+import CustomButton from "./CustomButton";
 import React, {useState} from "react";
 import {createTopic, getTopics} from "../services/topicService";
 import {v4 as uuidv4} from 'uuid';

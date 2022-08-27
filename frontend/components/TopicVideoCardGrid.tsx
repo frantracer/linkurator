@@ -1,7 +1,7 @@
 import VideoCard from "./VideoCard";
 import {readableAgoUnits} from "../utilities/dateFormatter";
 import {Topic} from "../entities/Topic";
-import CustomButton, {IconForButton} from "./atoms/CustomButton";
+import CustomButton, {IconForButton} from "./CustomButton";
 import {deleteTopic, getTopics} from "../services/topicService";
 import {EditTopicModalId} from "./EditTopicModal";
 import {TopicItem} from "../entities/TopicItem";
