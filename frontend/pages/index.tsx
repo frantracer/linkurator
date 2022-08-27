@@ -2,7 +2,7 @@ import type {NextPage} from "next";
 import Head from "next/head";
 import React, {useState} from "react";
 import LateralMenu from "../components/LateralMenu";
-import useSubscriptions, {Subscription} from "../hooks/useSubscriptions";
+import useSubscriptions from "../hooks/useSubscriptions";
 import useSubscriptionItems from "../hooks/useSubscriptionItems";
 import useProfile from "../hooks/useProfile";
 import SubscriptionVideoCardGrid from "../components/SubscriptionVideoCardGrid";
@@ -12,6 +12,7 @@ import TopicVideoCardGrid from "../components/TopicVideoCardGrid";
 import NewTopicModal from "../components/NewTopicModal";
 import {useTopics} from "../hooks/useTopics";
 import EditTopicModal from "../components/EditTopicModal";
+import {Subscription} from "../entities/Subscription";
 
 const Home: NextPage = () => {
   const [selectedSubscription, setSelectedSubscription] = useState<Subscription | undefined>();
