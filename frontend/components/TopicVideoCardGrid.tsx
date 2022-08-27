@@ -1,13 +1,14 @@
 import VideoCard from "./VideoCard";
 import {readableAgoUnits} from "../utilities/dateFormatter";
-import {TopicItem} from "../hooks/useTopicItems";
 import {Topic} from "../entities/Topic";
 import CustomButton, {IconForButton} from "./atoms/CustomButton";
 import {deleteTopic, getTopics} from "../services/topicService";
+import {EditTopicModalId} from "./EditTopicModal";
+import {TopicItem} from "../entities/TopicItem";
 
 type TopicVideoCardGridProps = {
   setTopics: (topics: Topic[]) => void,
-  setSelectedTopic: (topic: Topic | undefined) => void,
+  setSelectedTopicId: (topicId: string | undefined) => void,
   topic: Topic | undefined;
   items: TopicItem[];
 }
@@ -44,6 +45,12 @@ const TopicVideoCardGrid = (props: TopicVideoCardGridProps) => {
         <div className="flex flex-row justify-center items-center">
           <h1 className="text-4xl text-center text-gray-800">{topic.name}</h1>
           <CustomButton
+            text={"Edit"}
+            icon={IconForButton.pencil}
+            relatedModalId={EditTopicModalId}
+            clickAction={() => {
+            }}/>
+          <CustomButton
             text={"Delete"}
             icon={IconForButton.trash}
             relatedModalId={undefined}
@@ -51,7 +58,7 @@ const TopicVideoCardGrid = (props: TopicVideoCardGridProps) => {
               DeleteTopicAndGetAllTopics(topic.uuid)
                 .then(topics => {
                     props.setTopics(topics);
-                    props.setSelectedTopic(undefined);
+                    props.setSelectedTopicId(undefined);
                   }
                 );
             }}/>

@@ -11,7 +11,7 @@ import useTopicItems from "../hooks/useTopicItems";
 import TopicVideoCardGrid from "../components/TopicVideoCardGrid";
 import NewTopicModal from "../components/NewTopicModal";
 import {useTopics} from "../hooks/useTopics";
-import {Topic} from "../entities/Topic";
+import EditTopicModal from "../components/EditTopicModal";
 
 const Home: NextPage = () => {
   const [selectedSubscription, setSelectedSubscription] = useState<Subscription | undefined>();
@@ -19,9 +19,11 @@ const Home: NextPage = () => {
   const subscriptions = useSubscriptions(profile);
   const subscriptionsItems = useSubscriptionItems(selectedSubscription);
   const [topics, setTopics] = useTopics(profile);
-  const [selectedTopic, setSelectedTopic] = useState<Topic | undefined>();
-  const topicItems = useTopicItems(selectedTopic)
+  const [selectedTopicId, setSelectedTopicId] = useState<string | undefined>();
+  const [topicItems, setTopicItems] = useTopicItems(topics.find(t => t.uuid === selectedTopicId));
   const [section, setSection] = useState<SectionType>(SectionType.Subscriptions);
+
+  const selectedTopic = topics.find(t => t.uuid === selectedTopicId);
 
   return (
     <div>
@@ -33,11 +35,13 @@ const Home: NextPage = () => {
 
       <main className="flex bg-gray-100">
         <NewTopicModal setTopics={setTopics} subscriptions={subscriptions}/>
+        {selectedTopic && <EditTopicModal setTopics={setTopics} subscriptions={subscriptions} topic={selectedTopic}
+                                          setTopicItems={setTopicItems}/>}
 
         <LateralMenu
           topics={topics}
           selectedTopic={selectedTopic}
-          setSelectedTopic={setSelectedTopic}
+          setSelectedTopicId={setSelectedTopicId}
           subscriptions={subscriptions}
           selectedSubscription={selectedSubscription}
           setSelectedSubscription={(subscription) => setSelectedSubscription(subscription)}
@@ -47,7 +51,8 @@ const Home: NextPage = () => {
         {section === SectionType.Subscriptions &&
             <SubscriptionVideoCardGrid subscription={selectedSubscription} items={subscriptionsItems}/>}
         {section === SectionType.Topics &&
-            <TopicVideoCardGrid topic={selectedTopic} items={topicItems} setTopics={setTopics} setSelectedTopic={setSelectedTopic}/>}
+            <TopicVideoCardGrid topic={selectedTopic} items={topicItems} setTopics={setTopics}
+                                setSelectedTopicId={setSelectedTopicId}/>}
       </main>
     </div>
   );

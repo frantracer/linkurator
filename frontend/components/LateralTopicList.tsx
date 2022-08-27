@@ -6,7 +6,7 @@ import {Topic} from "../entities/Topic";
 
 type LateralTopicListProps = {
   topics: Topic[];
-  setSelectedTopic: (subscription: Topic | undefined) => void;
+  setSelectedTopicId: (topicId: string | undefined) => void;
   selectedTopic: Topic | undefined;
   searchValue: string;
 }
@@ -16,7 +16,7 @@ const LateralTopicList = (props: LateralTopicListProps) => {
   const handleClick = (topicId: string) => {
     const topic = props.topics.find((topic) => topic.uuid === topicId);
     if (topic) {
-      props.setSelectedTopic(topic);
+      props.setSelectedTopicId(topic.uuid);
     }
   }
 

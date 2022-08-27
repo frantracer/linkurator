@@ -13,7 +13,7 @@ type LateralMenuProps = {
   profile: Profile;
   topics: Topic[];
   selectedTopic: Topic | undefined;
-  setSelectedTopic: (topic: Topic | undefined) => void;
+  setSelectedTopicId: (topicId: string | undefined) => void;
   subscriptions: Subscription[];
   selectedSubscription: Subscription | undefined;
   setSelectedSubscription: (subscription: Subscription | undefined) => void;
@@ -58,7 +58,7 @@ const LateralMenu = (props: LateralMenuProps) => {
         {props.section === SectionType.Topics &&
             <LateralTopicList
                 topics={props.topics}
-                setSelectedTopic={props.setSelectedTopic}
+                setSelectedTopicId={props.setSelectedTopicId}
                 selectedTopic={props.selectedTopic}
                 searchValue={searchValue}/>
         }
