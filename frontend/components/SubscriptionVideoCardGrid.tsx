@@ -1,7 +1,7 @@
 import {SubscriptionItem} from "../hooks/useSubscriptionItems";
 import VideoCard from "./VideoCard";
-import {Subscription} from "../hooks/useSubscriptions";
 import {readableAgoUnits} from "../utilities/dateFormatter";
+import {Subscription} from "../entities/Subscription";
 
 type SubscriptionVideoCardGridProps = {
   subscription: Subscription | undefined;

@@ -2,13 +2,7 @@ import axios from "axios";
 import {useEffect, useState} from "react";
 import configuration from "../configuration";
 import {Profile} from "./useProfile";
-
-export type Subscription = {
-  uuid: string;
-  name: string;
-  url: string;
-  thumbnail: string
-};
+import {Subscription} from "../entities/Subscription";
 
 export interface SubscriptionResponse {
   elements: Subscription[];

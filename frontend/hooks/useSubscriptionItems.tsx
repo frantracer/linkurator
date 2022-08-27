@@ -1,7 +1,7 @@
 import axios from "axios";
 import {useEffect, useState} from "react";
 import configuration from "../configuration";
-import {Subscription} from "./useSubscriptions";
+import {Subscription} from "../entities/Subscription";
 
 export type SubscriptionItem = {
   uuid: string;

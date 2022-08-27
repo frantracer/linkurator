@@ -1,4 +1,3 @@
-import {Subscription} from "../hooks/useSubscriptions";
 import {useState} from "react";
 import {Profile} from "../hooks/useProfile";
 import LateralSearchBar from "./LateralSearchBar";
@@ -8,6 +7,7 @@ import {SectionType} from "../entities/SectionType";
 import SectionDropdown from "./SectionDropdown";
 import LateralTopicList from "./LateralTopicList";
 import {Topic} from "../entities/Topic";
+import {Subscription} from "../entities/Subscription";
 
 type LateralMenuProps = {
   profile: Profile;

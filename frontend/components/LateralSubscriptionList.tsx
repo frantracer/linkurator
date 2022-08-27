@@ -1,5 +1,5 @@
-import {Subscription} from "../hooks/useSubscriptions";
 import {MenuItem} from "./MenuItem";
+import {Subscription} from "../entities/Subscription";
 
 type LateralItemListProps = {
   subscriptions: Subscription[];

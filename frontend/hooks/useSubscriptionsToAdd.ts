@@ -1,6 +1,6 @@
-import {Subscription} from "./useSubscriptions";
 import {useEffect, useState} from "react";
 import {Topic} from "../entities/Topic";
+import {Subscription} from "../entities/Subscription";
 
 function useSubscriptionsToAdd(subscriptions: Subscription[], topic: Topic | undefined = undefined):
   [Subscription[], (subscription: Subscription) => void, (subscription: Subscription) => void, () => void] {
