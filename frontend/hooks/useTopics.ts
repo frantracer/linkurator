@@ -1,6 +1,6 @@
 import {useEffect, useState} from "react";
 import {Profile} from "./useProfile";
-import {Topic} from "../entities/Topic";
+import {Topic, topicSorting} from "../entities/Topic";
 import {getTopics} from "../services/topicService";
 
 
@@ -11,6 +11,7 @@ export function useTopics(profile: Profile): [Topic[], () => void] {
     if (profile) {
       getTopics()
         .then(topics => {
+          topics.sort(topicSorting)
           setTopics(topics)
         })
         .catch(error => console.error("Error retrieving subscriptions", error));
