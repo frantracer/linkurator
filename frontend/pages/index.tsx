@@ -17,7 +17,7 @@ import {Subscription} from "../entities/Subscription";
 const Home: NextPage = () => {
   const [selectedSubscription, setSelectedSubscription] = useState<Subscription | undefined>();
   const profile = useProfile();
-  const subscriptions = useSubscriptions(profile);
+  const [subscriptions] = useSubscriptions(profile);
   const subscriptionsItems = useSubscriptionItems(selectedSubscription);
   const [topics, refreshTopics] = useTopics(profile);
   const [selectedTopicId, setSelectedTopicId] = useState<string | undefined>();
