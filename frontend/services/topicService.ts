@@ -18,7 +18,7 @@ export async function getTopics(): Promise<Topic[]> {
       topics = topics.concat(data.elements);
       nextPage = data.next_page || "";
     } else {
-      console.error("Error retrieving subscriptions", data);
+      console.error("Error retrieving topics", data);
       nextPage = "";
     }
   }
