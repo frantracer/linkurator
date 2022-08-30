@@ -21,7 +21,7 @@ const Home: NextPage = () => {
   const subscriptionsItems = useSubscriptionItems(selectedSubscription);
   const [topics, refreshTopics] = useTopics(profile);
   const [selectedTopicId, setSelectedTopicId] = useState<string | undefined>();
-  const [topicItems, setTopicItems] = useTopicItems(topics.find(t => t.uuid === selectedTopicId));
+  const [topicItems, refreshTopicItems] = useTopicItems(topics.find(t => t.uuid === selectedTopicId));
   const [section, setSection] = useState<SectionType>(SectionType.Subscriptions);
 
   const selectedTopic = topics.find(t => t.uuid === selectedTopicId);
@@ -36,8 +36,10 @@ const Home: NextPage = () => {
 
       <main className="flex bg-gray-100">
         <NewTopicModal refreshTopics={refreshTopics} subscriptions={subscriptions}/>
-        {selectedTopic && <EditTopicModal refreshTopics={refreshTopics} subscriptions={subscriptions} topic={selectedTopic}
-                                          setTopicItems={setTopicItems}/>}
+        {selectedTopic && <EditTopicModal refreshTopics={refreshTopics}
+                                          subscriptions={subscriptions}
+                                          topic={selectedTopic}
+                                          refreshTopicItems={refreshTopicItems}/>}
 
         <LateralMenu
           topics={topics}

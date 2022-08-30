@@ -3,22 +3,24 @@ import {Topic} from "../entities/Topic";
 import {TopicItem} from "../entities/TopicItem";
 import {getTopicItems} from "../services/topicService";
 
-export function useTopicItems(topic?: Topic): [TopicItem[], (topic_items: TopicItem[]) => void,] {
+const useTopicItems = (topic?: Topic): [TopicItem[], () => void] => {
   const [topicItems, setTopicItems] = useState<TopicItem[]>([]);
 
-  useEffect(() => {
-    const fetchTopicItems = async () => {
-      if (topic) {
-        getTopicItems(topic.uuid).then(setTopicItems);
-      } else {
-        setTopicItems([]);
-      }
-    };
+  function refreshTopicItems(topic?: Topic) {
+    if (topic) {
+      getTopicItems(topic.uuid)
+        .then(setTopicItems)
+        .catch(error => console.log("Error retrieving topic items " + error));
+    } else {
+      setTopicItems([]);
+    }
+  }
 
-    fetchTopicItems();
+  useEffect(() => {
+    refreshTopicItems(topic)
   }, [topic]);
 
-  return [topicItems, setTopicItems];
+  return [topicItems, () => refreshTopicItems(topic)];
 }
 
 export default useTopicItems;

@@ -1,9 +1,8 @@
 import CustomButton from "./CustomButton";
 import React, {useState} from "react";
-import {getTopicItems, updateTopic} from "../services/topicService";
+import {updateTopic} from "../services/topicService";
 import {Topic} from "../entities/Topic";
 import useSubscriptionsToAdd from "../hooks/useSubscriptionsToAdd";
-import {TopicItem} from "../entities/TopicItem";
 import {useTopicName} from "../hooks/useTopicName";
 import {Subscription} from "../entities/Subscription";
 
@@ -13,7 +12,7 @@ type EditTopicModalProps = {
   topic: Topic;
   subscriptions: Subscription[];
   refreshTopics: () => void;
-  setTopicItems: (topicItems: TopicItem[]) => void;
+  refreshTopicItems: () => void;
 }
 
 const EditTopicModal = (props: EditTopicModalProps) => {
@@ -30,7 +29,7 @@ const EditTopicModal = (props: EditTopicModalProps) => {
   async function editButtonAction() {
     await updateTopic(props.topic.uuid, topicName, subscriptionsToAdd.map(s => s.uuid));
     props.refreshTopics();
-    props.setTopicItems(await getTopicItems(props.topic.uuid))
+    props.refreshTopicItems()
   }
 
   return (
