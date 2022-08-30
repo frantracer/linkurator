@@ -3,6 +3,7 @@ import React from "react";
 import LateralMenu from "./LateralMenu";
 import {clickOnText} from "../utilities/tests/actions";
 import {Profile} from "../hooks/useProfile";
+import {SectionType} from "../entities/SectionType";
 
 const dummyProfile: Profile = {
   last_name: "Dummy",
@@ -39,7 +40,9 @@ const subscriptions = [
 
 describe("LateralMenu should", () => {
   it("show all subscriptions", async () => {
-    render(<LateralMenu profile={dummyProfile} subscriptions={subscriptions} onClickSubscription={jest.fn()} />);
+    render(<LateralMenu profile={dummyProfile} subscriptions={subscriptions} setSelectedSubscription={jest.fn()}
+                        selectedSubscription={undefined} section={SectionType.Subscriptions} topics={[]}
+                        setSection={jest.fn()} selectedTopic={undefined} setSelectedTopicId={jest.fn()} />);
 
     await waitFor(() => {
       expect(screen.getByText("Technology"));
@@ -49,28 +52,14 @@ describe("LateralMenu should", () => {
     });
   });
 
-  it("select an item when clicked", async () => {
-    render(<LateralMenu profile={dummyProfile} subscriptions={subscriptions} onClickSubscription={jest.fn()} />);
-
-    await clickOnText("Technology");
-
-    expect(screen.getByText("Technology")).toHaveClass("bg-gray-200");
-  });
-
   it("report when an item is clicked", async () => {
     const onClick = jest.fn();
-    render(<LateralMenu profile={dummyProfile} subscriptions={subscriptions} onClickSubscription={onClick} />);
+    render(<LateralMenu profile={dummyProfile} subscriptions={subscriptions} setSelectedSubscription={onClick}
+                        selectedSubscription={undefined} section={SectionType.Subscriptions} topics={[]}
+                        setSection={jest.fn()} selectedTopic={undefined} setSelectedTopicId={jest.fn()} />);
 
     await clickOnText("Technology");
 
     expect(onClick).toHaveBeenCalledWith(subscriptions[0]);
-  });
-
-  it("select an item when clicked", async () => {
-    render(<LateralMenu profile={dummyProfile} subscriptions={subscriptions} onClickSubscription={jest.fn()} />);
-
-    await clickOnText("Technology");
-
-    expect(screen.getByText("Technology")).toHaveClass("bg-gray-200");
   });
 });
