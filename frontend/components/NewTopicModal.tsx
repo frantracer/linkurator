@@ -1,8 +1,7 @@
 import CustomButton from "./CustomButton";
 import React, {useState} from "react";
-import {createTopic, getTopics} from "../services/topicService";
+import {createTopic} from "../services/topicService";
 import {v4 as uuidv4} from 'uuid';
-import {Topic} from "../entities/Topic";
 import useSubscriptionsToAdd from "../hooks/useSubscriptionsToAdd";
 import {Subscription} from "../entities/Subscription";
 
@@ -10,12 +9,7 @@ export const NewTopicModalId = "new-topic-modal";
 
 type NewTopicModalProps = {
   subscriptions: Subscription[];
-  setTopics: (topics: Topic[]) => void;
-}
-
-async function createAndGetTopics(topicName: string, subscriptionsIds: string[]) {
-  await createTopic(uuidv4(), topicName, subscriptionsIds);
-  return await getTopics();
+  refreshTopics: () => void;
 }
 
 const NewTopicModal = (props: NewTopicModalProps) => {
@@ -69,10 +63,9 @@ const NewTopicModal = (props: NewTopicModalProps) => {
                           }}/>
             <CustomButton text={"Create"} icon={undefined} relatedModalId={NewTopicModalId}
                           clickAction={async () => {
-                            createAndGetTopics(newTopicName, subscriptionsToAdd.map(s => s.uuid))
-                              .then(props.setTopics)
-                              .catch(error => console.log(error))
-                            clearSubscriptions()
+                            await createTopic(uuidv4(), newTopicName, subscriptionsToAdd.map(s => s.uuid));
+                            props.refreshTopics();
+                            clearSubscriptions();
                           }}/>
           </div>
         </div>
@@ -84,7 +77,8 @@ const NewTopicModal = (props: NewTopicModalProps) => {
 function subscriptionToBadge(subscription: Subscription, removeSubscription: (subscription: Subscription) => void) {
   return <div key={subscription.uuid} className="badge mx-2">
     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-         className="inline-block w-4 h-4 stroke-current cursor-pointer" onClick={() => removeSubscription(subscription)}>
+         className="inline-block w-4 h-4 stroke-current cursor-pointer"
+         onClick={() => removeSubscription(subscription)}>
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path>
     </svg>
     {subscription.name}

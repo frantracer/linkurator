@@ -2,20 +2,15 @@ import VideoCard from "./VideoCard";
 import {readableAgoUnits} from "../utilities/dateFormatter";
 import {Topic} from "../entities/Topic";
 import CustomButton, {IconForButton} from "./CustomButton";
-import {deleteTopic, getTopics} from "../services/topicService";
+import {deleteTopic} from "../services/topicService";
 import {EditTopicModalId} from "./EditTopicModal";
 import {TopicItem} from "../entities/TopicItem";
 
 type TopicVideoCardGridProps = {
-  setTopics: (topics: Topic[]) => void,
+  refreshTopics: () => void,
   setSelectedTopicId: (topicId: string | undefined) => void,
   topic: Topic | undefined;
   items: TopicItem[];
-}
-
-async function DeleteTopicAndGetAllTopics(uuid: string): Promise<Topic[]> {
-  await deleteTopic(uuid);
-  return await getTopics();
 }
 
 const TopicVideoCardGrid = (props: TopicVideoCardGridProps) => {
@@ -54,13 +49,10 @@ const TopicVideoCardGrid = (props: TopicVideoCardGridProps) => {
             text={"Delete"}
             icon={IconForButton.trash}
             relatedModalId={undefined}
-            clickAction={() => {
-              DeleteTopicAndGetAllTopics(topic.uuid)
-                .then(topics => {
-                    props.setTopics(topics);
-                    props.setSelectedTopicId(undefined);
-                  }
-                );
+            clickAction={async () => {
+              await deleteTopic(topic.uuid);
+              props.refreshTopics();
+              props.setSelectedTopicId(undefined);
             }}/>
         </div>
         <div className="flex flex-row flex-wrap m-6">{cards}</div>

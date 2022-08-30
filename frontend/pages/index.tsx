@@ -19,7 +19,7 @@ const Home: NextPage = () => {
   const profile = useProfile();
   const subscriptions = useSubscriptions(profile);
   const subscriptionsItems = useSubscriptionItems(selectedSubscription);
-  const [topics, setTopics] = useTopics(profile);
+  const [topics, refreshTopics] = useTopics(profile);
   const [selectedTopicId, setSelectedTopicId] = useState<string | undefined>();
   const [topicItems, setTopicItems] = useTopicItems(topics.find(t => t.uuid === selectedTopicId));
   const [section, setSection] = useState<SectionType>(SectionType.Subscriptions);
@@ -35,8 +35,8 @@ const Home: NextPage = () => {
       </Head>
 
       <main className="flex bg-gray-100">
-        <NewTopicModal setTopics={setTopics} subscriptions={subscriptions}/>
-        {selectedTopic && <EditTopicModal setTopics={setTopics} subscriptions={subscriptions} topic={selectedTopic}
+        <NewTopicModal refreshTopics={refreshTopics} subscriptions={subscriptions}/>
+        {selectedTopic && <EditTopicModal refreshTopics={refreshTopics} subscriptions={subscriptions} topic={selectedTopic}
                                           setTopicItems={setTopicItems}/>}
 
         <LateralMenu
@@ -52,7 +52,7 @@ const Home: NextPage = () => {
         {section === SectionType.Subscriptions &&
             <SubscriptionVideoCardGrid subscription={selectedSubscription} items={subscriptionsItems}/>}
         {section === SectionType.Topics &&
-            <TopicVideoCardGrid topic={selectedTopic} items={topicItems} setTopics={setTopics}
+            <TopicVideoCardGrid topic={selectedTopic} items={topicItems} refreshTopics={refreshTopics}
                                 setSelectedTopicId={setSelectedTopicId}/>}
       </main>
     </div>

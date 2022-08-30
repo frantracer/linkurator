@@ -1,27 +1,27 @@
-import {Dispatch, SetStateAction, useEffect, useState} from "react";
+import {useEffect, useState} from "react";
 import {Profile} from "./useProfile";
 import {Topic} from "../entities/Topic";
 import {getTopics} from "../services/topicService";
 
 
-export function useTopics(profile: Profile): [Topic[], Dispatch<SetStateAction<Topic[]>>] {
+export function useTopics(profile: Profile): [Topic[], () => void] {
   const [topics, setTopics] = useState<Topic[]>([]);
 
-  useEffect(() => {
-    const fetchTopics = async () => {
-      try {
-        if (profile) {
-          getTopics().then(topics => setTopics(topics));
-        } else {
-          setTopics([]);
-        }
-      } catch (error: any) {
-        console.error("Error retrieving subscriptions", error);
-      }
-    };
+  function refreshTopics(profile: Profile) {
+    if (profile) {
+      getTopics()
+        .then(topics => {
+          setTopics(topics)
+        })
+        .catch(error => console.error("Error retrieving subscriptions", error));
+    } else {
+      setTopics([]);
+    }
+  }
 
-    fetchTopics();
+  useEffect(() => {
+    refreshTopics(profile);
   }, [profile]);
 
-  return [topics, setTopics];
+  return [topics, () => refreshTopics(profile)];
 }

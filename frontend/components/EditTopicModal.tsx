@@ -1,6 +1,6 @@
 import CustomButton from "./CustomButton";
 import React, {useState} from "react";
-import {getTopicItems, getTopics, updateTopic} from "../services/topicService";
+import {getTopicItems, updateTopic} from "../services/topicService";
 import {Topic} from "../entities/Topic";
 import useSubscriptionsToAdd from "../hooks/useSubscriptionsToAdd";
 import {TopicItem} from "../entities/TopicItem";
@@ -12,13 +12,8 @@ export const EditTopicModalId = "update-topic-modal";
 type EditTopicModalProps = {
   topic: Topic;
   subscriptions: Subscription[];
-  setTopics: (topics: Topic[]) => void;
+  refreshTopics: () => void;
   setTopicItems: (topicItems: TopicItem[]) => void;
-}
-
-async function editAndGetTopics(topic_id: string, topicName: string | undefined, subscriptionsIds: string[] | undefined) {
-  await updateTopic(topic_id, topicName, subscriptionsIds);
-  return await getTopics();
 }
 
 const EditTopicModal = (props: EditTopicModalProps) => {
@@ -33,9 +28,8 @@ const EditTopicModal = (props: EditTopicModalProps) => {
   const subscriptionBadges = subscriptionsToAdd.map(s => subscriptionToBadge(s, removeSubscription))
 
   async function editButtonAction() {
-    editAndGetTopics(props.topic.uuid, topicName, subscriptionsToAdd.map(s => s.uuid))
-      .then(props.setTopics)
-      .catch(error => console.log(error))
+    await updateTopic(props.topic.uuid, topicName, subscriptionsToAdd.map(s => s.uuid));
+    props.refreshTopics();
     props.setTopicItems(await getTopicItems(props.topic.uuid))
   }
 
