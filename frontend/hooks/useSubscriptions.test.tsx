@@ -13,7 +13,7 @@ const DummyComponent = () => {
     last_name: "",
   }
 
-  const subscriptions = useSubscriptions(profile);
+  const [subscriptions] = useSubscriptions(profile);
 
   const subscriptionsIds = subscriptions.map((t) => <div key={t.uuid}>{t.uuid}</div>);
 

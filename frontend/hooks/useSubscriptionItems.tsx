@@ -1,63 +1,27 @@
-import axios from "axios";
 import {useEffect, useState} from "react";
-import configuration from "../configuration";
 import {Subscription} from "../entities/Subscription";
+import {SubscriptionItem} from "../entities/TopicItem";
+import {getSubscriptionItems} from "../services/subscriptionService";
 
-export type SubscriptionItem = {
-  uuid: string;
-  name: string;
-  url: string;
-  thumbnail: string
-  published_at: Date;
-};
 
-interface SubscriptionItemsResponse {
-  elements: SubscriptionItem[];
-}
-
-const mapJsonToSubscriptionItemsResponse = (json: Record<string, any>): SubscriptionItemsResponse => {
-  return {
-    elements: json.elements.map((element: Record<string, any>) => {
-      const published_at = new Date(element.published_at);
-      if (isNaN(published_at.getTime())) {
-        throw new Error("Published at is not a valid date");
-      }
-      return {
-        uuid: element.uuid,
-        name: element.name,
-        url: element.url,
-        thumbnail: element.thumbnail,
-        published_at: new Date(element.published_at)
-      };
-    })
-  };
-}
-
-const useSubscriptionItems = (subscription?: Subscription) => {
+const useSubscriptionItems = (subscription?: Subscription): [SubscriptionItem[], () => void] => {
   const [subscriptionsItems, setSubscriptionsItems] = useState<SubscriptionItem[]>([]);
 
-  useEffect(() => {
-    const fetchSubscriptionsItems = async () => {
-      if (subscription) {
-        try {
-          const url = configuration.SUBSCRIPTIONS_URL + subscription.uuid + "/items";
-          const response = await axios.get(url, {withCredentials: true});
-          if (response.status === 200) {
-            const items = mapJsonToSubscriptionItemsResponse(response.data).elements;
-            setSubscriptionsItems(items);
-          }
-        } catch (error: any) {
-          console.error("Error retrieving subscriptions", error);
-        }
-      } else {
-        setSubscriptionsItems([]);
-      }
-    };
+  function refreshSubscriptionItems(subscription?: Subscription) {
+    if (subscription) {
+      getSubscriptionItems(subscription.uuid)
+        .then(setSubscriptionsItems)
+        .catch(console.error);
+    } else {
+      setSubscriptionsItems([]);
+    }
+  }
 
-    fetchSubscriptionsItems();
+  useEffect(() => {
+    refreshSubscriptionItems(subscription);
   }, [subscription]);
 
-  return subscriptionsItems;
+  return [subscriptionsItems, () => refreshSubscriptionItems(subscription)];
 };
 
 export default useSubscriptionItems;

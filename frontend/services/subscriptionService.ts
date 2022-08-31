@@ -1,10 +1,33 @@
 import configuration from "../configuration";
 import axios from "axios";
 import {Subscription} from "../entities/Subscription";
+import {SubscriptionItem} from "../entities/TopicItem";
 
 export interface SubscriptionResponse {
   elements: Subscription[];
   next_page: string;
+}
+
+interface SubscriptionItemsResponse {
+  elements: SubscriptionItem[];
+}
+
+const mapJsonToSubscriptionItemsResponse = (json: Record<string, any>): SubscriptionItemsResponse => {
+  return {
+    elements: json.elements.map((element: Record<string, any>) => {
+      const published_at = new Date(element.published_at);
+      if (isNaN(published_at.getTime())) {
+        throw new Error("Published at is not a valid date");
+      }
+      return {
+        uuid: element.uuid,
+        name: element.name,
+        url: element.url,
+        thumbnail: element.thumbnail,
+        published_at: new Date(element.published_at)
+      };
+    })
+  };
 }
 
 export async function getSubscriptions(): Promise<Subscription[]> {
@@ -22,4 +45,14 @@ export async function getSubscriptions(): Promise<Subscription[]> {
     }
   }
   return subscriptions
+}
+
+export async function getSubscriptionItems(subscription_uuid: string): Promise<SubscriptionItem[]> {
+  const url = configuration.SUBSCRIPTIONS_URL + subscription_uuid + "/items";
+  const response = await axios.get(url, {withCredentials: true});
+  if (response.status === 200) {
+    return mapJsonToSubscriptionItemsResponse(response.data).elements;
+  } else {
+    throw("Error retrieving subscription items " + response.data);
+  }
 }
