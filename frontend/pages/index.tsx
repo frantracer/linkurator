@@ -13,6 +13,7 @@ import NewTopicModal from "../components/NewTopicModal";
 import {useTopics} from "../hooks/useTopics";
 import EditTopicModal from "../components/EditTopicModal";
 import {Subscription} from "../entities/Subscription";
+import AssignTopicModal from "../components/AssignTopicModal";
 
 const Home: NextPage = () => {
   const [selectedSubscription, setSelectedSubscription] = useState<Subscription | undefined>();
@@ -36,10 +37,15 @@ const Home: NextPage = () => {
 
       <main className="flex bg-gray-100">
         <NewTopicModal refreshTopics={refreshTopics} subscriptions={subscriptions}/>
-        {selectedTopic && <EditTopicModal refreshTopics={refreshTopics}
-                                          subscriptions={subscriptions}
-                                          topic={selectedTopic}
-                                          refreshTopicItems={refreshTopicItems}/>}
+        {selectedSubscription &&
+            <AssignTopicModal topics={topics}
+                              subscription={selectedSubscription}
+                              refreshTopics={refreshTopics}/>}
+        {selectedTopic &&
+            <EditTopicModal refreshTopics={refreshTopics}
+                            subscriptions={subscriptions}
+                            topic={selectedTopic}
+                            refreshTopicItems={refreshTopicItems}/>}
 
         <LateralMenu
           topics={topics}

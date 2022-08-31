@@ -74,6 +74,16 @@ export async function getTopicItems(uuid: string): Promise<TopicItem[]> {
   return items;
 }
 
+export async function assignSubscriptionToTopic(topic_uuid: string, subscription_uuid: string): Promise<void> {
+  const {data, status} = await axios.post(
+    configuration.TOPICS_URL + topic_uuid + "/subscriptions/" + subscription_uuid,
+    {},
+    {withCredentials: true});
+  if (status !== 201) {
+    throw("Error assigning subscription to topic " + data);
+  }
+}
+
 interface TopicItemsResponse {
   elements: TopicItem[];
 }

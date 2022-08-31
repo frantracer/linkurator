@@ -4,6 +4,8 @@ import {Subscription} from "../entities/Subscription";
 import {SubscriptionItem} from "../entities/TopicItem";
 import {Topic} from "../entities/Topic";
 import React from "react";
+import CustomButton, {IconForButton} from "./CustomButton";
+import {AssignTopicModalId} from "./AssignTopicModal";
 
 type SubscriptionVideoCardGridProps = {
   topics: Topic[];
@@ -43,7 +45,15 @@ const SubscriptionVideoCardGrid = (props: SubscriptionVideoCardGridProps) => {
       });
 
     content = <div>
-      <div className="text-3xl text-center text-gray-800">{current_subscription.name}</div>
+      <div className="flex flex-row justify-center items-center">
+        <h1 className="text-4xl text-center text-gray-800">{current_subscription.name}</h1>
+        <CustomButton
+          text={"Assign topic"}
+          icon={IconForButton.add}
+          relatedModalId={AssignTopicModalId}
+          clickAction={() => {
+          }}/>
+      </div>
       {topicTags}
       <div className="flex flex-row flex-wrap m-6">{cards}</div>
     </div>
