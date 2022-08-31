@@ -52,9 +52,13 @@ const Home: NextPage = () => {
           section={section}
           setSection={(section) => setSection(section)}/>
         {section === SectionType.Subscriptions &&
-            <SubscriptionVideoCardGrid subscription={selectedSubscription} items={subscriptionsItems}/>}
+            <SubscriptionVideoCardGrid topics={topics}
+                                       subscription={selectedSubscription}
+                                       items={subscriptionsItems}/>}
         {section === SectionType.Topics &&
-            <TopicVideoCardGrid topic={selectedTopic} items={topicItems} refreshTopics={refreshTopics}
+            <TopicVideoCardGrid topic={selectedTopic}
+                                items={topicItems}
+                                refreshTopics={refreshTopics}
                                 setSelectedTopicId={setSelectedTopicId}/>}
       </main>
     </div>
