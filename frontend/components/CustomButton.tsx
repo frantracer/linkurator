@@ -59,13 +59,13 @@ const CustomButton = (props: CustomButton) => {
 
   return (props.relatedModalId ?
       <label onClick={props.clickAction} htmlFor={props.relatedModalId}
-             className="btn btn-primary modal-button gap-2 m-4">
+             className="btn btn-primary modal-button gap-2 m-1">
         {svgComponent}
         {props.text}
       </label>
       :
       <button onClick={props.clickAction}
-              className="btn btn-primary gap-2 m-4">
+              className="btn btn-primary gap-2 m-1">
         {svgComponent}
         {props.text}
       </button>

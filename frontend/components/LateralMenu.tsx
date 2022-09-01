@@ -1,4 +1,4 @@
-import {useState} from "react";
+import React, {useState} from "react";
 import {Profile} from "../hooks/useProfile";
 import LateralSearchBar from "./LateralSearchBar";
 import LateralSubscriptionList from "./LateralSubscriptionList";
@@ -8,6 +8,8 @@ import SectionDropdown from "./SectionDropdown";
 import LateralTopicList from "./LateralTopicList";
 import {Topic} from "../entities/Topic";
 import {Subscription} from "../entities/Subscription";
+import CustomButton from "./CustomButton";
+import configuration from "../configuration";
 
 type LateralMenuProps = {
   profile: Profile;
@@ -35,16 +37,36 @@ const Title = () => (
 const LateralMenu = (props: LateralMenuProps) => {
   const [searchValue, setSearchValue] = useState<string>('');
 
+  const LogoutButton = () => {
+    return <CustomButton
+      text={"Logout"}
+      icon={undefined}
+      relatedModalId={undefined}
+      clickAction={() => {
+        window.open(configuration.LOGOUT_URL, '_self')
+      }}/>
+  }
+
+  const LoginButton = () => {
+    return <CustomButton
+      text={"Login"}
+      icon={undefined}
+      relatedModalId={undefined}
+      clickAction={() => {
+        window.open(configuration.LOGIN_URL, '_self')
+      }}/>
+  }
+
   return (
     <div className="sticky top-0 flex-col h-screen bg-white shadow-lg md:flex md:flex-row">
       <div className="flex flex-col flex-shrink-0 w-full bg-white md:w-64">
         <Title/>
-        <ProfileMenu
-          profile={props.profile}/>
-        <SectionDropdown section={props.section} setSection={props.setSection}/>
-        <LateralSearchBar
-          searchBarQuery={searchValue}
-          setSearchBarQuery={setSearchValue}/>
+        {props.profile && <SectionDropdown section={props.section} setSection={props.setSection}/>}
+        {props.profile &&
+            <LateralSearchBar
+                searchBarQuery={searchValue}
+                setSearchBarQuery={setSearchValue}/>
+        }
         {props.section === SectionType.Subscriptions &&
             <LateralSubscriptionList
                 searchValue={searchValue}
@@ -59,6 +81,8 @@ const LateralMenu = (props: LateralMenuProps) => {
                 selectedTopic={props.selectedTopic}
                 searchValue={searchValue}/>
         }
+        <ProfileMenu profile={props.profile}/>
+        {props.profile ? <LogoutButton/> : <LoginButton/>}
       </div>
     </div>
   );
