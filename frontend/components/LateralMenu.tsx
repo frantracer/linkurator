@@ -24,14 +24,11 @@ type LateralMenuProps = {
 const Title = () => (
   <div className="flex flex-row items-center justify-between flex-shrink-0 px-8 py-4">
     <a
-      href="#"
+      href=""
       className="text-lg font-semibold tracking-widest text-gray-900 uppercase rounded-lg focus:outline-none focus:shadow-outline"
     >
       Linkurator
     </a>
-    <button className="rounded-lg md:hidden focus:outline-none focus:shadow-outline">
-      Linkurator
-    </button>
   </div>
 );
 
