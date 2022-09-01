@@ -30,10 +30,9 @@ const LateralSubscriptionList = (props: LateralItemListProps) => {
     ))
 
   return (
-    <nav className="flex-grow pb-4 px-7 md:block md:pb-0 md:overflow-y-auto">
+    <nav className="flex-grow pb-4 px-4 md:block md:pb-0 md:overflow-y-auto">
       {items}
     </nav>
-
   )
 }
 

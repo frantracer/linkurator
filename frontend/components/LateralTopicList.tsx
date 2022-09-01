@@ -34,16 +34,17 @@ const LateralTopicList = (props: LateralTopicListProps) => {
     ))
 
   return (
-    <div className="flex flex-col flex-shrink-0 w-full bg-white md:w-64">
-      <CustomButton
-        text={"New Topic"}
-        icon={IconForButton.add}
-        relatedModalId={NewTopicModalId}
-        clickAction={() => {}}/>
-      <nav className="flex-grow pb-4 px-7 md:block md:pb-0 md:overflow-y-auto">
-        {items}
-      </nav>
-    </div>
+    <nav className="flex-grow pb-4 px-4 md:block md:pb-0 md:overflow-y-auto">
+      <div className="flex flex-col w-full">
+        <CustomButton
+          text={"New Topic"}
+          icon={IconForButton.add}
+          relatedModalId={NewTopicModalId}
+          clickAction={() => {
+          }}/>
+      </div>
+      {items}
+    </nav>
   )
 }
 
