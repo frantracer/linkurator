@@ -23,7 +23,7 @@ const Home: NextPage = () => {
   const [topics, refreshTopics] = useTopics(profile);
   const [selectedTopicId, setSelectedTopicId] = useState<string | undefined>();
   const [topicItems, refreshTopicItems] = useTopicItems(topics.find(t => t.uuid === selectedTopicId));
-  const [section, setSection] = useState<SectionType>(SectionType.Subscriptions);
+  const [section, setSection] = useState<SectionType>(SectionType.Topics);
 
   const selectedTopic = topics.find(t => t.uuid === selectedTopicId);
 
