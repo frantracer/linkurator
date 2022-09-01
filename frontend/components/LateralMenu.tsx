@@ -61,28 +61,29 @@ const LateralMenu = (props: LateralMenuProps) => {
     <div className="sticky top-0 flex-col h-screen bg-white shadow-lg md:flex md:flex-row">
       <div className="flex flex-col flex-shrink-0 w-full bg-white md:w-64">
         <Title/>
+        {!props.profile && <LoginButton/>}
         {props.profile && <SectionDropdown section={props.section} setSection={props.setSection}/>}
         {props.profile &&
             <LateralSearchBar
                 searchBarQuery={searchValue}
                 setSearchBarQuery={setSearchValue}/>
         }
-        {props.section === SectionType.Subscriptions &&
+        {props.section === SectionType.Subscriptions && props.profile &&
             <LateralSubscriptionList
                 searchValue={searchValue}
                 subscriptions={props.subscriptions}
                 setSelectedSubscription={props.setSelectedSubscription}
                 selectedSubscription={props.selectedSubscription}/>
         }
-        {props.section === SectionType.Topics &&
+        {props.section === SectionType.Topics && props.profile &&
             <LateralTopicList
                 topics={props.topics}
                 setSelectedTopicId={props.setSelectedTopicId}
                 selectedTopic={props.selectedTopic}
                 searchValue={searchValue}/>
         }
-        <ProfileMenu profile={props.profile}/>
-        {props.profile ? <LogoutButton/> : <LoginButton/>}
+        {props.profile && <ProfileMenu profile={props.profile}/>}
+        {props.profile && <LogoutButton/>}
       </div>
     </div>
   );
