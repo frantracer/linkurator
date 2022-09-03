@@ -8,21 +8,11 @@ type VideoCardProps = {
 const VideoCard = (props: VideoCardProps) => {
   const { img, name, description } = props;
   return (
-    <div className="flex flex-col items-center justify-center transition-transform transform bg-white rounded-lg shadow-lg md:w-64 hover:scale-105 cursor-pointer">
-      <div
-        onClick={() => window.open(props.url, "_blank")}
-        className="w-full bg-center bg-no-repeat bg-cover rounded-t-lg"
-        data-testid="video-card-image"
-        style={{
-          backgroundImage: `url(${img})`,
-          maxHeight: "200px",
-          minHeight: "200px",
-          minWidth: "200px",
-        }}
-      ></div>
-      <div className="flex flex-col justify-start w-full p-4">
-        <h4 className="text-xl border-b-2">{name}</h4>
-        <p className="my-4">{description}</p>
+    <div className="card w-80 text-black shadow-xl hover:scale-105 cursor-pointer">
+      <figure><img className="w-full" src={img} alt={name} onClick={() => window.open(props.url, "_blank")}/></figure>
+      <div className="card-body">
+        <h2 className="card-title">{name}</h2>
+        <p>{description}</p>
       </div>
     </div>
   );

@@ -4,11 +4,12 @@ import VideoCard from "./VideoCard";
 
 describe("VideoCard should", () => {
   it("render image", () => {
-    renderCard({ img: "https://myImage.com/image.jpeg" });
+    const url = "https://myImage.com/image.jpeg"
+    renderCard({ img: url });
 
-    expect(screen.getByTestId("video-card-image")).toHaveStyle(
-      "background-image: url(https://myImage.com/image.jpeg)"
-    );
+    const image = screen.getByRole("img");
+
+    expect(image).toHaveAttribute("src", url);
   });
 
   it("render name", () => {
