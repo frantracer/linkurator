@@ -26,6 +26,10 @@ const Home: NextPage = () => {
   const [topicItems, refreshTopicItems] = useTopicItems(topics.find(t => t.uuid === selectedTopicId));
   const [section, setSection] = useState<SectionType>(SectionType.Topics);
 
+  if (selectedSubscription === undefined && subscriptions.length > 0) {
+    setSelectedSubscription(subscriptions[0]);
+  }
+
   let selectedTopic: Topic | undefined = undefined
   if (selectedTopicId) {
     selectedTopic = topics.find(t => t.uuid === selectedTopicId);
