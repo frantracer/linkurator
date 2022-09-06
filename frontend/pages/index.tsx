@@ -47,25 +47,35 @@ const Home: NextPage = () => {
                             topic={selectedTopic}
                             refreshTopicItems={refreshTopicItems}/>}
 
-        <LateralMenu
-          topics={topics}
-          selectedTopic={selectedTopic}
-          setSelectedTopicId={setSelectedTopicId}
-          subscriptions={subscriptions}
-          selectedSubscription={selectedSubscription}
-          setSelectedSubscription={(subscription) => setSelectedSubscription(subscription)}
-          profile={profile}
-          section={section}
-          setSection={(section) => setSection(section)}/>
-        {section === SectionType.Subscriptions &&
-            <SubscriptionVideoCardGrid topics={topics}
-                                       subscription={selectedSubscription}
-                                       items={subscriptionsItems}/>}
-        {section === SectionType.Topics &&
-            <TopicVideoCardGrid topic={selectedTopic}
-                                items={topicItems}
-                                refreshTopics={refreshTopics}
-                                setSelectedTopicId={setSelectedTopicId}/>}
+        <div className="drawer drawer-mobile">
+          <input id="my-drawer" type="checkbox" className="drawer-toggle"/>
+          <div className="drawer-content">
+            <label htmlFor="my-drawer" className="btn btn-primary drawer-button lg:hidden">Open drawer</label>
+            {section === SectionType.Subscriptions &&
+                <SubscriptionVideoCardGrid topics={topics}
+                                           subscription={selectedSubscription}
+                                           items={subscriptionsItems}/>}
+            {section === SectionType.Topics &&
+                <TopicVideoCardGrid topic={selectedTopic}
+                                    items={topicItems}
+                                    refreshTopics={refreshTopics}
+                                    setSelectedTopicId={setSelectedTopicId}/>}
+          </div>
+          <div className="drawer-side">
+            <label htmlFor="my-drawer" className="drawer-overlay"></label>
+            <LateralMenu
+              topics={topics}
+              selectedTopic={selectedTopic}
+              setSelectedTopicId={setSelectedTopicId}
+              subscriptions={subscriptions}
+              selectedSubscription={selectedSubscription}
+              setSelectedSubscription={(subscription) => setSelectedSubscription(subscription)}
+              profile={profile}
+              section={section}
+              setSection={(section) => setSection(section)}/>
+          </div>
+        </div>
+
       </main>
     </div>
   );
