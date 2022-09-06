@@ -14,6 +14,7 @@ import {useTopics} from "../hooks/useTopics";
 import EditTopicModal from "../components/EditTopicModal";
 import {Subscription} from "../entities/Subscription";
 import AssignTopicModal from "../components/AssignTopicModal";
+import {Topic} from "../entities/Topic";
 
 const Home: NextPage = () => {
   const [selectedSubscription, setSelectedSubscription] = useState<Subscription | undefined>();
@@ -25,7 +26,12 @@ const Home: NextPage = () => {
   const [topicItems, refreshTopicItems] = useTopicItems(topics.find(t => t.uuid === selectedTopicId));
   const [section, setSection] = useState<SectionType>(SectionType.Topics);
 
-  const selectedTopic = topics.find(t => t.uuid === selectedTopicId);
+  let selectedTopic: Topic | undefined = undefined
+  if (selectedTopicId) {
+    selectedTopic = topics.find(t => t.uuid === selectedTopicId);
+  } else if (topics.length > 0) {
+    setSelectedTopicId(topics[0].uuid);
+  }
 
   return (
     <div>
