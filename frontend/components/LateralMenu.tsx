@@ -47,20 +47,9 @@ const LateralMenu = (props: LateralMenuProps) => {
       }}/>
   }
 
-  const LoginButton = () => {
-    return <CustomButton
-      text={"Login"}
-      icon={undefined}
-      relatedModalId={undefined}
-      clickAction={() => {
-        window.open(configuration.LOGIN_URL, '_self')
-      }}/>
-  }
-
   return (
     <ul className="menu p-4 overflow-y-auto w-80 bg-white text-base-content">
       <Title/>
-      {!props.profile && <LoginButton/>}
       {props.profile && <SectionDropdown section={props.section} setSection={props.setSection}/>}
       {props.profile &&
           <LateralSearchBar
