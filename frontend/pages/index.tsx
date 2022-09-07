@@ -60,7 +60,6 @@ const Home: NextPage = () => {
         <div className="drawer drawer-mobile">
           <input id="my-drawer" type="checkbox" className="drawer-toggle"/>
           <div className="drawer-content">
-            <label htmlFor="my-drawer" className="btn btn-primary drawer-button lg:hidden">Open drawer</label>
             {section === SectionType.Subscriptions &&
                 <SubscriptionVideoCardGrid topics={topics}
                                            subscription={selectedSubscription}

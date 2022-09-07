@@ -47,13 +47,26 @@ const SubscriptionVideoCardGrid = (props: SubscriptionVideoCardGridProps) => {
     content =
       <div className="w-full">
         <div className="sticky top-0 z-10 bg-white flex flex-row justify-center items-center">
-          <h1 className="text-4xl text-center text-gray-800">{current_subscription.name}</h1>
-          <CustomButton
-            text={"Assign topic"}
-            icon={IconForButton.add}
-            relatedModalId={AssignTopicModalId}
-            clickAction={() => {
-            }}/>
+          <div className="flex-none">
+            <CustomButton
+              text={""}
+              icon={IconForButton.menu}
+              relatedModalId={"my-drawer"}
+              showOnlyOnMobile={true}
+              clickAction={() => {
+              }}/>
+          </div>
+          <div className="flex-auto">
+            <h1 className="text-2xl md:text-4xl font-bold text-center text-gray-800">{current_subscription.name}</h1>
+          </div>
+          <div className="flex-none">
+            <CustomButton
+              text={""}
+              icon={IconForButton.add}
+              relatedModalId={AssignTopicModalId}
+              clickAction={() => {
+              }}/>
+          </div>
         </div>
         {topicTags}
         <div className="flex flex-row flex-wrap m-6">

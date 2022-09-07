@@ -5,6 +5,7 @@ import CustomButton, {IconForButton} from "./CustomButton";
 import {deleteTopic} from "../services/topicService";
 import {EditTopicModalId} from "./EditTopicModal";
 import {TopicItem} from "../entities/TopicItem";
+import React from "react";
 
 type TopicVideoCardGridProps = {
   refreshTopics: () => void,
@@ -38,22 +39,35 @@ const TopicVideoCardGrid = (props: TopicVideoCardGridProps) => {
     topicGrid = (
       <div className="w-full">
         <div className="sticky top-0 z-10 bg-white flex flex-row justify-center items-center">
-          <h1 className="text-4xl text-center text-gray-800">{topic.name}</h1>
-          <CustomButton
-            text={"Edit"}
-            icon={IconForButton.pencil}
-            relatedModalId={EditTopicModalId}
-            clickAction={() => {
-            }}/>
-          <CustomButton
-            text={"Delete"}
-            icon={IconForButton.trash}
-            relatedModalId={undefined}
-            clickAction={async () => {
-              await deleteTopic(topic.uuid);
-              props.refreshTopics();
-              props.setSelectedTopicId(undefined);
-            }}/>
+          <div className="flex-none">
+            <CustomButton
+              text={""}
+              icon={IconForButton.menu}
+              relatedModalId={"my-drawer"}
+              showOnlyOnMobile={true}
+              clickAction={() => {
+              }}/>
+          </div>
+          <div className="flex-auto">
+            <h1 className="text-2xl md:text-4xl font-bold text-center text-gray-800">{topic.name}</h1>
+          </div>
+          <div className="flex-none">
+            <CustomButton
+              text={""}
+              icon={IconForButton.pencil}
+              relatedModalId={EditTopicModalId}
+              clickAction={() => {
+              }}/>
+            <CustomButton
+              text={""}
+              icon={IconForButton.trash}
+              relatedModalId={undefined}
+              clickAction={async () => {
+                await deleteTopic(topic.uuid);
+                props.refreshTopics();
+                props.setSelectedTopicId(undefined);
+              }}/>
+          </div>
         </div>
         <div className="flex flex-row flex-wrap m-6">
           {cards}
