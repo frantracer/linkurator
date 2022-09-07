@@ -44,19 +44,22 @@ const SubscriptionVideoCardGrid = (props: SubscriptionVideoCardGridProps) => {
         </div>
       });
 
-    content = <div>
-      <div className="flex flex-row justify-center items-center">
-        <h1 className="text-4xl text-center text-gray-800">{current_subscription.name}</h1>
-        <CustomButton
-          text={"Assign topic"}
-          icon={IconForButton.add}
-          relatedModalId={AssignTopicModalId}
-          clickAction={() => {
-          }}/>
+    content =
+      <div className="w-full">
+        <div className="sticky top-0 z-10 bg-white flex flex-row justify-center items-center">
+          <h1 className="text-4xl text-center text-gray-800">{current_subscription.name}</h1>
+          <CustomButton
+            text={"Assign topic"}
+            icon={IconForButton.add}
+            relatedModalId={AssignTopicModalId}
+            clickAction={() => {
+            }}/>
+        </div>
+        {topicTags}
+        <div className="flex flex-row flex-wrap m-6">
+          {cards}
+        </div>
       </div>
-      {topicTags}
-      <div className="flex flex-row flex-wrap m-6">{cards}</div>
-    </div>
   }
 
   return content;

@@ -37,7 +37,7 @@ const TopicVideoCardGrid = (props: TopicVideoCardGridProps) => {
 
     topicGrid = (
       <div className="w-full">
-        <div className="flex flex-row justify-center items-center">
+        <div className="sticky top-0 z-10 bg-white flex flex-row justify-center items-center">
           <h1 className="text-4xl text-center text-gray-800">{topic.name}</h1>
           <CustomButton
             text={"Edit"}
@@ -55,7 +55,9 @@ const TopicVideoCardGrid = (props: TopicVideoCardGridProps) => {
               props.setSelectedTopicId(undefined);
             }}/>
         </div>
-        <div className="flex flex-row flex-wrap m-6">{cards}</div>
+        <div className="flex flex-row flex-wrap m-6">
+          {cards}
+        </div>
       </div>
     )
   }
