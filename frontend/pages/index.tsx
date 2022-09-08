@@ -1,6 +1,7 @@
 import type {NextPage} from "next";
 import Head from "next/head";
 import React, {useState} from "react";
+import "tailwindcss/tailwind.css";
 import LateralMenu from "../components/LateralMenu";
 import useSubscriptions from "../hooks/useSubscriptions";
 import useSubscriptionItems from "../hooks/useSubscriptionItems";
