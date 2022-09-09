@@ -37,6 +37,9 @@ const Home: NextPage = () => {
   let selectedTopic: Topic | undefined = undefined
   if (selectedTopicId) {
     selectedTopic = topics.find(t => t.uuid === selectedTopicId);
+    if (!selectedTopic) {
+      setSelectedTopicId(undefined);
+    }
   } else if (topics.length > 0) {
     setSelectedTopicId(topics[0].uuid);
   }
