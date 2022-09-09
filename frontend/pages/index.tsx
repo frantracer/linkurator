@@ -18,6 +18,7 @@ import AssignTopicModal from "../components/AssignTopicModal";
 import {Topic} from "../entities/Topic";
 import CustomButton from "../components/CustomButton";
 import configuration from "../configuration";
+import CreateFirstTopicHero from "../components/CreateFirstTopicHero";
 
 const Home: NextPage = () => {
   const [selectedSubscription, setSelectedSubscription] = useState<Subscription | undefined>();
@@ -82,11 +83,13 @@ const Home: NextPage = () => {
                 <SubscriptionVideoCardGrid topics={topics}
                                            subscription={selectedSubscription}
                                            items={subscriptionsItems}/>}
-            {section === SectionType.Topics &&
+            {section === SectionType.Topics && topics.length > 0 &&
                 <TopicVideoCardGrid topic={selectedTopic}
                                     items={topicItems}
                                     refreshTopics={refreshTopics}
                                     setSelectedTopicId={setSelectedTopicId}/>}
+            {section === SectionType.Topics && topics.length == 0 &&
+                <CreateFirstTopicHero/>}
           </div>
           <div className="drawer-side">
             <label htmlFor="my-drawer" className="drawer-overlay"></label>

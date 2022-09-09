@@ -29,16 +29,13 @@ const NewTopicModal = (props: NewTopicModalProps) => {
       <div className="modal modal-bottom sm:modal-middle">
         <div className="modal-box">
           <h3 className="font-bold text-lg">Create new topic</h3>
-          <div className="form-control w-full max-w-xs">
-            <label className="label">
-              <span className="label-text">New topic name</span>
-            </label>
-            <input type="text" placeholder="New Topic" className="input input-bordered w-full max-w-xs"
+          <div className="form-control w-full max-w-xs my-2">
+            <input type="text" placeholder="New topic name" className="input input-bordered w-full max-w-xs"
                    value={newTopicName} onChange={(e) => setNewTopicName(e.target.value)}/>
           </div>
-          <div className="form-control">
+          <div className="form-control my-2">
             <div className="input-group">
-              <select className="select select-bordered" value={selectedSubscriptionId}
+              <select className="select select-bordered w-full max-w-xs" value={selectedSubscriptionId}
                       onChange={e => setSelectedSubscriptionId(e.target.value)}>
                 <option disabled value={"0"}>Pick subscription</option>
                 {options}
@@ -59,13 +56,15 @@ const NewTopicModal = (props: NewTopicModalProps) => {
           <div className="modal-action">
             <CustomButton text={"Close"} icon={undefined} relatedModalId={NewTopicModalId}
                           clickAction={() => {
-                            clearSubscriptions()
+                            clearSubscriptions();
+                            setNewTopicName("");
                           }}/>
             <CustomButton text={"Create"} icon={undefined} relatedModalId={NewTopicModalId}
                           clickAction={async () => {
                             await createTopic(uuidv4(), newTopicName, subscriptionsToAdd.map(s => s.uuid));
                             props.refreshTopics();
                             clearSubscriptions();
+                            setNewTopicName("");
                           }}/>
           </div>
         </div>
