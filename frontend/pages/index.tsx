@@ -116,7 +116,7 @@ const Home: NextPage = () => {
       <Head>
         <title>Linkurator</title>
         <meta name="description" content="Linkurator"/>
-        <link rel="icon" href="/favicon.ico"/>
+        <link rel="icon" href="/logo_v1_fav.png"/>
       </Head>
       {body}
     </div>

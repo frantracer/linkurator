@@ -24,13 +24,18 @@ type LateralMenuProps = {
 };
 
 const Title = () => (
-  <div className="flex flex-row items-center justify-between flex-shrink-0 px-8 py-4">
-    <a
-      href=""
-      className="text-lg font-semibold tracking-widest text-gray-900 uppercase rounded-lg focus:outline-none focus:shadow-outline"
-    >
-      Linkurator
-    </a>
+  <div className="flex px-2 py-4">
+    <div className="flex-none px-4">
+      <img src="/logo_v1_medium.png" alt="logo" className="w-8 h-8"/>
+    </div>
+    <div className="flex-1 justify-self-start">
+      <a
+        href=""
+        className="text-2xl font-semibold tracking-widest text-gray-900 uppercase rounded-lg"
+      >
+        Linkurator
+      </a>
+    </div>
   </div>
 );
 
