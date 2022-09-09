@@ -29,18 +29,18 @@ const NewTopicModal = (props: NewTopicModalProps) => {
       <div className="modal modal-bottom sm:modal-middle">
         <div className="modal-box">
           <h3 className="font-bold text-lg">Create new topic</h3>
-          <div className="form-control w-full max-w-xs my-2">
+          <div className="form-control w-3/4 max-w-xs my-2 ">
             <input type="text" placeholder="New topic name" className="input input-bordered w-full max-w-xs"
                    value={newTopicName} onChange={(e) => setNewTopicName(e.target.value)}/>
           </div>
           <div className="form-control my-2">
-            <div className="input-group">
+            <div className="input-group w-3/4">
               <select className="select select-bordered w-full max-w-xs" value={selectedSubscriptionId}
                       onChange={e => setSelectedSubscriptionId(e.target.value)}>
                 <option disabled value={"0"}>Pick subscription</option>
                 {options}
               </select>
-              <button className="btn" onClick={() => {
+              <button className="btn w-1/4" onClick={() => {
                 const subscription = props.subscriptions.find(subscription => subscription.uuid === selectedSubscriptionId);
                 if (subscription && !subscriptionsToAdd.map(s => s.uuid).includes(subscription.uuid)) {
                   addSubscription(subscription);
