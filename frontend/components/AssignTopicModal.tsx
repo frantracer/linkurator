@@ -47,24 +47,24 @@ const EditTopicModal = (props: AssignTopicModalProps) => {
           <h3 className="font-bold text-lg">{"Assign topic to subscription " + props.subscription.name}</h3>
           <div className="form-control w-full max-w-xs">
             <div className="input-group">
-              <label className="label">
-                <span className="label-text">Topic name</span>
-              </label>
-              <input type="text" placeholder="Topic name" className="input input-bordered w-full max-w-xs"
+              <input type="text" placeholder="New topic name" className="input input-bordered w-3/4 max-w-xs my-2"
                      value={topicName} onChange={(e) => setTopicName(e.target.value)}/>
-              <CustomButton text={"Create"} icon={undefined} relatedModalId={undefined}
-                            clickAction={() => newTopicButtonAction(topicName)}/>
+              <button className="btn w-1/4 max-w-xs my-2" onClick={() => {
+                newTopicButtonAction(topicName);
+                setTopicName("");
+              }}>
+                Create
+              </button>
             </div>
           </div>
           <div className="form-control">
             <div className="input-group">
-              <select className="select select-bordered" value={selectedTopicId}
+              <select className="select select-bordered w-3/4 max-w-xs my-2" value={selectedTopicId}
                       onChange={e => setselectedTopicId(e.target.value)}>
                 <option disabled value={"0"}>Pick topic</option>
                 {options}
               </select>
-              <CustomButton text={"Assign"} icon={undefined} relatedModalId={undefined}
-                            clickAction={assignButtonAction}/>
+              <button className="btn w-1/4 max-w-xs my-2" onClick={assignButtonAction}>Assign</button>
             </div>
           </div>
           <div className="modal-action">
