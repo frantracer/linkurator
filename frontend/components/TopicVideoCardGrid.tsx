@@ -36,7 +36,6 @@ const TopicVideoCardGrid = (props: TopicVideoCardGridProps) => {
 
   if (props.topic) {
     for (let i = 0; i < props.items.length; i++) {
-      console.log(props.items[i].subscription_uuid);
       cards.push(
         <div className="m-4" key={i}>
           <VideoCard
