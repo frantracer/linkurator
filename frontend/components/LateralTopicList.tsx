@@ -3,6 +3,7 @@ import {NewTopicModalId} from "./NewTopicModal";
 import React from "react";
 import CustomButton, {IconForButton} from "./CustomButton";
 import {Topic} from "../entities/Topic";
+import {scrollToDrawerContentTop} from "../utilities/scrollToDrawerContentTop";
 
 type LateralTopicListProps = {
   topics: Topic[];
@@ -17,6 +18,7 @@ const LateralTopicList = (props: LateralTopicListProps) => {
     const topic = props.topics.find((topic) => topic.uuid === topicId);
     if (topic) {
       props.setSelectedTopicId(topic.uuid);
+      scrollToDrawerContentTop();
     }
   }
 

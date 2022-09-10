@@ -1,4 +1,5 @@
 import {SectionType} from "../entities/SectionType";
+import {scrollToDrawerContentTop} from "../utilities/scrollToDrawerContentTop";
 
 type SectionSelectorProps = {
   section: SectionType;
@@ -13,7 +14,7 @@ const SectionDropdown = (props: SectionSelectorProps) => {
 
   return (
     <select className="select select-primary text-black bg-white w-full max-w-xs focus:outline-0"
-            onChange={(e) => props.setSection(e.target.value as SectionType)}>
+            onChange={(e) => {props.setSection(e.target.value as SectionType); scrollToDrawerContentTop()}}>
       {options.map(option => (
         <option selected={props.section === option.value} key={option.value} value={option.value}>{option.label}</option>
       ))}
