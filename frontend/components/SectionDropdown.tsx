@@ -7,8 +7,8 @@ type SectionSelectorProps = {
 
 const SectionDropdown = (props: SectionSelectorProps) => {
   const options = [
-    {label: 'Subscriptions', value: SectionType.Subscriptions},
-    {label: 'Topics', value: SectionType.Topics}
+    {label: 'Topics', value: SectionType.Topics},
+    {label: 'Subscriptions', value: SectionType.Subscriptions}
   ];
 
   return (
