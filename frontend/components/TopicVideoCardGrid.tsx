@@ -19,6 +19,21 @@ type TopicVideoCardGridProps = {
 const TopicVideoCardGrid = (props: TopicVideoCardGridProps) => {
   const cards = [];
 
+  let subscriptionTags;
+  if (props.topic) {
+    const current_topic = props.topic;
+    subscriptionTags = props.subscriptions
+      .filter(subscription => {
+        return current_topic.subscriptions_ids.includes(subscription.uuid)
+      })
+      .map(subscription => {
+        return <div key={subscription.uuid} className="badge badge-outline mx-2">
+          <img className="w-4 h-4 inline-block mx-1 rounded" src={subscription.thumbnail} alt={subscription.name}/>
+          <p>{subscription.name}</p>
+        </div>
+      });
+  }
+
   if (props.topic) {
     for (let i = 0; i < props.items.length; i++) {
       console.log(props.items[i].subscription_uuid);
@@ -73,6 +88,7 @@ const TopicVideoCardGrid = (props: TopicVideoCardGridProps) => {
               }}/>
           </div>
         </div>
+        {subscriptionTags}
         <div className="flex flex-row flex-wrap m-6">
           {cards}
         </div>
