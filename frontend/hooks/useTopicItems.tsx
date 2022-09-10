@@ -1,10 +1,10 @@
 import {useEffect, useState} from "react";
 import {Topic} from "../entities/Topic";
-import {TopicItem} from "../entities/TopicItem";
 import {getTopicItems} from "../services/topicService";
+import {SubscriptionItem} from "../entities/SubscriptionItem";
 
-const useTopicItems = (topic?: Topic): [TopicItem[], () => void] => {
-  const [topicItems, setTopicItems] = useState<TopicItem[]>([]);
+const useTopicItems = (topic?: Topic): [SubscriptionItem[], () => void] => {
+  const [topicItems, setTopicItems] = useState<SubscriptionItem[]>([]);
 
   function refreshTopicItems(topic?: Topic) {
     if (topic) {

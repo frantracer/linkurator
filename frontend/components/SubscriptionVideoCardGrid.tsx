@@ -1,7 +1,7 @@
 import VideoCard from "./VideoCard";
 import {readableAgoUnits} from "../utilities/dateFormatter";
 import {Subscription} from "../entities/Subscription";
-import {SubscriptionItem} from "../entities/TopicItem";
+import {SubscriptionItem} from "../entities/SubscriptionItem";
 import {Topic} from "../entities/Topic";
 import React from "react";
 import CustomButton, {IconForButton} from "./CustomButton";
@@ -25,6 +25,7 @@ const SubscriptionVideoCardGrid = (props: SubscriptionVideoCardGridProps) => {
             name={props.items[i].name}
             description={readableAgoUnits(props.items[i].published_at)}
             url={props.items[i].url}
+            subscription={undefined}
           />
         </div>
       );

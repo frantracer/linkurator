@@ -1,6 +1,6 @@
 import {useEffect, useState} from "react";
 import {Subscription} from "../entities/Subscription";
-import {SubscriptionItem} from "../entities/TopicItem";
+import {SubscriptionItem} from "../entities/SubscriptionItem";
 import {getSubscriptionItems} from "../services/subscriptionService";
 
 

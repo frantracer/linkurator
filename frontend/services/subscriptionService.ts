@@ -1,7 +1,7 @@
 import configuration from "../configuration";
 import axios from "axios";
 import {Subscription} from "../entities/Subscription";
-import {SubscriptionItem} from "../entities/TopicItem";
+import {SubscriptionItem} from "../entities/SubscriptionItem";
 
 export interface SubscriptionResponse {
   elements: Subscription[];
@@ -24,7 +24,8 @@ const mapJsonToSubscriptionItemsResponse = (json: Record<string, any>): Subscrip
         name: element.name,
         url: element.url,
         thumbnail: element.thumbnail,
-        published_at: new Date(element.published_at)
+        published_at: new Date(element.published_at),
+        subscription_uuid: element.subscription_uuid,
       };
     })
   };

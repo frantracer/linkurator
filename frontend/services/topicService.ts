@@ -1,7 +1,7 @@
 import {Topic} from "../entities/Topic";
 import configuration from "../configuration";
 import axios from "axios";
-import {TopicItem} from "../entities/TopicItem";
+import {SubscriptionItem} from "../entities/SubscriptionItem";
 
 export interface TopicResponse {
   elements: Topic[];
@@ -60,8 +60,8 @@ export async function deleteTopic(uuid: string) {
   }
 }
 
-export async function getTopicItems(uuid: string): Promise<TopicItem[]> {
-  let items: TopicItem[] = []
+export async function getTopicItems(uuid: string): Promise<SubscriptionItem[]> {
+  let items: SubscriptionItem[] = []
   try {
     const url = configuration.TOPICS_URL + uuid + "/items";
     const response = await axios.get(url, {withCredentials: true});
@@ -85,7 +85,7 @@ export async function assignSubscriptionToTopic(topic_uuid: string, subscription
 }
 
 interface TopicItemsResponse {
-  elements: TopicItem[];
+  elements: SubscriptionItem[];
 }
 
 const mapJsonToTopicItemsResponse = (json: Record<string, any>): TopicItemsResponse => {
@@ -100,7 +100,8 @@ const mapJsonToTopicItemsResponse = (json: Record<string, any>): TopicItemsRespo
         name: element.name,
         url: element.url,
         thumbnail: element.thumbnail,
-        published_at: new Date(element.published_at)
+        published_at: new Date(element.published_at),
+        subscription_uuid: element.subscription_uuid
       };
     })
   };

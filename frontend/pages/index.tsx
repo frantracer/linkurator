@@ -90,7 +90,8 @@ const Home: NextPage = () => {
                 <TopicVideoCardGrid topic={selectedTopic}
                                     items={topicItems}
                                     refreshTopics={refreshTopics}
-                                    setSelectedTopicId={setSelectedTopicId}/>}
+                                    setSelectedTopicId={setSelectedTopicId}
+                                    subscriptions={subscriptions}/>}
             {section === SectionType.Topics && topics.length == 0 &&
                 <CreateFirstTopicHero/>}
           </div>

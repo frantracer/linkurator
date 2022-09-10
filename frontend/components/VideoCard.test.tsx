@@ -40,6 +40,7 @@ function renderCard(props: {
       name={props.name ? props.name : ""}
       description={props.description ? props.description : ""}
       url={props.img ? props.img : ""}
+      subscription={undefined}
     />
   );
 }

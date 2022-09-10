@@ -4,14 +4,16 @@ import {Topic} from "../entities/Topic";
 import CustomButton, {IconForButton} from "./CustomButton";
 import {deleteTopic} from "../services/topicService";
 import {EditTopicModalId} from "./EditTopicModal";
-import {TopicItem} from "../entities/TopicItem";
 import React from "react";
+import {SubscriptionItem} from "../entities/SubscriptionItem";
+import {Subscription} from "../entities/Subscription";
 
 type TopicVideoCardGridProps = {
   refreshTopics: () => void,
   setSelectedTopicId: (topicId: string | undefined) => void,
   topic: Topic | undefined;
-  items: TopicItem[];
+  items: SubscriptionItem[];
+  subscriptions: Subscription[];
 }
 
 const TopicVideoCardGrid = (props: TopicVideoCardGridProps) => {
@@ -19,6 +21,7 @@ const TopicVideoCardGrid = (props: TopicVideoCardGridProps) => {
 
   if (props.topic) {
     for (let i = 0; i < props.items.length; i++) {
+      console.log(props.items[i].subscription_uuid);
       cards.push(
         <div className="m-4" key={i}>
           <VideoCard
@@ -26,6 +29,7 @@ const TopicVideoCardGrid = (props: TopicVideoCardGridProps) => {
             name={props.items[i].name}
             description={readableAgoUnits(props.items[i].published_at)}
             url={props.items[i].url}
+            subscription={props.subscriptions.find((s) => s.uuid == props.items[i].subscription_uuid)}
           />
         </div>
       );
