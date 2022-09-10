@@ -47,12 +47,12 @@ const EditTopicModal = (props: EditTopicModalProps) => {
           </div>
           <div className="form-control">
             <div className="input-group">
-              <select className="select select-bordered" value={selectedSubscriptionId}
+              <select className="select select-bordered w-3/4 max-w-xs my-2" value={selectedSubscriptionId}
                       onChange={e => setSelectedSubscriptionId(e.target.value)}>
                 <option disabled value={"0"}>Pick subscription</option>
                 {options}
               </select>
-              <button className="btn" onClick={() => {
+              <button className="btn w-1/4 max-w-xs my-2" onClick={() => {
                 const subscription = props.subscriptions.find(subscription => subscription.uuid === selectedSubscriptionId);
                 if (subscription && !subscriptionsToAdd.map(s => s.uuid).includes(subscription.uuid)) {
                   addSubscription(subscription);
