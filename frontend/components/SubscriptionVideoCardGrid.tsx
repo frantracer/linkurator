@@ -40,7 +40,7 @@ const SubscriptionVideoCardGrid = (props: SubscriptionVideoCardGridProps) => {
         return topic.subscriptions_ids.includes(current_subscription.uuid)
       })
       .map(topic => {
-        return <div key={topic.uuid} className="badge mx-2">
+        return <div key={topic.uuid} className="badge badge-outline mx-2">
           {topic.name}
         </div>
       });
