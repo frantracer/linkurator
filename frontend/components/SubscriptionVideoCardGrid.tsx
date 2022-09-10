@@ -57,7 +57,10 @@ const SubscriptionVideoCardGrid = (props: SubscriptionVideoCardGridProps) => {
               }}/>
           </div>
           <div className="flex-auto">
-            <h1 className="text-2xl md:text-4xl font-bold text-center text-gray-800">{current_subscription.name}</h1>
+            <h1 onClick={() => window.open(current_subscription.url, "_blank")}
+               className="text-2xl md:text-4xl font-bold text-center text-gray-800 cursor-pointer hover:underline">
+              {current_subscription.name}
+            </h1>
           </div>
           <div className="flex-none">
             <CustomButton
