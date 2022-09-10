@@ -7,6 +7,7 @@ import {EditTopicModalId} from "./EditTopicModal";
 import React from "react";
 import {SubscriptionItem} from "../entities/SubscriptionItem";
 import {Subscription} from "../entities/Subscription";
+import {LATERAL_MENU_ID} from "../utilities/hideLateralMenu";
 
 type TopicVideoCardGridProps = {
   refreshTopics: () => void,
@@ -61,7 +62,7 @@ const TopicVideoCardGrid = (props: TopicVideoCardGridProps) => {
             <CustomButton
               text={""}
               icon={IconForButton.menu}
-              relatedModalId={"my-drawer"}
+              relatedModalId={LATERAL_MENU_ID}
               showOnlyOnMobile={true}
               clickAction={() => {
               }}/>

@@ -6,6 +6,7 @@ import {Topic} from "../entities/Topic";
 import React from "react";
 import CustomButton, {IconForButton} from "./CustomButton";
 import {AssignTopicModalId} from "./AssignTopicModal";
+import {LATERAL_MENU_ID} from "../utilities/hideLateralMenu";
 
 type SubscriptionVideoCardGridProps = {
   topics: Topic[];
@@ -52,7 +53,7 @@ const SubscriptionVideoCardGrid = (props: SubscriptionVideoCardGridProps) => {
             <CustomButton
               text={""}
               icon={IconForButton.menu}
-              relatedModalId={"my-drawer"}
+              relatedModalId={LATERAL_MENU_ID}
               showOnlyOnMobile={true}
               clickAction={() => {
               }}/>

@@ -19,6 +19,7 @@ import {Topic} from "../entities/Topic";
 import CustomButton from "../components/CustomButton";
 import configuration from "../configuration";
 import CreateFirstTopicHero from "../components/CreateFirstTopicHero";
+import {LATERAL_MENU_ID} from "../utilities/hideLateralMenu";
 
 const Home: NextPage = () => {
   const [selectedSubscription, setSelectedSubscription] = useState<Subscription | undefined>();
@@ -80,7 +81,7 @@ const Home: NextPage = () => {
                             refreshTopicItems={refreshTopicItems}/>}
 
         <div className="drawer drawer-mobile">
-          <input id="my-drawer" type="checkbox" className="drawer-toggle"/>
+          <input id={LATERAL_MENU_ID} type="checkbox" className="drawer-toggle"/>
           <div className="drawer-content">
             {section === SectionType.Subscriptions &&
                 <SubscriptionVideoCardGrid topics={topics}
@@ -96,7 +97,7 @@ const Home: NextPage = () => {
                 <CreateFirstTopicHero/>}
           </div>
           <div className="drawer-side">
-            <label htmlFor="my-drawer" className="drawer-overlay"></label>
+            <label htmlFor={LATERAL_MENU_ID} className="drawer-overlay"></label>
             <LateralMenu
               topics={topics}
               selectedTopic={selectedTopic}

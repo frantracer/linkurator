@@ -1,6 +1,7 @@
 import {MenuItem} from "./MenuItem";
 import {Subscription} from "../entities/Subscription";
 import {scrollToDrawerContentTop} from "../utilities/scrollToDrawerContentTop";
+import {hideLateralMenu} from "../utilities/hideLateralMenu";
 
 type LateralItemListProps = {
   subscriptions: Subscription[];
@@ -15,6 +16,7 @@ const LateralSubscriptionList = (props: LateralItemListProps) => {
     if (subscription) {
       props.setSelectedSubscription(subscription);
       scrollToDrawerContentTop();
+      hideLateralMenu();
     }
   }
 

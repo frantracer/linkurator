@@ -4,6 +4,7 @@ import React from "react";
 import CustomButton, {IconForButton} from "./CustomButton";
 import {Topic} from "../entities/Topic";
 import {scrollToDrawerContentTop} from "../utilities/scrollToDrawerContentTop";
+import {hideLateralMenu} from "../utilities/hideLateralMenu";
 
 type LateralTopicListProps = {
   topics: Topic[];
@@ -19,6 +20,7 @@ const LateralTopicList = (props: LateralTopicListProps) => {
     if (topic) {
       props.setSelectedTopicId(topic.uuid);
       scrollToDrawerContentTop();
+      hideLateralMenu();
     }
   }
 
