@@ -101,7 +101,11 @@ const mapJsonToTopicItemsResponse = (json: Record<string, any>): TopicItemsRespo
         url: element.url,
         thumbnail: element.thumbnail,
         published_at: new Date(element.published_at),
-        subscription_uuid: element.subscription_uuid
+        subscription_uuid: element.subscription_uuid,
+        recommended: element.recommended,
+        discouraged: element.discouraged,
+        viewed: element.viewed,
+        hidden: element.hidden,
       };
     })
   };

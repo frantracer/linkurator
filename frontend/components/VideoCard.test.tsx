@@ -1,6 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import React from "react";
 import VideoCard from "./VideoCard";
+import {SubscriptionItem} from "../entities/SubscriptionItem";
 
 describe("VideoCard should", () => {
   it("render image", () => {
@@ -19,27 +20,28 @@ describe("VideoCard should", () => {
 
     expect(name).toBeInTheDocument();
   });
-
-  it("render description", () => {
-    renderCard({ description: "Card Description" });
-
-    const description = screen.getByText("Card Description");
-
-    expect(description).toBeInTheDocument();
-  });
 });
 
 function renderCard(props: {
   img?: string;
   name?: string;
-  description?: string;
 }) {
+
+  const item: SubscriptionItem = {
+    uuid: "uuid",
+    subscription_uuid: "subscription_uuid",
+    name: props.name || "Card Name",
+    thumbnail: props.img || "https://myImage.com/image.jpeg",
+    url: "https://myImage.com/image.jpeg",
+    published_at: new Date(),
+    discouraged: false,
+    recommended: false,
+    hidden: false,
+    viewed: false,
+  }
   return render(
     <VideoCard
-      img={props.img ? props.img : ""}
-      name={props.name ? props.name : ""}
-      description={props.description ? props.description : ""}
-      url={props.img ? props.img : ""}
+      item={item}
       subscription={undefined}
     />
   );

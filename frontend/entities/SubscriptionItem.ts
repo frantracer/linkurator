@@ -5,4 +5,8 @@ export type SubscriptionItem = {
   thumbnail: string
   published_at: Date;
   subscription_uuid: string;
+  recommended: boolean;
+  discouraged: boolean;
+  viewed: boolean;
+  hidden: boolean;
 };

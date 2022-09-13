@@ -1,5 +1,4 @@
 import VideoCard from "./VideoCard";
-import {readableAgoUnits} from "../utilities/dateFormatter";
 import {Topic} from "../entities/Topic";
 import CustomButton, {IconForButton} from "./CustomButton";
 import {deleteTopic} from "../services/topicService";
@@ -40,10 +39,7 @@ const TopicVideoCardGrid = (props: TopicVideoCardGridProps) => {
       cards.push(
         <div className="m-4" key={i}>
           <VideoCard
-            img={props.items[i].thumbnail}
-            name={props.items[i].name}
-            description={readableAgoUnits(props.items[i].published_at)}
-            url={props.items[i].url}
+            item={props.items[i]}
             subscription={props.subscriptions.find((s) => s.uuid == props.items[i].subscription_uuid)}
           />
         </div>

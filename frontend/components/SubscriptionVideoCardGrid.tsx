@@ -1,5 +1,4 @@
 import VideoCard from "./VideoCard";
-import {readableAgoUnits} from "../utilities/dateFormatter";
 import {Subscription} from "../entities/Subscription";
 import {SubscriptionItem} from "../entities/SubscriptionItem";
 import {Topic} from "../entities/Topic";
@@ -22,10 +21,7 @@ const SubscriptionVideoCardGrid = (props: SubscriptionVideoCardGridProps) => {
       cards.push(
         <div className="m-4" key={i}>
           <VideoCard
-            img={props.items[i].thumbnail}
-            name={props.items[i].name}
-            description={readableAgoUnits(props.items[i].published_at)}
-            url={props.items[i].url}
+            item={props.items[i]}
             subscription={undefined}
           />
         </div>
