@@ -18,10 +18,11 @@ const SubscriptionVideoCardGrid = (props: SubscriptionVideoCardGridProps) => {
 
   if (props.subscription) {
     for (let i = 0; i < props.items.length; i++) {
+      const item = props.items[i];
       cards.push(
-        <div className="m-4" key={i}>
+        <div className="m-4" key={item.uuid}>
           <VideoCard
-            item={props.items[i]}
+            item={item}
             subscription={undefined}
           />
         </div>

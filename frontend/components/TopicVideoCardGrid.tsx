@@ -36,14 +36,16 @@ const TopicVideoCardGrid = (props: TopicVideoCardGridProps) => {
 
   if (props.topic) {
     for (let i = 0; i < props.items.length; i++) {
+      const item = props.items[i];
       cards.push(
-        <div className="m-4" key={i}>
+        <div className="m-4" key={item.uuid}>
           <VideoCard
-            item={props.items[i]}
-            subscription={props.subscriptions.find((s) => s.uuid == props.items[i].subscription_uuid)}
+            item={item}
+            subscription={props.subscriptions.find((s) => s.uuid == item.subscription_uuid)}
           />
         </div>
       );
+
     }
   }
 
