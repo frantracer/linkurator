@@ -12,7 +12,7 @@ export async function interactWithItem(uuid: string, interactionType: Interactio
   console.log("Recommend " + uuid);
   const {data, status} = await axios.post(
     configuration.ITEMS_URL + uuid + "/interactions/" + interactionType, {}, {withCredentials: true});
-  if (status === 204) {
+  if (status === 201) {
     return data;
   } else {
     console.error("Error marking item as recommend", data);
