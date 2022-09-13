@@ -8,6 +8,7 @@ import {AssignTopicModalId} from "./AssignTopicModal";
 import {LATERAL_MENU_ID} from "../utilities/hideLateralMenu";
 
 type SubscriptionVideoCardGridProps = {
+  refreshItems: () => void,
   topics: Topic[];
   subscription: Subscription | undefined;
   items: SubscriptionItem[];
@@ -24,6 +25,7 @@ const SubscriptionVideoCardGrid = (props: SubscriptionVideoCardGridProps) => {
           <VideoCard
             item={item}
             subscription={undefined}
+            onChange={() => props.refreshItems()}
           />
         </div>
       );
@@ -57,7 +59,7 @@ const SubscriptionVideoCardGrid = (props: SubscriptionVideoCardGridProps) => {
           </div>
           <div className="flex-auto">
             <h1 onClick={() => window.open(current_subscription.url, "_blank")}
-               className="text-2xl md:text-4xl font-bold text-center text-gray-800 cursor-pointer hover:underline">
+                className="text-2xl md:text-4xl font-bold text-center text-gray-800 cursor-pointer hover:underline">
               {current_subscription.name}
             </h1>
           </div>

@@ -7,9 +7,18 @@ import {CustomSwapButton, CustomSwapButtonIcon} from "./CustomSwapButton";
 type VideoCardProps = {
   item: SubscriptionItem;
   subscription?: Subscription;
+  onChange: () => void;
 };
 
 const VideoCard = (props: VideoCardProps) => {
+  function onChangeSwapButton(itemUuid: string, interactionType: InteractionType, checked: boolean) {
+    if (checked) {
+      interactWithItem(itemUuid, interactionType).then(props.onChange);
+    } else {
+      removeInteractionWithItem(itemUuid, interactionType).then(props.onChange);
+    }
+  }
+
   return (
     <div className="card card-compact w-64 md:w-80 text-black shadow-xl hover:scale-105 cursor-pointer">
       <figure>
@@ -30,17 +39,17 @@ const VideoCard = (props: VideoCardProps) => {
           <p>{readableAgoUnits(props.item.published_at)}</p>
           <div className="card-actions justify-end">
             <CustomSwapButton icon={CustomSwapButtonIcon.ThumbsDown} defaultChecked={props.item.discouraged}
-                              onChecked={() => interactWithItem(props.item.uuid, InteractionType.Discouraged)}
-                              onUnchecked={() => removeInteractionWithItem(props.item.uuid, InteractionType.Discouraged)}/>
+                              onChecked={() => onChangeSwapButton(props.item.uuid, InteractionType.Discouraged, true)}
+                              onUnchecked={() => onChangeSwapButton(props.item.uuid, InteractionType.Discouraged, false)}/>
             <CustomSwapButton icon={CustomSwapButtonIcon.ThumbsUp} defaultChecked={props.item.recommended}
-                              onChecked={() => interactWithItem(props.item.uuid, InteractionType.Recommended)}
-                              onUnchecked={() => removeInteractionWithItem(props.item.uuid, InteractionType.Recommended)}/>
+                              onChecked={() => onChangeSwapButton(props.item.uuid, InteractionType.Recommended, true)}
+                              onUnchecked={() => onChangeSwapButton(props.item.uuid, InteractionType.Recommended, false)}/>
             <CustomSwapButton icon={CustomSwapButtonIcon.EyeSlash} defaultChecked={props.item.hidden}
-                              onChecked={() => interactWithItem(props.item.uuid, InteractionType.Hidden)}
-                              onUnchecked={() => removeInteractionWithItem(props.item.uuid, InteractionType.Hidden)}/>
+                              onChecked={() => onChangeSwapButton(props.item.uuid, InteractionType.Hidden, true)}
+                              onUnchecked={() => onChangeSwapButton(props.item.uuid, InteractionType.Hidden, false)}/>
             <CustomSwapButton icon={CustomSwapButtonIcon.CheckCircle} defaultChecked={props.item.viewed}
-                              onChecked={() => interactWithItem(props.item.uuid, InteractionType.Viewed)}
-                              onUnchecked={() => removeInteractionWithItem(props.item.uuid, InteractionType.Viewed)}/>
+                              onChecked={() => onChangeSwapButton(props.item.uuid, InteractionType.Viewed, true)}
+                              onUnchecked={() => onChangeSwapButton(props.item.uuid, InteractionType.Viewed, false)}/>
           </div>
         </div>
       </div>

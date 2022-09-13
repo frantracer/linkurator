@@ -25,7 +25,7 @@ const Home: NextPage = () => {
   const [selectedSubscription, setSelectedSubscription] = useState<Subscription | undefined>();
   const profile = useProfile();
   const [subscriptions] = useSubscriptions(profile);
-  const [subscriptionsItems] = useSubscriptionItems(selectedSubscription);
+  const [subscriptionsItems, refreshSubscriptionItems] = useSubscriptionItems(selectedSubscription);
   const [topics, refreshTopics] = useTopics(profile);
   const [selectedTopicId, setSelectedTopicId] = useState<string | undefined>();
   const [topicItems, refreshTopicItems] = useTopicItems(topics.find(t => t.uuid === selectedTopicId));
@@ -53,6 +53,11 @@ const Home: NextPage = () => {
       clickAction={() => {
         window.open(configuration.LOGIN_URL, '_self')
       }}/>
+  }
+
+  const refreshItems = () => {
+    refreshSubscriptionItems()
+    refreshTopicItems()
   }
 
   let body =
@@ -84,13 +89,15 @@ const Home: NextPage = () => {
           <input id={LATERAL_MENU_ID} type="checkbox" className="drawer-toggle"/>
           <div className="drawer-content">
             {section === SectionType.Subscriptions &&
-                <SubscriptionVideoCardGrid topics={topics}
+                <SubscriptionVideoCardGrid refreshItems={refreshItems}
+                                           topics={topics}
                                            subscription={selectedSubscription}
                                            items={subscriptionsItems}/>}
             {section === SectionType.Topics && topics.length > 0 &&
                 <TopicVideoCardGrid topic={selectedTopic}
                                     items={topicItems}
                                     refreshTopics={refreshTopics}
+                                    refreshItems={refreshItems}
                                     setSelectedTopicId={setSelectedTopicId}
                                     subscriptions={subscriptions}/>}
             {section === SectionType.Topics && topics.length == 0 &&

@@ -9,6 +9,7 @@ import {Subscription} from "../entities/Subscription";
 import {LATERAL_MENU_ID} from "../utilities/hideLateralMenu";
 
 type TopicVideoCardGridProps = {
+  refreshItems: () => void,
   refreshTopics: () => void,
   setSelectedTopicId: (topicId: string | undefined) => void,
   topic: Topic | undefined;
@@ -42,6 +43,7 @@ const TopicVideoCardGrid = (props: TopicVideoCardGridProps) => {
           <VideoCard
             item={item}
             subscription={props.subscriptions.find((s) => s.uuid == item.subscription_uuid)}
+            onChange={() => props.refreshItems()}
           />
         </div>
       );
