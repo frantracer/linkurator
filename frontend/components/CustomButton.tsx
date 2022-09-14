@@ -96,11 +96,11 @@ const CustomButton = (props: CustomButton) => {
         {props.text}
       </label>
       :
-      <button onClick={props.clickAction}
-              className={className}>
+      <label tabIndex={0} onClick={props.clickAction}
+             className={className}>
         {svgComponent}
         {props.text}
-      </button>
+      </label>
   );
 }
 
