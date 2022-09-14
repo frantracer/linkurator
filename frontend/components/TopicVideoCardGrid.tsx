@@ -7,6 +7,8 @@ import React from "react";
 import {SubscriptionItem} from "../entities/SubscriptionItem";
 import {Subscription} from "../entities/Subscription";
 import {LATERAL_MENU_ID} from "../utilities/hideLateralMenu";
+import {FilterOptionsModalId} from "./FilterOptionsModal";
+import {Filters, isItemShown} from "../entities/Filters";
 
 type TopicVideoCardGridProps = {
   refreshItems: () => void,
@@ -15,6 +17,7 @@ type TopicVideoCardGridProps = {
   topic: Topic | undefined;
   items: SubscriptionItem[];
   subscriptions: Subscription[];
+  filters: Filters;
 }
 
 const TopicVideoCardGrid = (props: TopicVideoCardGridProps) => {
@@ -38,16 +41,17 @@ const TopicVideoCardGrid = (props: TopicVideoCardGridProps) => {
   if (props.topic) {
     for (let i = 0; i < props.items.length; i++) {
       const item = props.items[i];
-      cards.push(
-        <div className="m-4" key={item.uuid}>
-          <VideoCard
-            item={item}
-            subscription={props.subscriptions.find((s) => s.uuid == item.subscription_uuid)}
-            onChange={() => props.refreshItems()}
-          />
-        </div>
-      );
-
+      if (isItemShown(item, props.filters)) {
+        cards.push(
+          <div className="m-4" key={item.uuid}>
+            <VideoCard
+              item={item}
+              subscription={props.subscriptions.find((s) => s.uuid == item.subscription_uuid)}
+              onChange={() => props.refreshItems()}
+            />
+          </div>
+        );
+      }
     }
   }
 
@@ -71,21 +75,36 @@ const TopicVideoCardGrid = (props: TopicVideoCardGridProps) => {
             <h1 className="text-2xl md:text-4xl font-bold text-center text-gray-800">{topic.name}</h1>
           </div>
           <div className="flex-none">
-            <CustomButton
-              text={""}
-              icon={IconForButton.pencil}
-              relatedModalId={EditTopicModalId}
-              clickAction={() => {
-              }}/>
-            <CustomButton
-              text={""}
-              icon={IconForButton.trash}
-              relatedModalId={undefined}
-              clickAction={async () => {
-                await deleteTopic(topic.uuid);
-                props.refreshTopics();
-                props.setSelectedTopicId(undefined);
-              }}/>
+            <div className="dropdown dropdown-end">
+              <CustomButton
+                text={""}
+                icon={IconForButton.options}
+                relatedModalId={undefined}
+                clickAction={() => {
+                }}/>
+              <ul tabIndex={0} className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52">
+                <CustomButton
+                  text={"Edit Topic"}
+                  icon={IconForButton.pencil}
+                  relatedModalId={EditTopicModalId}
+                  clickAction={() => {
+                  }}/>
+                <CustomButton
+                  text={"Delete topic"}
+                  icon={IconForButton.trash}
+                  relatedModalId={undefined}
+                  clickAction={async () => {
+                    await deleteTopic(topic.uuid);
+                    props.refreshTopics();
+                    props.setSelectedTopicId(undefined);
+                  }}/>
+                <CustomButton
+                  text={"Filter items"}
+                  icon={IconForButton.funnel}
+                  relatedModalId={FilterOptionsModalId}
+                  clickAction={async () => {}}/>
+              </ul>
+            </div>
           </div>
         </div>
         {subscriptionTags}

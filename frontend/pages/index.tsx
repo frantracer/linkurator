@@ -20,6 +20,8 @@ import CustomButton from "../components/CustomButton";
 import configuration from "../configuration";
 import CreateFirstTopicHero from "../components/CreateFirstTopicHero";
 import {LATERAL_MENU_ID} from "../utilities/hideLateralMenu";
+import FilterOptionsModal from "../components/FilterOptionsModal";
+import useFilters from "../hooks/useFilters";
 
 const Home: NextPage = () => {
   const [selectedSubscription, setSelectedSubscription] = useState<Subscription | undefined>();
@@ -30,6 +32,7 @@ const Home: NextPage = () => {
   const [selectedTopicId, setSelectedTopicId] = useState<string | undefined>();
   const [topicItems, refreshTopicItems] = useTopicItems(topics.find(t => t.uuid === selectedTopicId));
   const [section, setSection] = useState<SectionType>(SectionType.Topics);
+  const [filters, setFilters] = useFilters();
 
   if (selectedSubscription === undefined && subscriptions.length > 0) {
     setSelectedSubscription(subscriptions[0]);
@@ -75,6 +78,7 @@ const Home: NextPage = () => {
     body =
       <main className="flex bg-gray-100">
         <NewTopicModal refreshTopics={refreshTopics} subscriptions={subscriptions}/>
+        <FilterOptionsModal filters={filters} setFilters={setFilters}/>
         {selectedSubscription &&
             <AssignTopicModal topics={topics}
                               subscription={selectedSubscription}
@@ -92,14 +96,16 @@ const Home: NextPage = () => {
                 <SubscriptionVideoCardGrid refreshItems={refreshItems}
                                            topics={topics}
                                            subscription={selectedSubscription}
-                                           items={subscriptionsItems}/>}
+                                           items={subscriptionsItems}
+                                           filters={filters}/>}
             {section === SectionType.Topics && topics.length > 0 &&
                 <TopicVideoCardGrid topic={selectedTopic}
                                     items={topicItems}
                                     refreshTopics={refreshTopics}
                                     refreshItems={refreshItems}
                                     setSelectedTopicId={setSelectedTopicId}
-                                    subscriptions={subscriptions}/>}
+                                    subscriptions={subscriptions}
+                                    filters={filters}/>}
             {section === SectionType.Topics && topics.length == 0 &&
                 <CreateFirstTopicHero/>}
           </div>

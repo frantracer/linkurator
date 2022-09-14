@@ -6,12 +6,15 @@ import React from "react";
 import CustomButton, {IconForButton} from "./CustomButton";
 import {AssignTopicModalId} from "./AssignTopicModal";
 import {LATERAL_MENU_ID} from "../utilities/hideLateralMenu";
+import {Filters, isItemShown} from "../entities/Filters";
+import {FilterOptionsModalId} from "./FilterOptionsModal";
 
 type SubscriptionVideoCardGridProps = {
   refreshItems: () => void,
   topics: Topic[];
   subscription: Subscription | undefined;
   items: SubscriptionItem[];
+  filters: Filters;
 }
 
 const SubscriptionVideoCardGrid = (props: SubscriptionVideoCardGridProps) => {
@@ -20,15 +23,17 @@ const SubscriptionVideoCardGrid = (props: SubscriptionVideoCardGridProps) => {
   if (props.subscription) {
     for (let i = 0; i < props.items.length; i++) {
       const item = props.items[i];
-      cards.push(
-        <div className="m-4" key={item.uuid}>
-          <VideoCard
-            item={item}
-            subscription={undefined}
-            onChange={() => props.refreshItems()}
-          />
-        </div>
-      );
+      if (isItemShown(item, props.filters)) {
+        cards.push(
+          <div className="m-4" key={item.uuid}>
+            <VideoCard
+              item={item}
+              subscription={undefined}
+              onChange={() => props.refreshItems()}
+            />
+          </div>
+        );
+      }
     }
   }
 
@@ -64,12 +69,28 @@ const SubscriptionVideoCardGrid = (props: SubscriptionVideoCardGridProps) => {
             </h1>
           </div>
           <div className="flex-none">
-            <CustomButton
-              text={""}
-              icon={IconForButton.add}
-              relatedModalId={AssignTopicModalId}
-              clickAction={() => {
-              }}/>
+            <div className="dropdown dropdown-end">
+              <CustomButton
+                text={""}
+                icon={IconForButton.options}
+                relatedModalId={undefined}
+                clickAction={() => {
+                }}/>
+              <ul tabIndex={0} className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52">
+                <CustomButton
+                  text={"Add to Topic"}
+                  icon={IconForButton.add}
+                  relatedModalId={AssignTopicModalId}
+                  clickAction={() => {
+                  }}/>
+                <CustomButton
+                  text={"Filter items"}
+                  icon={IconForButton.funnel}
+                  relatedModalId={FilterOptionsModalId}
+                  clickAction={async () => {
+                  }}/>
+              </ul>
+            </div>
           </div>
         </div>
         {topicTags}
