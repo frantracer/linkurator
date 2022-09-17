@@ -29,8 +29,7 @@ const Home: NextPage = () => {
   const [subscriptions] = useSubscriptions(profile);
   const [subscriptionsItems, refreshSubscriptionItems] = useSubscriptionItems(selectedSubscription);
   const [topics, refreshTopics] = useTopics(profile);
-  const [selectedTopicId, setSelectedTopicId] = useState<string | undefined>();
-  const [topicItems, refreshTopicItems] = useTopicItems(topics.find(t => t.uuid === selectedTopicId));
+  const [topicItems, loadingTopicItems, refreshTopicItems, selectedTopicId, setSelectedTopicId] = useTopicItems();
   const [section, setSection] = useState<SectionType>(SectionType.Topics);
   const [filters, setFilters] = useFilters();
 
@@ -105,7 +104,8 @@ const Home: NextPage = () => {
                                     refreshItems={refreshItems}
                                     setSelectedTopicId={setSelectedTopicId}
                                     subscriptions={subscriptions}
-                                    filters={filters}/>}
+                                    filters={filters}
+                                    isLoading={loadingTopicItems}/>}
             {section === SectionType.Topics && topics.length == 0 &&
                 <CreateFirstTopicHero/>}
           </div>

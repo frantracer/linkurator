@@ -60,18 +60,35 @@ export async function deleteTopic(uuid: string) {
   }
 }
 
-export async function getTopicItems(uuid: string): Promise<SubscriptionItem[]> {
+export async function getTopicItems(uuid: string): Promise<[SubscriptionItem[], string]> {
   let items: SubscriptionItem[] = []
+  let nextPage = "";
   try {
-    const url = configuration.TOPICS_URL + uuid + "/items";
+    const url = configuration.TOPICS_URL + uuid + "/items?page_size=20";
     const response = await axios.get(url, {withCredentials: true});
     if (response.status === 200) {
       items = mapJsonToTopicItemsResponse(response.data).elements;
+      nextPage = response.data.next_page || "";
     }
   } catch (error: any) {
     console.error("Error retrieving topic items", error);
   }
-  return items;
+  return [items, nextPage];
+}
+
+export async function getTopicItemsFromUrl(url: string): Promise<[SubscriptionItem[], string]> {
+  let items: SubscriptionItem[] = []
+  let nextPage = "";
+  try {
+    const response = await axios.get(url, {withCredentials: true});
+    if (response.status === 200) {
+      items = mapJsonToTopicItemsResponse(response.data).elements;
+      nextPage = response.data.next_page || "";
+    }
+  } catch (error: any) {
+    console.error("Error retrieving topic items from url", error);
+  }
+  return [items, nextPage];
 }
 
 export async function assignSubscriptionToTopic(topic_uuid: string, subscription_uuid: string): Promise<void> {

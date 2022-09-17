@@ -18,6 +18,7 @@ type TopicVideoCardGridProps = {
   items: SubscriptionItem[];
   subscriptions: Subscription[];
   filters: Filters;
+  isLoading: boolean;
 }
 
 const TopicVideoCardGrid = (props: TopicVideoCardGridProps) => {
@@ -102,7 +103,8 @@ const TopicVideoCardGrid = (props: TopicVideoCardGridProps) => {
                   text={"Filter items"}
                   icon={IconForButton.funnel}
                   relatedModalId={FilterOptionsModalId}
-                  clickAction={async () => {}}/>
+                  clickAction={async () => {
+                  }}/>
               </ul>
             </div>
           </div>
@@ -111,6 +113,11 @@ const TopicVideoCardGrid = (props: TopicVideoCardGridProps) => {
         <div className="flex flex-row flex-wrap m-6">
           {cards}
         </div>
+        {props.isLoading &&
+            <div className="flex justify-center items-center">
+                <button className="btn btn-sm btn-ghost loading">loading</button>
+            </div>
+        }
       </div>
     )
   }
