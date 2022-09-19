@@ -27,9 +27,9 @@ const Home: NextPage = () => {
   const [selectedSubscription, setSelectedSubscription] = useState<Subscription | undefined>();
   const profile = useProfile();
   const [subscriptions] = useSubscriptions(profile);
-  const [subscriptionsItems, refreshSubscriptionItems] = useSubscriptionItems(selectedSubscription);
+  const [subscriptionsItems, _, refreshSubscriptionItem] = useSubscriptionItems(selectedSubscription);
   const [topics, refreshTopics] = useTopics(profile);
-  const [topicItems, loadingTopicItems, refreshTopicItems, selectedTopicId, setSelectedTopicId] = useTopicItems();
+  const [topicItems, loadingTopicItems, refreshTopicItems, refreshTopicItem, selectedTopicId, setSelectedTopicId] = useTopicItems();
   const [section, setSection] = useState<SectionType>(SectionType.Topics);
   const [filters, setFilters] = useFilters();
 
@@ -57,9 +57,9 @@ const Home: NextPage = () => {
       }}/>
   }
 
-  const refreshItems = () => {
-    refreshSubscriptionItems()
-    refreshTopicItems()
+  const refreshItem = (item_uuid: string) => {
+    refreshSubscriptionItem(item_uuid)
+    refreshTopicItem(item_uuid)
   }
 
   let body =
@@ -92,7 +92,7 @@ const Home: NextPage = () => {
           <input id={LATERAL_MENU_ID} type="checkbox" className="drawer-toggle"/>
           <div className="drawer-content">
             {section === SectionType.Subscriptions &&
-                <SubscriptionVideoCardGrid refreshItems={refreshItems}
+                <SubscriptionVideoCardGrid refreshItem={refreshItem}
                                            topics={topics}
                                            subscription={selectedSubscription}
                                            items={subscriptionsItems}
@@ -101,7 +101,7 @@ const Home: NextPage = () => {
                 <TopicVideoCardGrid topic={selectedTopic}
                                     items={topicItems}
                                     refreshTopics={refreshTopics}
-                                    refreshItems={refreshItems}
+                                    refreshItem={refreshItem}
                                     setSelectedTopicId={setSelectedTopicId}
                                     subscriptions={subscriptions}
                                     filters={filters}

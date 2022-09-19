@@ -11,7 +11,7 @@ import {FilterOptionsModalId} from "./FilterOptionsModal";
 import {Filters, isItemShown} from "../entities/Filters";
 
 type TopicVideoCardGridProps = {
-  refreshItems: () => void,
+  refreshItem: (itemId: string) => void,
   refreshTopics: () => void,
   setSelectedTopicId: (topicId: string | undefined) => void,
   topic: Topic | undefined;
@@ -48,7 +48,7 @@ const TopicVideoCardGrid = (props: TopicVideoCardGridProps) => {
             <VideoCard
               item={item}
               subscription={props.subscriptions.find((s) => s.uuid == item.subscription_uuid)}
-              onChange={() => props.refreshItems()}
+              onChange={() => props.refreshItem(item.uuid)}
             />
           </div>
         );

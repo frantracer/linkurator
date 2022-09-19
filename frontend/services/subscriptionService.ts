@@ -12,25 +12,29 @@ interface SubscriptionItemsResponse {
   elements: SubscriptionItem[];
 }
 
+const mapJsonItemToSubscriptionItem = (json: Record<string, any>): SubscriptionItem => {
+  const published_at = new Date(json.published_at);
+  if (isNaN(published_at.getTime())) {
+    throw new Error("Published at is not a valid date");
+  }
+  return {
+    uuid: json.uuid,
+    name: json.name,
+    url: json.url,
+    thumbnail: json.thumbnail,
+    published_at: new Date(json.published_at),
+    subscription_uuid: json.subscription_uuid,
+    recommended: json.recommended,
+    discouraged: json.discouraged,
+    viewed: json.viewed,
+    hidden: json.hidden,
+  };
+}
+
 const mapJsonToSubscriptionItemsResponse = (json: Record<string, any>): SubscriptionItemsResponse => {
   return {
     elements: json.elements.map((element: Record<string, any>) => {
-      const published_at = new Date(element.published_at);
-      if (isNaN(published_at.getTime())) {
-        throw new Error("Published at is not a valid date");
-      }
-      return {
-        uuid: element.uuid,
-        name: element.name,
-        url: element.url,
-        thumbnail: element.thumbnail,
-        published_at: new Date(element.published_at),
-        subscription_uuid: element.subscription_uuid,
-        recommended: element.recommended,
-        discouraged: element.discouraged,
-        viewed: element.viewed,
-        hidden: element.hidden,
-      };
+      return mapJsonItemToSubscriptionItem(element);
     })
   };
 }
@@ -60,4 +64,17 @@ export async function getSubscriptionItems(subscription_uuid: string): Promise<S
   } else {
     throw("Error retrieving subscription items " + response.data);
   }
+}
+
+export async function getItem(uuid: string): Promise<SubscriptionItem | undefined> {
+  try {
+    const url = configuration.ITEMS_URL + uuid;
+    const response = await axios.get(url, {withCredentials: true});
+    if (response.status === 200) {
+      return mapJsonItemToSubscriptionItem(response.data);
+    }
+  } catch (error: any) {
+    console.error("Error retrieving topic items", error);
+  }
+  return undefined;
 }

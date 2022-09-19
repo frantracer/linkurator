@@ -1,6 +1,7 @@
 import {useEffect, useState} from "react";
 import {getTopicItems, getTopicItemsFromUrl} from "../services/topicService";
 import {SubscriptionItem} from "../entities/SubscriptionItem";
+import {getItem} from "../services/subscriptionService";
 
 type OptionalTopicId = string | undefined;
 
@@ -11,7 +12,14 @@ type NextPageLogic = {
   loading: boolean,
 }
 
-const useTopicItems = (): [SubscriptionItem[], boolean, () => void, OptionalTopicId, (newTopicId: OptionalTopicId) => void] => {
+const useTopicItems = (): [
+  SubscriptionItem[],
+  boolean,
+  () => void,
+  (item_uuid: string) => void,
+  OptionalTopicId,
+  (newTopicId: OptionalTopicId) => void
+] => {
   const [topicItems, setTopicItems] = useState<SubscriptionItem[]>([]);
   const [nextPageLogic, setNextPageLogic] = useState<NextPageLogic>({
     currentTopicId: undefined,
@@ -19,6 +27,26 @@ const useTopicItems = (): [SubscriptionItem[], boolean, () => void, OptionalTopi
     nextUrl: undefined,
     loading: false,
   });
+
+  function refreshTopicItem(itemId: string) {
+    if (itemId in topicItems.map(item => item.uuid)) {
+      console.log("Item found")
+      getItem(itemId).then((updatedItem) => {
+        if (updatedItem) {
+          const newTopicItems = topicItems.map((item) => {
+              if (item.uuid == itemId) {
+                return updatedItem;
+              } else {
+                return item;
+              }
+            }
+          )
+          console.log("Updating topic items")
+          setTopicItems(newTopicItems);
+        }
+      })
+    }
+  }
 
   function refreshTopicItems() {
     if (!nextPageLogic.loading) {
@@ -93,6 +121,7 @@ const useTopicItems = (): [SubscriptionItem[], boolean, () => void, OptionalTopi
     topicItems,
     nextPageLogic.loading,
     () => setNextPageLogic({...nextPageLogic, loading: true}),
+    (item_uuid: string) => refreshTopicItem(item_uuid),
     nextPageLogic.currentTopicId,
     (topicId: OptionalTopicId) => setNextPageLogic({...nextPageLogic, currentTopicId: topicId, loading: true})
   ];

@@ -10,7 +10,7 @@ import {Filters, isItemShown} from "../entities/Filters";
 import {FilterOptionsModalId} from "./FilterOptionsModal";
 
 type SubscriptionVideoCardGridProps = {
-  refreshItems: () => void,
+  refreshItem: (itemId: string) => void,
   topics: Topic[];
   subscription: Subscription | undefined;
   items: SubscriptionItem[];
@@ -29,7 +29,7 @@ const SubscriptionVideoCardGrid = (props: SubscriptionVideoCardGridProps) => {
             <VideoCard
               item={item}
               subscription={undefined}
-              onChange={() => props.refreshItems()}
+              onChange={() => props.refreshItem(item.uuid)}
             />
           </div>
         );
