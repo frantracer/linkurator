@@ -10,6 +10,7 @@ type NextPageLogic = {
   lastTopicId: OptionalTopicId,
   nextUrl: string | undefined,
   loading: boolean,
+  isFinished: boolean,
 }
 
 const useTopicItems = (): [
@@ -18,7 +19,8 @@ const useTopicItems = (): [
   () => void,
   (item_uuid: string) => void,
   OptionalTopicId,
-  (newTopicId: OptionalTopicId) => void
+  (newTopicId: OptionalTopicId) => void,
+  boolean
 ] => {
   const [topicItems, setTopicItems] = useState<SubscriptionItem[]>([]);
   const [nextPageLogic, setNextPageLogic] = useState<NextPageLogic>({
@@ -26,6 +28,7 @@ const useTopicItems = (): [
     lastTopicId: undefined,
     nextUrl: undefined,
     loading: false,
+    isFinished: false,
   });
 
   function refreshTopicItem(itemId: string) {
@@ -73,6 +76,7 @@ const useTopicItems = (): [
             lastTopicId: nextPageLogic.currentTopicId,
             nextUrl: nextUrl,
             loading: false,
+            isFinished: !nextUrl,
           });
         })
         .catch(error => console.log("Error retrieving topic items " + error));
@@ -88,6 +92,7 @@ const useTopicItems = (): [
             lastTopicId: nextPageLogic.lastTopicId,
             nextUrl: nextUrl,
             loading: false,
+            isFinished: !nextUrl,
           });
         })
         .catch(error => console.log("Error retrieving topic items " + error));
@@ -99,7 +104,7 @@ const useTopicItems = (): [
     const drawerContent = document.querySelector('.drawer-content');
 
     const handleTopicScroll = () => {
-      if (drawerContent && nextPageLogic.currentTopicId && !nextPageLogic.loading) {
+      if (drawerContent && nextPageLogic.currentTopicId && !nextPageLogic.loading && !nextPageLogic.isFinished) {
         if (drawerContent.scrollTop + drawerContent.clientHeight >= drawerContent.scrollHeight) {
           setNextPageLogic({...nextPageLogic, loading: true});
         }
@@ -123,7 +128,8 @@ const useTopicItems = (): [
     () => setNextPageLogic({...nextPageLogic, loading: true}),
     (item_uuid: string) => refreshTopicItem(item_uuid),
     nextPageLogic.currentTopicId,
-    (topicId: OptionalTopicId) => setNextPageLogic({...nextPageLogic, currentTopicId: topicId, loading: true})
+    (topicId: OptionalTopicId) => setNextPageLogic({...nextPageLogic, currentTopicId: topicId, loading: true}),
+    nextPageLogic.isFinished
   ];
 }
 

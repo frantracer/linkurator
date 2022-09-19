@@ -19,6 +19,7 @@ type TopicVideoCardGridProps = {
   subscriptions: Subscription[];
   filters: Filters;
   isLoading: boolean;
+  topicIsFinished: boolean;
 }
 
 const TopicVideoCardGrid = (props: TopicVideoCardGridProps) => {
@@ -116,6 +117,11 @@ const TopicVideoCardGrid = (props: TopicVideoCardGridProps) => {
         {props.isLoading &&
             <div className="flex justify-center items-center">
                 <button className="btn btn-sm btn-ghost loading">loading</button>
+            </div>
+        }
+        {props.topicIsFinished &&
+            <div className="flex justify-center items-center">
+                <button className="btn btn-sm btn-ghost">No more items to show</button>
             </div>
         }
       </div>
