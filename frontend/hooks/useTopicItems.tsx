@@ -9,6 +9,7 @@ type NextPageLogic = {
   currentTopicId: OptionalTopicId,
   lastTopicId: OptionalTopicId,
   nextUrl: string | undefined,
+  clean: boolean,
   loading: boolean,
   isFinished: boolean,
 }
@@ -27,6 +28,7 @@ const useTopicItems = (): [
     currentTopicId: undefined,
     lastTopicId: undefined,
     nextUrl: undefined,
+    clean: true,
     loading: false,
     isFinished: false,
   });
@@ -60,12 +62,13 @@ const useTopicItems = (): [
         ...nextPageLogic,
         currentTopicId: nextPageLogic.currentTopicId,
         lastTopicId: nextPageLogic.currentTopicId,
+        clean: false,
         loading: false
       })
       return;
     }
 
-    if (nextPageLogic.currentTopicId && nextPageLogic.currentTopicId !== nextPageLogic.lastTopicId) {
+    if (nextPageLogic.currentTopicId && (nextPageLogic.clean || nextPageLogic.currentTopicId !== nextPageLogic.lastTopicId)) {
       getTopicItems(nextPageLogic.currentTopicId)
         .then(([items, nextUrl]) => {
           setTopicItems(items);
@@ -73,6 +76,7 @@ const useTopicItems = (): [
             currentTopicId: nextPageLogic.currentTopicId,
             lastTopicId: nextPageLogic.currentTopicId,
             nextUrl: nextUrl,
+            clean: false,
             loading: false,
             isFinished: !nextUrl,
           });
@@ -89,6 +93,7 @@ const useTopicItems = (): [
             currentTopicId: nextPageLogic.currentTopicId,
             lastTopicId: nextPageLogic.lastTopicId,
             nextUrl: nextUrl,
+            clean: false,
             loading: false,
             isFinished: !nextUrl,
           });
@@ -123,7 +128,7 @@ const useTopicItems = (): [
   return [
     topicItems,
     nextPageLogic.loading,
-    () => setNextPageLogic({...nextPageLogic, loading: true}),
+    () => setNextPageLogic({...nextPageLogic, clean: true, loading: true}),
     (item_uuid: string) => refreshTopicItem(item_uuid),
     nextPageLogic.currentTopicId,
     (topicId: OptionalTopicId) => setNextPageLogic({...nextPageLogic, currentTopicId: topicId, loading: true}),

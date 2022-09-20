@@ -8,6 +8,7 @@ type NextPageLogic = {
   currentSubscriptionId: OptionalSubscriptionId,
   lastSubscriptionId: OptionalSubscriptionId,
   nextUrl: string | undefined,
+  clean: boolean,
   loading: boolean,
   isFinished: boolean,
 }
@@ -27,6 +28,7 @@ const useSubscriptionItems = (): [
     currentSubscriptionId: undefined,
     lastSubscriptionId: undefined,
     nextUrl: undefined,
+    clean: true,
     loading: false,
     isFinished: false,
   });
@@ -73,6 +75,7 @@ const useSubscriptionItems = (): [
             currentSubscriptionId: nextPageLogic.currentSubscriptionId,
             lastSubscriptionId: nextPageLogic.currentSubscriptionId,
             nextUrl: nextUrl,
+            clean: false,
             loading: false,
             isFinished: !nextUrl,
           });
@@ -89,6 +92,7 @@ const useSubscriptionItems = (): [
             currentSubscriptionId: nextPageLogic.currentSubscriptionId,
             lastSubscriptionId: nextPageLogic.lastSubscriptionId,
             nextUrl: nextUrl,
+            clean: false,
             loading: false,
             isFinished: !nextUrl,
           });
@@ -131,6 +135,7 @@ const useSubscriptionItems = (): [
         currentSubscriptionId: selectedSubscriptionId,
         lastSubscriptionId: nextPageLogic.currentSubscriptionId,
         nextUrl: undefined,
+        clean: true,
         loading: true,
         isFinished: false,
       })
