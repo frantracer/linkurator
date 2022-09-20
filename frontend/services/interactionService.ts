@@ -9,7 +9,6 @@ export enum InteractionType {
 }
 
 export async function interactWithItem(uuid: string, interactionType: InteractionType) {
-  console.log("Recommend " + uuid);
   const {data, status} = await axios.post(
     configuration.ITEMS_URL + uuid + "/interactions/" + interactionType, {}, {withCredentials: true});
   if (status === 201) {

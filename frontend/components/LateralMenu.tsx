@@ -42,16 +42,6 @@ const Title = () => (
 const LateralMenu = (props: LateralMenuProps) => {
   const [searchValue, setSearchValue] = useState<string>('');
 
-  const LogoutButton = () => {
-    return <CustomButton
-      text={"Logout"}
-      icon={undefined}
-      relatedModalId={undefined}
-      clickAction={() => {
-        window.open(configuration.LOGOUT_URL, '_self')
-      }}/>
-  }
-
   return (
     <ul className="menu p-4 overflow-y-auto w-80 bg-white text-base-content">
       <Title/>
@@ -76,7 +66,14 @@ const LateralMenu = (props: LateralMenuProps) => {
               searchValue={searchValue}/>
       }
       {props.profile && <ProfileMenu profile={props.profile}/>}
-      {props.profile && <LogoutButton/>}
+      {props.profile && <CustomButton
+          text={"Logout"}
+          icon={undefined}
+          relatedModalId={undefined}
+          clickAction={() => {
+            window.open(configuration.LOGOUT_URL, '_self')
+          }}/>
+      }
     </ul>
   );
 };
