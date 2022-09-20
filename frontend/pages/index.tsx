@@ -13,7 +13,6 @@ import TopicVideoCardGrid from "../components/TopicVideoCardGrid";
 import NewTopicModal from "../components/NewTopicModal";
 import {useTopics} from "../hooks/useTopics";
 import EditTopicModal from "../components/EditTopicModal";
-import {Subscription} from "../entities/Subscription";
 import AssignTopicModal from "../components/AssignTopicModal";
 import {Topic} from "../entities/Topic";
 import CustomButton from "../components/CustomButton";
@@ -24,19 +23,21 @@ import FilterOptionsModal from "../components/FilterOptionsModal";
 import useFilters from "../hooks/useFilters";
 
 const Home: NextPage = () => {
-  const [selectedSubscription, setSelectedSubscription] = useState<Subscription | undefined>();
   const profile = useProfile();
   const [subscriptions] = useSubscriptions(profile);
-  const [subscriptionsItems, _, refreshSubscriptionItem] = useSubscriptionItems(selectedSubscription);
+  const [subscriptionsItems, loadingSubscriptionItems, _, refreshSubscriptionItem,
+    selectedSubscriptionId, setSelectedSubscriptionId, subscriptionIsFinished] =
+    useSubscriptionItems();
   const [topics, refreshTopics] = useTopics(profile);
-  const [topicItems, loadingTopicItems, refreshTopicItems, refreshTopicItem, selectedTopicId, setSelectedTopicId,
-    topicIsFinished] = useTopicItems();
+  const [topicItems, loadingTopicItems, refreshTopicItems, refreshTopicItem,
+    selectedTopicId, setSelectedTopicId, topicIsFinished] = useTopicItems();
   const [section, setSection] = useState<SectionType>(SectionType.Topics);
   const [filters, setFilters] = useFilters();
 
-  if (selectedSubscription === undefined && subscriptions.length > 0) {
-    setSelectedSubscription(subscriptions[0]);
+  if (selectedSubscriptionId === undefined && subscriptions.length > 0) {
+    setSelectedSubscriptionId(subscriptions[0].uuid);
   }
+  const selectedSubscription = subscriptions.find(subscription => subscription.uuid === selectedSubscriptionId);
 
   let selectedTopic: Topic | undefined = undefined
   if (selectedTopicId) {
@@ -97,7 +98,9 @@ const Home: NextPage = () => {
                                            topics={topics}
                                            subscription={selectedSubscription}
                                            items={subscriptionsItems}
-                                           filters={filters}/>}
+                                           filters={filters}
+                                           isLoading={loadingSubscriptionItems}
+                                           isFinished={subscriptionIsFinished}/>}
             {section === SectionType.Topics && topics.length > 0 &&
                 <TopicVideoCardGrid topic={selectedTopic}
                                     items={topicItems}
@@ -107,7 +110,7 @@ const Home: NextPage = () => {
                                     subscriptions={subscriptions}
                                     filters={filters}
                                     isLoading={loadingTopicItems}
-                topicIsFinished={topicIsFinished}/>}
+                                    topicIsFinished={topicIsFinished}/>}
             {section === SectionType.Topics && topics.length == 0 &&
                 <CreateFirstTopicHero/>}
           </div>
@@ -119,7 +122,7 @@ const Home: NextPage = () => {
               setSelectedTopicId={setSelectedTopicId}
               subscriptions={subscriptions}
               selectedSubscription={selectedSubscription}
-              setSelectedSubscription={(subscription) => setSelectedSubscription(subscription)}
+              setSelectedSubscription={(subscription) => setSelectedSubscriptionId(subscription?.uuid)}
               profile={profile}
               section={section}
               setSection={(section) => setSection(section)}/>

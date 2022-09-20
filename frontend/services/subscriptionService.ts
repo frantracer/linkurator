@@ -56,14 +56,35 @@ export async function getSubscriptions(): Promise<Subscription[]> {
   return subscriptions
 }
 
-export async function getSubscriptionItems(subscription_uuid: string): Promise<SubscriptionItem[]> {
-  const url = configuration.SUBSCRIPTIONS_URL + subscription_uuid + "/items";
-  const response = await axios.get(url, {withCredentials: true});
-  if (response.status === 200) {
-    return mapJsonToSubscriptionItemsResponse(response.data).elements;
-  } else {
-    throw("Error retrieving subscription items " + response.data);
+export async function getSubscriptionItems(uuid: string): Promise<[SubscriptionItem[], string]> {
+  let items: SubscriptionItem[] = []
+  let nextPage = "";
+  try {
+    const url = configuration.SUBSCRIPTIONS_URL + uuid + "/items?page_size=20";
+    const response = await axios.get(url, {withCredentials: true});
+    if (response.status === 200) {
+      items = mapJsonToSubscriptionItemsResponse(response.data).elements;
+      nextPage = response.data.next_page || "";
+    }
+  } catch (error: any) {
+    console.error("Error retrieving topic items", error);
   }
+  return [items, nextPage];
+}
+
+export async function getSubscriptionItemsFromUrl(url: string): Promise<[SubscriptionItem[], string]> {
+  let items: SubscriptionItem[] = []
+  let nextPage = "";
+  try {
+    const response = await axios.get(url, {withCredentials: true});
+    if (response.status === 200) {
+      items = mapJsonToSubscriptionItemsResponse(response.data).elements;
+      nextPage = response.data.next_page || "";
+    }
+  } catch (error: any) {
+    console.error("Error retrieving topic items from url", error);
+  }
+  return [items, nextPage];
 }
 
 export async function getItem(uuid: string): Promise<SubscriptionItem | undefined> {

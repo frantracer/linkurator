@@ -15,6 +15,8 @@ type SubscriptionVideoCardGridProps = {
   subscription: Subscription | undefined;
   items: SubscriptionItem[];
   filters: Filters;
+  isLoading: boolean;
+  isFinished: boolean;
 }
 
 const SubscriptionVideoCardGrid = (props: SubscriptionVideoCardGridProps) => {
@@ -97,6 +99,16 @@ const SubscriptionVideoCardGrid = (props: SubscriptionVideoCardGridProps) => {
         <div className="flex flex-row flex-wrap m-6">
           {cards}
         </div>
+        {props.isLoading &&
+            <div className="flex justify-center items-center">
+                <button className="btn btn-sm btn-ghost loading">loading</button>
+            </div>
+        }
+        {props.isFinished &&
+            <div className="flex justify-center items-center">
+                <button className="btn btn-sm btn-ghost">No more items to show</button>
+            </div>
+        }
       </div>
   }
 
