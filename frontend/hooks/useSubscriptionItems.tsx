@@ -1,6 +1,8 @@
 import {useEffect, useState} from "react";
 import {SubscriptionItem} from "../entities/SubscriptionItem";
 import {getItem, getSubscriptionItems, getSubscriptionItemsFromUrl} from "../services/subscriptionService";
+import {SUBSCRIPTION_GRID_ID} from "../components/SubscriptionVideoCardGrid";
+import {SectionType} from "../entities/SectionType";
 
 type OptionalSubscriptionId = string | undefined;
 
@@ -14,7 +16,7 @@ type NextPageLogic = {
 }
 
 
-const useSubscriptionItems = (): [
+const useSubscriptionItems = (section: SectionType): [
   SubscriptionItem[],
   boolean,
   () => void,
@@ -103,7 +105,7 @@ const useSubscriptionItems = (): [
   }
 
   useEffect(() => {
-    const drawerContent = document.querySelector('.drawer-content');
+    const drawerContent = document.getElementById(SUBSCRIPTION_GRID_ID);
 
     const handleSubscriptionScroll = () => {
       if (drawerContent && nextPageLogic.currentSubscriptionId && !nextPageLogic.loading && !nextPageLogic.isFinished) {
@@ -122,7 +124,7 @@ const useSubscriptionItems = (): [
     refreshSubscriptionItems();
 
     return () => drawerContent?.removeEventListener('scroll', handleSubscriptionScroll);
-  }, [nextPageLogic]);
+  }, [section, nextPageLogic]);
 
   return [
     subscriptionsItems,
@@ -131,14 +133,7 @@ const useSubscriptionItems = (): [
     (itemId: string) => refreshSubscriptionItem(itemId),
     nextPageLogic.currentSubscriptionId,
     (selectedSubscriptionId: OptionalSubscriptionId) => {
-      setNextPageLogic({
-        currentSubscriptionId: selectedSubscriptionId,
-        lastSubscriptionId: nextPageLogic.currentSubscriptionId,
-        nextUrl: undefined,
-        clean: true,
-        loading: true,
-        isFinished: false,
-      })
+      setNextPageLogic({...nextPageLogic, currentSubscriptionId: selectedSubscriptionId, loading: true})
     },
     nextPageLogic.isFinished
   ];

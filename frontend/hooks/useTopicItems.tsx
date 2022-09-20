@@ -2,6 +2,8 @@ import {useEffect, useState} from "react";
 import {getTopicItems, getTopicItemsFromUrl} from "../services/topicService";
 import {SubscriptionItem} from "../entities/SubscriptionItem";
 import {getItem} from "../services/subscriptionService";
+import {TOPIC_GRID_ID} from "../components/TopicVideoCardGrid";
+import {SectionType} from "../entities/SectionType";
 
 type OptionalTopicId = string | undefined;
 
@@ -14,7 +16,7 @@ type NextPageLogic = {
   isFinished: boolean,
 }
 
-const useTopicItems = (): [
+const useTopicItems = (section: SectionType): [
   SubscriptionItem[],
   boolean,
   () => void,
@@ -104,7 +106,7 @@ const useTopicItems = (): [
   }
 
   useEffect(() => {
-    const drawerContent = document.querySelector('.drawer-content');
+    const drawerContent = document.getElementById(TOPIC_GRID_ID);
 
     const handleTopicScroll = () => {
       if (drawerContent && nextPageLogic.currentTopicId && !nextPageLogic.loading && !nextPageLogic.isFinished) {
@@ -123,7 +125,7 @@ const useTopicItems = (): [
     refreshTopicItems();
 
     return () => drawerContent?.removeEventListener('scroll', handleTopicScroll);
-  }, [nextPageLogic]);
+  }, [section, nextPageLogic]);
 
   return [
     topicItems,

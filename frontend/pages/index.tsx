@@ -24,14 +24,13 @@ import useFilters from "../hooks/useFilters";
 
 const Home: NextPage = () => {
   const profile = useProfile();
+  const [section, setSection] = useState<SectionType>(SectionType.Topics);
   const [subscriptions] = useSubscriptions(profile);
   const [subscriptionsItems, loadingSubscriptionItems, _, refreshSubscriptionItem,
-    selectedSubscriptionId, setSelectedSubscriptionId, subscriptionIsFinished] =
-    useSubscriptionItems();
+    selectedSubscriptionId, setSelectedSubscriptionId, subscriptionIsFinished] = useSubscriptionItems(section);
   const [topics, refreshTopics] = useTopics(profile);
   const [topicItems, loadingTopicItems, refreshTopicItems, refreshTopicItem,
-    selectedTopicId, setSelectedTopicId, topicIsFinished] = useTopicItems();
-  const [section, setSection] = useState<SectionType>(SectionType.Topics);
+    selectedTopicId, setSelectedTopicId, topicIsFinished] = useTopicItems(section);
   const [filters, setFilters] = useFilters();
 
   if (selectedSubscriptionId === undefined && subscriptions.length > 0) {
@@ -92,28 +91,26 @@ const Home: NextPage = () => {
 
         <div className="drawer drawer-mobile">
           <input id={LATERAL_MENU_ID} type="checkbox" className="drawer-toggle"/>
-          <div className="drawer-content">
-            {section === SectionType.Subscriptions &&
-                <SubscriptionVideoCardGrid refreshItem={refreshItem}
-                                           topics={topics}
-                                           subscription={selectedSubscription}
-                                           items={subscriptionsItems}
-                                           filters={filters}
-                                           isLoading={loadingSubscriptionItems}
-                                           isFinished={subscriptionIsFinished}/>}
-            {section === SectionType.Topics && topics.length > 0 &&
-                <TopicVideoCardGrid topic={selectedTopic}
-                                    items={topicItems}
-                                    refreshTopics={refreshTopics}
-                                    refreshItem={refreshItem}
-                                    setSelectedTopicId={setSelectedTopicId}
-                                    subscriptions={subscriptions}
-                                    filters={filters}
-                                    isLoading={loadingTopicItems}
-                                    topicIsFinished={topicIsFinished}/>}
-            {section === SectionType.Topics && topics.length == 0 &&
-                <CreateFirstTopicHero/>}
-          </div>
+          {section === SectionType.Subscriptions &&
+              <SubscriptionVideoCardGrid refreshItem={refreshItem}
+                                         topics={topics}
+                                         subscription={selectedSubscription}
+                                         items={subscriptionsItems}
+                                         filters={filters}
+                                         isLoading={loadingSubscriptionItems}
+                                         isFinished={subscriptionIsFinished}/>}
+          {section === SectionType.Topics && topics.length > 0 &&
+              <TopicVideoCardGrid topic={selectedTopic}
+                                  items={topicItems}
+                                  refreshTopics={refreshTopics}
+                                  refreshItem={refreshItem}
+                                  setSelectedTopicId={setSelectedTopicId}
+                                  subscriptions={subscriptions}
+                                  filters={filters}
+                                  isLoading={loadingTopicItems}
+                                  topicIsFinished={topicIsFinished}/>}
+          {section === SectionType.Topics && topics.length == 0 &&
+              <CreateFirstTopicHero/>}
           <div className="drawer-side">
             <label htmlFor={LATERAL_MENU_ID} className="drawer-overlay"></label>
             <LateralMenu
