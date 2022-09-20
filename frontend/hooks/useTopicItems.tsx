@@ -32,8 +32,7 @@ const useTopicItems = (): [
   });
 
   function refreshTopicItem(itemId: string) {
-    if (itemId in topicItems.map(item => item.uuid)) {
-      console.log("Item found")
+    if (topicItems.map(item => item.uuid).includes(itemId)) {
       getItem(itemId).then((updatedItem) => {
         if (updatedItem) {
           const newTopicItems = topicItems.map((item) => {
@@ -44,7 +43,6 @@ const useTopicItems = (): [
               }
             }
           )
-          console.log("Updating topic items")
           setTopicItems(newTopicItems);
         }
       })
