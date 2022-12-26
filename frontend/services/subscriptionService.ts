@@ -48,6 +48,7 @@ export async function getSubscriptions(): Promise<Subscription[]> {
     if (status === 200) {
       subscriptions = subscriptions.concat(data.elements);
       nextPage = data.next_page || "";
+      nextPage = nextPage.replace("http://localhost:9000", configuration.API_BASE_URL);
     } else {
       console.error("Error retrieving subscriptions", data);
       nextPage = "";
@@ -65,6 +66,7 @@ export async function getSubscriptionItems(uuid: string): Promise<[SubscriptionI
     if (response.status === 200) {
       items = mapJsonToSubscriptionItemsResponse(response.data).elements;
       nextPage = response.data.next_page || "";
+      nextPage = nextPage.replace("http://localhost:9000", configuration.API_BASE_URL);
     }
   } catch (error: any) {
     console.error("Error retrieving topic items", error);
@@ -80,6 +82,7 @@ export async function getSubscriptionItemsFromUrl(url: string): Promise<[Subscri
     if (response.status === 200) {
       items = mapJsonToSubscriptionItemsResponse(response.data).elements;
       nextPage = response.data.next_page || "";
+      nextPage = nextPage.replace("http://localhost:9000", configuration.API_BASE_URL);
     }
   } catch (error: any) {
     console.error("Error retrieving topic items from url", error);

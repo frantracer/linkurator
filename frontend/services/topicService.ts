@@ -17,6 +17,7 @@ export async function getTopics(): Promise<Topic[]> {
     if (status === 200) {
       topics = topics.concat(data.elements);
       nextPage = data.next_page || "";
+      nextPage = nextPage.replace("http://localhost:9000", configuration.API_BASE_URL);
     } else {
       console.error("Error retrieving topics", data);
       nextPage = "";
@@ -69,6 +70,7 @@ export async function getTopicItems(uuid: string): Promise<[SubscriptionItem[], 
     if (response.status === 200) {
       items = mapJsonToTopicItemsResponse(response.data).elements;
       nextPage = response.data.next_page || "";
+      nextPage = nextPage.replace("http://localhost:9000", configuration.API_BASE_URL);
     }
   } catch (error: any) {
     console.error("Error retrieving topic items", error);

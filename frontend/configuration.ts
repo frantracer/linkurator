@@ -14,6 +14,7 @@ const configuration = {
   LOGOUT_URL,
   TOPICS_URL,
   ITEMS_URL,
+  API_BASE_URL,
 };
 
 export default configuration;
