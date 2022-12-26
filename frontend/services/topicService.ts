@@ -86,6 +86,7 @@ export async function getTopicItemsFromUrl(url: string): Promise<[SubscriptionIt
     if (response.status === 200) {
       items = mapJsonToTopicItemsResponse(response.data).elements;
       nextPage = response.data.next_page || "";
+      nextPage = nextPage.replace("http://localhost:9000", configuration.API_BASE_URL);
     }
   } catch (error: any) {
     console.error("Error retrieving topic items from url", error);
