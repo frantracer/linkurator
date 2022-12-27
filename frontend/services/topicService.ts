@@ -2,22 +2,27 @@ import {Topic} from "../entities/Topic";
 import configuration from "../configuration";
 import axios from "axios";
 import {SubscriptionItem} from "../entities/SubscriptionItem";
+import {replaceBaseUrl} from "../utilities/replaceBaseUrl";
 
 export interface TopicResponse {
   elements: Topic[];
-  next_page: string;
+  next_page: URL | null;
+}
+
+interface TopicItemsResponse {
+  elements: SubscriptionItem[];
+  nextPage: URL | null;
 }
 
 export async function getTopics(): Promise<Topic[]> {
   let topics: Topic[] = []
   let nextPage = configuration.TOPICS_URL;
   while (nextPage !== "") {
-    const {data, status} = await axios.get<TopicResponse>(
-      nextPage, {withCredentials: true});
+    const {data, status} = await axios.get(nextPage, {withCredentials: true});
     if (status === 200) {
-      topics = topics.concat(data.elements);
-      nextPage = data.next_page || "";
-      nextPage = nextPage.replace("http://localhost:9000", configuration.API_BASE_URL);
+      const response = mapJsonToTopicResponse(data);
+      topics = topics.concat(response.elements);
+      nextPage = response.next_page?.toString() || "";
     } else {
       console.error("Error retrieving topics", data);
       nextPage = "";
@@ -66,11 +71,11 @@ export async function getTopicItems(uuid: string): Promise<[SubscriptionItem[], 
   let nextPage = "";
   try {
     const url = configuration.TOPICS_URL + uuid + "/items?page_size=20";
-    const response = await axios.get(url, {withCredentials: true});
-    if (response.status === 200) {
-      items = mapJsonToTopicItemsResponse(response.data).elements;
-      nextPage = response.data.next_page || "";
-      nextPage = nextPage.replace("http://localhost:9000", configuration.API_BASE_URL);
+    const {data, status} = await axios.get(url, {withCredentials: true});
+    if (status === 200) {
+      const response = mapJsonToTopicItemsResponse(data);
+      items = response.elements;
+      nextPage = response.nextPage?.toString() || "";
     }
   } catch (error: any) {
     console.error("Error retrieving topic items", error);
@@ -82,11 +87,11 @@ export async function getTopicItemsFromUrl(url: string): Promise<[SubscriptionIt
   let items: SubscriptionItem[] = []
   let nextPage = "";
   try {
-    const response = await axios.get(url, {withCredentials: true});
-    if (response.status === 200) {
-      items = mapJsonToTopicItemsResponse(response.data).elements;
-      nextPage = response.data.next_page || "";
-      nextPage = nextPage.replace("http://localhost:9000", configuration.API_BASE_URL);
+    const {data, status} = await axios.get(url, {withCredentials: true});
+    if (status === 200) {
+      const response = mapJsonToTopicItemsResponse(data);
+      items = response.elements;
+      nextPage = response.nextPage?.toString() || "";
     }
   } catch (error: any) {
     console.error("Error retrieving topic items from url", error);
@@ -104,11 +109,30 @@ export async function assignSubscriptionToTopic(topic_uuid: string, subscription
   }
 }
 
-interface TopicItemsResponse {
-  elements: SubscriptionItem[];
+const mapJsonToTopicResponse = (json: Record<string, any>): TopicResponse => {
+  let nextPage: URL | null = null;
+  if (json.next_page) {
+    nextPage = replaceBaseUrl(new URL(json.next_page), new URL(configuration.API_BASE_URL));
+  }
+
+  return {
+    elements: json.elements.map((element: Record<string, any>) => {
+      return {
+        uuid: element.uuid,
+        name: element.name,
+        subscriptions_ids: element.subscriptions_ids,
+      };
+    }),
+    next_page: nextPage,
+  };
 }
 
 const mapJsonToTopicItemsResponse = (json: Record<string, any>): TopicItemsResponse => {
+  let nextPage: URL | null = null;
+  if (json.next_page) {
+    nextPage = replaceBaseUrl(new URL(json.next_page), new URL(configuration.API_BASE_URL));
+  }
+
   return {
     elements: json.elements.map((element: Record<string, any>) => {
       const published_at = new Date(element.published_at);
@@ -127,6 +151,7 @@ const mapJsonToTopicItemsResponse = (json: Record<string, any>): TopicItemsRespo
         viewed: element.viewed,
         hidden: element.hidden,
       };
-    })
+    }),
+    nextPage: nextPage,
   };
 }
