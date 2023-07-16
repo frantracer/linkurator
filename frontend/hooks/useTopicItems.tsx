@@ -110,7 +110,7 @@ const useTopicItems = (section: SectionType): [
 
     const handleTopicScroll = () => {
       if (drawerContent && nextPageLogic.currentTopicId && !nextPageLogic.loading && !nextPageLogic.isFinished) {
-        if (drawerContent.scrollTop + drawerContent.clientHeight >= drawerContent.scrollHeight) {
+        if ((drawerContent.scrollTop + drawerContent.clientHeight) / drawerContent.scrollHeight >= 0.90) {
           setNextPageLogic({...nextPageLogic, loading: true});
         }
       }

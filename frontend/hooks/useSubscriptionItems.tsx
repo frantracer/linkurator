@@ -109,7 +109,7 @@ const useSubscriptionItems = (section: SectionType): [
 
     const handleSubscriptionScroll = () => {
       if (drawerContent && nextPageLogic.currentSubscriptionId && !nextPageLogic.loading && !nextPageLogic.isFinished) {
-        if (drawerContent.scrollTop + drawerContent.clientHeight >= drawerContent.scrollHeight) {
+        if ((drawerContent.scrollTop + drawerContent.clientHeight) / drawerContent.scrollHeight >= 0.90) {
           setNextPageLogic({...nextPageLogic, loading: true});
         }
       }
