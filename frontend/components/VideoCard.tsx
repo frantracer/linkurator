@@ -28,7 +28,7 @@ const VideoCard = (props: VideoCardProps) => {
              onClick={() => window.open(props.item.url, "_blank")}/>
       </figure>
       <div className="card-body">
-        <h2 className="card-title">{props.item.name}</h2>
+        <h2 className="card-title" onClick={() => window.open(props.item.url, "_blank")}>{props.item.name}</h2>
         {props.subscription &&
             <div className="flex items-center">
                 <img className="w-4 h-4 inline-block mx-1 rounded" src={props.subscription.thumbnail}
