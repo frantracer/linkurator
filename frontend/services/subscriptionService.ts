@@ -119,3 +119,16 @@ export async function getItem(uuid: string): Promise<SubscriptionItem | undefine
   }
   return undefined;
 }
+
+export async function refreshSubscription(uuid: string): Promise<boolean> {
+  try {
+    const url = configuration.SUBSCRIPTIONS_URL + uuid + "/refresh";
+    const response = await axios.post(url, {}, {withCredentials: true});
+    if (response.status === 200) {
+      return true;
+    }
+  } catch (error: any) {
+    console.error("Error refreshing subscription", error);
+  }
+  return false;
+}

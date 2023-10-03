@@ -8,6 +8,7 @@ import {AssignTopicModalId} from "./AssignTopicModal";
 import {LATERAL_MENU_ID} from "../utilities/hideLateralMenu";
 import {Filters, isItemShown} from "../entities/Filters";
 import {FilterOptionsModalId} from "./FilterOptionsModal";
+import {refreshSubscription} from "../services/subscriptionService";
 
 type SubscriptionVideoCardGridProps = {
   refreshItem: (itemId: string) => void,
@@ -94,6 +95,13 @@ const SubscriptionVideoCardGrid = (props: SubscriptionVideoCardGridProps) => {
                     relatedModalId={FilterOptionsModalId}
                     clickAction={async () => {
                     }}/>
+                  <CustomButton
+                      text={"Refresh"}
+                      icon={IconForButton.refresh}
+                      relatedModalId={undefined}
+                      clickAction={async () => {
+                        await refreshSubscription(current_subscription.uuid)
+                      }}/>
                 </ul>
               </div>
             </div>
