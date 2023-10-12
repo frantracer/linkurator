@@ -1,26 +1,20 @@
 import React, {useState} from "react";
 import {Profile} from "../hooks/useProfile";
 import LateralSearchBar from "./LateralSearchBar";
-import LateralSubscriptionList from "./LateralSubscriptionList";
 import ProfileMenu from "./ProfileMenu";
-import {SectionType} from "../entities/SectionType";
-import SectionDropdown from "./SectionDropdown";
 import LateralTopicList from "./LateralTopicList";
 import {Topic} from "../entities/Topic";
 import {Subscription} from "../entities/Subscription";
 import CustomButton from "./CustomButton";
-import {configuration} from "../configuration";
+import {configuration, paths} from "../configuration";
+import RedirectButton from "./RedirectButton";
 
-type LateralMenuProps = {
+type TopicLateralMenuProps = {
   profile: Profile;
   topics: Topic[];
   selectedTopic: Topic | undefined;
   setSelectedTopicId: (topicId: string | undefined) => void;
   subscriptions: Subscription[];
-  selectedSubscription: Subscription | undefined;
-  setSelectedSubscription: (subscription: Subscription | undefined) => void;
-  section: SectionType;
-  setSection: (section: SectionType) => void;
 };
 
 const Title = () => (
@@ -39,32 +33,23 @@ const Title = () => (
   </div>
 );
 
-const LateralMenu = (props: LateralMenuProps) => {
+const LateralMenu = (props: TopicLateralMenuProps) => {
   const [searchValue, setSearchValue] = useState<string>('');
 
   return (
     <ul className="menu p-4 overflow-y-auto w-80 bg-white text-base-content">
       <Title/>
-      {props.profile && <SectionDropdown section={props.section} setSection={props.setSection}/>}
+      <RedirectButton to={paths.SUBSCRIPTIONS}>Switch to subscriptions</RedirectButton>
       {props.profile &&
           <LateralSearchBar
               searchBarQuery={searchValue}
               setSearchBarQuery={setSearchValue}/>
       }
-      {props.section === SectionType.Subscriptions && props.profile &&
-          <LateralSubscriptionList
-              searchValue={searchValue}
-              subscriptions={props.subscriptions}
-              setSelectedSubscription={props.setSelectedSubscription}
-              selectedSubscription={props.selectedSubscription}/>
-      }
-      {props.section === SectionType.Topics && props.profile &&
-          <LateralTopicList
-              topics={props.topics}
-              setSelectedTopicId={props.setSelectedTopicId}
-              selectedTopic={props.selectedTopic}
-              searchValue={searchValue}/>
-      }
+      <LateralTopicList
+          topics={props.topics}
+          setSelectedTopicId={props.setSelectedTopicId}
+          selectedTopic={props.selectedTopic}
+          searchValue={searchValue}/>
       {props.profile && <ProfileMenu profile={props.profile}/>}
       {props.profile && <CustomButton
           text={"Logout"}

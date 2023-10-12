@@ -1,5 +1,5 @@
 import {rest} from "msw";
-import configuration from "../../configuration";
+import {configuration} from "../../configuration";
 import {Profile} from "../../hooks/useProfile";
 import {SubscriptionResponse} from "../../hooks/useSubscriptions";
 import {server} from "../../mocks/tests";

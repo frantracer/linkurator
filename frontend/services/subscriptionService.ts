@@ -1,4 +1,4 @@
-import configuration from "../configuration";
+import {configuration} from "../configuration";
 import axios from "axios";
 import {Subscription} from "../entities/Subscription";
 import {SubscriptionItem} from "../entities/SubscriptionItem";

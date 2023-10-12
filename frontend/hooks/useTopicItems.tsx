@@ -16,7 +16,7 @@ type NextPageLogic = {
   isFinished: boolean,
 }
 
-const useTopicItems = (section: SectionType): [
+const useTopicItems = (): [
   SubscriptionItem[],
   boolean,
   () => void,
@@ -125,7 +125,7 @@ const useTopicItems = (section: SectionType): [
     refreshTopicItems();
 
     return () => drawerContent?.removeEventListener('scroll', handleTopicScroll);
-  }, [section, nextPageLogic]);
+  }, [nextPageLogic]);
 
   return [
     topicItems,

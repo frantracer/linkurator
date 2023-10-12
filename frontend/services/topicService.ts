@@ -1,5 +1,5 @@
 import {Topic} from "../entities/Topic";
-import configuration from "../configuration";
+import {configuration} from "../configuration";
 import axios from "axios";
 import {SubscriptionItem} from "../entities/SubscriptionItem";
 import {replaceBaseUrl} from "../utilities/replaceBaseUrl";

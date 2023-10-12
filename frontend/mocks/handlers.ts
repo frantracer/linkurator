@@ -1,5 +1,5 @@
-import { rest } from "msw";
-import configuration from "../configuration";
+import {rest} from "msw";
+import {configuration} from "../configuration";
 import subscriptionsList from "./fixtures/subscriptionsList.json";
 import profile from "./fixtures/profile.json";
 

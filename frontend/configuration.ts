@@ -17,4 +17,11 @@ const configuration = {
   API_BASE_URL,
 };
 
-export default configuration;
+const paths = {
+  HOME: '/',
+  LOGIN: '/login',
+  TOPICS: '/topics',
+  SUBSCRIPTIONS: '/subscriptions',
+}
+
+export { configuration, paths };

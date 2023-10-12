@@ -1,132 +1,22 @@
 import type {NextPage} from "next";
 import Head from "next/head";
-import React, {useState} from "react";
+import React, {useEffect} from "react";
 import "tailwindcss/tailwind.css";
-import LateralMenu from "../components/LateralMenu";
-import useSubscriptions from "../hooks/useSubscriptions";
-import useSubscriptionItems from "../hooks/useSubscriptionItems";
 import useProfile from "../hooks/useProfile";
-import SubscriptionVideoCardGrid from "../components/SubscriptionVideoCardGrid";
-import {SectionType} from "../entities/SectionType";
-import useTopicItems from "../hooks/useTopicItems";
-import TopicVideoCardGrid from "../components/TopicVideoCardGrid";
-import NewTopicModal from "../components/NewTopicModal";
-import {useTopics} from "../hooks/useTopics";
-import EditTopicModal from "../components/EditTopicModal";
-import AssignTopicModal from "../components/AssignTopicModal";
-import {Topic} from "../entities/Topic";
-import CustomButton from "../components/CustomButton";
-import configuration from "../configuration";
-import CreateFirstTopicHero from "../components/CreateFirstTopicHero";
-import {LATERAL_MENU_ID} from "../utilities/hideLateralMenu";
-import FilterOptionsModal from "../components/FilterOptionsModal";
-import useFilters from "../hooks/useFilters";
+import {paths} from "../configuration";
+import {useRouter} from "next/router";
 
 const Home: NextPage = () => {
+  const router = useRouter();
   const profile = useProfile();
-  const [section, setSection] = useState<SectionType>(SectionType.Topics);
-  const [subscriptions] = useSubscriptions(profile);
-  const [subscriptionsItems, loadingSubscriptionItems, _, refreshSubscriptionItem,
-    selectedSubscriptionId, setSelectedSubscriptionId, subscriptionIsFinished] = useSubscriptionItems(section);
-  const [topics, refreshTopics] = useTopics(profile);
-  const [topicItems, loadingTopicItems, refreshTopicItems, refreshTopicItem,
-    selectedTopicId, setSelectedTopicId, topicIsFinished] = useTopicItems(section);
-  const [filters, setFilters] = useFilters();
 
-  if (selectedSubscriptionId === undefined && subscriptions.length > 0) {
-    setSelectedSubscriptionId(subscriptions[0].uuid);
-  }
-  const selectedSubscription = subscriptions.find(subscription => subscription.uuid === selectedSubscriptionId);
-
-  let selectedTopic: Topic | undefined = undefined
-  if (selectedTopicId) {
-    selectedTopic = topics.find(t => t.uuid === selectedTopicId);
-    if (!selectedTopic) {
-      setSelectedTopicId(undefined);
+  useEffect(() => {
+    if (profile?.is_logged_in) {
+      router.push(paths.TOPICS)
+    } else if(profile?.is_logged_in === false) {
+      router.push(paths.LOGIN)
     }
-  } else if (topics.length > 0) {
-    setSelectedTopicId(topics[0].uuid);
-  }
-
-  const LoginButton = () => {
-    return <CustomButton
-      text={"Login"}
-      icon={undefined}
-      relatedModalId={undefined}
-      clickAction={() => {
-        window.open(configuration.LOGIN_URL, '_self')
-      }}/>
-  }
-
-  const refreshItem = (item_uuid: string) => {
-    refreshSubscriptionItem(item_uuid)
-    refreshTopicItem(item_uuid)
-  }
-
-  let body =
-    <main className="hero min-h-screen bg-gray-200 text-black">
-      <div className="hero-content text-center">
-        <div className="max-w-md">
-          <h1 className="text-5xl font-bold py-5">Decide the content you want to see</h1>
-          <p className="py-2">We do not use any algorithm to recommend you what to see.</p>
-          <p className="py-2">We provide the tools you need to find the content you seek.</p>
-          <LoginButton/>
-        </div>
-      </div>
-    </main>
-  if (profile) {
-    body =
-      <main className="flex bg-gray-100">
-        <NewTopicModal refreshTopics={refreshTopics} subscriptions={subscriptions}/>
-        <FilterOptionsModal filters={filters} setFilters={setFilters}/>
-        {selectedSubscription &&
-            <AssignTopicModal topics={topics}
-                              subscription={selectedSubscription}
-                              refreshTopics={refreshTopics}/>}
-        {selectedTopic &&
-            <EditTopicModal refreshTopics={refreshTopics}
-                            subscriptions={subscriptions}
-                            topic={selectedTopic}
-                            refreshTopicItems={refreshTopicItems}/>}
-
-        <div className="drawer drawer-mobile">
-          <input id={LATERAL_MENU_ID} type="checkbox" className="drawer-toggle"/>
-          {section === SectionType.Subscriptions &&
-              <SubscriptionVideoCardGrid refreshItem={refreshItem}
-                                         topics={topics}
-                                         subscription={selectedSubscription}
-                                         items={subscriptionsItems}
-                                         filters={filters}
-                                         isLoading={loadingSubscriptionItems}
-                                         isFinished={subscriptionIsFinished}/>}
-          {section === SectionType.Topics && topics.length > 0 &&
-              <TopicVideoCardGrid topic={selectedTopic}
-                                  items={topicItems}
-                                  refreshTopics={refreshTopics}
-                                  refreshItem={refreshItem}
-                                  setSelectedTopicId={setSelectedTopicId}
-                                  subscriptions={subscriptions}
-                                  filters={filters}
-                                  isLoading={loadingTopicItems}
-                                  topicIsFinished={topicIsFinished}/>}
-          {section === SectionType.Topics && topics.length == 0 &&
-              <CreateFirstTopicHero/>}
-          <div className="drawer-side">
-            <label htmlFor={LATERAL_MENU_ID} className="drawer-overlay"></label>
-            <LateralMenu
-              topics={topics}
-              selectedTopic={selectedTopic}
-              setSelectedTopicId={setSelectedTopicId}
-              subscriptions={subscriptions}
-              selectedSubscription={selectedSubscription}
-              setSelectedSubscription={(subscription) => setSelectedSubscriptionId(subscription?.uuid)}
-              profile={profile}
-              section={section}
-              setSection={(section) => setSection(section)}/>
-          </div>
-        </div>
-      </main>
-  }
+  }, [router, profile]);
 
   return (
     <div>
@@ -135,7 +25,6 @@ const Home: NextPage = () => {
         <meta name="description" content="Linkurator"/>
         <link rel="icon" href="/logo_v1_fav.png"/>
       </Head>
-      {body}
     </div>
   );
 };
