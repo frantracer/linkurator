@@ -3,6 +3,8 @@ import {SubscriptionItem} from "../entities/SubscriptionItem";
 import {readableAgoUnits} from "../utilities/dateFormatter";
 import {InteractionType, interactWithItem, removeInteractionWithItem,} from "../services/interactionService";
 import {CustomSwapButton, CustomSwapButtonIcon} from "./CustomSwapButton";
+import {paths} from "../configuration";
+import Link from "next/link";
 
 type VideoCardProps = {
   item: SubscriptionItem;
@@ -20,20 +22,22 @@ const VideoCard = (props: VideoCardProps) => {
   }
 
   return (
-    <div className="card card-compact w-64 md:w-80 text-black shadow-xl hover:scale-105 cursor-pointer">
+    <div className="card card-compact w-64 md:w-80 text-black shadow-xl hover:scale-105">
       <figure>
-        <img className="w-full"
+        <img className="w-full cursor-pointer"
              src={props.item.thumbnail}
              alt={props.item.name}
              onClick={() => window.open(props.item.url, "_blank")}/>
       </figure>
       <div className="card-body">
-        <h2 className="card-title" onClick={() => window.open(props.item.url, "_blank")}>{props.item.name}</h2>
+        <h2 className="card-title cursor-pointer" onClick={() => window.open(props.item.url, "_blank")}>
+          {props.item.name}
+        </h2>
         {props.subscription &&
-            <div className="flex items-center">
+            <div className="flex items-center cursor-pointer">
                 <img className="w-4 h-4 inline-block mx-1 rounded" src={props.subscription.thumbnail}
                      alt={props.subscription.name}/>
-                <p>{props.subscription.name}</p>
+                <Link href={paths.SUBSCRIPTIONS + "/" + props.subscription.uuid}>{props.subscription.name}</Link>
             </div>}
         <div className="flex flex-column">
           <p>{readableAgoUnits(props.item.published_at)}</p>
