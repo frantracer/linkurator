@@ -1,22 +1,20 @@
 import {MenuItem} from "./MenuItem";
 import {Subscription} from "../entities/Subscription";
-import {scrollToDrawerContentTop} from "../utilities/scrollToDrawerContentTop";
-import {hideLateralMenu} from "../utilities/hideLateralMenu";
+import {useRouter} from "next/router";
+import {paths} from "../configuration";
 
 type LateralItemListProps = {
   subscriptions: Subscription[];
-  setSelectedSubscription: (subscription: Subscription | undefined) => void;
   selectedSubscription: Subscription | undefined;
   searchValue: string;
 }
 
 const LateralSubscriptionList = (props: LateralItemListProps) => {
+  const router = useRouter()
   const handleClick = (subscriptionId: string) => {
     const subscription = props.subscriptions.find((subscription) => subscription.uuid === subscriptionId);
     if (subscription) {
-      props.setSelectedSubscription(subscription);
-      scrollToDrawerContentTop();
-      hideLateralMenu();
+      router.push(paths.SUBSCRIPTIONS + "/" + subscription.uuid)
     }
   }
 

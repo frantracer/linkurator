@@ -12,7 +12,6 @@ const Home: NextPage = () => {
   const profile = useProfile();
 
   useEffect(() => {
-    console.log(profile)
     if (profile?.is_logged_in) {
       router.push(paths.TOPICS)
     }

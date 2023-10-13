@@ -55,13 +55,11 @@ const LateralMenu = (props: LateralMenuProps) => {
           <LateralSubscriptionList
               searchValue={searchValue}
               subscriptions={props.subscriptions}
-              setSelectedSubscription={props.setSelectedSubscription}
               selectedSubscription={props.selectedSubscription}/>
       }
       {props.section === SectionType.Topics && props.profile &&
           <LateralTopicList
               topics={props.topics}
-              setSelectedTopicId={props.setSelectedTopicId}
               selectedTopic={props.selectedTopic}
               searchValue={searchValue}/>
       }

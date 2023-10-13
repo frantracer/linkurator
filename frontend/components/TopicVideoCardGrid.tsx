@@ -9,6 +9,7 @@ import {Subscription} from "../entities/Subscription";
 import {LATERAL_MENU_ID} from "../utilities/hideLateralMenu";
 import {FilterOptionsModalId} from "./FilterOptionsModal";
 import {Filters, isItemShown} from "../entities/Filters";
+import SubscriptionTag from "./SubscriptionTag";
 
 type TopicVideoCardGridProps = {
   refreshItem: (itemId: string) => void,
@@ -35,10 +36,7 @@ const TopicVideoCardGrid = (props: TopicVideoCardGridProps) => {
         return current_topic.subscriptions_ids.includes(subscription.uuid)
       })
       .map(subscription => {
-        return <div key={subscription.uuid} className="badge badge-outline mx-2">
-          <img className="w-4 h-4 inline-block mx-1 rounded" src={subscription.thumbnail} alt={subscription.name}/>
-          <p>{subscription.name}</p>
-        </div>
+        return <SubscriptionTag key={subscription.uuid} subscription={subscription}/>
       });
   }
 
@@ -113,7 +111,9 @@ const TopicVideoCardGrid = (props: TopicVideoCardGridProps) => {
               </div>
             </div>
           </div>
-          {subscriptionTags}
+          <div>
+            {subscriptionTags}
+          </div>
           <div className="flex flex-row flex-wrap m-6">
             {cards}
           </div>

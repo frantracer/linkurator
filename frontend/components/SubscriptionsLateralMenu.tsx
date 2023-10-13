@@ -12,7 +12,6 @@ type LateralMenuProps = {
   profile: Profile;
   subscriptions: Subscription[];
   selectedSubscription: Subscription | undefined;
-  setSelectedSubscription: (subscription: Subscription | undefined) => void;
 };
 
 const Title = () => (
@@ -47,7 +46,6 @@ const LateralMenu = (props: LateralMenuProps) => {
           <LateralSubscriptionList
               searchValue={searchValue}
               subscriptions={props.subscriptions}
-              setSelectedSubscription={props.setSelectedSubscription}
               selectedSubscription={props.selectedSubscription}/>
       }
       {props.profile && <ProfileMenu profile={props.profile}/>}

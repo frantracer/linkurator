@@ -9,6 +9,7 @@ import {LATERAL_MENU_ID} from "../utilities/hideLateralMenu";
 import {Filters, isItemShown} from "../entities/Filters";
 import {FilterOptionsModalId} from "./FilterOptionsModal";
 import {refreshSubscription} from "../services/subscriptionService";
+import TopicTag from "./TopicTag";
 
 type SubscriptionVideoCardGridProps = {
   refreshItem: (itemId: string) => void,
@@ -49,11 +50,7 @@ const SubscriptionVideoCardGrid = (props: SubscriptionVideoCardGridProps) => {
       .filter(topic => {
         return topic.subscriptions_ids.includes(current_subscription.uuid)
       })
-      .map(topic => {
-        return <div key={topic.uuid} className="badge badge-outline mx-2">
-          {topic.name}
-        </div>
-      });
+      .map(topic => <TopicTag key={topic.uuid} topic={topic}/>);
 
     content =
       <div id={SUBSCRIPTION_GRID_ID} className="drawer-content">

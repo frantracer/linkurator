@@ -18,6 +18,8 @@ import {paths} from "../../configuration";
 const SubscriptionsPage: NextPage = () => {
   const router = useRouter()
 
+  const subscriptionIdFromQuery: string | undefined = router.query.id ? router.query.id[0] as string : undefined;
+
   const profile = useProfile();
   const [subscriptions] = useSubscriptions(profile);
   const [subscriptionsItems, loadingSubscriptionItems, _, refreshSubscriptionItem,
@@ -35,11 +37,22 @@ const SubscriptionsPage: NextPage = () => {
   }
 
   useEffect(() => {
-    console.log(profile)
     if (profile?.is_logged_in === false) {
       router.push(paths.LOGIN)
+    } else {
+      if (subscriptionIdFromQuery) {
+        if (subscriptions.length > 0 && subscriptions.find(t => t.uuid === subscriptionIdFromQuery) === undefined) {
+          router.push(paths.SUBSCRIPTIONS)
+        } else {
+          setSelectedSubscriptionId(subscriptionIdFromQuery);
+        }
+      } else if (selectedSubscriptionId) {
+        router.push(paths.SUBSCRIPTIONS + "/" + selectedSubscriptionId)
+      } else if (topics.length > 0) {
+        router.push(paths.SUBSCRIPTIONS + "/" + subscriptions[0].uuid)
+      }
     }
-  }, [router, profile]);
+  }, [subscriptionIdFromQuery, router, profile, subscriptions]);
 
   return (
     <div>
@@ -66,7 +79,6 @@ const SubscriptionsPage: NextPage = () => {
             <SubscriptionsLateralMenu
               subscriptions={subscriptions}
               selectedSubscription={selectedSubscription}
-              setSelectedSubscription={(subscription) => setSelectedSubscriptionId(subscription?.uuid)}
               profile={profile}/>
           </div>
         </div>

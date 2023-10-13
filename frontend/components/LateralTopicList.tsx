@@ -3,24 +3,21 @@ import {NewTopicModalId} from "./NewTopicModal";
 import React from "react";
 import CustomButton, {IconForButton} from "./CustomButton";
 import {Topic} from "../entities/Topic";
-import {scrollToDrawerContentTop} from "../utilities/scrollToDrawerContentTop";
-import {hideLateralMenu} from "../utilities/hideLateralMenu";
+import {paths} from "../configuration";
+import {useRouter} from "next/router";
 
 type LateralTopicListProps = {
   topics: Topic[];
-  setSelectedTopicId: (topicId: string | undefined) => void;
   selectedTopic: Topic | undefined;
   searchValue: string;
 }
 
 const LateralTopicList = (props: LateralTopicListProps) => {
-
+  const router = useRouter()
   const handleClick = (topicId: string) => {
     const topic = props.topics.find((topic) => topic.uuid === topicId);
     if (topic) {
-      props.setSelectedTopicId(topic.uuid);
-      scrollToDrawerContentTop();
-      hideLateralMenu();
+      router.push(paths.TOPICS + "/" + topic.uuid)
     }
   }
 

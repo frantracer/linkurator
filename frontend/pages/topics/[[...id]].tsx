@@ -20,6 +20,8 @@ import {useRouter} from "next/router";
 const Home: NextPage = () => {
   const router = useRouter()
 
+  const topicIdFromQuery: string | undefined = router.query.id ? router.query.id[0] as string : undefined;
+
   const profile = useProfile();
   const [subscriptions] = useSubscriptions(profile);
   const [topics, refreshTopics] = useTopics(profile);
@@ -27,26 +29,29 @@ const Home: NextPage = () => {
     selectedTopicId, setSelectedTopicId, topicIsFinished] = useTopicItems();
   const [filters, setFilters] = useFilters();
 
-  let selectedTopic: Topic | undefined = undefined
-  if (selectedTopicId) {
-    selectedTopic = topics.find(t => t.uuid === selectedTopicId);
-    if (!selectedTopic) {
-      setSelectedTopicId(undefined);
-    }
-  } else if (topics.length > 0) {
-    setSelectedTopicId(topics[0].uuid);
-  }
+  let selectedTopic: Topic | undefined = topics.find(t => t.uuid === selectedTopicId);
 
   const refreshItem = (item_uuid: string) => {
     refreshTopicItem(item_uuid)
   }
 
   useEffect(() => {
-    console.log(profile)
     if (profile?.is_logged_in === false) {
       router.push(paths.LOGIN)
+    } else {
+      if (topicIdFromQuery) {
+        if (topics.length > 0 && topics.find(t => t.uuid === topicIdFromQuery) === undefined) {
+          router.push(paths.TOPICS)
+        } else {
+          setSelectedTopicId(topicIdFromQuery);
+        }
+      } else if (selectedTopicId) {
+        router.push(paths.TOPICS + "/" + selectedTopicId)
+      } else if (topics.length > 0) {
+        router.push(paths.TOPICS + "/" + topics[0].uuid)
+      }
     }
-  }, [router, profile]);
+  }, [topicIdFromQuery, router, profile, topics]);
 
   return (
     <div>
@@ -80,7 +85,6 @@ const Home: NextPage = () => {
             <TopicsLateralMenu
               topics={topics}
               selectedTopic={selectedTopic}
-              setSelectedTopicId={setSelectedTopicId}
               subscriptions={subscriptions}
               profile={profile}
             />
