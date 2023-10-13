@@ -5,6 +5,7 @@ import CustomButton, {IconForButton} from "./CustomButton";
 import {Topic} from "../entities/Topic";
 import {paths} from "../configuration";
 import {useRouter} from "next/router";
+import {hideLateralMenu} from "../utilities/hideLateralMenu";
 
 type LateralTopicListProps = {
   topics: Topic[];
@@ -17,6 +18,7 @@ const LateralTopicList = (props: LateralTopicListProps) => {
   const handleClick = (topicId: string) => {
     const topic = props.topics.find((topic) => topic.uuid === topicId);
     if (topic) {
+      hideLateralMenu()
       router.push(paths.TOPICS + "/" + topic.uuid)
     }
   }

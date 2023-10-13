@@ -2,6 +2,7 @@ import {MenuItem} from "./MenuItem";
 import {Subscription} from "../entities/Subscription";
 import {useRouter} from "next/router";
 import {paths} from "../configuration";
+import {hideLateralMenu} from "../utilities/hideLateralMenu";
 
 type LateralItemListProps = {
   subscriptions: Subscription[];
@@ -14,6 +15,7 @@ const LateralSubscriptionList = (props: LateralItemListProps) => {
   const handleClick = (subscriptionId: string) => {
     const subscription = props.subscriptions.find((subscription) => subscription.uuid === subscriptionId);
     if (subscription) {
+      hideLateralMenu()
       router.push(paths.SUBSCRIPTIONS + "/" + subscription.uuid)
     }
   }
