@@ -55,7 +55,7 @@ const SubscriptionVideoCardGrid = (props: SubscriptionVideoCardGridProps) => {
     content =
       <div id={SUBSCRIPTION_GRID_ID} className="drawer-content">
         <div className="w-full">
-          <div className="sticky top-0 z-10 bg-white flex flex-row justify-center items-center">
+          <div className="sticky top-0 z-10 bg-white flex flex-row justify-between">
             <div className="flex-none">
               <CustomButton
                 text={""}
@@ -65,13 +65,14 @@ const SubscriptionVideoCardGrid = (props: SubscriptionVideoCardGridProps) => {
                 clickAction={() => {
                 }}/>
             </div>
-            <div className="flex-auto">
+            <div className="flex items-center flex-row">
+              <img className="h-12 mx-1 my-1 mb-2 rounded" src={current_subscription.thumbnail} alt={current_subscription.name + " icon"} />
               <h1 onClick={() => window.open(current_subscription.url, "_blank")}
-                  className="text-2xl md:text-4xl font-bold text-center text-gray-800 cursor-pointer hover:underline">
+                  className="text-2xl md:text-4xl font-bold text-gray-800 cursor-pointer hover:underline">
                 {current_subscription.name}
               </h1>
             </div>
-            <div className="flex-none">
+            <div className="flex-none items-end">
               <div className="dropdown dropdown-end">
                 <CustomButton
                   text={""}
