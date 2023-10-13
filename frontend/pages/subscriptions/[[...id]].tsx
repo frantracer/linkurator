@@ -64,7 +64,6 @@ const SubscriptionsPage: NextPage = () => {
           <div className="drawer-side">
             <label htmlFor={LATERAL_MENU_ID} className="drawer-overlay"></label>
             <SubscriptionsLateralMenu
-              topics={topics}
               subscriptions={subscriptions}
               selectedSubscription={selectedSubscription}
               setSelectedSubscription={(subscription) => setSelectedSubscriptionId(subscription?.uuid)}
@@ -73,6 +72,7 @@ const SubscriptionsPage: NextPage = () => {
         </div>
       </main>
     </div>
+
   );
 };
 

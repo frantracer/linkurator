@@ -1,15 +1,26 @@
 import {useRouter} from 'next/router';
+import React, {FC, ReactNode, MouseEvent} from 'react';
 
-const RedirectButton = ({ to, children }) => {
-    const router = useRouter();
+interface RedirectButtonProps {
+  to: string;
+  children: ReactNode;
+}
 
-    const handleClick = () => {
-        router.push(to);
-    };
+const RedirectButton: FC<RedirectButtonProps> = ({to, children}) => {
+  const router = useRouter();
 
-    let className = "btn btn-primary gap-2 m-1";
+  const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+    router.push(to);
+  };
 
-    return <button className={className} onClick={handleClick}>{children}</button>;
+  const className = "btn btn-primary gap-2 m-1";
+
+  return (
+    <button className={className} onClick={handleClick}>
+      {children}
+    </button>
+  );
 };
 
 export default RedirectButton;
