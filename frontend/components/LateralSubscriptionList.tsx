@@ -3,6 +3,7 @@ import {Subscription} from "../entities/Subscription";
 import {useRouter} from "next/router";
 import {paths} from "../configuration";
 import {hideLateralMenu} from "../utilities/hideLateralMenu";
+import {scrollToDrawerContentTop} from "../utilities/scrollToDrawerContentTop";
 
 type LateralItemListProps = {
   subscriptions: Subscription[];
@@ -16,6 +17,7 @@ const LateralSubscriptionList = (props: LateralItemListProps) => {
     const subscription = props.subscriptions.find((subscription) => subscription.uuid === subscriptionId);
     if (subscription) {
       hideLateralMenu()
+      scrollToDrawerContentTop()
       router.push(paths.SUBSCRIPTIONS + "/" + subscription.uuid)
     }
   }

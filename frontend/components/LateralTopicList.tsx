@@ -6,6 +6,7 @@ import {Topic} from "../entities/Topic";
 import {paths} from "../configuration";
 import {useRouter} from "next/router";
 import {hideLateralMenu} from "../utilities/hideLateralMenu";
+import {scrollToDrawerContentTop} from "../utilities/scrollToDrawerContentTop";
 
 type LateralTopicListProps = {
   topics: Topic[];
@@ -19,6 +20,7 @@ const LateralTopicList = (props: LateralTopicListProps) => {
     const topic = props.topics.find((topic) => topic.uuid === topicId);
     if (topic) {
       hideLateralMenu()
+      scrollToDrawerContentTop()
       router.push(paths.TOPICS + "/" + topic.uuid)
     }
   }
