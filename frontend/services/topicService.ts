@@ -4,12 +4,12 @@ import axios from "axios";
 import {SubscriptionItem} from "../entities/SubscriptionItem";
 import {replaceBaseUrl} from "../utilities/replaceBaseUrl";
 
-export interface TopicResponse {
+export type TopicResponse = {
   elements: Topic[];
   next_page: URL | undefined;
 }
 
-interface TopicItemsResponse {
+export type TopicItemsResponse = {
   elements: SubscriptionItem[];
   nextPage: URL | undefined;
 }
@@ -66,37 +66,37 @@ export async function deleteTopic(uuid: string) {
   }
 }
 
-export async function getTopicItems(uuid: string): Promise<[SubscriptionItem[], string]> {
+export async function getTopicItems(uuid: string): Promise<TopicItemsResponse> {
   let items: SubscriptionItem[] = []
-  let nextPage = "";
+  let nextPage = undefined;
   try {
     const url = configuration.TOPICS_URL + uuid + "/items?page_size=20";
     const {data, status} = await axios.get(url, {withCredentials: true});
     if (status === 200) {
       const response = mapJsonToTopicItemsResponse(data);
       items = response.elements;
-      nextPage = response.nextPage?.toString() || "";
+      nextPage = response.nextPage;
     }
   } catch (error: any) {
     console.error("Error retrieving topic items", error);
   }
-  return [items, nextPage];
+  return {elements: items, nextPage: nextPage};
 }
 
-export async function getTopicItemsFromUrl(url: string): Promise<[SubscriptionItem[], string]> {
+export async function getTopicItemsFromUrl(url: string): Promise<TopicItemsResponse> {
   let items: SubscriptionItem[] = []
-  let nextPage = "";
+  let nextPage = undefined;
   try {
     const {data, status} = await axios.get(url, {withCredentials: true});
     if (status === 200) {
       const response = mapJsonToTopicItemsResponse(data);
       items = response.elements;
-      nextPage = response.nextPage?.toString() || "";
+      nextPage = response.nextPage;
     }
   } catch (error: any) {
     console.error("Error retrieving topic items from url", error);
   }
-  return [items, nextPage];
+  return {elements: items, nextPage: nextPage};
 }
 
 export async function assignSubscriptionToTopic(topic_uuid: string, subscription_uuid: string): Promise<void> {

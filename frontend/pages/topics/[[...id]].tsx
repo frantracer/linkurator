@@ -25,11 +25,10 @@ const Home: NextPage = () => {
   const {profile, profileIsLoading} = useProfile();
   const [subscriptions] = useSubscriptions(profile);
   const [topics, refreshTopics] = useTopics(profile);
-  const [topicItems, loadingTopicItems, refreshTopicItems, refreshTopicItem,
-    selectedTopicId, setSelectedTopicId, topicIsFinished] = useTopicItems();
+  const {topicItems, isLoading, isFinished, refreshTopicItem, refreshTopicItems, fetchMoreItems} = useTopicItems(topicIdFromQuery);
   const [filters, setFilters] = useFilters();
 
-  const selectedTopic: Topic | undefined = topics.find(t => t.uuid === selectedTopicId);
+  const selectedTopic: Topic | undefined = topics.find(t => t.uuid === topicIdFromQuery);
 
   const refreshItem = (item_uuid: string) => {
     refreshTopicItem(item_uuid)
@@ -43,11 +42,7 @@ const Home: NextPage = () => {
         if (topicIdFromQuery) {
           if (topics.length > 0 && topics.find(t => t.uuid === topicIdFromQuery) === undefined) {
             router.push(paths.TOPICS)
-          } else {
-            setSelectedTopicId(topicIdFromQuery);
           }
-        } else if (selectedTopicId) {
-          router.push(paths.TOPICS + "/" + selectedTopicId)
         } else if (topics.length > 0) {
           router.push(paths.TOPICS + "/" + topics[0].uuid)
         }
@@ -75,13 +70,13 @@ const Home: NextPage = () => {
           <input id={LATERAL_MENU_ID} type="checkbox" className="drawer-toggle"/>
           <TopicVideoCardGrid topic={selectedTopic}
                               items={topicItems}
+                              fetchMoreItems={fetchMoreItems}
                               refreshTopics={refreshTopics}
                               refreshItem={refreshItem}
-                              setSelectedTopicId={setSelectedTopicId}
                               subscriptions={subscriptions}
                               filters={filters}
-                              isLoading={loadingTopicItems}
-                              topicIsFinished={topicIsFinished}/>
+                              isLoading={isLoading}
+                              topicIsFinished={isFinished}/>
           <div className="drawer-side">
             <label htmlFor={LATERAL_MENU_ID} className="drawer-overlay"></label>
             <TopicsLateralMenu

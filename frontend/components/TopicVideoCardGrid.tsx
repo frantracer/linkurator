@@ -10,11 +10,13 @@ import {LATERAL_MENU_ID} from "../utilities/hideLateralMenu";
 import {FilterOptionsModalId} from "./FilterOptionsModal";
 import {Filters, isItemShown} from "../entities/Filters";
 import SubscriptionTag from "./SubscriptionTag";
+import {useRouter} from "next/router";
+import {paths} from "../configuration";
 
 type TopicVideoCardGridProps = {
+  fetchMoreItems: () => void,
   refreshItem: (itemId: string) => void,
   refreshTopics: () => void,
-  setSelectedTopicId: (topicId: string | undefined) => void,
   topic: Topic | undefined;
   items: SubscriptionItem[];
   subscriptions: Subscription[];
@@ -23,9 +25,8 @@ type TopicVideoCardGridProps = {
   topicIsFinished: boolean;
 }
 
-export const TOPIC_GRID_ID = "topic-grid";
-
 const TopicVideoCardGrid = (props: TopicVideoCardGridProps) => {
+  const router = useRouter();
   const cards = [];
 
   let subscriptionTags;
@@ -57,12 +58,22 @@ const TopicVideoCardGrid = (props: TopicVideoCardGridProps) => {
     }
   }
 
+  const handleGridScroll = (event: React.UIEvent<HTMLElement>) => {
+    const element = event.currentTarget
+    if (props.topicIsFinished || props.isLoading) {
+      return
+    }
+    if ((element.scrollTop + element.clientHeight) / element.scrollHeight >= 0.90) {
+      props.fetchMoreItems()
+    }
+  }
+
   let topicGrid = <div></div>
   if (props.topic) {
     const topic = props.topic;
 
     topicGrid = (
-      <div id={TOPIC_GRID_ID} className="drawer-content">
+      <div onScroll={handleGridScroll} className="drawer-content">
         <div className="w-full">
           <div className="sticky top-0 z-10 bg-white flex flex-row justify-center items-center">
             <div className="flex-none">
@@ -99,7 +110,7 @@ const TopicVideoCardGrid = (props: TopicVideoCardGridProps) => {
                     clickAction={async () => {
                       await deleteTopic(topic.uuid);
                       props.refreshTopics();
-                      props.setSelectedTopicId(undefined);
+                      router.push(paths.TOPICS);
                     }}/>
                   <CustomButton
                     text={"Filter items"}
