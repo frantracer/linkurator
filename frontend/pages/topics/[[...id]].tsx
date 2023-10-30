@@ -22,36 +22,38 @@ const Home: NextPage = () => {
 
   const topicIdFromQuery: string | undefined = router.query.id ? router.query.id[0] as string : undefined;
 
-  const profile = useProfile();
+  const {profile, profileIsLoading} = useProfile();
   const [subscriptions] = useSubscriptions(profile);
   const [topics, refreshTopics] = useTopics(profile);
   const [topicItems, loadingTopicItems, refreshTopicItems, refreshTopicItem,
     selectedTopicId, setSelectedTopicId, topicIsFinished] = useTopicItems();
   const [filters, setFilters] = useFilters();
 
-  let selectedTopic: Topic | undefined = topics.find(t => t.uuid === selectedTopicId);
+  const selectedTopic: Topic | undefined = topics.find(t => t.uuid === selectedTopicId);
 
   const refreshItem = (item_uuid: string) => {
     refreshTopicItem(item_uuid)
   }
 
   useEffect(() => {
-    if (profile?.is_logged_in === false) {
-      router.push(paths.LOGIN)
-    } else {
-      if (topicIdFromQuery) {
-        if (topics.length > 0 && topics.find(t => t.uuid === topicIdFromQuery) === undefined) {
-          router.push(paths.TOPICS)
-        } else {
-          setSelectedTopicId(topicIdFromQuery);
+    if (!profileIsLoading) {
+      if (profile === undefined) {
+        router.push(paths.LOGIN)
+      } else {
+        if (topicIdFromQuery) {
+          if (topics.length > 0 && topics.find(t => t.uuid === topicIdFromQuery) === undefined) {
+            router.push(paths.TOPICS)
+          } else {
+            setSelectedTopicId(topicIdFromQuery);
+          }
+        } else if (selectedTopicId) {
+          router.push(paths.TOPICS + "/" + selectedTopicId)
+        } else if (topics.length > 0) {
+          router.push(paths.TOPICS + "/" + topics[0].uuid)
         }
-      } else if (selectedTopicId) {
-        router.push(paths.TOPICS + "/" + selectedTopicId)
-      } else if (topics.length > 0) {
-        router.push(paths.TOPICS + "/" + topics[0].uuid)
       }
     }
-  }, [topicIdFromQuery, router, profile, topics]);
+  }, [topicIdFromQuery, router, profile, profileIsLoading, topics]);
 
   return (
     <div>
@@ -86,7 +88,7 @@ const Home: NextPage = () => {
               topics={topics}
               selectedTopic={selectedTopic}
               subscriptions={subscriptions}
-              profile={profile}
+              profile={profile!}
             />
           </div>
         </div>

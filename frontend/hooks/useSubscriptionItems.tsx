@@ -1,142 +1,68 @@
-import {useEffect, useState} from "react";
 import {SubscriptionItem} from "../entities/SubscriptionItem";
-import {getItem, getSubscriptionItems, getSubscriptionItemsFromUrl} from "../services/subscriptionService";
-import {SUBSCRIPTION_GRID_ID} from "../components/SubscriptionVideoCardGrid";
-import {SectionType} from "../entities/SectionType";
+import {
+  getSubscriptionItems,
+  getSubscriptionItemsFromUrl,
+  SubscriptionItemsResponse
+} from "../services/subscriptionService";
+import {useInfiniteQuery} from "@tanstack/react-query";
 
 type OptionalSubscriptionId = string | undefined;
 
-type NextPageLogic = {
-  currentSubscriptionId: OptionalSubscriptionId,
-  lastSubscriptionId: OptionalSubscriptionId,
-  nextUrl: string | undefined,
-  clean: boolean,
-  loading: boolean,
+type UseSubscriptionItems = {
+  subscriptionsItems: SubscriptionItem[],
+  isLoading: boolean,
   isFinished: boolean,
+  refreshSubscriptionItem: (itemId: string) => void,
+  fetchMoreItems: () => void,
 }
 
 
-const useSubscriptionItems = (): [
-  SubscriptionItem[],
-  boolean,
-  () => void,
-  (itemId: string) => void,
-  OptionalSubscriptionId,
-  (selectedSubscriptionId: OptionalSubscriptionId) => void,
-  boolean
-] => {
-  const [subscriptionsItems, setSubscriptionsItems] = useState<SubscriptionItem[]>([]);
-  const [nextPageLogic, setNextPageLogic] = useState<NextPageLogic>({
-    currentSubscriptionId: undefined,
-    lastSubscriptionId: undefined,
-    nextUrl: undefined,
-    clean: true,
-    loading: false,
-    isFinished: false,
-  });
+const useSubscriptionItems = (subscriptionId: OptionalSubscriptionId): UseSubscriptionItems => {
+  const {
+    data,
+    refetch,
+    fetchNextPage,
+    hasNextPage,
+    isFetching,
+    isFetchingNextPage
+  } = useInfiniteQuery<SubscriptionItemsResponse>({
+    queryKey: ["subscriptionItems", subscriptionId],
+    queryFn: async ({pageParam = undefined}) => {
+      if (subscriptionId === undefined) {
+        const emptyResponse: SubscriptionItemsResponse = {elements: [], nextPage: undefined};
+        return emptyResponse;
+      }
+      if (pageParam === undefined) {
+        return await getSubscriptionItems(subscriptionId);
+      }
+      return await getSubscriptionItemsFromUrl(pageParam as URL);
+    },
+    getNextPageParam: (lastPage) => {
+      return lastPage.nextPage
+    },
+    staleTime: Infinity
+  })
 
   function refreshSubscriptionItem(itemId: string) {
-    if (subscriptionsItems.map(item => item.uuid).includes(itemId)) {
-      getItem(itemId).then((updatedItem) => {
-        if (updatedItem) {
-          const newSubscriptionsItems = subscriptionsItems.map((item) => {
-              if (item.uuid == itemId) {
-                return updatedItem;
-              } else {
-                return item;
-              }
-            }
-          )
-          setSubscriptionsItems(newSubscriptionsItems);
-        }
-      })
-    }
-  }
-
-  function refreshSubscriptionItems() {
-    if (!nextPageLogic.loading) {
-      return;
-    }
-
-    if (!nextPageLogic.currentSubscriptionId) {
-      setSubscriptionsItems([]);
-      setNextPageLogic({
-        ...nextPageLogic,
-        currentSubscriptionId: nextPageLogic.currentSubscriptionId,
-        lastSubscriptionId: nextPageLogic.currentSubscriptionId,
-        loading: false
-      })
-      return;
-    }
-
-    if (nextPageLogic.currentSubscriptionId && nextPageLogic.currentSubscriptionId !== nextPageLogic.lastSubscriptionId) {
-      getSubscriptionItems(nextPageLogic.currentSubscriptionId)
-        .then(([items, nextUrl]) => {
-          setSubscriptionsItems(items);
-          setNextPageLogic({
-            currentSubscriptionId: nextPageLogic.currentSubscriptionId,
-            lastSubscriptionId: nextPageLogic.currentSubscriptionId,
-            nextUrl: nextUrl,
-            clean: false,
-            loading: false,
-            isFinished: !nextUrl,
-          });
-        })
-        .catch(error => console.log("Error retrieving subscription items " + error));
-      return;
-    }
-
-    if (nextPageLogic.nextUrl && nextPageLogic.loading) {
-      getSubscriptionItemsFromUrl(nextPageLogic.nextUrl)
-        .then(([items, nextUrl]) => {
-          setSubscriptionsItems([...subscriptionsItems, ...items]);
-          setNextPageLogic({
-            currentSubscriptionId: nextPageLogic.currentSubscriptionId,
-            lastSubscriptionId: nextPageLogic.lastSubscriptionId,
-            nextUrl: nextUrl,
-            clean: false,
-            loading: false,
-            isFinished: !nextUrl,
-          });
-        })
-        .catch(error => console.log("Error retrieving subscription items " + error));
-      return;
-    }
-  }
-
-  useEffect(() => {
-    const drawerContent = document.getElementById(SUBSCRIPTION_GRID_ID);
-
-    const handleSubscriptionScroll = () => {
-      if (drawerContent && nextPageLogic.currentSubscriptionId && !nextPageLogic.loading && !nextPageLogic.isFinished) {
-        if ((drawerContent.scrollTop + drawerContent.clientHeight) / drawerContent.scrollHeight >= 0.90) {
-          setNextPageLogic({...nextPageLogic, loading: true});
-        }
+    for (let i = 0; i < data!.pages.length; i++) {
+      const page = data!.pages[i];
+      const item = page.elements.find(item => item.uuid === itemId);
+      if (item) {
+        refetch({refetchPage: (page, index) => index === i}).then(() => {
+        });
+        break;
       }
     }
+  }
 
-    handleSubscriptionScroll();
-
-    if (drawerContent) {
-      drawerContent.addEventListener('scroll', handleSubscriptionScroll);
-    }
-
-    refreshSubscriptionItems();
-
-    return () => drawerContent?.removeEventListener('scroll', handleSubscriptionScroll);
-  }, [nextPageLogic]);
-
-  return [
-    subscriptionsItems,
-    nextPageLogic.loading,
-    () => refreshSubscriptionItems(),
-    (itemId: string) => refreshSubscriptionItem(itemId),
-    nextPageLogic.currentSubscriptionId,
-    (selectedSubscriptionId: OptionalSubscriptionId) => {
-      setNextPageLogic({...nextPageLogic, currentSubscriptionId: selectedSubscriptionId, loading: true})
-    },
-    nextPageLogic.isFinished
-  ];
+  return {
+    subscriptionsItems: data ? data.pages.map((page) => page.elements).flat() : [],
+    isLoading: isFetching || isFetchingNextPage,
+    isFinished: !hasNextPage,
+    refreshSubscriptionItem: (itemId: string) => refreshSubscriptionItem(itemId),
+    fetchMoreItems: () => fetchNextPage().then(() => {
+    })
+  };
 };
 
 export default useSubscriptionItems;

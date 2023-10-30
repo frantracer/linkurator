@@ -6,12 +6,12 @@ import {replaceBaseUrl} from "../utilities/replaceBaseUrl";
 
 export interface TopicResponse {
   elements: Topic[];
-  next_page: URL | null;
+  next_page: URL | undefined;
 }
 
 interface TopicItemsResponse {
   elements: SubscriptionItem[];
-  nextPage: URL | null;
+  nextPage: URL | undefined;
 }
 
 export async function getTopics(): Promise<Topic[]> {
@@ -110,7 +110,7 @@ export async function assignSubscriptionToTopic(topic_uuid: string, subscription
 }
 
 const mapJsonToTopicResponse = (json: Record<string, any>): TopicResponse => {
-  let nextPage: URL | null = null;
+  let nextPage: URL | undefined = undefined;
   if (json.next_page) {
     nextPage = replaceBaseUrl(new URL(json.next_page), new URL(configuration.API_BASE_URL));
   }
@@ -128,7 +128,7 @@ const mapJsonToTopicResponse = (json: Record<string, any>): TopicResponse => {
 }
 
 const mapJsonToTopicItemsResponse = (json: Record<string, any>): TopicItemsResponse => {
-  let nextPage: URL | null = null;
+  let nextPage: URL | undefined = undefined;
   if (json.next_page) {
     nextPage = replaceBaseUrl(new URL(json.next_page), new URL(configuration.API_BASE_URL));
   }

@@ -4,10 +4,10 @@ import {Topic, topicSorting} from "../entities/Topic";
 import {getTopics} from "../services/topicService";
 
 
-export function useTopics(profile: Profile): [Topic[], () => void] {
+export function useTopics(profile: Profile | undefined): [Topic[], () => void] {
   const [topics, setTopics] = useState<Topic[]>([]);
 
-  function refreshTopics(profile: Profile) {
+  function refreshTopics(profile: Profile | undefined) {
     if (profile) {
       getTopics()
         .then(topics => {

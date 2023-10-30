@@ -8,10 +8,10 @@ export interface SubscriptionResponse {
   next_page: string;
 }
 
-const useSubscriptions = (profile: Profile): [Subscription[], () => void] => {
+const useSubscriptions = (profile: Profile | undefined): [Subscription[], () => void] => {
   const [subscriptions, setSubscriptions] = useState<Subscription[]>([]);
 
-  function refreshSubscriptions(profile: Profile) {
+  function refreshSubscriptions(profile: Profile | undefined) {
     if (profile) {
       getSubscriptions().then(
         subscriptions => setSubscriptions(subscriptions.sort(subscriptionSorting))

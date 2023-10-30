@@ -8,15 +8,17 @@ import {useRouter} from "next/router";
 
 const Home: NextPage = () => {
   const router = useRouter();
-  const profile = useProfile();
+  const {profile, profileIsLoading} = useProfile();
 
   useEffect(() => {
-    if (profile?.is_logged_in) {
-      router.push(paths.TOPICS)
-    } else if(profile?.is_logged_in === false) {
-      router.push(paths.LOGIN)
+    if (!profileIsLoading) {
+      if (profile) {
+        router.push(paths.TOPICS)
+      } else {
+        router.push(paths.LOGIN)
+      }
     }
-  }, [router, profile]);
+  }, [profileIsLoading, router, profile]);
 
   return (
     <div>

@@ -18,41 +18,27 @@ import {paths} from "../../configuration";
 const SubscriptionsPage: NextPage = () => {
   const router = useRouter()
 
-  const subscriptionIdFromQuery: string | undefined = router.query.id ? router.query.id[0] as string : undefined;
+  const selectedSubscriptionId: string | undefined = router.query.id ? router.query.id[0] as string : undefined;
 
-  const profile = useProfile();
+  const {profile, profileIsLoading} = useProfile();
   const [subscriptions] = useSubscriptions(profile);
-  const [subscriptionsItems, loadingSubscriptionItems, _, refreshSubscriptionItem,
-    selectedSubscriptionId, setSelectedSubscriptionId, subscriptionIsFinished] = useSubscriptionItems();
   const [topics, refreshTopics] = useTopics(profile);
+  const {subscriptionsItems, refreshSubscriptionItem, fetchMoreItems, isLoading, isFinished} = useSubscriptionItems(selectedSubscriptionId);
   const [filters, setFilters] = useFilters();
 
-  if (selectedSubscriptionId === undefined && subscriptions.length > 0) {
-    setSelectedSubscriptionId(subscriptions[0].uuid);
-  }
   const selectedSubscription = subscriptions.find(subscription => subscription.uuid === selectedSubscriptionId);
 
-  const refreshItem = (item_uuid: string) => {
-    refreshSubscriptionItem(item_uuid)
-  }
-
   useEffect(() => {
-    if (profile?.is_logged_in === false) {
-      router.push(paths.LOGIN)
-    } else {
-      if (subscriptionIdFromQuery) {
-        if (subscriptions.length > 0 && subscriptions.find(t => t.uuid === subscriptionIdFromQuery) === undefined) {
-          router.push(paths.SUBSCRIPTIONS)
-        } else {
-          setSelectedSubscriptionId(subscriptionIdFromQuery);
+    if (!profileIsLoading) {
+      if (profile === undefined) {
+        router.push(paths.LOGIN)
+      } else {
+        if (subscriptions.length > 0 && selectedSubscription === undefined) {
+          router.push(paths.SUBSCRIPTIONS + "/" + subscriptions[0].uuid)
         }
-      } else if (selectedSubscriptionId) {
-        router.push(paths.SUBSCRIPTIONS + "/" + selectedSubscriptionId)
-      } else if (topics.length > 0) {
-        router.push(paths.SUBSCRIPTIONS + "/" + subscriptions[0].uuid)
       }
     }
-  }, [subscriptionIdFromQuery, router, profile, subscriptions]);
+  }, [profileIsLoading, selectedSubscription, profile, subscriptions, router]);
 
   return (
     <div>
@@ -67,19 +53,20 @@ const SubscriptionsPage: NextPage = () => {
 
         <div className="drawer drawer-mobile">
           <input id={LATERAL_MENU_ID} type="checkbox" className="drawer-toggle"/>
-          <SubscriptionVideoCardGrid refreshItem={refreshItem}
+          <SubscriptionVideoCardGrid refreshItem={refreshSubscriptionItem}
+                                     fetchMoreItems={fetchMoreItems}
                                      topics={topics}
                                      subscription={selectedSubscription}
                                      items={subscriptionsItems}
                                      filters={filters}
-                                     isLoading={loadingSubscriptionItems}
-                                     isFinished={subscriptionIsFinished}/>
+                                     isLoading={isLoading}
+                                     isFinished={isFinished}/>
           <div className="drawer-side">
             <label htmlFor={LATERAL_MENU_ID} className="drawer-overlay"></label>
             <SubscriptionsLateralMenu
               subscriptions={subscriptions}
               selectedSubscription={selectedSubscription}
-              profile={profile}/>
+              profile={profile!}/>
           </div>
         </div>
       </main>

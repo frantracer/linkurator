@@ -9,13 +9,13 @@ import {useRouter} from "next/router";
 
 const Home: NextPage = () => {
   const router = useRouter();
-  const profile = useProfile();
+  const {profile, profileIsLoading} = useProfile();
 
   useEffect(() => {
-    if (profile?.is_logged_in) {
+    if (!profileIsLoading && profile) {
       router.push(paths.TOPICS)
     }
-  }, [router, profile]);
+  }, [router, profile, profileIsLoading]);
 
   const LoginButton = () => {
     return <CustomButton
@@ -27,7 +27,7 @@ const Home: NextPage = () => {
       }}/>
   }
 
-  let body =
+  const body =
     <main className="hero min-h-screen bg-gray-200 text-black">
       <div className="hero-content text-center">
         <div className="max-w-md">

@@ -2,36 +2,35 @@ import axios from "axios";
 import {useEffect, useState} from "react";
 import {configuration} from "../configuration";
 
-export interface ProfileResponse {
+export type Profile = {
   first_name: string
   last_name: string
   avatar_url: string
-  is_logged_in: boolean | undefined
 }
 
-export type Profile =
-  | undefined
-  | ProfileResponse;
+export type ProfileState = {
+  profile: Profile | undefined;
+  isLoading: boolean;
+}
 
 const useProfile = () => {
-  const [profile, setProfile] = useState<Profile>();
+  const [profileState, setProfileState] = useState<ProfileState>({profile: undefined, isLoading: true});
 
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        let {data} = await axios.get<ProfileResponse>(configuration.PROFILE_URL, {withCredentials: true});
-        data.is_logged_in = true;
-        setProfile(data);
+        const {data} = await axios.get<Profile | undefined>(configuration.PROFILE_URL, {withCredentials: true});
+        setProfileState({profile: data, isLoading: false});
       } catch (error: any) {
         console.error("Error retrieving profile", error);
-        setProfile({is_logged_in: false, first_name: "", last_name: "", avatar_url: ""});
+        setProfileState({profile: undefined, isLoading: false});
       }
     };
 
-    fetchProfile();
+    fetchProfile().then(() => {});
   }, []);
 
-  return profile;
+  return {profile: profileState.profile, profileIsLoading: profileState.isLoading};
 };
 
 export default useProfile;

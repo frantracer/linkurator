@@ -13,6 +13,7 @@ import TopicTag from "./TopicTag";
 
 type SubscriptionVideoCardGridProps = {
   refreshItem: (itemId: string) => void,
+  fetchMoreItems: () => void,
   topics: Topic[];
   subscription: Subscription | undefined;
   items: SubscriptionItem[];
@@ -20,8 +21,6 @@ type SubscriptionVideoCardGridProps = {
   isLoading: boolean;
   isFinished: boolean;
 }
-
-export const SUBSCRIPTION_GRID_ID = "subscription-grid";
 
 const SubscriptionVideoCardGrid = (props: SubscriptionVideoCardGridProps) => {
   const cards = [];
@@ -43,6 +42,16 @@ const SubscriptionVideoCardGrid = (props: SubscriptionVideoCardGridProps) => {
     }
   }
 
+  const handleGridScroll = (event: React.UIEvent<HTMLElement>) => {
+    const element = event.currentTarget
+    if (props.isFinished || props.isLoading) {
+      return
+    }
+    if ((element.scrollTop + element.clientHeight) / element.scrollHeight >= 0.90) {
+      props.fetchMoreItems()
+    }
+  }
+
   let content = <div></div>
   if (props.subscription) {
     const current_subscription = props.subscription;
@@ -53,7 +62,7 @@ const SubscriptionVideoCardGrid = (props: SubscriptionVideoCardGridProps) => {
       .map(topic => <TopicTag key={topic.uuid} topic={topic}/>);
 
     content =
-      <div id={SUBSCRIPTION_GRID_ID} className="drawer-content">
+      <div onScroll={handleGridScroll} className="drawer-content">
         <div className="w-full">
           <div className="sticky top-0 z-10 bg-white flex flex-row justify-between">
             <div className="flex-none">
