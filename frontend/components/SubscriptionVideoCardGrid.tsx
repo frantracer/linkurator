@@ -94,7 +94,7 @@ const SubscriptionVideoCardGrid = (props: SubscriptionVideoCardGridProps) => {
                     text={"Add to Topic"}
                     icon={IconForButton.add}
                     relatedModalId={AssignTopicModalId}
-                    clickAction={() => {
+                    clickAction={async () => {
                     }}/>
                   <CustomButton
                     text={"Filter items"}

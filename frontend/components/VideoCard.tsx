@@ -5,6 +5,7 @@ import {InteractionType, interactWithItem, removeInteractionWithItem,} from "../
 import {CustomSwapButton, CustomSwapButtonIcon} from "./CustomSwapButton";
 import {paths} from "../configuration";
 import Link from "next/link";
+import {useInView} from "react-intersection-observer";
 
 type VideoCardProps = {
   item: SubscriptionItem;
@@ -13,6 +14,8 @@ type VideoCardProps = {
 };
 
 const VideoCard = (props: VideoCardProps) => {
+  const {ref, inView} = useInView({threshold: 0});
+
   function onChangeSwapButton(itemUuid: string, interactionType: InteractionType, checked: boolean) {
     if (checked) {
       interactWithItem(itemUuid, interactionType).then(props.onChange);
@@ -21,8 +24,21 @@ const VideoCard = (props: VideoCardProps) => {
     }
   }
 
-  return (
-    <div className="card card-compact w-64 md:w-80 text-black shadow-xl hover:scale-105">
+  let card = <div className="card card-compact w-64 md:w-80 text-black shadow-xl hover:scale-105" ref={ref}>
+    <figure>
+      <img className="w-full cursor-pointer"
+           src="/video_caption_skeleton.png"
+           alt="Loading item..."/>
+    </figure>
+    <div className="card-body">
+      <h2 className="card-title cursor-pointer">
+        Loading...
+      </h2>
+    </div>
+  </div>
+
+  if (inView) {
+    card = <div className="card card-compact w-64 md:w-80 text-black shadow-xl hover:scale-105">
       <figure>
         <img className="w-full cursor-pointer"
              src={props.item.thumbnail}
@@ -58,7 +74,9 @@ const VideoCard = (props: VideoCardProps) => {
         </div>
       </div>
     </div>
-  );
+  }
+
+  return card
 };
 
 export default VideoCard;
