@@ -14,6 +14,7 @@ import useFilters from "../../hooks/useFilters";
 import {useRouter} from "next/router";
 import SubscriptionsLateralMenu from "../../components/SubscriptionsLateralMenu";
 import {paths} from "../../configuration";
+import EditTopicModal from "../../components/AssignTopicModal";
 
 const SubscriptionsPage: NextPage = () => {
   const router = useRouter()
@@ -50,6 +51,9 @@ const SubscriptionsPage: NextPage = () => {
       <main className="flex bg-gray-100">
         <NewTopicModal refreshTopics={refreshTopics} subscriptions={subscriptions}/>
         <FilterOptionsModal filters={filters} setFilters={setFilters}/>
+        {selectedSubscription &&
+          <EditTopicModal refreshTopics={refreshTopics} topics={topics} subscription={selectedSubscription} />
+        }
 
         <div className="drawer drawer-mobile">
           <input id={LATERAL_MENU_ID} type="checkbox" className="drawer-toggle"/>
