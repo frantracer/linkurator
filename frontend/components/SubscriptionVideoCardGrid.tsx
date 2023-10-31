@@ -10,6 +10,7 @@ import {Filters, isItemShown} from "../entities/Filters";
 import {FilterOptionsModalId} from "./FilterOptionsModal";
 import {refreshSubscription} from "../services/subscriptionService";
 import TopicTag from "./TopicTag";
+import {ITEMS_PER_PAGE} from "../utilities/constants";
 
 type SubscriptionVideoCardGridProps = {
   refreshItem: (itemId: string) => void,
@@ -23,7 +24,19 @@ type SubscriptionVideoCardGridProps = {
 }
 
 const SubscriptionVideoCardGrid = (props: SubscriptionVideoCardGridProps) => {
+
+  const handleGridScroll = (event: React.UIEvent<HTMLElement>) => {
+    const element = event.currentTarget
+    if (props.isFinished || props.isLoading) {
+      return
+    }
+    if ((element.scrollTop + element.clientHeight) / element.scrollHeight >= 0.90) {
+      props.fetchMoreItems()
+    }
+  }
+
   const cards = [];
+  let content = <div></div>
 
   if (props.subscription) {
     for (let i = 0; i < props.items.length; i++) {
@@ -40,26 +53,17 @@ const SubscriptionVideoCardGrid = (props: SubscriptionVideoCardGridProps) => {
         );
       }
     }
-  }
 
-  const handleGridScroll = (event: React.UIEvent<HTMLElement>) => {
-    const element = event.currentTarget
-    if (props.isFinished || props.isLoading) {
-      return
-    }
-    if ((element.scrollTop + element.clientHeight) / element.scrollHeight >= 0.90) {
-      props.fetchMoreItems()
-    }
-  }
-
-  let content = <div></div>
-  if (props.subscription) {
     const current_subscription = props.subscription;
     const topicTags = props.topics
       .filter(topic => {
         return topic.subscriptions_ids.includes(current_subscription.uuid)
       })
       .map(topic => <TopicTag key={topic.uuid} topic={topic}/>);
+
+    if (!props.isFinished && !props.isLoading && cards.length < ITEMS_PER_PAGE) {
+      props.fetchMoreItems()
+    }
 
     content =
       <div onScroll={handleGridScroll} className="drawer-content">

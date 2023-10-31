@@ -3,6 +3,7 @@ import {configuration} from "../configuration";
 import axios from "axios";
 import {SubscriptionItem} from "../entities/SubscriptionItem";
 import {replaceBaseUrl} from "../utilities/replaceBaseUrl";
+import {ITEMS_PER_PAGE} from "../utilities/constants";
 
 export type TopicResponse = {
   elements: Topic[];
@@ -70,7 +71,7 @@ export async function getTopicItems(uuid: string): Promise<TopicItemsResponse> {
   let items: SubscriptionItem[] = []
   let nextPage = undefined;
   try {
-    const url = configuration.TOPICS_URL + uuid + "/items?page_size=20";
+    const url = configuration.TOPICS_URL + uuid + "/items?page_size=" + ITEMS_PER_PAGE;
     const {data, status} = await axios.get(url, {withCredentials: true});
     if (status === 200) {
       const response = mapJsonToTopicItemsResponse(data);

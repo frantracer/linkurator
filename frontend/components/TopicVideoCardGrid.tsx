@@ -12,6 +12,7 @@ import {Filters, isItemShown} from "../entities/Filters";
 import SubscriptionTag from "./SubscriptionTag";
 import {useRouter} from "next/router";
 import {paths} from "../configuration";
+import {ITEMS_PER_PAGE} from "../utilities/constants";
 
 type TopicVideoCardGridProps = {
   fetchMoreItems: () => void,
@@ -39,9 +40,7 @@ const TopicVideoCardGrid = (props: TopicVideoCardGridProps) => {
       .map(subscription => {
         return <SubscriptionTag key={subscription.uuid} subscription={subscription}/>
       });
-  }
 
-  if (props.topic) {
     for (let i = 0; i < props.items.length; i++) {
       const item = props.items[i];
       if (isItemShown(item, props.filters)) {
@@ -55,6 +54,10 @@ const TopicVideoCardGrid = (props: TopicVideoCardGridProps) => {
           </div>
         );
       }
+    }
+
+    if (!props.topicIsFinished && !props.isLoading && cards.length < ITEMS_PER_PAGE) {
+      props.fetchMoreItems()
     }
   }
 
