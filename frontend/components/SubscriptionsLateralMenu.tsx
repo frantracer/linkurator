@@ -34,7 +34,7 @@ const LateralMenu = (props: LateralMenuProps) => {
   const [searchValue, setSearchValue] = useState<string>('');
 
   return (
-    <ul className="menu p-4 overflow-y-auto w-80 bg-white text-base-content">
+    <ul className="menu p-4 min-h-full overflow-y-auto w-80 bg-white text-base-content">
       <Title/>
       <RedirectButton to={paths.TOPICS}>Switch to topics</RedirectButton>
       {props.profile &&

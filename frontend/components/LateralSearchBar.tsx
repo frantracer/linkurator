@@ -6,7 +6,7 @@ type LateralSearchBarProps = {
 const LateralSearchBar = (props: LateralSearchBarProps) => (
   <div className="flex flex-row items-center justify-between px-4 py-2">
     <input
-      className="w-full rounded-lg shadow-md focus:outline-none focus:shadow-outline"
+      className="input w-full max-w-xs input-primary bg-white"
       type="text"
       placeholder="Search"
       value={props.searchBarQuery}

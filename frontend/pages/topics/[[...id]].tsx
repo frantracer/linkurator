@@ -25,13 +25,26 @@ const Home: NextPage = () => {
   const {profile, profileIsLoading} = useProfile();
   const [subscriptions] = useSubscriptions(profile);
   const [topics, refreshTopics] = useTopics(profile);
-  const {topicItems, isLoading, isFinished, refreshTopicItem, refreshTopicItems, fetchMoreItems} = useTopicItems(topicIdFromQuery);
+  const {
+    topicItems,
+    isLoading,
+    isFinished,
+    refreshTopicItem,
+    refreshTopicItems,
+    fetchMoreItems
+  } = useTopicItems(topicIdFromQuery);
   const [filters, setFilters] = useFilters();
 
   const selectedTopic: Topic | undefined = topics.find(t => t.uuid === topicIdFromQuery);
 
-  const refreshItem = (item_uuid: string) => {
-    refreshTopicItem(item_uuid)
+  const handleGridScroll = (event: React.UIEvent<HTMLElement>) => {
+    const element = event.currentTarget
+    if (isFinished || isLoading) {
+      return
+    }
+    if ((element.scrollTop + element.clientHeight) / element.scrollHeight >= 0.90) {
+      fetchMoreItems()
+    }
   }
 
   useEffect(() => {
@@ -66,17 +79,8 @@ const Home: NextPage = () => {
                             topic={selectedTopic}
                             refreshTopicItems={refreshTopicItems}/>}
 
-        <div className="drawer drawer-mobile">
+        <div className="drawer lg:drawer-open">
           <input id={LATERAL_MENU_ID} type="checkbox" className="drawer-toggle"/>
-          <TopicVideoCardGrid topic={selectedTopic}
-                              items={topicItems}
-                              fetchMoreItems={fetchMoreItems}
-                              refreshTopics={refreshTopics}
-                              refreshItem={refreshItem}
-                              subscriptions={subscriptions}
-                              filters={filters}
-                              isLoading={isLoading}
-                              topicIsFinished={isFinished}/>
           <div className="drawer-side">
             <label htmlFor={LATERAL_MENU_ID} className="drawer-overlay"></label>
             <TopicsLateralMenu
@@ -85,6 +89,17 @@ const Home: NextPage = () => {
               subscriptions={subscriptions}
               profile={profile!}
             />
+          </div>
+          <div onScroll={handleGridScroll} className="drawer-content">
+            <TopicVideoCardGrid topic={selectedTopic}
+                                items={topicItems}
+                                fetchMoreItems={fetchMoreItems}
+                                refreshTopics={refreshTopics}
+                                refreshItem={refreshTopicItem}
+                                subscriptions={subscriptions}
+                                filters={filters}
+                                isLoading={isLoading}
+                                topicIsFinished={isFinished}/>
           </div>
         </div>
       </main>

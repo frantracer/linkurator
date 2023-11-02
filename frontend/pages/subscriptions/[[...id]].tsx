@@ -29,6 +29,16 @@ const SubscriptionsPage: NextPage = () => {
 
   const selectedSubscription = subscriptions.find(subscription => subscription.uuid === selectedSubscriptionId);
 
+  const handleGridScroll = (event: React.UIEvent<HTMLElement>) => {
+    const element = event.currentTarget
+    if (isFinished || isLoading) {
+      return
+    }
+    if ((element.scrollTop + element.clientHeight) / element.scrollHeight >= 0.90) {
+      fetchMoreItems()
+    }
+  }
+
   useEffect(() => {
     if (!profileIsLoading) {
       if (profile === undefined) {
@@ -55,16 +65,18 @@ const SubscriptionsPage: NextPage = () => {
           <EditTopicModal refreshTopics={refreshTopics} topics={topics} subscription={selectedSubscription} />
         }
 
-        <div className="drawer drawer-mobile">
+        <div className="drawer lg:drawer-open">
           <input id={LATERAL_MENU_ID} type="checkbox" className="drawer-toggle"/>
-          <SubscriptionVideoCardGrid refreshItem={refreshSubscriptionItem}
-                                     fetchMoreItems={fetchMoreItems}
-                                     topics={topics}
-                                     subscription={selectedSubscription}
-                                     items={subscriptionsItems}
-                                     filters={filters}
-                                     isLoading={isLoading}
-                                     isFinished={isFinished}/>
+          <div onScroll={handleGridScroll} className="drawer-content">
+            <SubscriptionVideoCardGrid refreshItem={refreshSubscriptionItem}
+                                       fetchMoreItems={fetchMoreItems}
+                                       topics={topics}
+                                       subscription={selectedSubscription}
+                                       items={subscriptionsItems}
+                                       filters={filters}
+                                       isLoading={isLoading}
+                                       isFinished={isFinished}/>
+          </div>
           <div className="drawer-side">
             <label htmlFor={LATERAL_MENU_ID} className="drawer-overlay"></label>
             <SubscriptionsLateralMenu
