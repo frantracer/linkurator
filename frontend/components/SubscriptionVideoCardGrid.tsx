@@ -13,6 +13,7 @@ import TopicTag from "./TopicTag";
 import {ITEMS_PER_PAGE} from "../utilities/constants";
 
 type SubscriptionVideoCardGridProps = {
+  refreshSubscriptions: () => void,
   refreshItem: (itemId: string) => void,
   fetchMoreItems: () => void,
   topics: Topic[];
@@ -100,9 +101,13 @@ const SubscriptionVideoCardGrid = (props: SubscriptionVideoCardGridProps) => {
                   text={"Refresh"}
                   icon={IconForButton.refresh}
                   relatedModalId={undefined}
-                  clickAction={async () => {
-                    await refreshSubscription(current_subscription.uuid)
-                  }}/>
+                  clickAction={
+                    async () => {
+                      refreshSubscription(current_subscription.uuid).then(() => {
+                        props.refreshSubscriptions()
+                      })
+                    }
+                  }/>
               </ul>
             </div>
           </div>

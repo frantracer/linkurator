@@ -26,7 +26,13 @@ const SubscriptionsPage: NextPage = () => {
   const {profile, profileIsLoading} = useProfile();
   const {subscriptions, refreshSubscriptions} = useSubscriptions(profile);
   const [topics, refreshTopics] = useTopics(profile);
-  const {subscriptionsItems, refreshSubscriptionItem, fetchMoreItems, isLoading, isFinished} = useSubscriptionItems(selectedSubscriptionId);
+  const {
+    subscriptionsItems,
+    refreshSubscriptionItem,
+    fetchMoreItems,
+    isLoading,
+    isFinished
+  } = useSubscriptionItems(selectedSubscriptionId);
   const [filters, setFilters] = useFilters();
 
   const selectedSubscription = subscriptions.find(subscription => subscription.uuid === selectedSubscriptionId);
@@ -70,20 +76,22 @@ const SubscriptionsPage: NextPage = () => {
         <NewTopicModal refreshTopics={refreshTopics} subscriptions={subscriptions}/>
         <FilterOptionsModal filters={filters} setFilters={setFilters}/>
         {selectedSubscription &&
-          <EditTopicModal refreshTopics={refreshTopics} topics={topics} subscription={selectedSubscription} />
+            <EditTopicModal refreshTopics={refreshTopics} topics={topics} subscription={selectedSubscription}/>
         }
 
         <div className="drawer lg:drawer-open">
           <input id={LATERAL_MENU_ID} type="checkbox" className="drawer-toggle"/>
           <div onScroll={handleGridScroll} className="drawer-content">
-            <SubscriptionVideoCardGrid refreshItem={refreshSubscriptionItem}
-                                       fetchMoreItems={fetchMoreItems}
-                                       topics={topics}
-                                       subscription={selectedSubscription}
-                                       items={subscriptionsItems}
-                                       filters={filters}
-                                       isLoading={isLoading}
-                                       isFinished={isFinished}/>
+            <SubscriptionVideoCardGrid
+              refreshSubscriptions={refreshSubscriptions}
+              refreshItem={refreshSubscriptionItem}
+              fetchMoreItems={fetchMoreItems}
+              topics={topics}
+              subscription={selectedSubscription}
+              items={subscriptionsItems}
+              filters={filters}
+              isLoading={isLoading}
+              isFinished={isFinished}/>
           </div>
           <div className="drawer-side">
             <label htmlFor={LATERAL_MENU_ID} className="drawer-overlay"></label>
