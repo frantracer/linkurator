@@ -107,10 +107,22 @@ const SubscriptionVideoCardGrid = (props: SubscriptionVideoCardGridProps) => {
             </div>
           </div>
         </div>
-        {topicTags}
-        <div className="flex flex-row flex-wrap m-6">
-          {cards}
-        </div>
+        {!props.subscription.isBeingScanned &&
+            <div>
+                <div>
+                  {topicTags}
+                </div>
+                <div className="flex flex-row flex-wrap m-6">
+                  {cards}
+                </div>
+            </div>
+        }
+        {props.subscription.isBeingScanned &&
+            <div className="flex items-center justify-center h-screen">
+                <span className="loading loading-spinner loading-lg"></span>
+                <span>Fetching items for {props.subscription.name}...</span>
+            </div>
+        }
         {props.isLoading &&
             <div className="flex justify-center items-center">
                 <button className="btn btn-sm btn-ghost loading">loading</button>

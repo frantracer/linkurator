@@ -52,6 +52,7 @@ const mapJsonToSubscriptionResponse = (json: Record<string, any>): SubscriptionR
         url: element.url,
         thumbnail: element.thumbnail,
         topic_uuid: element.topic_uuid,
+        isBeingScanned: Date.parse(element.scanned_at) < 946684800000, // It was scanned before 2000-01-01
       };
     }),
     nextPage: json.next_page ? replaceBaseUrl(new URL(json.next_page), new URL(configuration.API_BASE_URL)) : undefined,

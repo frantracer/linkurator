@@ -23,7 +23,7 @@ const Home: NextPage = () => {
   const topicIdFromQuery: string | undefined = router.query.id ? router.query.id[0] as string : undefined;
 
   const {profile, profileIsLoading} = useProfile();
-  const [subscriptions] = useSubscriptions(profile);
+  const {subscriptions} = useSubscriptions(profile);
   const [topics, refreshTopics] = useTopics(profile);
   const {
     topicItems,

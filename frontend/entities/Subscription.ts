@@ -2,7 +2,8 @@ export type Subscription = {
   uuid: string;
   name: string;
   url: string;
-  thumbnail: string
+  thumbnail: string;
+  isBeingScanned: boolean;
 };
 
 export function subscriptionSorting(s1: Subscription, s2: Subscription): number {

@@ -16,13 +16,15 @@ import SubscriptionsLateralMenu from "../../components/SubscriptionsLateralMenu"
 import {paths} from "../../configuration";
 import EditTopicModal from "../../components/AssignTopicModal";
 
+const REFRESH_SUBSCRIPTIONS_INTERVAL = 30000;
+
 const SubscriptionsPage: NextPage = () => {
   const router = useRouter()
 
   const selectedSubscriptionId: string | undefined = router.query.id ? router.query.id[0] as string : undefined;
 
   const {profile, profileIsLoading} = useProfile();
-  const [subscriptions] = useSubscriptions(profile);
+  const {subscriptions, refreshSubscriptions} = useSubscriptions(profile);
   const [topics, refreshTopics] = useTopics(profile);
   const {subscriptionsItems, refreshSubscriptionItem, fetchMoreItems, isLoading, isFinished} = useSubscriptionItems(selectedSubscriptionId);
   const [filters, setFilters] = useFilters();
@@ -47,6 +49,12 @@ const SubscriptionsPage: NextPage = () => {
         if (subscriptions.length > 0 && selectedSubscription === undefined) {
           router.push(paths.SUBSCRIPTIONS + "/" + subscriptions[0].uuid)
         }
+      }
+
+      if (selectedSubscription?.isBeingScanned) {
+        setTimeout(() => {
+          refreshSubscriptions()
+        }, REFRESH_SUBSCRIPTIONS_INTERVAL)
       }
     }
   }, [profileIsLoading, selectedSubscription, profile, subscriptions, router]);

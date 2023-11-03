@@ -3,12 +3,12 @@ import {Profile} from "./useProfile";
 import {Subscription, subscriptionSorting} from "../entities/Subscription";
 import {getSubscriptions} from "../services/subscriptionService";
 
-export interface SubscriptionResponse {
-  elements: Subscription[];
-  next_page: string;
+type subscriptionState = {
+  subscriptions: Subscription[];
+  refreshSubscriptions: () => void;
 }
 
-const useSubscriptions = (profile: Profile | undefined): [Subscription[], () => void] => {
+const useSubscriptions = (profile: Profile | undefined): subscriptionState => {
   const [subscriptions, setSubscriptions] = useState<Subscription[]>([]);
 
   function refreshSubscriptions(profile: Profile | undefined) {
@@ -25,7 +25,10 @@ const useSubscriptions = (profile: Profile | undefined): [Subscription[], () => 
     refreshSubscriptions(profile)
   }, [profile]);
 
-  return [subscriptions, () => refreshSubscriptions(profile)];
+  return {
+    subscriptions: subscriptions,
+    refreshSubscriptions: () => {refreshSubscriptions(profile)}
+  }
 };
 
 export default useSubscriptions;
