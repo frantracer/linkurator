@@ -1,7 +1,5 @@
 import {MenuItem} from "./MenuItem";
-import {NewTopicModalId} from "./NewTopicModal";
 import React from "react";
-import CustomButton, {IconForButton} from "./CustomButton";
 import {Topic} from "../entities/Topic";
 import {paths} from "../configuration";
 import {useRouter} from "next/router";
@@ -39,15 +37,7 @@ const LateralTopicList = (props: LateralTopicListProps) => {
     ))
 
   return (
-    <nav className="flex-grow pb-4 px-4 md:block md:pb-0 md:overflow-y-auto">
-      <div className="flex flex-col w-full">
-        <CustomButton
-          text={"New Topic"}
-          icon={IconForButton.add}
-          relatedModalId={NewTopicModalId}
-          clickAction={() => {
-          }}/>
-      </div>
+    <nav className="bg-gray-50 rounded">
       {items}
     </nav>
   )

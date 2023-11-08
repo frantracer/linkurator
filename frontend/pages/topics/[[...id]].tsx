@@ -79,18 +79,9 @@ const Home: NextPage = () => {
                             topic={selectedTopic}
                             refreshTopicItems={refreshTopicItems}/>}
 
-        <div className="drawer lg:drawer-open">
+        <div onScroll={handleGridScroll} className="drawer lg:drawer-open h-screen overflow-y-auto">
           <input id={LATERAL_MENU_ID} type="checkbox" className="drawer-toggle"/>
-          <div className="drawer-side">
-            <label htmlFor={LATERAL_MENU_ID} className="drawer-overlay"></label>
-            <TopicsLateralMenu
-              topics={topics}
-              selectedTopic={selectedTopic}
-              subscriptions={subscriptions}
-              profile={profile!}
-            />
-          </div>
-          <div onScroll={handleGridScroll} className="drawer-content">
+          <div className="drawer-content">
             <TopicVideoCardGrid topic={selectedTopic}
                                 items={topicItems}
                                 fetchMoreItems={fetchMoreItems}
@@ -100,6 +91,15 @@ const Home: NextPage = () => {
                                 filters={filters}
                                 isLoading={isLoading}
                                 topicIsFinished={isFinished}/>
+          </div>
+          <div className="drawer-side z-20">
+            <label htmlFor={LATERAL_MENU_ID} aria-label="close sidebar" className="drawer-overlay"></label>
+            <TopicsLateralMenu
+              topics={topics}
+              selectedTopic={selectedTopic}
+              subscriptions={subscriptions}
+              profile={profile!}
+            />
           </div>
         </div>
       </main>

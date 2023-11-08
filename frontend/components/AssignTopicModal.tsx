@@ -1,4 +1,3 @@
-import CustomButton from "./CustomButton";
 import React, {useState} from "react";
 import {assignSubscriptionToTopic, createTopic} from "../services/topicService";
 import {Topic} from "../entities/Topic";
@@ -68,9 +67,7 @@ const EditTopicModal = (props: AssignTopicModalProps) => {
             </div>
           </div>
           <div className="modal-action">
-            <CustomButton text={"Close"} icon={undefined} relatedModalId={AssignTopicModalId}
-                          clickAction={() => {
-                          }}/>
+            <label htmlFor={AssignTopicModalId} className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</label>
           </div>
         </div>
       </div>

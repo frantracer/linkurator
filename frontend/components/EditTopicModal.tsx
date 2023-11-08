@@ -66,11 +66,11 @@ const EditTopicModal = (props: EditTopicModalProps) => {
             {subscriptionBadges}
           </div>
           <div className="modal-action">
-            <CustomButton text={"Close"} icon={undefined} relatedModalId={EditTopicModalId}
-                          clickAction={() => {
-                          }}/>
-            <CustomButton text={"Edit"} icon={undefined} relatedModalId={EditTopicModalId}
-                          clickAction={editButtonAction}/>
+            <form method="dialog">
+              <label htmlFor={EditTopicModalId} className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</label>
+              <CustomButton text={"Edit"} icon={undefined} relatedModalId={EditTopicModalId}
+                            clickAction={editButtonAction}/>
+            </form>
           </div>
         </div>
       </div>

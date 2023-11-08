@@ -79,9 +79,9 @@ const SubscriptionsPage: NextPage = () => {
             <EditTopicModal refreshTopics={refreshTopics} topics={topics} subscription={selectedSubscription}/>
         }
 
-        <div className="drawer lg:drawer-open">
+        <div onScroll={handleGridScroll} className="drawer lg:drawer-open h-screen overflow-y-auto">
           <input id={LATERAL_MENU_ID} type="checkbox" className="drawer-toggle"/>
-          <div onScroll={handleGridScroll} className="drawer-content">
+          <div className="drawer-content">
             <SubscriptionVideoCardGrid
               refreshSubscriptions={refreshSubscriptions}
               refreshItem={refreshSubscriptionItem}
@@ -93,8 +93,8 @@ const SubscriptionsPage: NextPage = () => {
               isLoading={isLoading}
               isFinished={isFinished}/>
           </div>
-          <div className="drawer-side">
-            <label htmlFor={LATERAL_MENU_ID} className="drawer-overlay"></label>
+          <div className="drawer-side z-20">
+            <label htmlFor={LATERAL_MENU_ID} aria-label="close sidebar" className="drawer-overlay"></label>
             <SubscriptionsLateralMenu
               subscriptions={subscriptions}
               selectedSubscription={selectedSubscription}

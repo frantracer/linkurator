@@ -57,9 +57,9 @@ const SubscriptionVideoCardGrid = (props: SubscriptionVideoCardGridProps) => {
     }
 
     content =
-      <div className="w-full">
-        <div className="sticky top-0 z-10 bg-white flex flex-row justify-between">
-          <div className="flex-none">
+      <div className="flex flex-col w-full">
+        <div className="sticky top-0 z-10 bg-white flex flex-row justify-between w-full">
+          <div className="flex items-start">
             <CustomButton
               text={""}
               icon={IconForButton.menu}
@@ -76,7 +76,7 @@ const SubscriptionVideoCardGrid = (props: SubscriptionVideoCardGridProps) => {
               {current_subscription.name}
             </h1>
           </div>
-          <div className="flex-none items-end">
+          <div className="flex items-end">
             <div className="dropdown dropdown-end">
               <CustomButton
                 text={""}

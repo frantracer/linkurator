@@ -5,9 +5,10 @@ import ProfileMenu from "./ProfileMenu";
 import LateralTopicList from "./LateralTopicList";
 import {Topic} from "../entities/Topic";
 import {Subscription} from "../entities/Subscription";
-import CustomButton from "./CustomButton";
+import CustomButton, {IconForButton} from "./CustomButton";
 import {configuration, paths} from "../configuration";
 import RedirectButton from "./RedirectButton";
+import {NewTopicModalId} from "./NewTopicModal";
 
 type TopicLateralMenuProps = {
   profile: Profile;
@@ -36,28 +37,39 @@ const LateralMenu = (props: TopicLateralMenuProps) => {
   const [searchValue, setSearchValue] = useState<string>('');
 
   return (
-    <ul className="menu p-4 min-h-full overflow-y-auto w-80 bg-white text-base-content">
-      <Title/>
-      <RedirectButton to={paths.SUBSCRIPTIONS}>Switch to subscriptions</RedirectButton>
-      {props.profile &&
-          <LateralSearchBar
-              searchBarQuery={searchValue}
-              setSearchBarQuery={setSearchValue}/>
-      }
-      <LateralTopicList
+    <div className="flex flex-col p-4 h-full w-80 bg-white text-base-content">
+      <div className="flex-[0_0_auto]">
+        <Title/>
+        <RedirectButton to={paths.SUBSCRIPTIONS}>Switch to subscriptions</RedirectButton>
+        <LateralSearchBar
+          searchBarQuery={searchValue}
+          setSearchBarQuery={setSearchValue}/>
+        <CustomButton
+          text={"New Topic"}
+          icon={IconForButton.add}
+          relatedModalId={NewTopicModalId}
+          clickAction={() => {
+          }}
+        />
+      </div>
+      <div className="flex-1 overflow-y-auto">
+        <LateralTopicList
           topics={props.topics}
           selectedTopic={props.selectedTopic}
           searchValue={searchValue}/>
-      {props.profile && <ProfileMenu profile={props.profile}/>}
-      {props.profile && <CustomButton
-          text={"Logout"}
-          icon={undefined}
-          relatedModalId={undefined}
-          clickAction={() => {
-            window.open(configuration.LOGOUT_URL, '_self')
-          }}/>
-      }
-    </ul>
+      </div>
+      <div className="flex-[0_0_auto]">
+        {props.profile && <ProfileMenu profile={props.profile}/>}
+        {props.profile && <CustomButton
+            text={"Logout"}
+            icon={undefined}
+            relatedModalId={undefined}
+            clickAction={() => {
+              window.open(configuration.LOGOUT_URL, '_self')
+            }}/>
+        }
+      </div>
+    </div>
   );
 };
 

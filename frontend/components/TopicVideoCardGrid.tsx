@@ -66,7 +66,7 @@ const TopicVideoCardGrid = (props: TopicVideoCardGridProps) => {
     const topic = props.topic;
 
     topicGrid = (
-      <div className="w-full">
+      <div className="flex flex-col w-full">
         <div className="sticky top-0 z-10 bg-white flex flex-row justify-center items-center">
           <div className="flex-none">
             <CustomButton

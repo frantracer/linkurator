@@ -34,30 +34,37 @@ const LateralMenu = (props: LateralMenuProps) => {
   const [searchValue, setSearchValue] = useState<string>('');
 
   return (
-    <ul className="menu p-4 min-h-full overflow-y-auto w-80 bg-white text-base-content">
-      <Title/>
-      <RedirectButton to={paths.TOPICS}>Switch to topics</RedirectButton>
-      {props.profile &&
-          <LateralSearchBar
-              searchBarQuery={searchValue}
-              setSearchBarQuery={setSearchValue}/>
-      }
-      {props.profile &&
-          <LateralSubscriptionList
-              searchValue={searchValue}
-              subscriptions={props.subscriptions}
-              selectedSubscription={props.selectedSubscription}/>
-      }
-      {props.profile && <ProfileMenu profile={props.profile}/>}
-      {props.profile && <CustomButton
-          text={"Logout"}
-          icon={undefined}
-          relatedModalId={undefined}
-          clickAction={() => {
-            window.open(configuration.LOGOUT_URL, '_self')
-          }}/>
-      }
-    </ul>
+    <div className="flex flex-col p-4 h-full w-80 bg-white text-base-content">
+      <div className="flex-[0_0_auto]">
+        <Title/>
+        <RedirectButton to={paths.TOPICS}>Switch to topics</RedirectButton>
+        {props.profile &&
+            <LateralSearchBar
+                searchBarQuery={searchValue}
+                setSearchBarQuery={setSearchValue}/>
+        }
+      </div>
+      <div className="flex-1 overflow-y-auto">
+
+        {props.profile &&
+            <LateralSubscriptionList
+                searchValue={searchValue}
+                subscriptions={props.subscriptions}
+                selectedSubscription={props.selectedSubscription}/>
+        }
+      </div>
+      <div className="flex-[0_0_auto]">
+        {props.profile && <ProfileMenu profile={props.profile}/>}
+        {props.profile && <CustomButton
+            text={"Logout"}
+            icon={undefined}
+            relatedModalId={undefined}
+            clickAction={() => {
+              window.open(configuration.LOGOUT_URL, '_self')
+            }}/>
+        }
+      </div>
+    </div>
   );
 };
 

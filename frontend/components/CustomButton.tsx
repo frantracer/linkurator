@@ -90,7 +90,7 @@ const CustomButton = (props: CustomButton) => {
             </svg>
   }
 
-  let className = "btn btn-primary gap-2 m-1";
+  let className = "btn btn-primary gap-2 m-1 w-full";
   if (props.showOnlyOnMobile) {
     className += " lg:hidden";
   }
