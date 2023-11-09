@@ -25,7 +25,7 @@ const SubscriptionsPage: NextPage = () => {
 
   const {profile, profileIsLoading} = useProfile();
   const {subscriptions, refreshSubscriptions} = useSubscriptions(profile);
-  const [topics, refreshTopics] = useTopics(profile);
+  const {topics, refreshTopics} = useTopics(profile);
   const {
     subscriptionsItems,
     refreshSubscriptionItem,

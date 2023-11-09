@@ -54,18 +54,17 @@ const NewTopicModal = (props: NewTopicModalProps) => {
             {subscriptionBadges}
           </div>
           <div className="modal-action">
-            <CustomButton text={"Close"} icon={undefined} relatedModalId={NewTopicModalId}
-                          clickAction={() => {
-                            clearSubscriptions();
-                            setNewTopicName("");
-                          }}/>
-            <CustomButton text={"Create"} icon={undefined} relatedModalId={NewTopicModalId}
-                          clickAction={async () => {
-                            await createTopic(uuidv4(), newTopicName, subscriptionsToAdd.map(s => s.uuid));
-                            props.refreshTopics();
-                            clearSubscriptions();
-                            setNewTopicName("");
-                          }}/>
+            <form method="dialog">
+              <label htmlFor={NewTopicModalId}
+                     className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</label>
+              <CustomButton text={"Create"} icon={undefined} relatedModalId={NewTopicModalId}
+                            clickAction={async () => {
+                              await createTopic(uuidv4(), newTopicName, subscriptionsToAdd.map(s => s.uuid));
+                              props.refreshTopics();
+                              clearSubscriptions();
+                              setNewTopicName("");
+                            }}/>
+            </form>
           </div>
         </div>
       </div>

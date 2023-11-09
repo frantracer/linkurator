@@ -16,6 +16,7 @@ import FilterOptionsModal from "../../components/FilterOptionsModal";
 import useFilters from "../../hooks/useFilters";
 import TopicsLateralMenu from "../../components/TopicsLateralMenu";
 import {useRouter} from "next/router";
+import CreateFirstTopicHero from "../../components/CreateFirstTopicHero";
 
 const Home: NextPage = () => {
   const router = useRouter()
@@ -24,7 +25,7 @@ const Home: NextPage = () => {
 
   const {profile, profileIsLoading} = useProfile();
   const {subscriptions} = useSubscriptions(profile);
-  const [topics, refreshTopics] = useTopics(profile);
+  const {topics, topicsAreLoading, refreshTopics} = useTopics(profile);
   const {
     topicItems,
     isLoading,
@@ -82,15 +83,20 @@ const Home: NextPage = () => {
         <div onScroll={handleGridScroll} className="drawer lg:drawer-open h-screen overflow-y-auto">
           <input id={LATERAL_MENU_ID} type="checkbox" className="drawer-toggle"/>
           <div className="drawer-content">
-            <TopicVideoCardGrid topic={selectedTopic}
-                                items={topicItems}
-                                fetchMoreItems={fetchMoreItems}
-                                refreshTopics={refreshTopics}
-                                refreshItem={refreshTopicItem}
-                                subscriptions={subscriptions}
-                                filters={filters}
-                                isLoading={isLoading}
-                                topicIsFinished={isFinished}/>
+            {topics.length === 0 && !topicsAreLoading &&
+              <CreateFirstTopicHero/>
+            }
+            {topics.length > 0 &&
+              <TopicVideoCardGrid topic={selectedTopic}
+                                  items={topicItems}
+                                  fetchMoreItems={fetchMoreItems}
+                                  refreshTopics={refreshTopics}
+                                  refreshItem={refreshTopicItem}
+                                  subscriptions={subscriptions}
+                                  filters={filters}
+                                  isLoading={isLoading}
+                                  topicIsFinished={isFinished}/>
+            }
           </div>
           <div className="drawer-side z-20">
             <label htmlFor={LATERAL_MENU_ID} aria-label="close sidebar" className="drawer-overlay"></label>
