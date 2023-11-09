@@ -88,7 +88,7 @@ const TopicVideoCardGrid = (props: TopicVideoCardGridProps) => {
                 relatedModalId={undefined}
                 clickAction={() => {
                 }}/>
-              <ul tabIndex={0} className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52">
+              <ul tabIndex={0} className="dropdown-content menu shadow bg-base-100 rounded-box w-52 gap-2">
                 <CustomButton
                   text={"Edit Topic"}
                   icon={IconForButton.pencil}

@@ -58,7 +58,7 @@ const SubscriptionVideoCardGrid = (props: SubscriptionVideoCardGridProps) => {
 
     content =
       <div className="flex flex-col w-full">
-        <div className="sticky top-0 z-10 bg-white flex flex-row justify-between w-full">
+        <div className="sticky top-0 z-10 bg-white flex flex-row justify-between align-top w-full">
           <div className="flex items-start">
             <CustomButton
               text={""}
@@ -68,15 +68,15 @@ const SubscriptionVideoCardGrid = (props: SubscriptionVideoCardGridProps) => {
               clickAction={() => {
               }}/>
           </div>
-          <div className="flex items-center flex-row">
-            <img className="h-12 mx-1 my-1 mb-2 rounded" src={current_subscription.thumbnail}
+          <div className="flex flex-row">
+            <img className="h-12 p-1 rounded" src={current_subscription.thumbnail}
                  alt={current_subscription.name + " icon"}/>
             <h1 onClick={() => window.open(current_subscription.url, "_blank")}
                 className="text-2xl md:text-4xl font-bold text-gray-800 cursor-pointer hover:underline">
               {current_subscription.name}
             </h1>
           </div>
-          <div className="flex items-end">
+          <div className="flex">
             <div className="dropdown dropdown-end">
               <CustomButton
                 text={""}
@@ -84,7 +84,7 @@ const SubscriptionVideoCardGrid = (props: SubscriptionVideoCardGridProps) => {
                 relatedModalId={undefined}
                 clickAction={() => {
                 }}/>
-              <ul tabIndex={0} className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52">
+              <ul tabIndex={0} className="dropdown-content menu shadow bg-base-100 rounded-box w-52 gap-2">
                 <CustomButton
                   text={"Add to Topic"}
                   icon={IconForButton.add}
