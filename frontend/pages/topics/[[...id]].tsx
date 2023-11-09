@@ -25,7 +25,7 @@ const Home: NextPage = () => {
 
   const {profile, profileIsLoading} = useProfile();
   const {subscriptions} = useSubscriptions(profile);
-  const {topics, topicsAreLoading, refreshTopics} = useTopics(profile);
+  const {topics, topicsAreLoading, refreshTopics} = useTopics(profile, profileIsLoading);
   const {
     topicItems,
     isLoading,

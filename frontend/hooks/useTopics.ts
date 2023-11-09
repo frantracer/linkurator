@@ -14,7 +14,7 @@ type TopicsState = {
   topicsAreLoading: boolean;
 }
 
-export function useTopics(profile: Profile | undefined): UseTopics {
+export function useTopics(profile: Profile | undefined, profileIsLoading: boolean): UseTopics {
   const [topics, setTopics] = useState<TopicsState>({topics: [], topicsAreLoading: true});
 
   function refreshTopics(profile: Profile | undefined) {
@@ -26,7 +26,11 @@ export function useTopics(profile: Profile | undefined): UseTopics {
         })
         .catch(error => console.error("Error retrieving subscriptions", error));
     } else {
-      setTopics({topics: [], topicsAreLoading: false});
+      if (profileIsLoading) {
+        setTopics({topics: [], topicsAreLoading: true});
+      } else {
+        setTopics({topics: [], topicsAreLoading: false});
+      }
     }
   }
 
