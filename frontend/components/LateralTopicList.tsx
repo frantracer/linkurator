@@ -4,7 +4,7 @@ import {Topic} from "../entities/Topic";
 import {paths} from "../configuration";
 import {useRouter} from "next/router";
 import {hideLateralMenu} from "../utilities/hideLateralMenu";
-import {scrollToDrawerContentTop} from "../utilities/scrollToDrawerContentTop";
+import {scrollToDrawerTop} from "../utilities/scrollToDrawerTop";
 
 type LateralTopicListProps = {
   topics: Topic[];
@@ -18,7 +18,7 @@ const LateralTopicList = (props: LateralTopicListProps) => {
     const topic = props.topics.find((topic) => topic.uuid === topicId);
     if (topic) {
       hideLateralMenu()
-      scrollToDrawerContentTop()
+      scrollToDrawerTop()
       router.push(paths.TOPICS + "/" + topic.uuid)
     }
   }
