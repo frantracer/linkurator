@@ -1,5 +1,5 @@
 import CustomButton from "./CustomButton";
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {Filters} from "../entities/Filters";
 import {scrollToDrawerTop} from "../utilities/scrollToDrawerTop";
 
@@ -13,7 +13,9 @@ type FilterOptionsModalProps = {
 const FilterOptionsModal = (props: FilterOptionsModalProps) => {
   const [tempFilters, setTempFilters] = useState<Filters>(props.filters);
 
-  console.log(tempFilters)
+  useEffect(() => {
+    setTempFilters(props.filters)
+  }, [props.filters])
 
   return (
     <div className="text-white">
@@ -23,7 +25,8 @@ const FilterOptionsModal = (props: FilterOptionsModalProps) => {
           <h3 className="font-bold text-lg m-2">Filter options</h3>
           <div className="form-control">
             <label className="label">
-              <input type="text" placeholder="Search..." className="input input-primary input-bordered min-w-full max-w-full"
+              <input type="text" placeholder="Search..." defaultValue={tempFilters.textSearch}
+                     className="input input-primary input-bordered min-w-full max-w-full"
                      value={tempFilters.textSearch}
                      onChange={(e) => setTempFilters({...tempFilters, textSearch: e.target.value})}/>
             </label>
@@ -31,21 +34,21 @@ const FilterOptionsModal = (props: FilterOptionsModalProps) => {
           <div className="form-control">
             <label className="label cursor-pointer">
               <span className="label-text">Show hidden items</span>
-              <input type="checkbox" defaultChecked={tempFilters.display_hidden} className="checkbox checkbox-primary"
+              <input type="checkbox" checked={tempFilters.display_hidden} className="checkbox checkbox-primary"
                      onClick={() => setTempFilters({...tempFilters, display_hidden: !tempFilters.display_hidden})}/>
             </label>
           </div>
           <div className="form-control">
             <label className="label cursor-pointer">
               <span className="label-text">Show viewed items</span>
-              <input type="checkbox" defaultChecked={tempFilters.display_viewed} className="checkbox checkbox-primary"
+              <input type="checkbox" checked={tempFilters.display_viewed} className="checkbox checkbox-primary"
                      onClick={() => setTempFilters({...tempFilters, display_viewed: !tempFilters.display_viewed})}/>
             </label>
           </div>
           <div className="form-control">
             <label className="label cursor-pointer">
               <span className="label-text">Show recommended items</span>
-              <input type="checkbox" defaultChecked={tempFilters.display_recommended}
+              <input type="checkbox" checked={tempFilters.display_recommended}
                      className="checkbox checkbox-primary"
                      onClick={() => setTempFilters({
                        ...tempFilters,
@@ -56,7 +59,7 @@ const FilterOptionsModal = (props: FilterOptionsModalProps) => {
           <div className="form-control">
             <label className="label cursor-pointer">
               <span className="label-text">Show discouraged items</span>
-              <input type="checkbox" defaultChecked={tempFilters.display_discouraged}
+              <input type="checkbox" checked={tempFilters.display_discouraged}
                      className="checkbox checkbox-primary"
                      onClick={() => setTempFilters({
                        ...tempFilters,

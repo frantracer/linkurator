@@ -23,7 +23,7 @@ const SubscriptionsPage: NextPage = () => {
 
   const selectedSubscriptionId: string | undefined = router.query.id ? router.query.id[0] as string : undefined;
 
-  const [filters, setFilters] = useFilters();
+  const {filters, setFilters, setDefaultFilters} = useFilters();
   const {profile, profileIsLoading} = useProfile();
   const {subscriptions, refreshSubscriptions} = useSubscriptions(profile);
   const {topics, refreshTopics} = useTopics(profile, profileIsLoading);
@@ -56,6 +56,7 @@ const SubscriptionsPage: NextPage = () => {
         if (subscriptions.length > 0 && selectedSubscription === undefined) {
           router.push(paths.SUBSCRIPTIONS + "/" + subscriptions[0].uuid)
         }
+        setDefaultFilters()
       }
 
       if (selectedSubscription?.isBeingScanned) {
@@ -64,7 +65,7 @@ const SubscriptionsPage: NextPage = () => {
         }, REFRESH_SUBSCRIPTIONS_INTERVAL)
       }
     }
-  }, [profileIsLoading, selectedSubscription, profile, subscriptions, router]);
+    }, [profileIsLoading, selectedSubscription, profile, subscriptions, router]);
 
   return (
     <div>
