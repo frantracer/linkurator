@@ -5,6 +5,7 @@ export type Filters = {
   display_viewed: boolean;
   display_discouraged: boolean;
   display_recommended: boolean;
+  textSearch: string;
 }
 
 export function isItemShown(item: SubscriptionItem, filters: Filters) {

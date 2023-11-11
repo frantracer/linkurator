@@ -17,7 +17,7 @@ type UseSubscriptionItems = {
 }
 
 
-const useSubscriptionItems = (subscriptionId: OptionalSubscriptionId): UseSubscriptionItems => {
+const useSubscriptionItems = (subscriptionId: OptionalSubscriptionId, textSearch: string): UseSubscriptionItems => {
   const {
     data,
     refetch,
@@ -26,14 +26,14 @@ const useSubscriptionItems = (subscriptionId: OptionalSubscriptionId): UseSubscr
     isFetching,
     isFetchingNextPage
   } = useInfiniteQuery<SubscriptionItemsResponse>({
-    queryKey: ["subscriptionItems", subscriptionId],
+    queryKey: ["subscriptionItems", subscriptionId, textSearch],
     queryFn: async ({pageParam = undefined}) => {
       if (subscriptionId === undefined) {
         const emptyResponse: SubscriptionItemsResponse = {elements: [], nextPage: undefined};
         return emptyResponse;
       }
       if (pageParam === undefined) {
-        return await getSubscriptionItems(subscriptionId);
+        return await getSubscriptionItems(subscriptionId, textSearch);
       }
       return await getSubscriptionItemsFromUrl(pageParam as URL);
     },

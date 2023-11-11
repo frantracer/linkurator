@@ -76,11 +76,11 @@ export async function getSubscriptions(): Promise<Subscription[]> {
   return subscriptions
 }
 
-export async function getSubscriptionItems(uuid: string): Promise<SubscriptionItemsResponse> {
+export async function getSubscriptionItems(uuid: string, textSearch: string): Promise<SubscriptionItemsResponse> {
   let items: SubscriptionItem[] = []
   let nextPage: URL | undefined = undefined;
   try {
-    const url = configuration.SUBSCRIPTIONS_URL + uuid + "/items?page_size=" + ITEMS_PER_PAGE;
+    const url = configuration.SUBSCRIPTIONS_URL + uuid + "/items?page_size=" + ITEMS_PER_PAGE + "&search=" + textSearch;
     const {status, data} = await axios.get(url, {withCredentials: true});
     if (status === 200) {
       const response = mapJsonToSubscriptionItemsResponse(data);

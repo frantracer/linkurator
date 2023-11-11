@@ -67,11 +67,11 @@ export async function deleteTopic(uuid: string) {
   }
 }
 
-export async function getTopicItems(uuid: string): Promise<TopicItemsResponse> {
+export async function getTopicItems(uuid: string, searchText: string): Promise<TopicItemsResponse> {
   let items: SubscriptionItem[] = []
   let nextPage = undefined;
   try {
-    const url = configuration.TOPICS_URL + uuid + "/items?page_size=" + ITEMS_PER_PAGE;
+    const url = configuration.TOPICS_URL + uuid + "/items?page_size=" + ITEMS_PER_PAGE + "&search=" + searchText;
     const {data, status} = await axios.get(url, {withCredentials: true});
     if (status === 200) {
       const response = mapJsonToTopicItemsResponse(data);

@@ -23,6 +23,7 @@ const Home: NextPage = () => {
 
   const topicIdFromQuery: string | undefined = router.query.id ? router.query.id[0] as string : undefined;
 
+  const [filters, setFilters] = useFilters();
   const {profile, profileIsLoading} = useProfile();
   const {subscriptions} = useSubscriptions(profile);
   const {topics, topicsAreLoading, refreshTopics} = useTopics(profile, profileIsLoading);
@@ -33,8 +34,7 @@ const Home: NextPage = () => {
     refreshTopicItem,
     refreshTopicItems,
     fetchMoreItems
-  } = useTopicItems(topicIdFromQuery);
-  const [filters, setFilters] = useFilters();
+  } = useTopicItems(topicIdFromQuery, filters.textSearch);
 
   const selectedTopic: Topic | undefined = topics.find(t => t.uuid === topicIdFromQuery);
 

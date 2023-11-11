@@ -13,7 +13,7 @@ type UseTopicItems = {
   fetchMoreItems: () => void,
 }
 
-const useTopicItems = (topicId: OptionalTopicId): UseTopicItems => {
+const useTopicItems = (topicId: OptionalTopicId, searchText: string): UseTopicItems => {
   const {
     data,
     refetch,
@@ -22,14 +22,14 @@ const useTopicItems = (topicId: OptionalTopicId): UseTopicItems => {
     isFetching,
     isFetchingNextPage
   } = useInfiniteQuery<TopicItemsResponse>({
-    queryKey: ["topicItems", topicId],
+    queryKey: ["topicItems", topicId, searchText],
     queryFn: async ({pageParam = undefined}) => {
       if (topicId === undefined) {
         const emptyResponse: TopicItemsResponse = {elements: [], nextPage: undefined};
         return emptyResponse;
       }
       if (pageParam === undefined) {
-        return await getTopicItems(topicId);
+        return await getTopicItems(topicId, searchText);
       }
       return await getTopicItemsFromUrl(pageParam);
     },

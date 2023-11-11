@@ -7,6 +7,7 @@ const useFilters = () => {
     display_viewed: false,
     display_discouraged: false,
     display_recommended: true,
+    textSearch: "",
   });
 
   return [filters, setFilters] as const;
