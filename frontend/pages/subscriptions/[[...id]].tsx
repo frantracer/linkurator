@@ -27,15 +27,16 @@ const SubscriptionsPage: NextPage = () => {
   const {profile, profileIsLoading} = useProfile();
   const {subscriptions, refreshSubscriptions} = useSubscriptions(profile);
   const {topics, refreshTopics} = useTopics(profile, profileIsLoading);
+
+  const selectedSubscription = subscriptions.find(subscription => subscription.uuid === selectedSubscriptionId);
+
   const {
     subscriptionsItems,
     refreshSubscriptionItem,
     fetchMoreItems,
     isLoading,
     isFinished
-  } = useSubscriptionItems(selectedSubscriptionId, filters.textSearch);
-
-  const selectedSubscription = subscriptions.find(subscription => subscription.uuid === selectedSubscriptionId);
+  } = useSubscriptionItems(selectedSubscription, filters.textSearch);
 
   const handleGridScroll = (event: React.UIEvent<HTMLElement>) => {
     const element = event.currentTarget
