@@ -1,6 +1,7 @@
 import CustomButton from "./CustomButton";
 import React, {useState} from "react";
 import {Filters} from "../entities/Filters";
+import {scrollToDrawerTop} from "../utilities/scrollToDrawerTop";
 
 export const FilterOptionsModalId = "filter-options-modal";
 
@@ -18,10 +19,11 @@ const FilterOptionsModal = (props: FilterOptionsModalProps) => {
     <div className="text-white">
       <input type="checkbox" id={FilterOptionsModalId} className="modal-toggle"/>
       <div className="modal modal-bottom sm:modal-middle">
-        <ul tabIndex={0} className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-fit">
+        <div className="modal-box">
+          <h3 className="font-bold text-lg m-2">Filter options</h3>
           <div className="form-control">
             <label className="label">
-              <input type="text" placeholder="Search..." className="input input-primary input-bordered"
+              <input type="text" placeholder="Search..." className="input input-primary input-bordered min-w-full max-w-full"
                      value={tempFilters.textSearch}
                      onChange={(e) => setTempFilters({...tempFilters, textSearch: e.target.value})}/>
             </label>
@@ -43,26 +45,37 @@ const FilterOptionsModal = (props: FilterOptionsModalProps) => {
           <div className="form-control">
             <label className="label cursor-pointer">
               <span className="label-text">Show recommended items</span>
-              <input type="checkbox" defaultChecked={tempFilters.display_recommended} className="checkbox checkbox-primary"
-                     onClick={() => setTempFilters({...tempFilters, display_recommended: !tempFilters.display_recommended})}/>
+              <input type="checkbox" defaultChecked={tempFilters.display_recommended}
+                     className="checkbox checkbox-primary"
+                     onClick={() => setTempFilters({
+                       ...tempFilters,
+                       display_recommended: !tempFilters.display_recommended
+                     })}/>
             </label>
           </div>
           <div className="form-control">
             <label className="label cursor-pointer">
               <span className="label-text">Show discouraged items</span>
-              <input type="checkbox" defaultChecked={tempFilters.display_discouraged} className="checkbox checkbox-primary"
-                     onClick={() => setTempFilters({...tempFilters, display_discouraged: !tempFilters.display_discouraged})}/>
+              <input type="checkbox" defaultChecked={tempFilters.display_discouraged}
+                     className="checkbox checkbox-primary"
+                     onClick={() => setTempFilters({
+                       ...tempFilters,
+                       display_discouraged: !tempFilters.display_discouraged
+                     })}/>
             </label>
           </div>
-          <div className="modal-box">
-            <div className="modal-action">
+          <div className="modal-action">
+            <form method="dialog">
+              <label htmlFor={FilterOptionsModalId}
+                     className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</label>
               <CustomButton text={"Accept"} icon={undefined} relatedModalId={FilterOptionsModalId}
                             clickAction={() => {
                               props.setFilters(tempFilters)
+                              scrollToDrawerTop()
                             }}/>
-            </div>
+            </form>
           </div>
-        </ul>
+        </div>
       </div>
     </div>
   )
