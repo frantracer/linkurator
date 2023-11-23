@@ -9,4 +9,5 @@ export type SubscriptionItem = {
   discouraged: boolean;
   viewed: boolean;
   hidden: boolean;
+  duration: undefined | number;
 };

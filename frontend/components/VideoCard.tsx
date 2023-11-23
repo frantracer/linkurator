@@ -13,6 +13,21 @@ type VideoCardProps = {
   onChange: () => void;
 };
 
+const convert_seconds_to_hh_mm_ss = (seconds: number) => {
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.floor((seconds - (hours * 3600)) / 60);
+  const seconds_left = seconds - (hours * 3600) - (minutes * 60);
+  let result = "";
+  if (hours > 0) {
+    result += hours.toString() + ":";
+    result += minutes.toString().padStart(2, "0") + ":";
+  } else {
+    result += minutes.toString() + ":";
+  }
+  result += seconds_left.toString().padStart(2, "0");
+  return result;
+}
+
 const VideoCard = (props: VideoCardProps) => {
   const {ref, inView} = useInView({threshold: 0});
 
@@ -44,6 +59,11 @@ const VideoCard = (props: VideoCardProps) => {
              src={props.item.thumbnail}
              alt={props.item.name}
              onClick={() => window.open(props.item.url, "_blank")}/>
+        {props.item.duration &&
+            <span className="absolute top-0 right-0 m-1 p-1 bg-black bg-opacity-90 rounded">
+                <p className="text-white">{convert_seconds_to_hh_mm_ss(props.item.duration)}</p>
+            </span>
+        }
       </figure>
       <div className="card-body">
         <h2 className="card-title cursor-pointer" onClick={() => window.open(props.item.url, "_blank")}>

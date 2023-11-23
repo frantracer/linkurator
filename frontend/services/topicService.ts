@@ -151,6 +151,7 @@ const mapJsonToTopicItemsResponse = (json: Record<string, any>): TopicItemsRespo
         discouraged: element.discouraged,
         viewed: element.viewed,
         hidden: element.hidden,
+        duration: element.duration,
       };
     }),
     nextPage: nextPage,

@@ -31,6 +31,7 @@ const mapJsonItemToSubscriptionItem = (json: Record<string, any>): SubscriptionI
     discouraged: json.discouraged,
     viewed: json.viewed,
     hidden: json.hidden,
+    duration: json.duration,
   };
 }
 
