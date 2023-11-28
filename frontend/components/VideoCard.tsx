@@ -59,7 +59,7 @@ const VideoCard = (props: VideoCardProps) => {
              src={props.item.thumbnail}
              alt={props.item.name}
              onClick={() => window.open(props.item.url, "_blank")}/>
-        {props.item.duration &&
+        {props.item.duration !== undefined &&
             <span className="absolute top-0 right-0 m-1 p-1 bg-black bg-opacity-90 rounded">
                 <p className="text-white">{convert_seconds_to_hh_mm_ss(props.item.duration)}</p>
             </span>
