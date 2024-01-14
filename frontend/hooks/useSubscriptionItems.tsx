@@ -6,6 +6,8 @@ import {
 } from "../services/subscriptionService";
 import {useInfiniteQuery} from "@tanstack/react-query";
 import {Subscription} from "../entities/Subscription";
+import {Filters} from "../entities/Filters";
+import {mapFiltersToInteractionParams} from "../services/common";
 
 type OptionalSubscription = Subscription | undefined;
 
@@ -18,7 +20,7 @@ type UseSubscriptionItems = {
 }
 
 
-const useSubscriptionItems = (subscription: OptionalSubscription, textSearch: string): UseSubscriptionItems => {
+const useSubscriptionItems = (subscription: OptionalSubscription, filters: Filters): UseSubscriptionItems => {
   const {
     data,
     refetch,
@@ -27,14 +29,14 @@ const useSubscriptionItems = (subscription: OptionalSubscription, textSearch: st
     isFetching,
     isFetchingNextPage
   } = useInfiniteQuery<SubscriptionItemsResponse>({
-    queryKey: ["subscriptionItems", subscription?.uuid, subscription?.isBeingScanned, textSearch],
+    queryKey: ["subscriptionItems", subscription?.uuid, subscription?.isBeingScanned, filters],
     queryFn: async ({pageParam = undefined}) => {
       if (subscription === undefined || subscription.isBeingScanned) {
         const emptyResponse: SubscriptionItemsResponse = {elements: [], nextPage: undefined};
         return emptyResponse;
       }
       if (pageParam === undefined) {
-        return await getSubscriptionItems(subscription.uuid, textSearch);
+        return await getSubscriptionItems(subscription.uuid, filters.textSearch, mapFiltersToInteractionParams(filters));
       }
       return await getSubscriptionItemsFromUrl(pageParam as URL);
     },

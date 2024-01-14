@@ -4,6 +4,7 @@ import {Subscription} from "../entities/Subscription";
 import {SubscriptionItem} from "../entities/SubscriptionItem";
 import {replaceBaseUrl} from "../utilities/replaceBaseUrl";
 import {ITEMS_PER_PAGE} from "../utilities/constants";
+import {InteractionFilter} from "./common";
 
 export type SubscriptionResponse = {
   elements: Subscription[];
@@ -77,11 +78,17 @@ export async function getSubscriptions(): Promise<Subscription[]> {
   return subscriptions
 }
 
-export async function getSubscriptionItems(uuid: string, textSearch: string): Promise<SubscriptionItemsResponse> {
+export async function getSubscriptionItems(
+  uuid: string,
+  searchText: string = "",
+  interactionsToInclude: InteractionFilter[] = []
+): Promise<SubscriptionItemsResponse> {
   let items: SubscriptionItem[] = []
   let nextPage: URL | undefined = undefined;
   try {
-    const url = configuration.SUBSCRIPTIONS_URL + uuid + "/items?page_size=" + ITEMS_PER_PAGE + "&search=" + textSearch;
+    const searchParam = searchText ? "&search=" + searchText : "";
+    const interactionsParam = interactionsToInclude.length > 0 ? "&include_interactions=" + interactionsToInclude.join(",") : "";
+    const url = configuration.SUBSCRIPTIONS_URL + uuid + "/items?page_size=" + ITEMS_PER_PAGE + searchParam + interactionsParam
     const {status, data} = await axios.get(url, {withCredentials: true});
     if (status === 200) {
       const response = mapJsonToSubscriptionItemsResponse(data);

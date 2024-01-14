@@ -8,11 +8,12 @@ type UseFilters = {
 }
 
 const defaultFilters: Filters = {
+  textSearch: "",
   display_hidden: false,
   display_viewed: false,
   display_discouraged: false,
-  display_recommended: true,
-  textSearch: "",
+  display_recommended: false,
+  display_without_interaction: true,
 }
 
 const useFilters = (): UseFilters => {

@@ -11,3 +11,7 @@ export type SubscriptionItem = {
   hidden: boolean;
   duration: undefined | number;
 };
+
+export function hasInteraction(item: SubscriptionItem) {
+  return item.viewed || item.discouraged || item.hidden || item.recommended;
+}

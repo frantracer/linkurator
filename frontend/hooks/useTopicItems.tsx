@@ -1,6 +1,8 @@
 import {getTopicItems, getTopicItemsFromUrl, TopicItemsResponse} from "../services/topicService";
 import {SubscriptionItem} from "../entities/SubscriptionItem";
 import {useInfiniteQuery} from "@tanstack/react-query";
+import {Filters} from "../entities/Filters";
+import {mapFiltersToInteractionParams} from "../services/common";
 
 type OptionalTopicId = string | undefined;
 
@@ -13,7 +15,7 @@ type UseTopicItems = {
   fetchMoreItems: () => void,
 }
 
-const useTopicItems = (topicId: OptionalTopicId, searchText: string): UseTopicItems => {
+const useTopicItems = (topicId: OptionalTopicId, filters: Filters): UseTopicItems => {
   const {
     data,
     refetch,
@@ -22,14 +24,14 @@ const useTopicItems = (topicId: OptionalTopicId, searchText: string): UseTopicIt
     isFetching,
     isFetchingNextPage
   } = useInfiniteQuery<TopicItemsResponse>({
-    queryKey: ["topicItems", topicId, searchText],
+    queryKey: ["topicItems", topicId, filters],
     queryFn: async ({pageParam = undefined}) => {
       if (topicId === undefined) {
         const emptyResponse: TopicItemsResponse = {elements: [], nextPage: undefined};
         return emptyResponse;
       }
       if (pageParam === undefined) {
-        return await getTopicItems(topicId, searchText);
+        return await getTopicItems(topicId, filters.textSearch, mapFiltersToInteractionParams(filters));
       }
       return await getTopicItemsFromUrl(pageParam);
     },

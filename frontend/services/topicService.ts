@@ -4,6 +4,7 @@ import axios from "axios";
 import {SubscriptionItem} from "../entities/SubscriptionItem";
 import {replaceBaseUrl} from "../utilities/replaceBaseUrl";
 import {ITEMS_PER_PAGE} from "../utilities/constants";
+import {InteractionFilter} from "./common";
 
 export type TopicResponse = {
   elements: Topic[];
@@ -14,6 +15,7 @@ export type TopicItemsResponse = {
   elements: SubscriptionItem[];
   nextPage: URL | undefined;
 }
+
 
 export async function getTopics(): Promise<Topic[]> {
   let topics: Topic[] = []
@@ -67,11 +69,17 @@ export async function deleteTopic(uuid: string) {
   }
 }
 
-export async function getTopicItems(uuid: string, searchText: string): Promise<TopicItemsResponse> {
+export async function getTopicItems(
+  uuid: string,
+  searchText: string = "",
+  interactionsToInclude: InteractionFilter[] = []
+): Promise<TopicItemsResponse> {
   let items: SubscriptionItem[] = []
   let nextPage = undefined;
   try {
-    const url = configuration.TOPICS_URL + uuid + "/items?page_size=" + ITEMS_PER_PAGE + "&search=" + searchText;
+    const searchParam = searchText ? "&search=" + searchText : "";
+    const interactionsParam = interactionsToInclude.length > 0 ? "&include_interactions=" + interactionsToInclude.join(",") : "";
+    const url = configuration.TOPICS_URL + uuid + "/items?page_size=" + ITEMS_PER_PAGE + searchParam + interactionsParam
     const {data, status} = await axios.get(url, {withCredentials: true});
     if (status === 200) {
       const response = mapJsonToTopicItemsResponse(data);
@@ -106,7 +114,7 @@ export async function assignSubscriptionToTopic(topic_uuid: string, subscription
     {},
     {withCredentials: true});
   if (status !== 201) {
-    throw("Error assigning subscription to topic " + data);
+    throw ("Error assigning subscription to topic " + data);
   }
 }
 

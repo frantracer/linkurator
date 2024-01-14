@@ -34,7 +34,7 @@ const Home: NextPage = () => {
     refreshTopicItem,
     refreshTopicItems,
     fetchMoreItems
-  } = useTopicItems(topicIdFromQuery, filters.textSearch);
+  } = useTopicItems(topicIdFromQuery, filters);
 
   const selectedTopic: Topic | undefined = topics.find(t => t.uuid === topicIdFromQuery);
 

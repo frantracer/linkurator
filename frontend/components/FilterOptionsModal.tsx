@@ -67,6 +67,17 @@ const FilterOptionsModal = (props: FilterOptionsModalProps) => {
                      })}/>
             </label>
           </div>
+          <div className="form-control">
+            <label className="label cursor-pointer">
+              <span className="label-text">Show all other items</span>
+              <input type="checkbox" checked={tempFilters.display_without_interaction}
+                     className="checkbox checkbox-primary"
+                     onClick={() => setTempFilters({
+                       ...tempFilters,
+                       display_without_interaction: !tempFilters.display_without_interaction
+                     })}/>
+            </label>
+          </div>
           <div className="modal-action">
             <form method="dialog">
               <label htmlFor={FilterOptionsModalId}

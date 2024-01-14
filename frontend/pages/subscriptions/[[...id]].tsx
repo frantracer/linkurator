@@ -36,7 +36,7 @@ const SubscriptionsPage: NextPage = () => {
     fetchMoreItems,
     isLoading,
     isFinished
-  } = useSubscriptionItems(selectedSubscription, filters.textSearch);
+  } = useSubscriptionItems(selectedSubscription, filters);
 
   const handleGridScroll = (event: React.UIEvent<HTMLElement>) => {
     const element = event.currentTarget
