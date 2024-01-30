@@ -20,64 +20,92 @@ const FilterOptionsModal = (props: FilterOptionsModalProps) => {
   return (
     <div className="text-white">
       <input type="checkbox" id={FilterOptionsModalId} className="modal-toggle"/>
-      <div className="modal modal-bottom sm:modal-middle">
-        <div className="modal-box">
-          <h3 className="font-bold text-lg m-2">Filter options</h3>
+
+      <dialog className="modal modal-bottom sm:modal-middle">
+
+        <div className="modal-box min-w-full sm:min-w-fit">
+          <h3 className="font-bold text-lg">Filter options</h3>
+
           <div className="form-control">
+            <span className="label-text">Text filter</span>
             <label className="label">
               <input type="text" placeholder="Search..." defaultValue={tempFilters.textSearch}
-                     className="input input-primary input-bordered min-w-full max-w-full"
-                     value={tempFilters.textSearch}
+                     className="input input-primary input-bordered w-full"
                      onChange={(e) => setTempFilters({...tempFilters, textSearch: e.target.value})}/>
             </label>
           </div>
+
+          <div className="flex justify-between">
+            <div className="form-control">
+              <span className="label-text">Min seconds</span>
+              <label className="label">
+                <input type="number" placeholder="" defaultValue={tempFilters.minDuration || 0}
+                       className="input input-primary input-bordered w-32"
+                       onChange={(e) => setTempFilters({...tempFilters, minDuration: Number(e.target.value)})}/>
+              </label>
+            </div>
+            <div className="form-control">
+              <span className="label-text">Max seconds</span>
+              <label className="label">
+                <input type="number" placeholder="" defaultValue={tempFilters.maxDuration || 100000}
+                       className="input input-primary input-bordered w-32"
+                       onChange={(e) => setTempFilters({...tempFilters, maxDuration: Number(e.target.value)})}/>
+              </label>
+            </div>
+          </div>
+
           <div className="form-control">
             <label className="label cursor-pointer">
               <span className="label-text">Show hidden items</span>
-              <input type="checkbox" checked={tempFilters.display_hidden} className="checkbox checkbox-primary"
-                     onClick={() => setTempFilters({...tempFilters, display_hidden: !tempFilters.display_hidden})}/>
+              <input type="checkbox" defaultChecked={tempFilters.displayHidden} className="checkbox checkbox-primary"
+                     onClick={() => setTempFilters({...tempFilters, displayHidden: !tempFilters.displayHidden})}/>
             </label>
           </div>
+
           <div className="form-control">
             <label className="label cursor-pointer">
               <span className="label-text">Show viewed items</span>
-              <input type="checkbox" checked={tempFilters.display_viewed} className="checkbox checkbox-primary"
-                     onClick={() => setTempFilters({...tempFilters, display_viewed: !tempFilters.display_viewed})}/>
+              <input type="checkbox" defaultChecked={tempFilters.displayViewed} className="checkbox checkbox-primary"
+                     onClick={() => setTempFilters({...tempFilters, displayViewed: !tempFilters.displayViewed})}/>
             </label>
           </div>
+
           <div className="form-control">
             <label className="label cursor-pointer">
               <span className="label-text">Show recommended items</span>
-              <input type="checkbox" checked={tempFilters.display_recommended}
+              <input type="checkbox" defaultChecked={tempFilters.displayRecommended}
                      className="checkbox checkbox-primary"
                      onClick={() => setTempFilters({
                        ...tempFilters,
-                       display_recommended: !tempFilters.display_recommended
+                       displayRecommended: !tempFilters.displayRecommended
                      })}/>
             </label>
           </div>
+
           <div className="form-control">
             <label className="label cursor-pointer">
               <span className="label-text">Show discouraged items</span>
-              <input type="checkbox" checked={tempFilters.display_discouraged}
+              <input type="checkbox" defaultChecked={tempFilters.displayDiscouraged}
                      className="checkbox checkbox-primary"
                      onClick={() => setTempFilters({
                        ...tempFilters,
-                       display_discouraged: !tempFilters.display_discouraged
+                       displayDiscouraged: !tempFilters.displayDiscouraged
                      })}/>
             </label>
           </div>
+
           <div className="form-control">
             <label className="label cursor-pointer">
               <span className="label-text">Show all other items</span>
-              <input type="checkbox" checked={tempFilters.display_without_interaction}
+              <input type="checkbox" defaultChecked={tempFilters.displayWithoutInteraction}
                      className="checkbox checkbox-primary"
                      onClick={() => setTempFilters({
                        ...tempFilters,
-                       display_without_interaction: !tempFilters.display_without_interaction
+                       displayWithoutInteraction: !tempFilters.displayWithoutInteraction
                      })}/>
             </label>
           </div>
+
           <div className="modal-action">
             <form method="dialog">
               <label htmlFor={FilterOptionsModalId}
@@ -90,7 +118,7 @@ const FilterOptionsModal = (props: FilterOptionsModalProps) => {
             </form>
           </div>
         </div>
-      </div>
+      </dialog>
     </div>
   )
 }

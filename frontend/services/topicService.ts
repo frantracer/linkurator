@@ -71,6 +71,8 @@ export async function deleteTopic(uuid: string) {
 
 export async function getTopicItems(
   uuid: string,
+  minDuration: number,
+  maxDuration: number,
   searchText: string = "",
   interactionsToInclude: InteractionFilter[] = []
 ): Promise<TopicItemsResponse> {
@@ -79,7 +81,10 @@ export async function getTopicItems(
   try {
     const searchParam = searchText ? "&search=" + searchText : "";
     const interactionsParam = interactionsToInclude.length > 0 ? "&include_interactions=" + interactionsToInclude.join(",") : "";
-    const url = configuration.TOPICS_URL + uuid + "/items?page_size=" + ITEMS_PER_PAGE + searchParam + interactionsParam
+    const minDurationParam = "&min_duration=" + minDuration;
+    const maxDurationParam = "&max_duration=" + maxDuration;
+    const url = configuration.TOPICS_URL + uuid + "/items?page_size=" + ITEMS_PER_PAGE + searchParam +
+      interactionsParam + minDurationParam + maxDurationParam;
     const {data, status} = await axios.get(url, {withCredentials: true});
     if (status === 200) {
       const response = mapJsonToTopicItemsResponse(data);

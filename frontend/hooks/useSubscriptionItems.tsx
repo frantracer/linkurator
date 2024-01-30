@@ -36,7 +36,8 @@ const useSubscriptionItems = (subscription: OptionalSubscription, filters: Filte
         return emptyResponse;
       }
       if (pageParam === undefined) {
-        return await getSubscriptionItems(subscription.uuid, filters.textSearch, mapFiltersToInteractionParams(filters));
+        return await getSubscriptionItems(subscription.uuid, filters.minDuration, filters.maxDuration,
+          filters.textSearch, mapFiltersToInteractionParams(filters));
       }
       return await getSubscriptionItemsFromUrl(pageParam as URL);
     },

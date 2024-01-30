@@ -31,7 +31,8 @@ const useTopicItems = (topicId: OptionalTopicId, filters: Filters): UseTopicItem
         return emptyResponse;
       }
       if (pageParam === undefined) {
-        return await getTopicItems(topicId, filters.textSearch, mapFiltersToInteractionParams(filters));
+        return await getTopicItems(topicId, filters.minDuration, filters.maxDuration, filters.textSearch,
+          mapFiltersToInteractionParams(filters));
       }
       return await getTopicItemsFromUrl(pageParam);
     },

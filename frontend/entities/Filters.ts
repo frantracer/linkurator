@@ -1,25 +1,27 @@
 import {hasInteraction, SubscriptionItem} from "./SubscriptionItem";
 
 export type Filters = {
-  display_without_interaction: boolean;
-  display_hidden: boolean;
-  display_viewed: boolean;
-  display_discouraged: boolean;
-  display_recommended: boolean;
+  displayWithoutInteraction: boolean;
+  displayHidden: boolean;
+  displayViewed: boolean;
+  displayDiscouraged: boolean;
+  displayRecommended: boolean;
   textSearch: string;
+  minDuration: number;
+  maxDuration: number;
 }
 
 export function isItemShown(item: SubscriptionItem, filters: Filters) {
-  if (!filters.display_recommended && !filters.display_discouraged &&
-    !filters.display_viewed && !filters.display_hidden &&
-    !filters.display_without_interaction) {
+  if (!filters.displayRecommended && !filters.displayDiscouraged &&
+    !filters.displayViewed && !filters.displayHidden &&
+    !filters.displayWithoutInteraction) {
     return true;
   }
   return (
-    (filters.display_without_interaction && !hasInteraction(item)) ||
-    (filters.display_hidden && item.hidden) ||
-    (filters.display_viewed && item.viewed) ||
-    (filters.display_discouraged && item.discouraged) ||
-    (filters.display_recommended && item.recommended)
+    (filters.displayWithoutInteraction && !hasInteraction(item)) ||
+    (filters.displayHidden && item.hidden) ||
+    (filters.displayViewed && item.viewed) ||
+    (filters.displayDiscouraged && item.discouraged) ||
+    (filters.displayRecommended && item.recommended)
   );
 }

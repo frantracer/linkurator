@@ -80,6 +80,8 @@ export async function getSubscriptions(): Promise<Subscription[]> {
 
 export async function getSubscriptionItems(
   uuid: string,
+  minDuration: number,
+  maxDuration: number,
   searchText: string = "",
   interactionsToInclude: InteractionFilter[] = []
 ): Promise<SubscriptionItemsResponse> {
@@ -88,7 +90,10 @@ export async function getSubscriptionItems(
   try {
     const searchParam = searchText ? "&search=" + searchText : "";
     const interactionsParam = interactionsToInclude.length > 0 ? "&include_interactions=" + interactionsToInclude.join(",") : "";
-    const url = configuration.SUBSCRIPTIONS_URL + uuid + "/items?page_size=" + ITEMS_PER_PAGE + searchParam + interactionsParam
+    const minDurationParam = "&min_duration=" + minDuration;
+    const maxDurationParam = "&max_duration=" + maxDuration;
+    const url = configuration.SUBSCRIPTIONS_URL + uuid + "/items?page_size=" + ITEMS_PER_PAGE + searchParam +
+      interactionsParam + minDurationParam + maxDurationParam;
     const {status, data} = await axios.get(url, {withCredentials: true});
     if (status === 200) {
       const response = mapJsonToSubscriptionItemsResponse(data);

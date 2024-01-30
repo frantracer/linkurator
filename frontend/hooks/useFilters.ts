@@ -9,11 +9,13 @@ type UseFilters = {
 
 const defaultFilters: Filters = {
   textSearch: "",
-  display_hidden: false,
-  display_viewed: false,
-  display_discouraged: false,
-  display_recommended: false,
-  display_without_interaction: true,
+  displayHidden: false,
+  displayViewed: false,
+  displayDiscouraged: false,
+  displayRecommended: false,
+  displayWithoutInteraction: true,
+  minDuration: 61,
+  maxDuration: 100000,
 }
 
 const useFilters = (): UseFilters => {

@@ -10,19 +10,19 @@ export enum InteractionFilter {
 
 export const mapFiltersToInteractionParams = (filters: Filters): InteractionFilter[] => {
   const interactionParams: InteractionFilter[] = [];
-  if (filters.display_without_interaction) {
+  if (filters.displayWithoutInteraction) {
     interactionParams.push(InteractionFilter.WITHOUT_INTERACTIONS);
   }
-  if (filters.display_discouraged) {
+  if (filters.displayDiscouraged) {
     interactionParams.push(InteractionFilter.DISCOURAGED);
   }
-  if (filters.display_recommended) {
+  if (filters.displayRecommended) {
     interactionParams.push(InteractionFilter.RECOMMENDED);
   }
-  if (filters.display_hidden) {
+  if (filters.displayHidden) {
     interactionParams.push(InteractionFilter.HIDDEN);
   }
-  if (filters.display_viewed) {
+  if (filters.displayViewed) {
     interactionParams.push(InteractionFilter.VIEWED);
   }
   return interactionParams
