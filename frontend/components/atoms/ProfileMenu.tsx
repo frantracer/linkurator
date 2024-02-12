@@ -1,4 +1,4 @@
-import {Profile} from "../hooks/useProfile";
+import {Profile} from "../../hooks/useProfile";
 import React from "react";
 
 type ProfileMenuProps = {

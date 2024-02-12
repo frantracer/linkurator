@@ -1,10 +1,10 @@
-import {MenuItem} from "./MenuItem";
+import {MenuItem} from "../atoms/MenuItem";
 import React from "react";
-import {Topic} from "../entities/Topic";
-import {paths} from "../configuration";
+import {Topic} from "../../entities/Topic";
+import {paths} from "../../configuration";
 import {useRouter} from "next/router";
-import {hideLateralMenu} from "../utilities/hideLateralMenu";
-import {scrollToDrawerTop} from "../utilities/scrollToDrawerTop";
+import {hideLateralMenu} from "../../utilities/hideLateralMenu";
+import {scrollToDrawerTop} from "../../utilities/scrollToDrawerTop";
 
 type LateralTopicListProps = {
   topics: Topic[];

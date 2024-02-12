@@ -1,7 +1,7 @@
 import React, {useState} from "react";
-import {assignSubscriptionToTopic, createTopic} from "../services/topicService";
-import {Topic} from "../entities/Topic";
-import {Subscription} from "../entities/Subscription";
+import {assignSubscriptionToTopic, createTopic} from "../../services/topicService";
+import {Topic} from "../../entities/Topic";
+import {Subscription} from "../../entities/Subscription";
 import {v4 as uuidv4} from 'uuid';
 
 export const AssignTopicModalId = "assign-topic-modal";

@@ -1,12 +1,12 @@
 import React, {useState} from "react";
-import {Profile} from "../hooks/useProfile";
-import LateralSearchBar from "./LateralSearchBar";
+import {Profile} from "../../hooks/useProfile";
+import LateralSearchBar from "../atoms/LateralSearchBar";
 import LateralSubscriptionList from "./LateralSubscriptionList";
-import ProfileMenu from "./ProfileMenu";
-import {Subscription} from "../entities/Subscription";
-import CustomButton from "./CustomButton";
-import {configuration, paths} from "../configuration";
-import RedirectButton from "./RedirectButton";
+import ProfileMenu from "../atoms/ProfileMenu";
+import {Subscription} from "../../entities/Subscription";
+import CustomButton from "../atoms/CustomButton";
+import {configuration, paths} from "../../configuration";
+import RedirectButton from "../atoms/RedirectButton";
 
 type LateralMenuProps = {
   profile: Profile;

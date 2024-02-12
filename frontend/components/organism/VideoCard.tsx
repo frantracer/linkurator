@@ -1,9 +1,9 @@
-import {Subscription} from "../entities/Subscription";
-import {SubscriptionItem} from "../entities/SubscriptionItem";
-import {readableAgoUnits} from "../utilities/dateFormatter";
-import {InteractionType, interactWithItem, removeInteractionWithItem,} from "../services/interactionService";
-import {CustomSwapButton, CustomSwapButtonIcon} from "./CustomSwapButton";
-import {paths} from "../configuration";
+import {Subscription} from "../../entities/Subscription";
+import {SubscriptionItem} from "../../entities/SubscriptionItem";
+import {readableAgoUnits} from "../../utilities/dateFormatter";
+import {InteractionType, interactWithItem, removeInteractionWithItem,} from "../../services/interactionService";
+import {CustomSwapButton, CustomSwapButtonIcon} from "../atoms/CustomSwapButton";
+import {paths} from "../../configuration";
 import Link from "next/link";
 import {useInView} from "react-intersection-observer";
 

@@ -1,10 +1,10 @@
-import CustomButton from "./CustomButton";
+import CustomButton from "../atoms/CustomButton";
 import React, {useState} from "react";
-import {updateTopic} from "../services/topicService";
-import {Topic} from "../entities/Topic";
-import useSubscriptionsToAdd from "../hooks/useSubscriptionsToAdd";
-import {useTopicName} from "../hooks/useTopicName";
-import {Subscription} from "../entities/Subscription";
+import {updateTopic} from "../../services/topicService";
+import {Topic} from "../../entities/Topic";
+import useSubscriptionsToAdd from "../../hooks/useSubscriptionsToAdd";
+import {useTopicName} from "../../hooks/useTopicName";
+import {Subscription} from "../../entities/Subscription";
 
 export const EditTopicModalId = "update-topic-modal";
 

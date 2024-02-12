@@ -1,18 +1,18 @@
 import VideoCard from "./VideoCard";
-import {Topic} from "../entities/Topic";
-import CustomButton, {IconForButton} from "./CustomButton";
-import {deleteTopic} from "../services/topicService";
+import {Topic} from "../../entities/Topic";
+import CustomButton, {IconForButton} from "../atoms/CustomButton";
+import {deleteTopic} from "../../services/topicService";
 import {EditTopicModalId} from "./EditTopicModal";
 import React from "react";
-import {SubscriptionItem} from "../entities/SubscriptionItem";
-import {Subscription} from "../entities/Subscription";
-import {LATERAL_MENU_ID} from "../utilities/hideLateralMenu";
+import {SubscriptionItem} from "../../entities/SubscriptionItem";
+import {Subscription} from "../../entities/Subscription";
+import {LATERAL_MENU_ID} from "../../utilities/hideLateralMenu";
 import {FilterOptionsModalId} from "./FilterOptionsModal";
-import {Filters, isItemShown} from "../entities/Filters";
-import SubscriptionTag from "./SubscriptionTag";
+import {Filters, isItemShown} from "../../entities/Filters";
+import SubscriptionTag from "../atoms/SubscriptionTag";
 import {useRouter} from "next/router";
-import {paths} from "../configuration";
-import {ITEMS_PER_PAGE} from "../utilities/constants";
+import {paths} from "../../configuration";
+import {ITEMS_PER_PAGE} from "../../utilities/constants";
 
 type TopicVideoCardGridProps = {
   fetchMoreItems: () => void,

@@ -1,7 +1,7 @@
 import React from "react";
-import {Subscription} from "../entities/Subscription";
+import {Subscription} from "../../entities/Subscription";
 import Link from "next/link";
-import {paths} from "../configuration";
+import {paths} from "../../configuration";
 
 type SubscriptionTagProps = {
   subscription: Subscription;

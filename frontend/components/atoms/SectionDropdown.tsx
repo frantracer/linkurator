@@ -1,5 +1,5 @@
-import {SectionType} from "../entities/SectionType";
-import {scrollToDrawerTop} from "../utilities/scrollToDrawerTop";
+import {SectionType} from "../../entities/SectionType";
+import {scrollToDrawerTop} from "../../utilities/scrollToDrawerTop";
 
 type SectionSelectorProps = {
   section: SectionType;

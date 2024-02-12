@@ -1,7 +1,7 @@
 import React from "react";
 import Link from "next/link";
-import {paths} from "../configuration";
-import {Topic} from "../entities/Topic";
+import {paths} from "../../configuration";
+import {Topic} from "../../entities/Topic";
 
 type TopicTagProps = {
   topic: Topic

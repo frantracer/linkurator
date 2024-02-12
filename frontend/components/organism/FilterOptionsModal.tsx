@@ -1,7 +1,7 @@
-import CustomButton from "./CustomButton";
+import CustomButton from "../atoms/CustomButton";
 import React, {useEffect, useState} from "react";
-import {Filters} from "../entities/Filters";
-import {scrollToDrawerTop} from "../utilities/scrollToDrawerTop";
+import {Filters} from "../../entities/Filters";
+import {scrollToDrawerTop} from "../../utilities/scrollToDrawerTop";
 
 export const FilterOptionsModalId = "filter-options-modal";
 

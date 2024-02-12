@@ -5,18 +5,18 @@ import "tailwindcss/tailwind.css";
 import useSubscriptions from "../../hooks/useSubscriptions";
 import useProfile from "../../hooks/useProfile";
 import useTopicItems from "../../hooks/useTopicItems";
-import TopicVideoCardGrid from "../../components/TopicVideoCardGrid";
-import NewTopicModal from "../../components/NewTopicModal";
+import TopicVideoCardGrid from "../../components/organism/TopicVideoCardGrid";
+import NewTopicModal from "../../components/organism/NewTopicModal";
 import {useTopics} from "../../hooks/useTopics";
-import EditTopicModal from "../../components/EditTopicModal";
+import EditTopicModal from "../../components/organism/EditTopicModal";
 import {Topic} from "../../entities/Topic";
 import {paths} from "../../configuration";
 import {LATERAL_MENU_ID} from "../../utilities/hideLateralMenu";
-import FilterOptionsModal from "../../components/FilterOptionsModal";
+import FilterOptionsModal from "../../components/organism/FilterOptionsModal";
 import useFilters from "../../hooks/useFilters";
-import TopicsLateralMenu from "../../components/TopicsLateralMenu";
+import TopicsLateralMenu from "../../components/organism/TopicsLateralMenu";
 import {useRouter} from "next/router";
-import CreateFirstTopicHero from "../../components/CreateFirstTopicHero";
+import CreateFirstTopicHero from "../../components/organism/CreateFirstTopicHero";
 
 const Home: NextPage = () => {
   const router = useRouter()

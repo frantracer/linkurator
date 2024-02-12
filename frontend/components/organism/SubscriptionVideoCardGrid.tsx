@@ -1,16 +1,16 @@
 import VideoCard from "./VideoCard";
-import {Subscription} from "../entities/Subscription";
-import {SubscriptionItem} from "../entities/SubscriptionItem";
-import {Topic} from "../entities/Topic";
+import {Subscription} from "../../entities/Subscription";
+import {SubscriptionItem} from "../../entities/SubscriptionItem";
+import {Topic} from "../../entities/Topic";
 import React from "react";
-import CustomButton, {IconForButton} from "./CustomButton";
+import CustomButton, {IconForButton} from "../atoms/CustomButton";
 import {AssignTopicModalId} from "./AssignTopicModal";
-import {LATERAL_MENU_ID} from "../utilities/hideLateralMenu";
-import {Filters, isItemShown} from "../entities/Filters";
+import {LATERAL_MENU_ID} from "../../utilities/hideLateralMenu";
+import {Filters, isItemShown} from "../../entities/Filters";
 import {FilterOptionsModalId} from "./FilterOptionsModal";
-import {refreshSubscription} from "../services/subscriptionService";
-import TopicTag from "./TopicTag";
-import {ITEMS_PER_PAGE} from "../utilities/constants";
+import {refreshSubscription} from "../../services/subscriptionService";
+import TopicTag from "../atoms/TopicTag";
+import {ITEMS_PER_PAGE} from "../../utilities/constants";
 
 type SubscriptionVideoCardGridProps = {
   refreshSubscriptions: () => void,

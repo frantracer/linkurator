@@ -5,16 +5,16 @@ import "tailwindcss/tailwind.css";
 import useSubscriptions from "../../hooks/useSubscriptions";
 import useSubscriptionItems from "../../hooks/useSubscriptionItems";
 import useProfile from "../../hooks/useProfile";
-import SubscriptionVideoCardGrid from "../../components/SubscriptionVideoCardGrid";
-import NewTopicModal from "../../components/NewTopicModal";
+import SubscriptionVideoCardGrid from "../../components/organism/SubscriptionVideoCardGrid";
+import NewTopicModal from "../../components/organism/NewTopicModal";
 import {useTopics} from "../../hooks/useTopics";
 import {LATERAL_MENU_ID} from "../../utilities/hideLateralMenu";
-import FilterOptionsModal from "../../components/FilterOptionsModal";
+import FilterOptionsModal from "../../components/organism/FilterOptionsModal";
 import useFilters from "../../hooks/useFilters";
 import {useRouter} from "next/router";
-import SubscriptionsLateralMenu from "../../components/SubscriptionsLateralMenu";
+import SubscriptionsLateralMenu from "../../components/organism/SubscriptionsLateralMenu";
 import {paths} from "../../configuration";
-import EditTopicModal from "../../components/AssignTopicModal";
+import EditTopicModal from "../../components/organism/AssignTopicModal";
 
 const REFRESH_SUBSCRIPTIONS_INTERVAL = 30000;
 

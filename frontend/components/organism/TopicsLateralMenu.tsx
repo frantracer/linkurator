@@ -1,13 +1,13 @@
 import React, {useState} from "react";
-import {Profile} from "../hooks/useProfile";
-import LateralSearchBar from "./LateralSearchBar";
-import ProfileMenu from "./ProfileMenu";
-import LateralTopicList from "./LateralTopicList";
-import {Topic} from "../entities/Topic";
-import {Subscription} from "../entities/Subscription";
-import CustomButton, {IconForButton} from "./CustomButton";
-import {configuration, paths} from "../configuration";
-import RedirectButton from "./RedirectButton";
+import {Profile} from "../../hooks/useProfile";
+import LateralSearchBar from "../atoms/LateralSearchBar";
+import ProfileMenu from "../atoms/ProfileMenu";
+import LateralTopicList from "../molecules/LateralTopicList";
+import {Topic} from "../../entities/Topic";
+import {Subscription} from "../../entities/Subscription";
+import CustomButton, {IconForButton} from "../atoms/CustomButton";
+import {configuration, paths} from "../../configuration";
+import RedirectButton from "../atoms/RedirectButton";
 import {NewTopicModalId} from "./NewTopicModal";
 
 type TopicLateralMenuProps = {

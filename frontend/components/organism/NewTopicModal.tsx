@@ -1,9 +1,9 @@
-import CustomButton from "./CustomButton";
+import CustomButton from "../atoms/CustomButton";
 import React, {useState} from "react";
-import {createTopic} from "../services/topicService";
+import {createTopic} from "../../services/topicService";
 import {v4 as uuidv4} from 'uuid';
-import useSubscriptionsToAdd from "../hooks/useSubscriptionsToAdd";
-import {Subscription} from "../entities/Subscription";
+import useSubscriptionsToAdd from "../../hooks/useSubscriptionsToAdd";
+import {Subscription} from "../../entities/Subscription";
 
 export const NewTopicModalId = "new-topic-modal";
 

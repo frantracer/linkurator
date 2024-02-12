@@ -3,7 +3,7 @@ import Head from "next/head";
 import React, {useEffect} from "react";
 import "tailwindcss/tailwind.css";
 import useProfile from "../hooks/useProfile";
-import CustomButton from "../components/CustomButton";
+import CustomButton from "../components/atoms/CustomButton";
 import {configuration, paths} from "../configuration";
 import {useRouter} from "next/router";
 
@@ -40,14 +40,14 @@ const Home: NextPage = () => {
     </main>
 
   return (
-    <div>
+    <html>
       <Head>
         <title>Linkurator</title>
         <meta name="description" content="Linkurator"/>
         <link rel="icon" href="/logo_v1_fav.png"/>
       </Head>
       {body}
-    </div>
+    </html>
   );
 };
 

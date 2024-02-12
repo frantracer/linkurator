@@ -1,0 +1,172 @@
+import "tailwindcss/tailwind.css";
+import Drawer from "../components/molecules/Drawer";
+import ThemeToogleButton from "../components/molecules/ThemeToogleButton";
+import TopTitle from "../components/molecules/TopTitle";
+import Button from "../components/atoms/Button";
+import Link from "../components/atoms/Link";
+import Head1 from "../components/atoms/Head1";
+import Section from "../components/atoms/Section";
+import SearchBar from "../components/molecules/SearchBar";
+import InputText from "../components/atoms/InputText";
+import {SwapButton} from "../components/atoms/SwapButton";
+import {
+  AddIcon,
+  CheckCircleFilledIcon,
+  CheckCircleIcon,
+  DownloadIcon,
+  EyeSlashFilledIcon,
+  EyeSlashIcon,
+  FunnelIcon,
+  LikeIcon,
+  MagnifyingGlassIcon,
+  MenuIcon,
+  MoonIcon,
+  OptionsIcon,
+  PencilIcon,
+  RefreshIcon,
+  SunIcon,
+  ThumbsDownFilledIcon,
+  ThumbsDownIcon,
+  ThumbsUpFilledIcon,
+  ThumbsUpIcon,
+  TrashIcon
+} from "../components/atoms/Icons";
+
+const SIDE_BAR_NAME = "main-menu";
+const ICONS_REF = "icons";
+const BUTTONS_REF = "buttons";
+const SWAP_BUTTONS_REF = "swap_buttons";
+const INPUTS_REF = "inputs";
+
+const closeSideBar = () => {
+  const sideBar = (document.getElementById(SIDE_BAR_NAME) as HTMLInputElement);
+  if (sideBar) {
+    sideBar.checked = false;
+  }
+}
+
+const LateralMenu = () => {
+  return (
+    <aside className="bg-base-200 text-base-content z-20 h-full p-2">
+      <div className="flex justify-center items-center p-4">
+        <img src="/logo_v1_medium.png" alt="linkurator logo" className="h-8 w-8 mr-2"/>
+        <span className="text-2xl font-bold text-center">LINKURATOR</span>
+      </div>
+      <ul className="menu p-4 w-80">
+        <li><Link clickAction={closeSideBar} href={"#" + ICONS_REF}>Icons</Link></li>
+        <li><Link clickAction={closeSideBar} href={"#" + BUTTONS_REF}>Buttons</Link></li>
+        <li><Link clickAction={closeSideBar} href={"#" + SWAP_BUTTONS_REF}>Swap Buttons</Link></li>
+        <li><Link clickAction={closeSideBar} href={"#" + INPUTS_REF}>Inputs</Link></li>
+      </ul>
+    </aside>
+  );
+}
+
+const IconsSection = () => {
+  return (
+    <Section>
+      <Head1 id={ICONS_REF}># Icons</Head1>
+      <div className="grid grid-cols-6 md:grid-cols-10 lg:grid-cols-12 gap-y-8 m-2 py-8 px-4
+      rounded border-2 border-base-100 justify-items-center items-center">
+        <AddIcon/>
+        <DownloadIcon/>
+        <FunnelIcon/>
+        <LikeIcon/>
+        <MenuIcon/>
+        <MoonIcon/>
+        <OptionsIcon/>
+        <PencilIcon/>
+        <RefreshIcon/>
+        <SunIcon/>
+        <TrashIcon/>
+        <MagnifyingGlassIcon/>
+        <ThumbsUpIcon/>
+        <ThumbsUpFilledIcon/>
+        <ThumbsDownIcon/>
+        <ThumbsDownFilledIcon/>
+        <CheckCircleIcon/>
+        <CheckCircleFilledIcon/>
+        <EyeSlashIcon/>
+        <EyeSlashFilledIcon/>
+      </div>
+    </Section>
+  );
+}
+
+const ButtonsSection = () => {
+  return (
+    <Section>
+      <Head1 id={BUTTONS_REF}># Buttons</Head1>
+      <div className="flex flex-col gap-6 p-6 w-full
+      border-base-100 border-solid border-2 rounded justify-items-center items-center">
+        <Button><MenuIcon/></Button>
+        <Button>Button</Button>
+        <Button><DownloadIcon/>Download</Button>
+      </div>
+    </Section>
+  );
+}
+
+const SwapButtonsSection = () => {
+  return (
+    <Section>
+      <Head1 id={SWAP_BUTTONS_REF}># Swap Buttons</Head1>
+      <div className="flex flex-col gap-6 p-6 w-full
+      border-base-100 border-solid border-2 rounded justify-items-center items-center">
+        <SwapButton defaultChecked={true}>
+          <span>ON</span>
+          <span>OFF</span>
+        </SwapButton>
+        <SwapButton defaultChecked={true}>
+          <MoonIcon/>
+          <SunIcon/>
+        </SwapButton>
+      </div>
+    </Section>
+  )
+}
+
+const InputsSection = () => {
+  return (
+    <Section>
+      <Head1 id={INPUTS_REF}># Inputs</Head1>
+      <div className="flex flex-col gap-4 m-auto p-4 w-full
+      border-base-100 border-solid border-2 rounded justify-items-center items-center">
+        <div className="grid grid-cols-1 gap-4 w-1/2">
+          <InputText/>
+          <SearchBar/>
+        </div>
+      </div>
+    </Section>
+  );
+}
+
+const MainContent = () => {
+  return (
+    <main className="bg-base-300 text-base-content w-full h-full z-0 p-2 overflow-auto">
+      <IconsSection/>
+      <ButtonsSection/>
+      <SwapButtonsSection/>
+      <InputsSection/>
+    </main>
+  );
+}
+
+const DesignSystemPage = () => {
+  return (
+    <div className="h-screen w-screen">
+      <Drawer id={SIDE_BAR_NAME}>
+        <LateralMenu/>
+        <TopTitle title={"Design System"}>
+          <Button relatedModalId={SIDE_BAR_NAME} showOnlyOnMobile={true}>
+            <MenuIcon/>
+          </Button>
+          <ThemeToogleButton/>
+        </TopTitle>
+        <MainContent/>
+      </Drawer>
+    </div>
+  );
+}
+
+export default DesignSystemPage;

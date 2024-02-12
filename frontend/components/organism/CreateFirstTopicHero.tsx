@@ -1,4 +1,4 @@
-import CustomButton, {IconForButton} from "./CustomButton";
+import CustomButton, {IconForButton} from "../atoms/CustomButton";
 import {NewTopicModalId} from "./NewTopicModal";
 import React from "react";
 

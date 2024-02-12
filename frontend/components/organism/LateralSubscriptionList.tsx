@@ -1,9 +1,9 @@
-import {MenuItem} from "./MenuItem";
-import {Subscription} from "../entities/Subscription";
+import {MenuItem} from "../atoms/MenuItem";
+import {Subscription} from "../../entities/Subscription";
 import {useRouter} from "next/router";
-import {paths} from "../configuration";
-import {hideLateralMenu} from "../utilities/hideLateralMenu";
-import {scrollToDrawerTop} from "../utilities/scrollToDrawerTop";
+import {paths} from "../../configuration";
+import {hideLateralMenu} from "../../utilities/hideLateralMenu";
+import {scrollToDrawerTop} from "../../utilities/scrollToDrawerTop";
 
 type LateralItemListProps = {
   subscriptions: Subscription[];

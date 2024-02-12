@@ -14,7 +14,7 @@ const RedirectButton: FC<RedirectButtonProps> = ({to, children}) => {
     router.push(to);
   };
 
-  const className = "btn btn-primary gap-2 m-1 w-full";
+  const className = "btn btn-primary gap-2 m-1 w-full rounded-none";
 
   return (
     <button className={className} onClick={handleClick}>
