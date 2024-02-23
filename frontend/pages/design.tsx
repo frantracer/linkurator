@@ -9,6 +9,7 @@ import Section from "../components/atoms/Section";
 import SearchBar from "../components/molecules/SearchBar";
 import InputText from "../components/atoms/InputText";
 import {SwapButton} from "../components/atoms/SwapButton";
+import VideoCard from "../components/organism/VideoCard";
 import {
   AddIcon,
   CheckCircleFilledIcon,
@@ -31,12 +32,15 @@ import {
   ThumbsUpIcon,
   TrashIcon
 } from "../components/atoms/Icons";
+import React from "react";
+import ItemCardSkeleton from "../components/organism/ItemCardSkeleton";
 
 const SIDE_BAR_NAME = "main-menu";
 const ICONS_REF = "icons";
 const BUTTONS_REF = "buttons";
 const SWAP_BUTTONS_REF = "swap_buttons";
 const INPUTS_REF = "inputs";
+const CARDS_REF = "cards";
 
 const closeSideBar = () => {
   const sideBar = (document.getElementById(SIDE_BAR_NAME) as HTMLInputElement);
@@ -57,6 +61,7 @@ const LateralMenu = () => {
         <li><Link clickAction={closeSideBar} href={"#" + BUTTONS_REF}>Buttons</Link></li>
         <li><Link clickAction={closeSideBar} href={"#" + SWAP_BUTTONS_REF}>Swap Buttons</Link></li>
         <li><Link clickAction={closeSideBar} href={"#" + INPUTS_REF}>Inputs</Link></li>
+        <li><Link clickAction={closeSideBar} href={"#" + CARDS_REF}>Cards</Link></li>
       </ul>
     </aside>
   );
@@ -141,6 +146,42 @@ const InputsSection = () => {
   );
 }
 
+const CardSection = () => {
+  const item = {
+    uuid: "f857e617-c1e7-4c0d-9982-cb8a2b51de1c",
+    name: "Name",
+    url: "https://www.linkurator.com",
+    thumbnail: "/logo_v1_medium.png",
+    published_at: new Date(),
+    subscription_uuid: "87484eb4-65cf-4821-b818-2d7e8bbf7488",
+    recommended: false,
+    discouraged: false,
+    viewed: false,
+    hidden: false,
+    duration: 0
+  }
+
+  const subscription = {
+    uuid: "87484eb4-65cf-4821-b818-2d7e8bbf7488",
+    name: "Subscription",
+    url: "https://www.linkurator.com",
+    thumbnail: "/logo_v1_medium.png",
+    isBeingScanned: false
+  }
+
+  return (
+    <Section>
+      <Head1 id={CARDS_REF}># Cards</Head1>
+      <div className="flex flex-col md:flex-row gap-12 m-auto p-4 w-full
+      border-base-100 border-solid border-2 rounded justify-center items-center">
+        <ItemCardSkeleton/>
+        <VideoCard item={item} subscription={subscription} onChange={undefined} onChangeSwapButton={async () => {
+        }}/>
+      </div>
+    </Section>
+  );
+}
+
 const MainContent = () => {
   return (
     <main className="bg-base-300 text-base-content w-full h-full z-0 p-2 overflow-auto">
@@ -148,6 +189,7 @@ const MainContent = () => {
       <ButtonsSection/>
       <SwapButtonsSection/>
       <InputsSection/>
+      <CardSection/>
     </main>
   );
 }

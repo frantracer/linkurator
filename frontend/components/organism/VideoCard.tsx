@@ -2,15 +2,27 @@ import {Subscription} from "../../entities/Subscription";
 import {SubscriptionItem} from "../../entities/SubscriptionItem";
 import {readableAgoUnits} from "../../utilities/dateFormatter";
 import {InteractionType, interactWithItem, removeInteractionWithItem,} from "../../services/interactionService";
-import {CustomSwapButton, CustomSwapButtonIcon} from "../atoms/CustomSwapButton";
 import {paths} from "../../configuration";
 import Link from "next/link";
 import {useInView} from "react-intersection-observer";
+import {SwapButton} from "../atoms/SwapButton";
+import {
+  CheckCircleFilledIcon,
+  CheckCircleIcon,
+  EyeSlashFilledIcon,
+  EyeSlashIcon,
+  ThumbsDownFilledIcon,
+  ThumbsDownIcon,
+  ThumbsUpFilledIcon,
+  ThumbsUpIcon
+} from "../atoms/Icons";
+import ItemCardSkeleton from "./ItemCardSkeleton";
 
 type VideoCardProps = {
   item: SubscriptionItem;
   subscription?: Subscription;
-  onChange: () => void;
+  onChange?: () => void;
+  onChangeSwapButton?: (itemUuid: string, interactionType: InteractionType, checked: boolean) => Promise<void>;
 };
 
 const convert_seconds_to_hh_mm_ss = (seconds: number) => {
@@ -28,75 +40,90 @@ const convert_seconds_to_hh_mm_ss = (seconds: number) => {
   return result;
 }
 
-const VideoCard = (props: VideoCardProps) => {
+async function defaultOnChangeSwapButton(itemUuid: string, interactionType: InteractionType, checked: boolean) {
+  if (checked) {
+    await interactWithItem(itemUuid, interactionType);
+  } else {
+    await removeInteractionWithItem(itemUuid, interactionType);
+  }
+}
+
+const VideoCard = (
+  {
+    item,
+    subscription,
+    onChange = undefined,
+    onChangeSwapButton = defaultOnChangeSwapButton
+  }: VideoCardProps) => {
   const {ref, inView} = useInView({threshold: 0});
 
-  function onChangeSwapButton(itemUuid: string, interactionType: InteractionType, checked: boolean) {
-    if (checked) {
-      interactWithItem(itemUuid, interactionType).then(props.onChange);
-    } else {
-      removeInteractionWithItem(itemUuid, interactionType).then(props.onChange);
-    }
-  }
-
-  let card = <div className="card card-compact w-64 md:w-80 text-black shadow-xl hover:scale-105" ref={ref}>
-    <figure>
-      <img className="w-full cursor-pointer"
-           src="/video_caption_skeleton.png"
-           alt="Loading item..."/>
-    </figure>
-    <div className="card-body">
-      <h2 className="card-title cursor-pointer">
-        Loading...
-      </h2>
-    </div>
-  </div>
-
-  if (inView) {
-    card = <div className="card card-compact w-64 md:w-80 text-black shadow-xl hover:scale-105">
-      <figure>
-        <img className="w-full cursor-pointer"
-             src={props.item.thumbnail}
-             alt={props.item.name}
-             onClick={() => window.open(props.item.url, "_blank")}/>
-        {props.item.duration != undefined &&
+  if (!inView) {
+    return (
+      <div ref={ref}>
+        <ItemCardSkeleton/>
+      </div>
+    )
+  } else {
+    return (
+      <div className="card card-compact w-80 bg-base-200 shadow-base-100 shadow-xl hover:scale-105">
+      <figure className="aspect-video h-48">
+        <img className="h-full"
+             src={item.thumbnail}
+             alt={item.name}
+             onClick={() => window.open(item.url, "_blank")}/>
+        {item.duration != undefined &&
             <span className="absolute top-0 right-0 m-1 p-1 bg-black bg-opacity-90 rounded">
-                <p className="text-white">{convert_seconds_to_hh_mm_ss(props.item.duration)}</p>
+                <p className="text-white">{convert_seconds_to_hh_mm_ss(item.duration)}</p>
             </span>
         }
       </figure>
       <div className="card-body">
-        <h2 className="card-title cursor-pointer" onClick={() => window.open(props.item.url, "_blank")}>
-          {props.item.name}
+        <h2 className="card-title cursor-pointer" onClick={() => window.open(item.url, "_blank")}>
+          {item.name}
         </h2>
-        {props.subscription &&
+        {subscription &&
             <div className="flex items-center cursor-pointer">
-                <img className="w-4 h-4 inline-block mx-1 rounded" src={props.subscription.thumbnail}
-                     alt={props.subscription.name}/>
-                <Link href={paths.SUBSCRIPTIONS + "/" + props.subscription.uuid}>{props.subscription.name}</Link>
+                <img className="w-4 h-4 inline-block mx-1 rounded" src={subscription.thumbnail}
+                     alt={subscription.name}/>
+                <Link href={paths.SUBSCRIPTIONS + "/" + subscription.uuid}>{subscription.name}</Link>
             </div>}
         <div className="flex flex-column">
-          <p>{readableAgoUnits(props.item.published_at)}</p>
+          <p>{readableAgoUnits(item.published_at)}</p>
           <div className="card-actions justify-end">
-            <CustomSwapButton icon={CustomSwapButtonIcon.ThumbsDown} defaultChecked={props.item.discouraged}
-                              onChecked={() => onChangeSwapButton(props.item.uuid, InteractionType.Discouraged, true)}
-                              onUnchecked={() => onChangeSwapButton(props.item.uuid, InteractionType.Discouraged, false)}/>
-            <CustomSwapButton icon={CustomSwapButtonIcon.ThumbsUp} defaultChecked={props.item.recommended}
-                              onChecked={() => onChangeSwapButton(props.item.uuid, InteractionType.Recommended, true)}
-                              onUnchecked={() => onChangeSwapButton(props.item.uuid, InteractionType.Recommended, false)}/>
-            <CustomSwapButton icon={CustomSwapButtonIcon.EyeSlash} defaultChecked={props.item.hidden}
-                              onChecked={() => onChangeSwapButton(props.item.uuid, InteractionType.Hidden, true)}
-                              onUnchecked={() => onChangeSwapButton(props.item.uuid, InteractionType.Hidden, false)}/>
-            <CustomSwapButton icon={CustomSwapButtonIcon.CheckCircle} defaultChecked={props.item.viewed}
-                              onChecked={() => onChangeSwapButton(props.item.uuid, InteractionType.Viewed, true)}
-                              onUnchecked={() => onChangeSwapButton(props.item.uuid, InteractionType.Viewed, false)}/>
+            <SwapButton defaultChecked={item.discouraged}
+                        onChange={
+                          (isChecked) => onChangeSwapButton &&
+                            onChangeSwapButton(item.uuid, InteractionType.Discouraged, isChecked).then(onChange)
+                        }>
+              <ThumbsDownFilledIcon/>
+              <ThumbsDownIcon/>
+            </SwapButton>
+            <SwapButton defaultChecked={item.recommended}
+                        onChange={
+                          (isChecked) => onChangeSwapButton &&
+                            onChangeSwapButton(item.uuid, InteractionType.Recommended, isChecked).then(onChange)
+                        }>
+              <ThumbsUpFilledIcon/>
+              <ThumbsUpIcon/>
+            </SwapButton>
+            <SwapButton defaultChecked={item.hidden}
+                        onChange={(isChecked) => onChangeSwapButton &&
+                          onChangeSwapButton(item.uuid, InteractionType.Hidden, isChecked).then(onChange)}>
+              <EyeSlashFilledIcon/>
+              <EyeSlashIcon/>
+            </SwapButton>
+            <SwapButton defaultChecked={item.viewed}
+                        onChange={(isChecked) => onChangeSwapButton &&
+                          onChangeSwapButton(item.uuid, InteractionType.Viewed, isChecked).then(onChange)}>
+              <CheckCircleFilledIcon/>
+              <CheckCircleIcon/>
+            </SwapButton>
           </div>
         </div>
       </div>
     </div>
+    )
   }
-
-  return card
 };
 
 export default VideoCard;
