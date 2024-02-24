@@ -4,9 +4,9 @@ import LateralSearchBar from "../atoms/LateralSearchBar";
 import LateralSubscriptionList from "./LateralSubscriptionList";
 import ProfileMenu from "../atoms/ProfileMenu";
 import {Subscription} from "../../entities/Subscription";
-import CustomButton from "../atoms/CustomButton";
 import {configuration, paths} from "../../configuration";
-import RedirectButton from "../atoms/RedirectButton";
+import Button from "../atoms/Button";
+import {useRouter} from "next/router";
 
 type LateralMenuProps = {
   profile: Profile;
@@ -31,19 +31,24 @@ const Title = () => (
 );
 
 const LateralMenu = (props: LateralMenuProps) => {
+  const router = useRouter();
   const [searchValue, setSearchValue] = useState<string>('');
 
+  const goToTopics = () => {
+    router.push(paths.TOPICS);
+  };
+
   return (
-    <div className="flex flex-col p-4 h-full w-80 bg-white text-base-content">
-      <div className="flex-[0_0_auto]">
-        <Title/>
-        <RedirectButton to={paths.TOPICS}>Switch to topics</RedirectButton>
-        {props.profile &&
-            <LateralSearchBar
-                searchBarQuery={searchValue}
-                setSearchBarQuery={setSearchValue}/>
-        }
-      </div>
+    <div className="flex flex-col p-4 h-full w-80 bg-white text-base-content gap-y-2">
+      <Title/>
+      <Button fitContent={false} clickAction={goToTopics}>
+        Switch to topics
+      </Button>
+      {props.profile &&
+          <LateralSearchBar
+              searchBarQuery={searchValue}
+              setSearchBarQuery={setSearchValue}/>
+      }
       <div className="flex-1 overflow-y-auto">
 
         {props.profile &&
@@ -55,13 +60,12 @@ const LateralMenu = (props: LateralMenuProps) => {
       </div>
       <div className="flex-[0_0_auto]">
         {props.profile && <ProfileMenu profile={props.profile}/>}
-        {props.profile && <CustomButton
-            text={"Logout"}
-            icon={undefined}
-            relatedModalId={undefined}
-            clickAction={() => {
+        {props.profile &&
+            <Button fitContent={false} clickAction={() => {
               window.open(configuration.LOGOUT_URL, '_self')
-            }}/>
+            }}>
+                <span>Logout</span>
+            </Button>
         }
       </div>
     </div>

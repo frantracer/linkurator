@@ -3,9 +3,9 @@ import Head from "next/head";
 import React, {useEffect} from "react";
 import "tailwindcss/tailwind.css";
 import useProfile from "../hooks/useProfile";
-import CustomButton from "../components/atoms/CustomButton";
 import {configuration, paths} from "../configuration";
 import {useRouter} from "next/router";
+import Button from "../components/atoms/Button";
 
 const Home: NextPage = () => {
   const router = useRouter();
@@ -18,13 +18,14 @@ const Home: NextPage = () => {
   }, [router, profile, profileIsLoading]);
 
   const LoginButton = () => {
-    return <CustomButton
-      text={"Login"}
-      icon={undefined}
-      relatedModalId={undefined}
-      clickAction={() => {
-        window.open(configuration.LOGIN_URL, '_self')
-      }}/>
+    return (
+      <Button
+        clickAction={() => {
+          window.open(configuration.LOGIN_URL, '_self')
+        }}>
+        Login
+      </Button>
+    )
   }
 
   const body =
@@ -41,12 +42,12 @@ const Home: NextPage = () => {
 
   return (
     <html>
-      <Head>
-        <title>Linkurator</title>
-        <meta name="description" content="Linkurator"/>
-        <link rel="icon" href="/logo_v1_fav.png"/>
-      </Head>
-      {body}
+    <Head>
+      <title>Linkurator</title>
+      <meta name="description" content="Linkurator"/>
+      <link rel="icon" href="/logo_v1_fav.png"/>
+    </Head>
+    {body}
     </html>
   );
 };

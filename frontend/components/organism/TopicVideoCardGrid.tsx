@@ -1,6 +1,5 @@
 import VideoCard from "./VideoCard";
 import {Topic} from "../../entities/Topic";
-import CustomButton, {IconForButton} from "../atoms/CustomButton";
 import {deleteTopic} from "../../services/topicService";
 import {EditTopicModalId} from "./EditTopicModal";
 import React from "react";
@@ -13,6 +12,8 @@ import SubscriptionTag from "../atoms/SubscriptionTag";
 import {useRouter} from "next/router";
 import {paths} from "../../configuration";
 import {ITEMS_PER_PAGE} from "../../utilities/constants";
+import Button from "../atoms/Button";
+import {FunnelIcon, MenuIcon, OptionsIcon, PencilIcon, TrashIcon} from "../atoms/Icons";
 
 type TopicVideoCardGridProps = {
   fetchMoreItems: () => void,
@@ -69,47 +70,39 @@ const TopicVideoCardGrid = (props: TopicVideoCardGridProps) => {
       <div className="flex flex-col w-full">
         <div className="sticky top-0 z-10 bg-white flex flex-row justify-center items-center">
           <div className="flex-none">
-            <CustomButton
-              text={""}
-              icon={IconForButton.menu}
+            <Button
               relatedModalId={LATERAL_MENU_ID}
-              showOnlyOnMobile={true}
-              clickAction={() => {
-              }}/>
+              showOnlyOnMobile={true}>
+              <MenuIcon/>
+            </Button>
           </div>
           <div className="flex-auto">
             <h1 className="text-2xl md:text-4xl font-bold text-center text-gray-800">{topic.name}</h1>
           </div>
           <div className="flex-none">
             <div className="dropdown dropdown-end">
-              <CustomButton
-                text={""}
-                icon={IconForButton.options}
-                relatedModalId={undefined}
-                clickAction={() => {
-                }}/>
+              <div tabIndex={0}>
+                <Button>
+                  <OptionsIcon/>
+                </Button>
+              </div>
               <ul tabIndex={0} className="dropdown-content menu shadow bg-base-100 rounded-box w-52 gap-2">
-                <CustomButton
-                  text={"Edit Topic"}
-                  icon={IconForButton.pencil}
-                  relatedModalId={EditTopicModalId}
-                  clickAction={() => {
-                  }}/>
-                <CustomButton
-                  text={"Delete topic"}
-                  icon={IconForButton.trash}
-                  relatedModalId={undefined}
-                  clickAction={async () => {
-                    await deleteTopic(topic.uuid);
-                    props.refreshTopics();
-                    router.push(paths.TOPICS);
-                  }}/>
-                <CustomButton
-                  text={"Filter items"}
-                  icon={IconForButton.funnel}
-                  relatedModalId={FilterOptionsModalId}
-                  clickAction={async () => {
-                  }}/>
+                <Button fitContent={false} relatedModalId={EditTopicModalId}>
+                  <PencilIcon/>
+                  <span>Edit Topic</span>
+                </Button>
+                <Button fitContent={false} clickAction={async () => {
+                  await deleteTopic(topic.uuid);
+                  props.refreshTopics();
+                  router.push(paths.TOPICS);
+                }}>
+                  <TrashIcon/>
+                  <span>Delete Topic</span>
+                </Button>
+                <Button fitContent={false} relatedModalId={FilterOptionsModalId}>
+                  <FunnelIcon/>
+                  <span>Filter items</span>
+                </Button>
               </ul>
             </div>
           </div>

@@ -1,9 +1,9 @@
-import CustomButton from "../atoms/CustomButton";
 import React, {useState} from "react";
 import {createTopic} from "../../services/topicService";
 import {v4 as uuidv4} from 'uuid';
 import useSubscriptionsToAdd from "../../hooks/useSubscriptionsToAdd";
 import {Subscription} from "../../entities/Subscription";
+import Button from "../atoms/Button";
 
 export const NewTopicModalId = "new-topic-modal";
 
@@ -57,13 +57,15 @@ const NewTopicModal = (props: NewTopicModalProps) => {
             <form method="dialog">
               <label htmlFor={NewTopicModalId}
                      className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</label>
-              <CustomButton text={"Create"} icon={undefined} relatedModalId={NewTopicModalId}
-                            clickAction={async () => {
-                              await createTopic(uuidv4(), newTopicName, subscriptionsToAdd.map(s => s.uuid));
-                              props.refreshTopics();
-                              clearSubscriptions();
-                              setNewTopicName("");
-                            }}/>
+              <Button relatedModalId={NewTopicModalId}
+                      clickAction={async () => {
+                        await createTopic(uuidv4(), newTopicName, subscriptionsToAdd.map(s => s.uuid));
+                        props.refreshTopics();
+                        clearSubscriptions();
+                        setNewTopicName("");
+                      }}>
+                <span>Create</span>
+              </Button>
             </form>
           </div>
         </div>

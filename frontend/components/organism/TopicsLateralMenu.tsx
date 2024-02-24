@@ -5,10 +5,11 @@ import ProfileMenu from "../atoms/ProfileMenu";
 import LateralTopicList from "../molecules/LateralTopicList";
 import {Topic} from "../../entities/Topic";
 import {Subscription} from "../../entities/Subscription";
-import CustomButton, {IconForButton} from "../atoms/CustomButton";
 import {configuration, paths} from "../../configuration";
-import RedirectButton from "../atoms/RedirectButton";
 import {NewTopicModalId} from "./NewTopicModal";
+import {useRouter} from "next/router";
+import Button from "../atoms/Button";
+import {AddIcon} from "../atoms/Icons";
 
 type TopicLateralMenuProps = {
   profile: Profile;
@@ -34,23 +35,26 @@ const Title = () => (
 );
 
 const LateralMenu = (props: TopicLateralMenuProps) => {
+  const router = useRouter();
   const [searchValue, setSearchValue] = useState<string>('');
 
+  const goToSubscriptions = () => {
+    router.push(paths.SUBSCRIPTIONS);
+  }
+
   return (
-    <div className="flex flex-col p-4 h-full w-80 bg-white text-base-content">
-      <div className="flex-[0_0_auto]">
-        <Title/>
-        <RedirectButton to={paths.SUBSCRIPTIONS}>Switch to subscriptions</RedirectButton>
+    <div className="flex flex-col p-4 h-full w-80 bg-white text-base-content gap-y-2">
+      <Title/>
+      <Button fitContent={false} clickAction={goToSubscriptions}>
+        Switch to subscriptions
+      </Button>
+      <div className="flex flex-row items-center gap-x-2">
         <LateralSearchBar
           searchBarQuery={searchValue}
           setSearchBarQuery={setSearchValue}/>
-        <CustomButton
-          text={"New Topic"}
-          icon={IconForButton.add}
-          relatedModalId={NewTopicModalId}
-          clickAction={() => {
-          }}
-        />
+        <Button relatedModalId={NewTopicModalId}>
+          <AddIcon/>
+        </Button>
       </div>
       <div className="flex-1 overflow-y-auto">
         <LateralTopicList
@@ -60,13 +64,13 @@ const LateralMenu = (props: TopicLateralMenuProps) => {
       </div>
       <div className="flex-[0_0_auto]">
         {props.profile && <ProfileMenu profile={props.profile}/>}
-        {props.profile && <CustomButton
-            text={"Logout"}
-            icon={undefined}
-            relatedModalId={undefined}
-            clickAction={() => {
-              window.open(configuration.LOGOUT_URL, '_self')
-            }}/>
+        {props.profile &&
+            <Button fitContent={false}
+                clickAction={() => {
+                  window.open(configuration.LOGOUT_URL, '_self')
+                }}>
+                <span>Logout</span>
+            </Button>
         }
       </div>
     </div>

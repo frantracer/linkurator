@@ -3,7 +3,6 @@ import {Subscription} from "../../entities/Subscription";
 import {SubscriptionItem} from "../../entities/SubscriptionItem";
 import {Topic} from "../../entities/Topic";
 import React from "react";
-import CustomButton, {IconForButton} from "../atoms/CustomButton";
 import {AssignTopicModalId} from "./AssignTopicModal";
 import {LATERAL_MENU_ID} from "../../utilities/hideLateralMenu";
 import {Filters, isItemShown} from "../../entities/Filters";
@@ -11,6 +10,8 @@ import {FilterOptionsModalId} from "./FilterOptionsModal";
 import {refreshSubscription} from "../../services/subscriptionService";
 import TopicTag from "../atoms/TopicTag";
 import {ITEMS_PER_PAGE} from "../../utilities/constants";
+import {AddIcon, FunnelIcon, MenuIcon, OptionsIcon, RefreshIcon} from "../atoms/Icons";
+import Button from "../atoms/Button";
 
 type SubscriptionVideoCardGridProps = {
   refreshSubscriptions: () => void,
@@ -60,13 +61,9 @@ const SubscriptionVideoCardGrid = (props: SubscriptionVideoCardGridProps) => {
       <div className="flex flex-col w-full">
         <div className="sticky top-0 z-10 bg-white flex flex-row justify-between align-top w-full">
           <div className="flex items-start">
-            <CustomButton
-              text={""}
-              icon={IconForButton.menu}
-              relatedModalId={LATERAL_MENU_ID}
-              showOnlyOnMobile={true}
-              clickAction={() => {
-              }}/>
+            <Button relatedModalId={LATERAL_MENU_ID} showOnlyOnMobile={true}>
+              <MenuIcon/>
+            </Button>
           </div>
           <div className="flex flex-row">
             <img className="h-12 p-1 rounded" src={current_subscription.thumbnail}
@@ -78,36 +75,31 @@ const SubscriptionVideoCardGrid = (props: SubscriptionVideoCardGridProps) => {
           </div>
           <div className="flex">
             <div className="dropdown dropdown-end">
-              <CustomButton
-                text={""}
-                icon={IconForButton.options}
-                relatedModalId={undefined}
-                clickAction={() => {
-                }}/>
+              <div tabIndex={0}>
+                <Button>
+                  <OptionsIcon/>
+                </Button>
+              </div>
               <ul tabIndex={0} className="dropdown-content menu shadow bg-base-100 rounded-box w-52 gap-2">
-                <CustomButton
-                  text={"Add to Topic"}
-                  icon={IconForButton.add}
-                  relatedModalId={AssignTopicModalId}
-                  clickAction={async () => {
-                  }}/>
-                <CustomButton
-                  text={"Filter items"}
-                  icon={IconForButton.funnel}
-                  relatedModalId={FilterOptionsModalId}
-                  clickAction={async () => {
-                  }}/>
-                <CustomButton
-                  text={"Refresh"}
-                  icon={IconForButton.refresh}
-                  relatedModalId={undefined}
+                <Button fitContent={false} relatedModalId={AssignTopicModalId}>
+                  <AddIcon/>
+                  <span>Add to Topic</span>
+                </Button>
+                <Button fitContent={false} relatedModalId={FilterOptionsModalId}>
+                  <FunnelIcon/>
+                  <span>Filter items</span>
+                </Button>
+                <Button fitContent={false}
                   clickAction={
                     async () => {
                       refreshSubscription(current_subscription.uuid).then(() => {
                         props.refreshSubscriptions()
                       })
                     }
-                  }/>
+                  }>
+                  <RefreshIcon/>
+                  <span>Refresh</span>
+                </Button>
               </ul>
             </div>
           </div>

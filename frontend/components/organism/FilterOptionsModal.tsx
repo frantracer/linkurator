@@ -1,7 +1,7 @@
-import CustomButton from "../atoms/CustomButton";
 import React, {useEffect, useState} from "react";
 import {Filters} from "../../entities/Filters";
 import {scrollToDrawerTop} from "../../utilities/scrollToDrawerTop";
+import Button from "../atoms/Button";
 
 export const FilterOptionsModalId = "filter-options-modal";
 
@@ -110,11 +110,13 @@ const FilterOptionsModal = (props: FilterOptionsModalProps) => {
             <form method="dialog">
               <label htmlFor={FilterOptionsModalId}
                      className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</label>
-              <CustomButton text={"Accept"} icon={undefined} relatedModalId={FilterOptionsModalId}
-                            clickAction={() => {
-                              props.setFilters(tempFilters)
-                              scrollToDrawerTop()
-                            }}/>
+              <Button relatedModalId={FilterOptionsModalId}
+                      clickAction={() => {
+                        props.setFilters(tempFilters)
+                        scrollToDrawerTop()
+                      }}>
+                Accept
+              </Button>
             </form>
           </div>
         </div>

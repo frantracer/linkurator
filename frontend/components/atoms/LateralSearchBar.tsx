@@ -4,7 +4,7 @@ type LateralSearchBarProps = {
 };
 
 const LateralSearchBar = (props: LateralSearchBarProps) => (
-  <div className="flex flex-row items-center justify-between px-4 py-2">
+  <div className="flex flex-row items-center justify-between">
     <input
       className="input w-full max-w-xs input-primary bg-white"
       type="text"
