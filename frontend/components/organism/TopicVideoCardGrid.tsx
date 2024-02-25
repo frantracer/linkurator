@@ -65,7 +65,7 @@ const TopicVideoCardGrid = (props: TopicVideoCardGridProps) => {
 
   return (
     <main onScroll={props.handleScroll} className="flex flex-col w-full overflow-auto">
-      <div className="flex m-2 gap-2">
+      <div className="flex flex-row flex-wrap m-2 gap-2">
         {subscriptionTags}
       </div>
       <div className="flex flex-row flex-wrap m-6">
