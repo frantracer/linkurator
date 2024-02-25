@@ -3,21 +3,13 @@ import {Subscription} from "../../entities/Subscription";
 import {SubscriptionItem} from "../../entities/SubscriptionItem";
 import {Topic} from "../../entities/Topic";
 import React from "react";
-import {AssignTopicModalId} from "./AssignTopicModal";
-import {LATERAL_MENU_ID} from "../../utilities/hideLateralMenu";
 import {Filters, isItemShown} from "../../entities/Filters";
-import {FilterOptionsModalId} from "./FilterOptionsModal";
-import {refreshSubscription} from "../../services/subscriptionService";
 import {ITEMS_PER_PAGE} from "../../utilities/constants";
-import {AddIcon, FunnelIcon, MenuIcon, OptionsIcon, RefreshIcon} from "../atoms/Icons";
-import Button from "../atoms/Button";
 import Link from "next/link";
 import {paths} from "../../configuration";
 import Tag from "../atoms/Tag";
-import Avatar from "../atoms/Avatar";
 
 type SubscriptionVideoCardGridProps = {
-  refreshSubscriptions: () => void,
   refreshItem: (itemId: string) => void,
   fetchMoreItems: () => void,
   topics: Topic[];
@@ -26,6 +18,7 @@ type SubscriptionVideoCardGridProps = {
   filters: Filters;
   isLoading: boolean;
   isFinished: boolean;
+  handleScroll: (event: React.UIEvent<HTMLElement>) => void,
 }
 
 const SubscriptionVideoCardGrid = (props: SubscriptionVideoCardGridProps) => {
@@ -70,51 +63,7 @@ const SubscriptionVideoCardGrid = (props: SubscriptionVideoCardGridProps) => {
     }
 
     content =
-      <div className="flex flex-col w-full">
-        <div className="sticky top-0 z-10 bg-white flex flex-row justify-between align-top w-full">
-          <div className="flex items-start">
-            <Button relatedModalId={LATERAL_MENU_ID} showOnlyOnMobile={true}>
-              <MenuIcon/>
-            </Button>
-          </div>
-          <div className="flex flex-row">
-            <Avatar src={current_subscription.thumbnail} alt={current_subscription.name}/>
-            <h1 onClick={() => window.open(current_subscription.url, "_blank")}
-                className="text-2xl md:text-4xl font-bold text-gray-800 cursor-pointer hover:underline">
-              {current_subscription.name}
-            </h1>
-          </div>
-          <div className="flex">
-            <div className="dropdown dropdown-end">
-              <div tabIndex={0}>
-                <Button>
-                  <OptionsIcon/>
-                </Button>
-              </div>
-              <ul tabIndex={0} className="dropdown-content menu shadow bg-base-100 rounded-box w-52 gap-2">
-                <Button fitContent={false} relatedModalId={AssignTopicModalId}>
-                  <AddIcon/>
-                  <span>Add to Topic</span>
-                </Button>
-                <Button fitContent={false} relatedModalId={FilterOptionsModalId}>
-                  <FunnelIcon/>
-                  <span>Filter items</span>
-                </Button>
-                <Button fitContent={false}
-                        clickAction={
-                          async () => {
-                            refreshSubscription(current_subscription.uuid).then(() => {
-                              props.refreshSubscriptions()
-                            })
-                          }
-                        }>
-                  <RefreshIcon/>
-                  <span>Refresh</span>
-                </Button>
-              </ul>
-            </div>
-          </div>
-        </div>
+      <main onScroll={props.handleScroll} className="flex flex-col w-full overflow-auto">
         {!props.subscription.isBeingScanned &&
             <div>
                 <div className="flex m-2 gap-2">
@@ -141,7 +90,7 @@ const SubscriptionVideoCardGrid = (props: SubscriptionVideoCardGridProps) => {
                 <button className="btn btn-sm btn-ghost">No more items to show</button>
             </div>
         }
-      </div>
+      </main>
   }
 
   return content;

@@ -1,18 +1,11 @@
 import VideoCard from "./VideoCard";
 import {Topic} from "../../entities/Topic";
-import {deleteTopic} from "../../services/topicService";
-import {EditTopicModalId} from "./EditTopicModal";
 import React from "react";
 import {SubscriptionItem} from "../../entities/SubscriptionItem";
 import {Subscription} from "../../entities/Subscription";
-import {LATERAL_MENU_ID} from "../../utilities/hideLateralMenu";
-import {FilterOptionsModalId} from "./FilterOptionsModal";
 import {Filters, isItemShown} from "../../entities/Filters";
-import {useRouter} from "next/router";
 import {paths} from "../../configuration";
 import {ITEMS_PER_PAGE} from "../../utilities/constants";
-import Button from "../atoms/Button";
-import {FunnelIcon, MenuIcon, OptionsIcon, PencilIcon, TrashIcon} from "../atoms/Icons";
 import Link from "next/link";
 import Tag from "../atoms/Tag";
 import Miniature from "../atoms/Miniature";
@@ -20,17 +13,16 @@ import Miniature from "../atoms/Miniature";
 type TopicVideoCardGridProps = {
   fetchMoreItems: () => void,
   refreshItem: (itemId: string) => void,
-  refreshTopics: () => void,
   topic: Topic | undefined;
   items: SubscriptionItem[];
   subscriptions: Subscription[];
   filters: Filters;
   isLoading: boolean;
   topicIsFinished: boolean;
+  handleScroll: (event: React.UIEvent<HTMLElement>) => void,
 }
 
 const TopicVideoCardGrid = (props: TopicVideoCardGridProps) => {
-  const router = useRouter();
   const cards = [];
 
   let subscriptionTags;
@@ -71,72 +63,26 @@ const TopicVideoCardGrid = (props: TopicVideoCardGridProps) => {
     }
   }
 
-  let topicGrid = <div></div>
-  if (props.topic) {
-    const topic = props.topic;
-
-    topicGrid = (
-      <div className="flex flex-col w-full">
-        <div className="sticky top-0 z-10 bg-white flex flex-row justify-center items-center">
-          <div className="flex-none">
-            <Button
-              relatedModalId={LATERAL_MENU_ID}
-              showOnlyOnMobile={true}>
-              <MenuIcon/>
-            </Button>
-          </div>
-          <div className="flex-auto">
-            <h1 className="text-2xl md:text-4xl font-bold text-center text-gray-800">{topic.name}</h1>
-          </div>
-          <div className="flex-none">
-            <div className="dropdown dropdown-end">
-              <div tabIndex={0}>
-                <Button>
-                  <OptionsIcon/>
-                </Button>
-              </div>
-              <ul tabIndex={0} className="dropdown-content menu shadow bg-base-100 rounded-box w-52 gap-2">
-                <Button fitContent={false} relatedModalId={EditTopicModalId}>
-                  <PencilIcon/>
-                  <span>Edit Topic</span>
-                </Button>
-                <Button fitContent={false} clickAction={async () => {
-                  await deleteTopic(topic.uuid);
-                  props.refreshTopics();
-                  router.push(paths.TOPICS);
-                }}>
-                  <TrashIcon/>
-                  <span>Delete Topic</span>
-                </Button>
-                <Button fitContent={false} relatedModalId={FilterOptionsModalId}>
-                  <FunnelIcon/>
-                  <span>Filter items</span>
-                </Button>
-              </ul>
-            </div>
-          </div>
-        </div>
-        <div className="flex m-2 gap-2">
-          {subscriptionTags}
-        </div>
-        <div className="flex flex-row flex-wrap m-6">
-          {cards}
-        </div>
-        {props.isLoading &&
-            <div className="flex justify-center items-center">
-                <button className="btn btn-sm btn-ghost loading">loading</button>
-            </div>
-        }
-        {props.topicIsFinished &&
-            <div className="flex justify-center items-center">
-                <button className="btn btn-sm btn-ghost">No more items to show</button>
-            </div>
-        }
+  return (
+    <main onScroll={props.handleScroll} className="flex flex-col w-full overflow-auto">
+      <div className="flex m-2 gap-2">
+        {subscriptionTags}
       </div>
-    )
-  }
-
-  return topicGrid
+      <div className="flex flex-row flex-wrap m-6">
+        {cards}
+      </div>
+      {props.isLoading &&
+          <div className="flex justify-center items-center">
+              <button className="btn btn-sm btn-ghost loading">loading</button>
+          </div>
+      }
+      {props.topicIsFinished &&
+          <div className="flex justify-center items-center">
+              <button className="btn btn-sm btn-ghost">No more items to show</button>
+          </div>
+      }
+    </main>
+  )
 }
 
 export default TopicVideoCardGrid;

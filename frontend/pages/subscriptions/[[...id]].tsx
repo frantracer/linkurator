@@ -9,12 +9,17 @@ import SubscriptionVideoCardGrid from "../../components/organism/SubscriptionVid
 import NewTopicModal from "../../components/organism/NewTopicModal";
 import {useTopics} from "../../hooks/useTopics";
 import {LATERAL_MENU_ID} from "../../utilities/hideLateralMenu";
-import FilterOptionsModal from "../../components/organism/FilterOptionsModal";
+import FilterOptionsModal, {FilterOptionsModalId} from "../../components/organism/FilterOptionsModal";
 import useFilters from "../../hooks/useFilters";
 import {useRouter} from "next/router";
 import SubscriptionsLateralMenu from "../../components/organism/SubscriptionsLateralMenu";
 import {paths} from "../../configuration";
-import EditTopicModal from "../../components/organism/AssignTopicModal";
+import EditTopicModal, {AssignTopicModalId} from "../../components/organism/AssignTopicModal";
+import Drawer from "../../components/molecules/Drawer";
+import TopTitle from "../../components/molecules/TopTitle";
+import Button from "../../components/atoms/Button";
+import {AddIcon, FunnelIcon, MenuIcon, OptionsIcon, RefreshIcon} from "../../components/atoms/Icons";
+import {refreshSubscription} from "../../services/subscriptionService";
 
 const REFRESH_SUBSCRIPTIONS_INTERVAL = 30000;
 
@@ -29,6 +34,14 @@ const SubscriptionsPage: NextPage = () => {
   const {topics, refreshTopics} = useTopics(profile, profileIsLoading);
 
   const selectedSubscription = subscriptions.find(subscription => subscription.uuid === selectedSubscriptionId);
+
+  const subscriptionUrl = selectedSubscription ? selectedSubscription.url : "";
+  const subscriptionName = selectedSubscription ? selectedSubscription.name : "";
+  const subscriptionThumbnail = selectedSubscription ? selectedSubscription.thumbnail : "";
+
+  const openSubscriptionUrl = () => {
+    if (subscriptionUrl) window.open(subscriptionUrl, "_blank");
+  }
 
   const {
     subscriptionsItems,
@@ -65,45 +78,75 @@ const SubscriptionsPage: NextPage = () => {
         }, REFRESH_SUBSCRIPTIONS_INTERVAL)
       }
     }
-    }, [profileIsLoading, selectedSubscription, profile, subscriptions, router]);
+  }, [profileIsLoading, selectedSubscription, profile, subscriptions, router]);
 
   return (
-    <div>
+    <div className="h-screen w-screen">
       <Head>
         <title>Linkurator</title>
         <meta name="description" content="Linkurator"/>
         <link rel="icon" href="/logo_v1_fav.png"/>
       </Head>
-      <main className="flex bg-gray-100">
-        <NewTopicModal refreshTopics={refreshTopics} subscriptions={subscriptions}/>
+      <Drawer id={LATERAL_MENU_ID}>
+        <SubscriptionsLateralMenu
+          subscriptions={subscriptions}
+          selectedSubscription={selectedSubscription}
+          profile={profile!}/>
+        <TopTitle title={subscriptionName}
+                  thumbnail={subscriptionThumbnail}
+                  onTitleClick={openSubscriptionUrl}>
+          <Button relatedModalId={LATERAL_MENU_ID} showOnlyOnMobile={true}>
+            <MenuIcon/>
+          </Button>
+          <div className="dropdown dropdown-end">
+            <div tabIndex={0}>
+              <Button>
+                <OptionsIcon/>
+              </Button>
+            </div>
+            <ul tabIndex={0} className="dropdown-content menu shadow bg-base-100 rounded-box w-52 gap-2">
+              <Button fitContent={false} relatedModalId={AssignTopicModalId}>
+                <AddIcon/>
+                <span>Add to Topic</span>
+              </Button>
+              <Button fitContent={false} relatedModalId={FilterOptionsModalId}>
+                <FunnelIcon/>
+                <span>Filter items</span>
+              </Button>
+              <Button fitContent={false}
+                      clickAction={
+                        async () => {
+                          if (selectedSubscription) {
+                            refreshSubscription(selectedSubscription.uuid)
+                              .then(() => {
+                                refreshSubscriptions()
+                              })
+                          }
+                        }
+                      }>
+                <RefreshIcon/>
+                <span>Refresh</span>
+              </Button>
+            </ul>
+          </div>
+        </TopTitle>
+        <SubscriptionVideoCardGrid
+          refreshItem={refreshSubscriptionItem}
+          fetchMoreItems={fetchMoreItems}
+          topics={topics}
+          subscription={selectedSubscription}
+          items={subscriptionsItems}
+          filters={filters}
+          isLoading={isLoading}
+          isFinished={isFinished}
+          handleScroll={handleGridScroll}
+        />
         <FilterOptionsModal filters={filters} setFilters={setFilters}/>
         {selectedSubscription &&
             <EditTopicModal refreshTopics={refreshTopics} topics={topics} subscription={selectedSubscription}/>
         }
-
-        <div onScroll={handleGridScroll} className="drawer lg:drawer-open h-screen overflow-y-auto">
-          <input id={LATERAL_MENU_ID} type="checkbox" className="drawer-toggle"/>
-          <div className="drawer-content">
-            <SubscriptionVideoCardGrid
-              refreshSubscriptions={refreshSubscriptions}
-              refreshItem={refreshSubscriptionItem}
-              fetchMoreItems={fetchMoreItems}
-              topics={topics}
-              subscription={selectedSubscription}
-              items={subscriptionsItems}
-              filters={filters}
-              isLoading={isLoading}
-              isFinished={isFinished}/>
-          </div>
-          <div className="drawer-side z-20">
-            <label htmlFor={LATERAL_MENU_ID} aria-label="close sidebar" className="drawer-overlay"></label>
-            <SubscriptionsLateralMenu
-              subscriptions={subscriptions}
-              selectedSubscription={selectedSubscription}
-              profile={profile!}/>
-          </div>
-        </div>
-      </main>
+        <NewTopicModal refreshTopics={refreshTopics} subscriptions={subscriptions}/>
+      </Drawer>
     </div>
 
   );
