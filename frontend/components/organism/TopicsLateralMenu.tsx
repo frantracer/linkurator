@@ -1,8 +1,7 @@
 import React, {useState} from "react";
 import {Profile} from "../../hooks/useProfile";
 import LateralSearchBar from "../atoms/LateralSearchBar";
-import ProfileMenu from "../atoms/ProfileMenu";
-import LateralTopicList from "../molecules/LateralTopicList";
+import LateralTopicList from "./LateralTopicList";
 import {Topic} from "../../entities/Topic";
 import {Subscription} from "../../entities/Subscription";
 import {configuration, paths} from "../../configuration";
@@ -10,6 +9,7 @@ import {NewTopicModalId} from "./NewTopicModal";
 import {useRouter} from "next/router";
 import Button from "../atoms/Button";
 import {AddIcon} from "../atoms/Icons";
+import LogoHeader from "../molecules/LogoHeader";
 
 type TopicLateralMenuProps = {
   profile: Profile;
@@ -17,22 +17,6 @@ type TopicLateralMenuProps = {
   selectedTopic: Topic | undefined;
   subscriptions: Subscription[];
 };
-
-const Title = () => (
-  <div className="flex px-2 py-4">
-    <div className="flex-none px-4">
-      <img src="/logo_v1_medium.png" alt="logo" className="w-8 h-8"/>
-    </div>
-    <div className="flex-1 justify-self-start">
-      <a
-        href=""
-        className="text-2xl font-semibold tracking-widest text-gray-900 uppercase rounded-lg"
-      >
-        Linkurator
-      </a>
-    </div>
-  </div>
-);
 
 const LateralMenu = (props: TopicLateralMenuProps) => {
   const router = useRouter();
@@ -42,9 +26,13 @@ const LateralMenu = (props: TopicLateralMenuProps) => {
     router.push(paths.SUBSCRIPTIONS);
   }
 
+  const profileUrl = props.profile ? props.profile.avatar_url : '';
+  const profileName = props.profile ? props.profile.first_name : '';
+
   return (
-    <div className="flex flex-col p-4 h-full w-80 bg-white text-base-content gap-y-2">
-      <Title/>
+    <div className="flex flex-col px-2 py-4 h-full w-80 bg-base-200 text-base-content gap-y-2">
+      <LogoHeader avatarUrl={profileUrl} name={profileName}/>
+      <div className="divider m-0"></div>
       <Button fitContent={false} clickAction={goToSubscriptions}>
         Switch to subscriptions
       </Button>
@@ -63,12 +51,11 @@ const LateralMenu = (props: TopicLateralMenuProps) => {
           searchValue={searchValue}/>
       </div>
       <div className="flex-[0_0_auto]">
-        {props.profile && <ProfileMenu profile={props.profile}/>}
         {props.profile &&
             <Button fitContent={false}
-                clickAction={() => {
-                  window.open(configuration.LOGOUT_URL, '_self')
-                }}>
+                    clickAction={() => {
+                      window.open(configuration.LOGOUT_URL, '_self')
+                    }}>
                 <span>Logout</span>
             </Button>
         }

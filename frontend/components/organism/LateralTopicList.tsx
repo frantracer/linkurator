@@ -37,7 +37,7 @@ const LateralTopicList = (props: LateralTopicListProps) => {
     ))
 
   return (
-    <nav className="bg-gray-50 rounded">
+    <nav className="bg-gray-50 rounded h-full overflow-auto">
       {items}
     </nav>
   )
