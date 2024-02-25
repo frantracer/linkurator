@@ -18,7 +18,7 @@ const FilterOptionsModal = (props: FilterOptionsModalProps) => {
   }, [props.filters])
 
   return (
-    <div className="text-white">
+    <div className="bg-base-100">
       <input type="checkbox" id={FilterOptionsModalId} className="modal-toggle"/>
 
       <dialog className="modal modal-bottom sm:modal-middle">

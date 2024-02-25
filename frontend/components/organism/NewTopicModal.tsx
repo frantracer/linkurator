@@ -24,7 +24,7 @@ const NewTopicModal = (props: NewTopicModalProps) => {
   const subscriptionBadges = subscriptionsToAdd.map(s => subscriptionToBadge(s, removeSubscription))
 
   return (
-    <div className="text-white">
+    <div className="bg-base-100">
       <input type="checkbox" id={NewTopicModalId} className="modal-toggle"/>
       <div className="modal modal-bottom sm:modal-middle">
         <div className="modal-box">
