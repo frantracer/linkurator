@@ -68,7 +68,7 @@ const TopicVideoCardGrid = (props: TopicVideoCardGridProps) => {
       <div className="flex flex-row flex-wrap m-2 gap-2">
         {subscriptionTags}
       </div>
-      <div className="flex flex-row flex-wrap m-6">
+      <div className="flex flex-row flex-wrap m-2">
         {cards}
       </div>
       {props.isLoading &&
