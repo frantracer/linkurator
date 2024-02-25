@@ -8,12 +8,14 @@ import {Subscription} from "../../entities/Subscription";
 import {LATERAL_MENU_ID} from "../../utilities/hideLateralMenu";
 import {FilterOptionsModalId} from "./FilterOptionsModal";
 import {Filters, isItemShown} from "../../entities/Filters";
-import SubscriptionTag from "../atoms/SubscriptionTag";
 import {useRouter} from "next/router";
 import {paths} from "../../configuration";
 import {ITEMS_PER_PAGE} from "../../utilities/constants";
 import Button from "../atoms/Button";
 import {FunnelIcon, MenuIcon, OptionsIcon, PencilIcon, TrashIcon} from "../atoms/Icons";
+import Link from "next/link";
+import Tag from "../atoms/Tag";
+import Miniature from "../atoms/Miniature";
 
 type TopicVideoCardGridProps = {
   fetchMoreItems: () => void,
@@ -39,7 +41,14 @@ const TopicVideoCardGrid = (props: TopicVideoCardGridProps) => {
         return current_topic.subscriptions_ids.includes(subscription.uuid)
       })
       .map(subscription => {
-        return <SubscriptionTag key={subscription.uuid} subscription={subscription}/>
+        return (
+          <Tag key={subscription.uuid}>
+            <Miniature src={subscription.thumbnail} alt={subscription.name}/>
+            <Link href={paths.SUBSCRIPTIONS + "/" + subscription.uuid} scroll={false}>
+              {subscription.name}
+            </Link>
+          </Tag>
+        )
       });
 
     for (let i = 0; i < props.items.length; i++) {
@@ -107,7 +116,7 @@ const TopicVideoCardGrid = (props: TopicVideoCardGridProps) => {
             </div>
           </div>
         </div>
-        <div>
+        <div className="flex m-2 gap-2">
           {subscriptionTags}
         </div>
         <div className="flex flex-row flex-wrap m-6">

@@ -17,6 +17,7 @@ import {
   ThumbsUpIcon
 } from "../atoms/Icons";
 import ItemCardSkeleton from "./ItemCardSkeleton";
+import Miniature from "../atoms/Miniature";
 
 type VideoCardProps = {
   item: SubscriptionItem;
@@ -66,62 +67,61 @@ const VideoCard = (
   } else {
     return (
       <div className="card card-compact w-80 bg-base-200 shadow-base-100 shadow-xl hover:scale-105">
-      <figure className="aspect-video h-48">
-        <img className="h-full"
-             src={item.thumbnail}
-             alt={item.name}
-             onClick={() => window.open(item.url, "_blank")}/>
-        {item.duration != undefined &&
-            <span className="absolute top-0 right-0 m-1 p-1 bg-black bg-opacity-90 rounded">
+        <figure className="aspect-video h-48">
+          <img className="h-full"
+               src={item.thumbnail}
+               alt={item.name}
+               onClick={() => window.open(item.url, "_blank")}/>
+          {item.duration != undefined &&
+              <span className="absolute top-0 right-0 m-1 p-1 bg-black bg-opacity-90 rounded">
                 <p className="text-white">{convert_seconds_to_hh_mm_ss(item.duration)}</p>
             </span>
-        }
-      </figure>
-      <div className="card-body">
-        <h2 className="card-title cursor-pointer" onClick={() => window.open(item.url, "_blank")}>
-          {item.name}
-        </h2>
-        {subscription &&
-            <div className="flex items-center cursor-pointer">
-                <img className="w-4 h-4 inline-block mx-1 rounded" src={subscription.thumbnail}
-                     alt={subscription.name}/>
-                <Link href={paths.SUBSCRIPTIONS + "/" + subscription.uuid}>{subscription.name}</Link>
-            </div>}
-        <div className="flex flex-column">
-          <p>{readableAgoUnits(item.published_at)}</p>
-          <div className="card-actions justify-end">
-            <SwapButton defaultChecked={item.discouraged}
-                        onChange={
-                          (isChecked) => onChangeSwapButton &&
-                            onChangeSwapButton(item.uuid, InteractionType.Discouraged, isChecked).then(onChange)
-                        }>
-              <ThumbsDownFilledIcon/>
-              <ThumbsDownIcon/>
-            </SwapButton>
-            <SwapButton defaultChecked={item.recommended}
-                        onChange={
-                          (isChecked) => onChangeSwapButton &&
-                            onChangeSwapButton(item.uuid, InteractionType.Recommended, isChecked).then(onChange)
-                        }>
-              <ThumbsUpFilledIcon/>
-              <ThumbsUpIcon/>
-            </SwapButton>
-            <SwapButton defaultChecked={item.hidden}
-                        onChange={(isChecked) => onChangeSwapButton &&
-                          onChangeSwapButton(item.uuid, InteractionType.Hidden, isChecked).then(onChange)}>
-              <EyeSlashFilledIcon/>
-              <EyeSlashIcon/>
-            </SwapButton>
-            <SwapButton defaultChecked={item.viewed}
-                        onChange={(isChecked) => onChangeSwapButton &&
-                          onChangeSwapButton(item.uuid, InteractionType.Viewed, isChecked).then(onChange)}>
-              <CheckCircleFilledIcon/>
-              <CheckCircleIcon/>
-            </SwapButton>
+          }
+        </figure>
+        <div className="card-body">
+          <h2 className="card-title cursor-pointer" onClick={() => window.open(item.url, "_blank")}>
+            {item.name}
+          </h2>
+          {subscription &&
+              <div className="flex gap-x-2 items-center cursor-pointer">
+                  <Miniature src={subscription.thumbnail} alt={subscription.name}/>
+                  <Link href={paths.SUBSCRIPTIONS + "/" + subscription.uuid}>{subscription.name}</Link>
+              </div>}
+          <div className="flex flex-column">
+            <p>{readableAgoUnits(item.published_at)}</p>
+            <div className="card-actions justify-end">
+              <SwapButton defaultChecked={item.discouraged}
+                          onChange={
+                            (isChecked) => onChangeSwapButton &&
+                              onChangeSwapButton(item.uuid, InteractionType.Discouraged, isChecked).then(onChange)
+                          }>
+                <ThumbsDownFilledIcon/>
+                <ThumbsDownIcon/>
+              </SwapButton>
+              <SwapButton defaultChecked={item.recommended}
+                          onChange={
+                            (isChecked) => onChangeSwapButton &&
+                              onChangeSwapButton(item.uuid, InteractionType.Recommended, isChecked).then(onChange)
+                          }>
+                <ThumbsUpFilledIcon/>
+                <ThumbsUpIcon/>
+              </SwapButton>
+              <SwapButton defaultChecked={item.hidden}
+                          onChange={(isChecked) => onChangeSwapButton &&
+                            onChangeSwapButton(item.uuid, InteractionType.Hidden, isChecked).then(onChange)}>
+                <EyeSlashFilledIcon/>
+                <EyeSlashIcon/>
+              </SwapButton>
+              <SwapButton defaultChecked={item.viewed}
+                          onChange={(isChecked) => onChangeSwapButton &&
+                            onChangeSwapButton(item.uuid, InteractionType.Viewed, isChecked).then(onChange)}>
+                <CheckCircleFilledIcon/>
+                <CheckCircleIcon/>
+              </SwapButton>
+            </div>
           </div>
         </div>
       </div>
-    </div>
     )
   }
 };

@@ -8,10 +8,13 @@ import {LATERAL_MENU_ID} from "../../utilities/hideLateralMenu";
 import {Filters, isItemShown} from "../../entities/Filters";
 import {FilterOptionsModalId} from "./FilterOptionsModal";
 import {refreshSubscription} from "../../services/subscriptionService";
-import TopicTag from "../atoms/TopicTag";
 import {ITEMS_PER_PAGE} from "../../utilities/constants";
 import {AddIcon, FunnelIcon, MenuIcon, OptionsIcon, RefreshIcon} from "../atoms/Icons";
 import Button from "../atoms/Button";
+import Link from "next/link";
+import {paths} from "../../configuration";
+import Tag from "../atoms/Tag";
+import Avatar from "../atoms/Avatar";
 
 type SubscriptionVideoCardGridProps = {
   refreshSubscriptions: () => void,
@@ -51,7 +54,16 @@ const SubscriptionVideoCardGrid = (props: SubscriptionVideoCardGridProps) => {
       .filter(topic => {
         return topic.subscriptions_ids.includes(current_subscription.uuid)
       })
-      .map(topic => <TopicTag key={topic.uuid} topic={topic}/>);
+      .map(topic => {
+          return (
+            <Tag key={topic.uuid}>
+              <Link href={paths.TOPICS + "/" + topic.uuid} scroll={false}>
+                {topic.name}
+              </Link>
+            </Tag>
+          )
+        }
+      );
 
     if (!props.isFinished && !props.isLoading && cards.length < ITEMS_PER_PAGE) {
       props.fetchMoreItems()
@@ -66,8 +78,7 @@ const SubscriptionVideoCardGrid = (props: SubscriptionVideoCardGridProps) => {
             </Button>
           </div>
           <div className="flex flex-row">
-            <img className="h-12 p-1 rounded" src={current_subscription.thumbnail}
-                 alt={current_subscription.name + " icon"}/>
+            <Avatar src={current_subscription.thumbnail} alt={current_subscription.name}/>
             <h1 onClick={() => window.open(current_subscription.url, "_blank")}
                 className="text-2xl md:text-4xl font-bold text-gray-800 cursor-pointer hover:underline">
               {current_subscription.name}
@@ -90,13 +101,13 @@ const SubscriptionVideoCardGrid = (props: SubscriptionVideoCardGridProps) => {
                   <span>Filter items</span>
                 </Button>
                 <Button fitContent={false}
-                  clickAction={
-                    async () => {
-                      refreshSubscription(current_subscription.uuid).then(() => {
-                        props.refreshSubscriptions()
-                      })
-                    }
-                  }>
+                        clickAction={
+                          async () => {
+                            refreshSubscription(current_subscription.uuid).then(() => {
+                              props.refreshSubscriptions()
+                            })
+                          }
+                        }>
                   <RefreshIcon/>
                   <span>Refresh</span>
                 </Button>
@@ -106,7 +117,7 @@ const SubscriptionVideoCardGrid = (props: SubscriptionVideoCardGridProps) => {
         </div>
         {!props.subscription.isBeingScanned &&
             <div>
-                <div>
+                <div className="flex m-2 gap-2">
                   {topicTags}
                 </div>
                 <div className="flex flex-row flex-wrap m-6">

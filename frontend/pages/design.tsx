@@ -34,6 +34,9 @@ import {
 } from "../components/atoms/Icons";
 import React from "react";
 import ItemCardSkeleton from "../components/organism/ItemCardSkeleton";
+import Avatar from "../components/atoms/Avatar";
+import Tag from "../components/atoms/Tag";
+import Miniature from "../components/atoms/Miniature";
 
 const SIDE_BAR_NAME = "main-menu";
 const ICONS_REF = "icons";
@@ -41,6 +44,9 @@ const BUTTONS_REF = "buttons";
 const SWAP_BUTTONS_REF = "swap_buttons";
 const INPUTS_REF = "inputs";
 const CARDS_REF = "cards";
+const MINIATURES_REF = "miniatures";
+const AVATARS_REF = "avatars";
+const TAGS_REF = "tags";
 
 const closeSideBar = () => {
   const sideBar = (document.getElementById(SIDE_BAR_NAME) as HTMLInputElement);
@@ -61,6 +67,9 @@ const LateralMenu = () => {
         <li><Link clickAction={closeSideBar} href={"#" + BUTTONS_REF}>Buttons</Link></li>
         <li><Link clickAction={closeSideBar} href={"#" + SWAP_BUTTONS_REF}>Swap Buttons</Link></li>
         <li><Link clickAction={closeSideBar} href={"#" + INPUTS_REF}>Inputs</Link></li>
+        <li><Link clickAction={closeSideBar} href={"#" + MINIATURES_REF}>Miniatures</Link></li>
+        <li><Link clickAction={closeSideBar} href={"#" + AVATARS_REF}>Avatars</Link></li>
+        <li><Link clickAction={closeSideBar} href={"#" + TAGS_REF}>Tags</Link></li>
         <li><Link clickAction={closeSideBar} href={"#" + CARDS_REF}>Cards</Link></li>
       </ul>
     </aside>
@@ -182,6 +191,51 @@ const CardSection = () => {
   );
 }
 
+const AvatarsSection = () => {
+  return (
+    <Section>
+      <Head1 id={AVATARS_REF}># Avatar</Head1>
+      <div className="flex flex-col gap-6 p-6 w-full
+      border-base-100 border-solid border-2 rounded justify-items-center items-center">
+        <Avatar src={"/logo_v1_medium.png"} alt={"linkurator logo"}/>
+      </div>
+    </Section>
+  );
+}
+
+const MiniaturesSection = () => {
+  return (
+    <Section>
+      <Head1 id={MINIATURES_REF}># Miniature</Head1>
+      <div className="flex flex-col gap-6 p-6 w-full
+      border-base-100 border-solid border-2 rounded justify-items-center items-center">
+        <Miniature src={"/logo_v1_medium.png"} alt={"linkurator logo"}/>
+      </div>
+    </Section>
+  );
+}
+
+const TagSection = () => {
+  return (
+    <Section>
+      <Head1 id={TAGS_REF}># Tags</Head1>
+      <div className="flex flex-col gap-6 p-6 w-full
+      border-base-100 border-solid border-2 rounded justify-items-center items-center">
+        <Tag>
+          <span>1</span>
+        </Tag>
+        <Tag>
+          <span>Favorites</span>
+        </Tag>
+        <Tag>
+          <Miniature src={"/logo_v1_medium.png"} alt={"linkurator logo"}/>
+          <span>Linkurator</span>
+        </Tag>
+      </div>
+    </Section>
+  );
+}
+
 const MainContent = () => {
   return (
     <main className="bg-base-300 text-base-content w-full h-full z-0 p-2 overflow-auto">
@@ -189,6 +243,9 @@ const MainContent = () => {
       <ButtonsSection/>
       <SwapButtonsSection/>
       <InputsSection/>
+      <AvatarsSection/>
+      <MiniaturesSection/>
+      <TagSection/>
       <CardSection/>
     </main>
   );
