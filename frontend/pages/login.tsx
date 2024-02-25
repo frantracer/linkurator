@@ -29,13 +29,19 @@ const Home: NextPage = () => {
   }
 
   const body =
-    <main className="hero min-h-screen bg-gray-200 text-black">
+    <main className="hero min-h-screen bg-base-200">
       <div className="hero-content text-center">
         <div className="max-w-md">
-          <h1 className="text-5xl font-bold py-5">Decide the content you want to see</h1>
+          <h1 className="text-5xl font-bold py-5 uppercase">
+            <img src="/logo_v1_medium.png" alt="Linkurator logo" className="w-20 h-20 inline-block mx-4"/>
+            Linkurator
+          </h1>
+          <h2 className="text-3xl font-bold py-5">Here you decide the content you want to see</h2>
           <p className="py-2">We do not use any algorithm to recommend you what to see.</p>
           <p className="py-2">We provide the tools you need to find the content you seek.</p>
-          <LoginButton/>
+          <div className="m-8">
+            <LoginButton/>
+          </div>
         </div>
       </div>
     </main>
