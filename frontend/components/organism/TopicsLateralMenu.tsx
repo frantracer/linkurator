@@ -10,6 +10,7 @@ import {useRouter} from "next/router";
 import Button from "../atoms/Button";
 import {AddIcon} from "../atoms/Icons";
 import LogoHeader from "../molecules/LogoHeader";
+import {hideLateralMenu} from "../../utilities/hideLateralMenu";
 
 type TopicLateralMenuProps = {
   profile: Profile;
@@ -18,7 +19,7 @@ type TopicLateralMenuProps = {
   subscriptions: Subscription[];
 };
 
-const LateralMenu = (props: TopicLateralMenuProps) => {
+const TopicsLateralMenu = (props: TopicLateralMenuProps) => {
   const router = useRouter();
   const [searchValue, setSearchValue] = useState<string>('');
 
@@ -40,7 +41,7 @@ const LateralMenu = (props: TopicLateralMenuProps) => {
         <LateralSearchBar
           searchBarQuery={searchValue}
           setSearchBarQuery={setSearchValue}/>
-        <Button relatedModalId={NewTopicModalId}>
+        <Button relatedModalId={NewTopicModalId} clickAction={hideLateralMenu}>
           <AddIcon/>
         </Button>
       </div>
@@ -64,4 +65,4 @@ const LateralMenu = (props: TopicLateralMenuProps) => {
   );
 };
 
-export default LateralMenu;
+export default TopicsLateralMenu;
