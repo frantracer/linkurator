@@ -6,7 +6,7 @@ type MiniatureProps = {
 const Miniature = (props: MiniatureProps) => {
   return (
     <div className="avatar">
-      <div className="w-6 h-6 rounded bg-neutral p-0.5">
+      <div className="w-5 h-5 rounded bg-neutral">
         <img src={props.src} alt={props.alt}/>
       </div>
     </div>
