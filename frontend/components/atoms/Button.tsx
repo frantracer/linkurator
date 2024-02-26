@@ -20,7 +20,7 @@ const Button = (
     children
   }: ButtonProps
 ) => {
-  let className = "btn btn-primary rounded-none";
+  let className = "btn btn-primary rounded";
   if (fitContent) {
     className += " w-fit";
   } else {
