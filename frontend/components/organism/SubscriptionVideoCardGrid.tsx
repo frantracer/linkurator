@@ -69,7 +69,8 @@ const SubscriptionVideoCardGrid = (props: SubscriptionVideoCardGridProps) => {
                 <div className="flex flex-row flex-wrap m-2 gap-2">
                   {topicTags}
                 </div>
-                <div className="flex flex-row flex-wrap m-2">
+                <div className="grid grid-cols-[repeat(auto-fill,minmax(320px,1fr))] gap-4
+                justify-items-center justify-content-center">
                   {cards}
                 </div>
             </div>
