@@ -256,10 +256,13 @@ const DesignSystemPage = () => {
     <div className="h-screen w-screen">
       <Drawer id={SIDE_BAR_NAME}>
         <LateralMenu/>
-        <TopTitle title={"Design System"}>
+        <TopTitle>
           <Button relatedModalId={SIDE_BAR_NAME} showOnlyOnMobile={true}>
             <MenuIcon/>
           </Button>
+          <h1 className="text-2xl font-bold whitespace-nowrap truncate text-center w-full">
+            Design System
+          </h1>
           <ThemeToogleButton/>
         </TopTitle>
         <MainContent/>

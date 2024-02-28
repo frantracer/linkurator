@@ -20,6 +20,7 @@ import TopTitle from "../../components/molecules/TopTitle";
 import Button from "../../components/atoms/Button";
 import {AddIcon, FunnelIcon, MenuIcon, OptionsIcon, RefreshIcon} from "../../components/atoms/Icons";
 import {refreshSubscription} from "../../services/subscriptionService";
+import Avatar from "../../components/atoms/Avatar";
 
 const REFRESH_SUBSCRIPTIONS_INTERVAL = 30000;
 
@@ -92,12 +93,17 @@ const SubscriptionsPage: NextPage = () => {
           subscriptions={subscriptions}
           selectedSubscription={selectedSubscription}
           profile={profile!}/>
-        <TopTitle title={subscriptionName}
-                  thumbnail={subscriptionThumbnail}
-                  onTitleClick={openSubscriptionUrl}>
+        <TopTitle>
           <Button relatedModalId={LATERAL_MENU_ID} showOnlyOnMobile={true}>
             <MenuIcon/>
           </Button>
+          <div className="flex flex-row gap-2 items-center justify-center w-full overflow-hidden hover:cursor-pointer"
+               onClick={openSubscriptionUrl}>
+            <Avatar src={subscriptionThumbnail} alt={subscriptionName}/>
+            <h1 className="text-2xl font-bold whitespace-nowrap truncate">
+              {subscriptionName}
+            </h1>
+          </div>
           <div className="dropdown dropdown-end">
             <div tabIndex={0}>
               <Button>

@@ -85,10 +85,13 @@ const Home: NextPage = () => {
           subscriptions={subscriptions}
           profile={profile!}
         />
-        <TopTitle title={topicName}>
+        <TopTitle>
           <Button relatedModalId={LATERAL_MENU_ID} showOnlyOnMobile={true}>
             <MenuIcon/>
           </Button>
+          <h1 className="text-2xl font-bold whitespace-nowrap truncate text-center w-full">
+            {topicName}
+          </h1>
           <div className="dropdown dropdown-end">
             <div tabIndex={0}>
               <Button>
