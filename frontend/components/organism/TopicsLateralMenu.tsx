@@ -11,6 +11,7 @@ import Button from "../atoms/Button";
 import {AddIcon} from "../atoms/Icons";
 import LogoHeader from "../molecules/LogoHeader";
 import {hideLateralMenu} from "../../utilities/hideLateralMenu";
+import {openModal} from "../../utilities/modalAction";
 
 type TopicLateralMenuProps = {
   profile: Profile;
@@ -30,6 +31,11 @@ const TopicsLateralMenu = (props: TopicLateralMenuProps) => {
   const profileUrl = props.profile ? props.profile.avatar_url : '';
   const profileName = props.profile ? props.profile.first_name : '';
 
+  const openNewTopicModal = () => {
+    openModal(NewTopicModalId);
+    hideLateralMenu();
+  }
+
   return (
     <div className="flex flex-col px-2 py-4 h-full w-80 bg-base-200 text-base-content gap-y-2">
       <LogoHeader avatarUrl={profileUrl} name={profileName}/>
@@ -41,7 +47,7 @@ const TopicsLateralMenu = (props: TopicLateralMenuProps) => {
         <LateralSearchBar
           searchBarQuery={searchValue}
           setSearchBarQuery={setSearchValue}/>
-        <Button relatedModalId={NewTopicModalId} clickAction={hideLateralMenu}>
+        <Button clickAction={openNewTopicModal}>
           <AddIcon/>
         </Button>
       </div>
