@@ -1,23 +1,29 @@
-import {useState} from "react";
+import { useState, useEffect } from "react";
 
 type InputTextProps = {
   placeholder?: string;
   withLeftPadding?: boolean;
   onChange?: (value: string) => void;
+  value?: string;
 };
 
 const InputText = (
   {
     placeholder = "Input",
     withLeftPadding = false,
-    onChange = undefined
+    onChange = undefined,
+    value = ""
   }: InputTextProps) => {
-  const [searchValue, setSearchValue] = useState("");
+  const [searchValue, setSearchValue] = useState(value);
 
   let padding = "";
   if (withLeftPadding) {
     padding = "pl-10";
   }
+
+  useEffect(() => {
+    setSearchValue(value);
+  }, [value]);
 
   return (
     <input
