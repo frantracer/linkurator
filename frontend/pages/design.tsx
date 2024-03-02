@@ -14,6 +14,7 @@ import {
   AddIcon,
   CheckCircleFilledIcon,
   CheckCircleIcon,
+  CrossIcon,
   DownloadIcon,
   EyeSlashFilledIcon,
   EyeSlashIcon,
@@ -37,6 +38,8 @@ import ItemCardSkeleton from "../components/organism/ItemCardSkeleton";
 import Avatar from "../components/atoms/Avatar";
 import Tag from "../components/atoms/Tag";
 import Miniature from "../components/atoms/Miniature";
+import Box from "../components/atoms/Box";
+import Dropdown from "../components/atoms/Dropdown";
 
 const SIDE_BAR_NAME = "main-menu";
 const ICONS_REF = "icons";
@@ -47,6 +50,8 @@ const CARDS_REF = "cards";
 const MINIATURES_REF = "miniatures";
 const AVATARS_REF = "avatars";
 const TAGS_REF = "tags";
+const BOX_REF = "box";
+const DROPDOWN_REF = "dropdown";
 
 const closeSideBar = () => {
   const sideBar = (document.getElementById(SIDE_BAR_NAME) as HTMLInputElement);
@@ -71,6 +76,8 @@ const LateralMenu = () => {
         <li><Link clickAction={closeSideBar} href={"#" + AVATARS_REF}>Avatars</Link></li>
         <li><Link clickAction={closeSideBar} href={"#" + TAGS_REF}>Tags</Link></li>
         <li><Link clickAction={closeSideBar} href={"#" + CARDS_REF}>Cards</Link></li>
+        <li><Link clickAction={closeSideBar} href={"#" + BOX_REF}>Box</Link></li>
+        <li><Link clickAction={closeSideBar} href={"#" + DROPDOWN_REF}>Dropdown</Link></li>
       </ul>
     </aside>
   );
@@ -102,6 +109,7 @@ const IconsSection = () => {
         <CheckCircleFilledIcon/>
         <EyeSlashIcon/>
         <EyeSlashFilledIcon/>
+        <CrossIcon/>
       </div>
     </Section>
   );
@@ -236,6 +244,39 @@ const TagSection = () => {
   );
 }
 
+const BoxSection = () => {
+  return (
+    <Section>
+      <Head1 id={BOX_REF}># Box</Head1>
+      <div className="flex flex-col gap-6 p-6 w-full
+      border-base-100 border-solid border-2 rounded justify-items-center items-center">
+        <Box titleBackgroundColor={"bg-base-200"} title={"Empty"}/>
+        <Box titleBackgroundColor={"bg-base-300"} title={"Tags"}>
+          <Button>Button</Button>
+        </Box>
+      </div>
+    </Section>
+  );
+}
+
+const DropdownSection = () => {
+  return (
+    <Section>
+      <Head1 id={DROPDOWN_REF}># Dropdown</Head1>
+      <div className="flex flex-col gap-6 p-6 w-full
+      border-base-100 border-solid border-2 rounded justify-items-center items-center">
+        <Dropdown title={"Pick option"} options={
+          [
+            {key: "1", label: "Option 1"},
+            {key: "2", label: "Option 2"},
+            {key: "3", label: "Option 3"}
+          ]
+        } onChange={(key) => console.log(key)}/>
+      </div>
+    </Section>
+  );
+}
+
 const MainContent = () => {
   return (
     <main className="bg-base-300 text-base-content w-full h-full z-0 p-2 overflow-auto">
@@ -247,6 +288,8 @@ const MainContent = () => {
       <MiniaturesSection/>
       <TagSection/>
       <CardSection/>
+      <BoxSection/>
+      <DropdownSection/>
     </main>
   );
 }
