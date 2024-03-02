@@ -1,6 +1,5 @@
 import React, {useState} from "react";
 import {Profile} from "../../hooks/useProfile";
-import LateralSearchBar from "../atoms/LateralSearchBar";
 import LateralTopicList from "./LateralTopicList";
 import {Topic} from "../../entities/Topic";
 import {Subscription} from "../../entities/Subscription";
@@ -12,6 +11,7 @@ import {AddIcon} from "../atoms/Icons";
 import LogoHeader from "../molecules/LogoHeader";
 import {hideLateralMenu} from "../../utilities/hideLateralMenu";
 import {openModal} from "../../utilities/modalAction";
+import SearchBar from "../molecules/SearchBar";
 
 type TopicLateralMenuProps = {
   profile: Profile;
@@ -44,9 +44,7 @@ const TopicsLateralMenu = (props: TopicLateralMenuProps) => {
         Switch to subscriptions
       </Button>
       <div className="flex flex-row items-center gap-x-2">
-        <LateralSearchBar
-          searchBarQuery={searchValue}
-          setSearchBarQuery={setSearchValue}/>
+        <SearchBar handleChange={setSearchValue}/>
         <Button clickAction={openNewTopicModal}>
           <AddIcon/>
         </Button>

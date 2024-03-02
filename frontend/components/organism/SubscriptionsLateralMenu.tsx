@@ -1,12 +1,12 @@
 import React, {useState} from "react";
 import {Profile} from "../../hooks/useProfile";
-import LateralSearchBar from "../atoms/LateralSearchBar";
 import LateralSubscriptionList from "./LateralSubscriptionList";
 import {Subscription} from "../../entities/Subscription";
 import {configuration, paths} from "../../configuration";
 import Button from "../atoms/Button";
 import {useRouter} from "next/router";
 import LogoHeader from "../molecules/LogoHeader";
+import SearchBar from "../molecules/SearchBar";
 
 type LateralMenuProps = {
   profile: Profile;
@@ -32,11 +32,7 @@ const LateralMenu = (props: LateralMenuProps) => {
       <Button fitContent={false} clickAction={goToTopics}>
         Switch to topics
       </Button>
-      {props.profile &&
-          <LateralSearchBar
-              searchBarQuery={searchValue}
-              setSearchBarQuery={setSearchValue}/>
-      }
+      {props.profile && <SearchBar handleChange={setSearchValue}/>}
       <div className="flex-1 overflow-y-auto">
 
         {props.profile &&
