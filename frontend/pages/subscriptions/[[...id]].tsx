@@ -99,7 +99,7 @@ const SubscriptionsPage: NextPage = () => {
           </Button>
           <div className="flex flex-row gap-2 items-center justify-center w-full overflow-hidden hover:cursor-pointer"
                onClick={openSubscriptionUrl}>
-            <Avatar src={subscriptionThumbnail} alt={subscriptionName}/>
+            {subscriptionThumbnail && <Avatar src={subscriptionThumbnail} alt={subscriptionName}/>}
             <h1 className="text-2xl font-bold whitespace-nowrap truncate">
               {subscriptionName}
             </h1>
