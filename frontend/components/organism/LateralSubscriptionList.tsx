@@ -4,9 +4,15 @@ import {useRouter} from "next/router";
 import {paths} from "../../configuration";
 import {hideLateralMenu} from "../../utilities/hideLateralMenu";
 import {scrollToDrawerTop} from "../../utilities/scrollToDrawerTop";
+import Menu from "../atoms/Menu";
+import Tag from "../atoms/Tag";
+import React from "react";
+import {Topic} from "../../entities/Topic";
+import Miniature from "../atoms/Miniature";
 
 type LateralItemListProps = {
   subscriptions: Subscription[];
+  topics: Topic[];
   selectedSubscription: Subscription | undefined;
   searchValue: string;
 }
@@ -22,23 +28,34 @@ const LateralSubscriptionList = (props: LateralItemListProps) => {
     }
   }
 
+  function counterTopicsPerSubscription(subscription: Subscription, topics: Topic[]): number {
+    return topics.filter((topic) => {
+      return topic.subscriptions_ids.includes(subscription.uuid);
+    }).length;
+  }
+
   const items = props.subscriptions
     .filter((subscription) => {
       return subscription.name.toLowerCase().includes(props.searchValue.toLowerCase());
     })
     .map((subscription) => (
       <MenuItem
-        title={subscription.name}
         key={subscription.uuid}
         onClick={() => handleClick(subscription.uuid)}
         selected={subscription.uuid === props.selectedSubscription?.uuid}
-      />
+      >
+        <div className="flex flex-row gap-2 items-center">
+          <Miniature src={subscription.thumbnail} alt={subscription.name}/>
+          <div className="whitespace-nowrap overflow-auto truncate w-full">{subscription.name}</div>
+          <Tag>{counterTopicsPerSubscription(subscription, props.topics)}</Tag>
+        </div>
+      </MenuItem>
     ))
 
   return (
-    <nav className="bg-gray-50 rounded h-full overflow-auto">
+    <Menu>
       {items}
-    </nav>
+    </Menu>
   )
 }
 

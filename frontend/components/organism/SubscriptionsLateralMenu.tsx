@@ -7,10 +7,12 @@ import Button from "../atoms/Button";
 import {useRouter} from "next/router";
 import LogoHeader from "../molecules/LogoHeader";
 import SearchBar from "../molecules/SearchBar";
+import {Topic} from "../../entities/Topic";
 
 type LateralMenuProps = {
   profile: Profile;
   subscriptions: Subscription[];
+  topics: Topic[],
   selectedSubscription: Subscription | undefined;
 };
 
@@ -32,25 +34,21 @@ const LateralMenu = (props: LateralMenuProps) => {
       <Button fitContent={false} clickAction={goToTopics}>
         Switch to topics
       </Button>
-      {props.profile && <SearchBar handleChange={setSearchValue}/>}
-      <div className="flex-1 overflow-y-auto">
-
-        {props.profile &&
-            <LateralSubscriptionList
-                searchValue={searchValue}
-                subscriptions={props.subscriptions}
-                selectedSubscription={props.selectedSubscription}/>
-        }
-      </div>
-      <div className="flex-[0_0_auto]">
-        {props.profile &&
-            <Button fitContent={false} clickAction={() => {
-              window.open(configuration.LOGOUT_URL, '_self')
-            }}>
-                <span>Logout</span>
-            </Button>
-        }
-      </div>
+      <SearchBar handleChange={setSearchValue}/>
+      {props.profile &&
+          <LateralSubscriptionList
+              searchValue={searchValue}
+              subscriptions={props.subscriptions}
+              topics={props.topics}
+              selectedSubscription={props.selectedSubscription}/>
+      }
+      {props.profile &&
+          <Button fitContent={false} clickAction={() => {
+            window.open(configuration.LOGOUT_URL, '_self')
+          }}>
+              <span>Logout</span>
+          </Button>
+      }
     </div>
   );
 };

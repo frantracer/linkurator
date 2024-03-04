@@ -33,13 +33,16 @@ import {
   ThumbsUpIcon,
   TrashIcon
 } from "../components/atoms/Icons";
-import React from "react";
+import React, {useEffect} from "react";
 import ItemCardSkeleton from "../components/organism/ItemCardSkeleton";
 import Avatar from "../components/atoms/Avatar";
 import Tag from "../components/atoms/Tag";
 import Miniature from "../components/atoms/Miniature";
 import Box from "../components/atoms/Box";
 import Dropdown from "../components/atoms/Dropdown";
+import Menu from "../components/atoms/Menu";
+import {MenuItem} from "../components/atoms/MenuItem";
+import {useRouter} from "next/router";
 
 const SIDE_BAR_NAME = "main-menu";
 const ICONS_REF = "icons";
@@ -61,25 +64,45 @@ const closeSideBar = () => {
 }
 
 const LateralMenu = () => {
+  const router = useRouter();
+  const [anchor, setAnchor] = React.useState<string | null>(null);
+
+  useEffect(() => {
+    const currentAnchor = (document.location.hash || "").substring(1);
+    setAnchor(currentAnchor);
+  }, []);
+
+  const refs = [ICONS_REF, BUTTONS_REF, SWAP_BUTTONS_REF, INPUTS_REF, MINIATURES_REF, AVATARS_REF,
+    TAGS_REF, CARDS_REF, BOX_REF, DROPDOWN_REF];
+
+  const handleClick = (ref: string) => {
+    router.push("#" + ref).then(() => {
+        setAnchor(ref);
+        closeSideBar();
+      }
+    );
+  }
+
+  const replaceUnderscore = (ref: string) => {
+    return ref.replace("_", " ");
+  }
+
+  const menuItems = refs.map((ref) => {
+    return (
+      <MenuItem key={ref} onClick={() => handleClick(ref)} selected={anchor === ref}>
+        <Link href={"#" + ref}><span className="uppercase">{replaceUnderscore(ref)}</span></Link>
+      </MenuItem>
+    );
+  })
+
   return (
-    <aside className="bg-base-200 text-base-content z-20 h-full p-2">
+    <Menu>
       <div className="flex justify-center items-center p-4">
         <img src="/logo_v1_medium.png" alt="linkurator logo" className="h-8 w-8 mr-2"/>
         <span className="text-2xl font-bold text-center">LINKURATOR</span>
       </div>
-      <ul className="menu p-4 w-80">
-        <li><Link clickAction={closeSideBar} href={"#" + ICONS_REF}>Icons</Link></li>
-        <li><Link clickAction={closeSideBar} href={"#" + BUTTONS_REF}>Buttons</Link></li>
-        <li><Link clickAction={closeSideBar} href={"#" + SWAP_BUTTONS_REF}>Swap Buttons</Link></li>
-        <li><Link clickAction={closeSideBar} href={"#" + INPUTS_REF}>Inputs</Link></li>
-        <li><Link clickAction={closeSideBar} href={"#" + MINIATURES_REF}>Miniatures</Link></li>
-        <li><Link clickAction={closeSideBar} href={"#" + AVATARS_REF}>Avatars</Link></li>
-        <li><Link clickAction={closeSideBar} href={"#" + TAGS_REF}>Tags</Link></li>
-        <li><Link clickAction={closeSideBar} href={"#" + CARDS_REF}>Cards</Link></li>
-        <li><Link clickAction={closeSideBar} href={"#" + BOX_REF}>Box</Link></li>
-        <li><Link clickAction={closeSideBar} href={"#" + DROPDOWN_REF}>Dropdown</Link></li>
-      </ul>
-    </aside>
+      {menuItems}
+    </Menu>
   );
 }
 

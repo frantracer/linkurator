@@ -1,16 +1,18 @@
 type MenuItemProps = {
-  title: string;
   onClick: () => void;
   selected?: boolean;
+  children?: React.ReactNode;
 };
 
-export const MenuItem = (props: MenuItemProps) => (
-  <button
-    onClick={props.onClick}
-    className={`block px-4 py-2 mt-2 text-sm w-full text-left font-semibold text-gray-900 rounded-sm hover:bg-gray-100 focus:outline-none focus:shadow-outline ${
-      props.selected ? "bg-gray-200" : ""
-    }`}
-  >
-    {props.title}
-  </button>
-);
+export const MenuItem = (props: MenuItemProps) => {
+  const background = props.selected ? "bg-base-100" : "bg-transparent";
+
+  return (
+    <button
+      onClick={props.onClick}
+      className={`block p-2 text-sm w-full text-left rounded
+    hover:bg-base-100/80 focus:outline-none focus:shadow-outline ${background}`}>
+      {props.children}
+    </button>
+  )
+};

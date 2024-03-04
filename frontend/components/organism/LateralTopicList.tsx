@@ -5,6 +5,8 @@ import {paths} from "../../configuration";
 import {useRouter} from "next/router";
 import {hideLateralMenu} from "../../utilities/hideLateralMenu";
 import {scrollToDrawerTop} from "../../utilities/scrollToDrawerTop";
+import Menu from "../atoms/Menu";
+import Tag from "../atoms/Tag";
 
 type LateralTopicListProps = {
   topics: Topic[];
@@ -29,17 +31,21 @@ const LateralTopicList = (props: LateralTopicListProps) => {
     })
     .map((topic) => (
       <MenuItem
-        title={topic.name}
         key={topic.uuid}
         onClick={() => handleClick(topic.uuid)}
         selected={topic.uuid === props.selectedTopic?.uuid}
-      />
+      >
+        <div className="flex flex-row gap-2 items-center">
+          <div className="whitespace-nowrap overflow-auto truncate w-full">{topic.name}</div>
+          <Tag>{topic.subscriptions_ids.length}</Tag>
+        </div>
+      </MenuItem>
     ))
 
   return (
-    <nav className="bg-gray-50 rounded h-full overflow-auto">
+    <Menu>
       {items}
-    </nav>
+    </Menu>
   )
 }
 

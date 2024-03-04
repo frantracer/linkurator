@@ -91,6 +91,7 @@ const SubscriptionsPage: NextPage = () => {
       <Drawer id={LATERAL_MENU_ID}>
         <SubscriptionsLateralMenu
           subscriptions={subscriptions}
+          topics={topics}
           selectedSubscription={selectedSubscription}
           profile={profile!}/>
         <TopTitle>
