@@ -20,6 +20,7 @@ import {MenuIcon, OptionsIcon} from "../../components/atoms/Icons";
 import Avatar from "../../components/atoms/Avatar";
 import SubscriptionDetails, {SUBSCRIPTION_DETAILS_ID} from "../../components/organism/SubscriptionDetails";
 import {refreshSubscription} from "../../services/subscriptionService";
+import AssignTopicModal from "../../components/organism/AssignTopicModal";
 
 const REFRESH_SUBSCRIPTIONS_INTERVAL = 30000;
 
@@ -126,6 +127,11 @@ const SubscriptionsPage: NextPage = () => {
             handleScroll={handleGridScroll}
           />
           <NewTopicModal refreshTopics={refreshTopics} subscriptions={subscriptions}/>
+          {selectedSubscription &&
+              <AssignTopicModal topics={topics}
+                                subscription={selectedSubscription}
+                                refreshTopics={refreshTopics}/>
+          }
         </Drawer>
       </Drawer>
     </div>

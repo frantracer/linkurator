@@ -5,9 +5,6 @@ import {Topic} from "../../entities/Topic";
 import React from "react";
 import {Filters, isItemShown} from "../../entities/Filters";
 import {ITEMS_PER_PAGE} from "../../utilities/constants";
-import Link from "next/link";
-import {paths} from "../../configuration";
-import Tag from "../atoms/Tag";
 
 type SubscriptionVideoCardGridProps = {
   refreshItem: (itemId: string) => void,
@@ -42,22 +39,6 @@ const SubscriptionVideoCardGrid = (props: SubscriptionVideoCardGridProps) => {
       }
     }
 
-    const current_subscription = props.subscription;
-    const topicTags = props.topics
-      .filter(topic => {
-        return topic.subscriptions_ids.includes(current_subscription.uuid)
-      })
-      .map(topic => {
-          return (
-            <Tag key={topic.uuid}>
-              <Link href={paths.TOPICS + "/" + topic.uuid} scroll={false}>
-                {topic.name}
-              </Link>
-            </Tag>
-          )
-        }
-      );
-
     if (!props.isFinished && !props.isLoading && cards.length < ITEMS_PER_PAGE) {
       props.fetchMoreItems()
     }
@@ -65,14 +46,9 @@ const SubscriptionVideoCardGrid = (props: SubscriptionVideoCardGridProps) => {
     content =
       <main onScroll={props.handleScroll} className="flex flex-col w-full overflow-auto">
         {!props.subscription.isBeingScanned &&
-            <div>
-                <div className="flex flex-row flex-wrap m-2 gap-2">
-                  {topicTags}
-                </div>
-                <div className="grid grid-cols-[repeat(auto-fill,minmax(320px,1fr))] gap-4
+            <div className="grid grid-cols-[repeat(auto-fill,minmax(320px,1fr))] gap-4
                 justify-items-center justify-content-center">
-                  {cards}
-                </div>
+              {cards}
             </div>
         }
         {props.subscription.isBeingScanned &&

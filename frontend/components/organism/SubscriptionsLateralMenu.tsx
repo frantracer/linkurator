@@ -8,6 +8,8 @@ import {useRouter} from "next/router";
 import LogoHeader from "../molecules/LogoHeader";
 import SearchBar from "../molecules/SearchBar";
 import {Topic} from "../../entities/Topic";
+import Sidebar from "../atoms/Sidebar";
+import Divider from "../atoms/Divider";
 
 type LateralMenuProps = {
   profile: Profile;
@@ -28,9 +30,9 @@ const LateralMenu = (props: LateralMenuProps) => {
   const profileName = props.profile ? props.profile.first_name : '';
 
   return (
-    <div className="flex flex-col px-2 py-4 h-full w-80 bg-base-200 text-base-content gap-y-2">
+    <Sidebar>
       <LogoHeader avatarUrl={profileUrl} name={profileName}/>
-      <div className="divider m-0"></div>
+      <Divider/>
       <Button fitContent={false} clickAction={goToTopics}>
         Switch to topics
       </Button>
@@ -49,7 +51,7 @@ const LateralMenu = (props: LateralMenuProps) => {
               <span>Logout</span>
           </Button>
       }
-    </div>
+    </Sidebar>
   );
 };
 

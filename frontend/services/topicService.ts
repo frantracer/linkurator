@@ -123,6 +123,15 @@ export async function assignSubscriptionToTopic(topic_uuid: string, subscription
   }
 }
 
+export async function unassignSubscriptionToTopic(topic_uuid: string, subscription_uuid: string): Promise<void> {
+  const {data, status} = await axios.delete(
+    configuration.TOPICS_URL + topic_uuid + "/subscriptions/" + subscription_uuid,
+    {withCredentials: true});
+  if (status !== 204) {
+    throw ("Error unassigning subscription from topic " + data);
+  }
+}
+
 const mapJsonToTopicResponse = (json: Record<string, any>): TopicResponse => {
   let nextPage: URL | undefined = undefined;
   if (json.next_page) {

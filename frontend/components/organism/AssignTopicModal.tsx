@@ -1,8 +1,17 @@
 import React, {useState} from "react";
-import {assignSubscriptionToTopic, createTopic} from "../../services/topicService";
+import {assignSubscriptionToTopic, createTopic, unassignSubscriptionToTopic} from "../../services/topicService";
 import {Topic} from "../../entities/Topic";
 import {Subscription} from "../../entities/Subscription";
 import {v4 as uuidv4} from 'uuid';
+import Modal from "../atoms/Modal";
+import Dropdown from "../atoms/Dropdown";
+import InputText from "../atoms/InputText";
+import FlexRow from "../atoms/FlexRow";
+import Button from "../atoms/Button";
+import Box from "../atoms/Box";
+import Tag from "../atoms/Tag";
+import FlexColumn from "../atoms/FlexColumn";
+import {CrossIcon} from "../atoms/Icons";
 
 export const AssignTopicModalId = "assign-topic-modal";
 
@@ -14,14 +23,19 @@ type AssignTopicModalProps = {
 
 const EditTopicModal = (props: AssignTopicModalProps) => {
   const [topicName, setTopicName] = useState<string>("");
-  const [selectedTopicId, setselectedTopicId] = useState<string>("0");
 
   const options = props.topics.map(topic => {
-    return <option key={topic.uuid} value={topic.uuid}>{topic.name}</option>
+    return {key: topic.uuid, label: topic.name}
   })
 
-  function assignButtonAction() {
-    assignSubscriptionToTopic(selectedTopicId, props.subscription.uuid)
+  function assignButtonAction(topicId: string) {
+    assignSubscriptionToTopic(topicId, props.subscription.uuid)
+      .then(() => props.refreshTopics())
+      .catch(err => console.log(err));
+  }
+
+  function unassignButtonAction(topicId: string) {
+    unassignSubscriptionToTopic(topicId, props.subscription.uuid)
       .then(() => props.refreshTopics())
       .catch(err => console.log(err));
   }
@@ -30,48 +44,49 @@ const EditTopicModal = (props: AssignTopicModalProps) => {
     if (topic_name.length > 0) {
       const new_uuid = uuidv4();
       createTopic(new_uuid, topic_name, [])
-        .then(() => {
+        .then(async () => {
+          await assignSubscriptionToTopic(new_uuid, props.subscription.uuid)
           props.refreshTopics();
-          setselectedTopicId(new_uuid);
         })
         .catch(err => console.log(err));
+      setTopicName("");
     }
   }
 
-  return (
-    <div className="bg-base-100">
-      <input type="checkbox" id={AssignTopicModalId} className="modal-toggle"/>
-      <div className="modal modal-bottom sm:modal-middle">
-        <div className="modal-box">
-          <h3 className="font-bold text-lg">{"Assign topic to subscription " + props.subscription.name}</h3>
-          <div className="form-control w-full max-w-xs">
-            <div className="input-group">
-              <input type="text" placeholder="New topic name" className="input input-bordered w-3/4 max-w-xs my-2"
-                     value={topicName} onChange={(e) => setTopicName(e.target.value)}/>
-              <button className="btn w-1/4 max-w-xs my-2" onClick={() => {
-                newTopicButtonAction(topicName);
-                setTopicName("");
-              }}>
-                Create
-              </button>
-            </div>
-          </div>
-          <div className="form-control">
-            <div className="input-group">
-              <select className="select select-bordered w-3/4 max-w-xs my-2" value={selectedTopicId}
-                      onChange={e => setselectedTopicId(e.target.value)}>
-                <option disabled value={"0"}>Pick topic</option>
-                {options}
-              </select>
-              <button className="btn w-1/4 max-w-xs my-2" onClick={assignButtonAction}>Assign</button>
-            </div>
-          </div>
-          <div className="modal-action">
-            <label htmlFor={AssignTopicModalId} className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</label>
-          </div>
+  const filteredTopics = props.topics.filter(topic => topic.subscriptions_ids.includes(props.subscription.uuid));
+  const topicTags = filteredTopics.map(topic => {
+    return (
+      <Tag key={topic.uuid}>
+        {topic.name}
+        <div className={"hover:cursor-pointer"} onClick={() => unassignButtonAction(topic.uuid)}>
+          <CrossIcon/>
         </div>
-      </div>
-    </div>
+      </Tag>
+    )
+  })
+
+  return (
+    <Modal id={AssignTopicModalId}>
+      <FlexColumn>
+        <h1 className="font-bold text-xl w-full text-center">Assign subscription</h1>
+        <Box title={"Topics"}>
+          <FlexRow position={"start"}>
+            {topicTags}
+          </FlexRow>
+        </Box>
+        <Dropdown title={"Pick topic"} options={options}
+                  onChange={(key) => assignButtonAction(key)}/>
+        <FlexRow>
+          <InputText placeholder={"New topic name"}
+                     value={topicName} onChange={(value) => setTopicName(value)}/>
+          <Button clickAction={() => {
+            newTopicButtonAction(topicName);
+          }}>
+            Assign
+          </Button>
+        </FlexRow>
+      </FlexColumn>
+    </Modal>
   )
 }
 
