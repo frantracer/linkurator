@@ -21,7 +21,7 @@ type AssignTopicModalProps = {
   refreshTopics: () => void;
 }
 
-const EditTopicModal = (props: AssignTopicModalProps) => {
+const AssignTopicModal = (props: AssignTopicModalProps) => {
   const [topicName, setTopicName] = useState<string>("");
 
   const options = props.topics.map(topic => {
@@ -90,4 +90,4 @@ const EditTopicModal = (props: AssignTopicModalProps) => {
   )
 }
 
-export default EditTopicModal;
+export default AssignTopicModal;
