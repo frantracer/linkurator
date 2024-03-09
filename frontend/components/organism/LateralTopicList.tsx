@@ -8,6 +8,8 @@ import {scrollToDrawerTop} from "../../utilities/scrollToDrawerTop";
 import Menu from "../atoms/Menu";
 import Tag from "../atoms/Tag";
 
+export const LATERAL_TOPIC_MENU_ID = 'lateral-topic-menu';
+
 type LateralTopicListProps = {
   topics: Topic[];
   selectedTopic: Topic | undefined;
@@ -19,7 +21,7 @@ const LateralTopicList = (props: LateralTopicListProps) => {
   const handleClick = (topicId: string) => {
     const topic = props.topics.find((topic) => topic.uuid === topicId);
     if (topic) {
-      hideLateralMenu()
+      hideLateralMenu(LATERAL_TOPIC_MENU_ID)
       scrollToDrawerTop()
       router.push(paths.TOPICS + "/" + topic.uuid)
     }

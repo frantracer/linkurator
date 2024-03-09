@@ -8,7 +8,6 @@ import useProfile from "../../hooks/useProfile";
 import SubscriptionVideoCardGrid from "../../components/organism/SubscriptionVideoCardGrid";
 import NewTopicModal from "../../components/organism/NewTopicModal";
 import {useTopics} from "../../hooks/useTopics";
-import {LATERAL_MENU_ID} from "../../utilities/hideLateralMenu";
 import useFilters from "../../hooks/useFilters";
 import {useRouter} from "next/router";
 import SubscriptionsLateralMenu from "../../components/organism/SubscriptionsLateralMenu";
@@ -21,6 +20,7 @@ import Avatar from "../../components/atoms/Avatar";
 import SubscriptionDetails, {SUBSCRIPTION_DETAILS_ID} from "../../components/organism/SubscriptionDetails";
 import {refreshSubscription} from "../../services/subscriptionService";
 import AssignTopicModal from "../../components/organism/AssignTopicModal";
+import {LATERAL_SUBSCRIPTION_MENU_ID} from "../../components/organism/LateralSubscriptionList";
 
 const REFRESH_SUBSCRIPTIONS_INTERVAL = 30000;
 
@@ -88,7 +88,7 @@ const SubscriptionsPage: NextPage = () => {
         <meta name="description" content="Linkurator"/>
         <link rel="icon" href="/logo_v1_fav.png"/>
       </Head>
-      <Drawer id={LATERAL_MENU_ID}>
+      <Drawer id={LATERAL_SUBSCRIPTION_MENU_ID}>
         <SubscriptionsLateralMenu
           subscriptions={subscriptions}
           topics={topics}
@@ -101,7 +101,7 @@ const SubscriptionsPage: NextPage = () => {
                                setFilters={setFilters}
                                refreshSubscription={() => refreshSubscription(selectedSubscriptionId)}/>
           <TopTitle>
-            <Button relatedModalId={LATERAL_MENU_ID} showOnlyOnMobile={true}>
+            <Button relatedModalId={LATERAL_SUBSCRIPTION_MENU_ID} showOnlyOnMobile={true}>
               <MenuIcon/>
             </Button>
             <div className="flex flex-row gap-2 items-center justify-center w-full overflow-hidden hover:cursor-pointer"

@@ -10,6 +10,8 @@ import React from "react";
 import {Topic} from "../../entities/Topic";
 import Miniature from "../atoms/Miniature";
 
+export const LATERAL_SUBSCRIPTION_MENU_ID = 'lateral-subscription-menu';
+
 type LateralItemListProps = {
   subscriptions: Subscription[];
   topics: Topic[];
@@ -22,7 +24,7 @@ const LateralSubscriptionList = (props: LateralItemListProps) => {
   const handleClick = (subscriptionId: string) => {
     const subscription = props.subscriptions.find((subscription) => subscription.uuid === subscriptionId);
     if (subscription) {
-      hideLateralMenu()
+      hideLateralMenu(LATERAL_SUBSCRIPTION_MENU_ID)
       scrollToDrawerTop()
       router.push(paths.SUBSCRIPTIONS + "/" + subscription.uuid)
     }

@@ -11,7 +11,6 @@ import {useTopics} from "../../hooks/useTopics";
 import EditTopicModal, {EditTopicModalId} from "../../components/organism/EditTopicModal";
 import {Topic} from "../../entities/Topic";
 import {paths} from "../../configuration";
-import {LATERAL_MENU_ID} from "../../utilities/hideLateralMenu";
 import FilterOptionsModal, {FilterOptionsModalId} from "../../components/organism/FilterOptionsModal";
 import useFilters from "../../hooks/useFilters";
 import TopicsLateralMenu from "../../components/organism/TopicsLateralMenu";
@@ -22,6 +21,7 @@ import TopTitle from "../../components/molecules/TopTitle";
 import Button from "../../components/atoms/Button";
 import {FunnelIcon, MenuIcon, OptionsIcon, PencilIcon, TrashIcon} from "../../components/atoms/Icons";
 import {deleteTopic} from "../../services/topicService";
+import {LATERAL_TOPIC_MENU_ID} from "../../components/organism/LateralTopicList";
 
 const Home: NextPage = () => {
   const router = useRouter()
@@ -78,7 +78,7 @@ const Home: NextPage = () => {
         <meta name="description" content="Linkurator"/>
         <link rel="icon" href="/logo_v1_fav.png"/>
       </Head>
-      <Drawer id={LATERAL_MENU_ID}>
+      <Drawer id={LATERAL_TOPIC_MENU_ID}>
         <TopicsLateralMenu
           topics={topics}
           selectedTopic={selectedTopic}
@@ -86,7 +86,7 @@ const Home: NextPage = () => {
           profile={profile!}
         />
         <TopTitle>
-          <Button relatedModalId={LATERAL_MENU_ID} showOnlyOnMobile={true}>
+          <Button relatedModalId={LATERAL_TOPIC_MENU_ID} showOnlyOnMobile={true}>
             <MenuIcon/>
           </Button>
           <h1 className="text-2xl font-bold whitespace-nowrap truncate text-center w-full">

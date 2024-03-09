@@ -1,6 +1,6 @@
 import React, {useState} from "react";
 import {Profile} from "../../hooks/useProfile";
-import LateralTopicList from "./LateralTopicList";
+import LateralTopicList, {LATERAL_TOPIC_MENU_ID} from "./LateralTopicList";
 import {Topic} from "../../entities/Topic";
 import {Subscription} from "../../entities/Subscription";
 import {configuration, paths} from "../../configuration";
@@ -35,7 +35,7 @@ const TopicsLateralMenu = (props: TopicLateralMenuProps) => {
 
   const openNewTopicModal = () => {
     openModal(NewTopicModalId);
-    hideLateralMenu();
+    hideLateralMenu(LATERAL_TOPIC_MENU_ID);
   }
 
   return (
