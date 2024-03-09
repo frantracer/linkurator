@@ -14,6 +14,7 @@ import {
   AddIcon,
   CheckCircleFilledIcon,
   CheckCircleIcon,
+  CheckIcon,
   CrossIcon,
   DownloadIcon,
   EyeSlashFilledIcon,
@@ -43,6 +44,8 @@ import Dropdown from "../components/atoms/Dropdown";
 import Menu from "../components/atoms/Menu";
 import {MenuItem} from "../components/atoms/MenuItem";
 import {useRouter} from "next/router";
+import Sidebar from "../components/atoms/Sidebar";
+import Divider from "../components/atoms/Divider";
 
 const SIDE_BAR_NAME = "main-menu";
 const ICONS_REF = "icons";
@@ -96,13 +99,16 @@ const LateralMenu = () => {
   })
 
   return (
-    <Menu>
-      <div className="flex justify-center items-center p-4">
+    <Sidebar>
+      <div className="flex justify-center items-center p-2">
         <img src="/logo_v1_medium.png" alt="linkurator logo" className="h-8 w-8 mr-2"/>
         <span className="text-2xl font-bold text-center">LINKURATOR</span>
       </div>
-      {menuItems}
-    </Menu>
+      <Divider/>
+      <Menu>
+        {menuItems}
+      </Menu>
+    </Sidebar>
   );
 }
 
@@ -133,6 +139,7 @@ const IconsSection = () => {
         <EyeSlashIcon/>
         <EyeSlashFilledIcon/>
         <CrossIcon/>
+        <CheckIcon/>
       </div>
     </Section>
   );
@@ -273,8 +280,8 @@ const BoxSection = () => {
       <Head1 id={BOX_REF}># Box</Head1>
       <div className="flex flex-col gap-6 p-6 w-full
       border-base-100 border-solid border-2 rounded justify-items-center items-center">
-        <Box titleBackgroundColor={"bg-base-200"} title={"Empty"}/>
-        <Box titleBackgroundColor={"bg-base-300"} title={"Tags"}>
+        <Box title={"Empty"}/>
+        <Box title={"Tags"}>
           <Button>Button</Button>
         </Box>
       </div>

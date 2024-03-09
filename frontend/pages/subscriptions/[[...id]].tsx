@@ -9,25 +9,24 @@ import SubscriptionVideoCardGrid from "../../components/organism/SubscriptionVid
 import NewTopicModal from "../../components/organism/NewTopicModal";
 import {useTopics} from "../../hooks/useTopics";
 import {LATERAL_MENU_ID} from "../../utilities/hideLateralMenu";
-import FilterOptionsModal, {FilterOptionsModalId} from "../../components/organism/FilterOptionsModal";
 import useFilters from "../../hooks/useFilters";
 import {useRouter} from "next/router";
 import SubscriptionsLateralMenu from "../../components/organism/SubscriptionsLateralMenu";
 import {paths} from "../../configuration";
-import EditTopicModal, {AssignTopicModalId} from "../../components/organism/AssignTopicModal";
 import Drawer from "../../components/molecules/Drawer";
 import TopTitle from "../../components/molecules/TopTitle";
 import Button from "../../components/atoms/Button";
-import {AddIcon, FunnelIcon, MenuIcon, OptionsIcon, RefreshIcon} from "../../components/atoms/Icons";
-import {refreshSubscription} from "../../services/subscriptionService";
+import {MenuIcon, OptionsIcon} from "../../components/atoms/Icons";
 import Avatar from "../../components/atoms/Avatar";
+import SubscriptionDetails, {SUBSCRIPTION_DETAILS_ID} from "../../components/organism/SubscriptionDetails";
+import {refreshSubscription} from "../../services/subscriptionService";
 
 const REFRESH_SUBSCRIPTIONS_INTERVAL = 30000;
 
 const SubscriptionsPage: NextPage = () => {
   const router = useRouter()
 
-  const selectedSubscriptionId: string | undefined = router.query.id ? router.query.id[0] as string : undefined;
+  const selectedSubscriptionId: string = router.query.id ? router.query.id[0] as string : "";
 
   const {filters, setFilters, setDefaultFilters} = useFilters();
   const {profile, profileIsLoading} = useProfile();
@@ -94,65 +93,40 @@ const SubscriptionsPage: NextPage = () => {
           topics={topics}
           selectedSubscription={selectedSubscription}
           profile={profile!}/>
-        <TopTitle>
-          <Button relatedModalId={LATERAL_MENU_ID} showOnlyOnMobile={true}>
-            <MenuIcon/>
-          </Button>
-          <div className="flex flex-row gap-2 items-center justify-center w-full overflow-hidden hover:cursor-pointer"
-               onClick={openSubscriptionUrl}>
-            {subscriptionThumbnail && <Avatar src={subscriptionThumbnail} alt={subscriptionName}/>}
-            <h1 className="text-2xl font-bold whitespace-nowrap truncate">
-              {subscriptionName}
-            </h1>
-          </div>
-          <div className="dropdown dropdown-end">
-            <div tabIndex={0}>
-              <Button>
-                <OptionsIcon/>
-              </Button>
+        <Drawer id={SUBSCRIPTION_DETAILS_ID} right={true} alwaysOpenOnDesktop={true}>
+          <SubscriptionDetails subscription={selectedSubscription}
+                               topics={topics}
+                               filters={filters}
+                               setFilters={setFilters}
+                               refreshSubscription={() => refreshSubscription(selectedSubscriptionId)}/>
+          <TopTitle>
+            <Button relatedModalId={LATERAL_MENU_ID} showOnlyOnMobile={true}>
+              <MenuIcon/>
+            </Button>
+            <div className="flex flex-row gap-2 items-center justify-center w-full overflow-hidden hover:cursor-pointer"
+                 onClick={openSubscriptionUrl}>
+              {subscriptionThumbnail && <Avatar src={subscriptionThumbnail} alt={subscriptionName}/>}
+              <h1 className="text-2xl font-bold whitespace-nowrap truncate">
+                {subscriptionName}
+              </h1>
             </div>
-            <ul tabIndex={0} className="dropdown-content menu shadow bg-base-100 rounded-box w-52 gap-2">
-              <Button fitContent={false} relatedModalId={AssignTopicModalId}>
-                <AddIcon/>
-                <span>Add to Topic</span>
-              </Button>
-              <Button fitContent={false} relatedModalId={FilterOptionsModalId}>
-                <FunnelIcon/>
-                <span>Filter items</span>
-              </Button>
-              <Button fitContent={false}
-                      clickAction={
-                        async () => {
-                          if (selectedSubscription) {
-                            refreshSubscription(selectedSubscription.uuid)
-                              .then(() => {
-                                refreshSubscriptions()
-                              })
-                          }
-                        }
-                      }>
-                <RefreshIcon/>
-                <span>Refresh</span>
-              </Button>
-            </ul>
-          </div>
-        </TopTitle>
-        <SubscriptionVideoCardGrid
-          refreshItem={refreshSubscriptionItem}
-          fetchMoreItems={fetchMoreItems}
-          topics={topics}
-          subscription={selectedSubscription}
-          items={subscriptionsItems}
-          filters={filters}
-          isLoading={isLoading}
-          isFinished={isFinished}
-          handleScroll={handleGridScroll}
-        />
-        <FilterOptionsModal filters={filters} setFilters={setFilters}/>
-        {selectedSubscription &&
-            <EditTopicModal refreshTopics={refreshTopics} topics={topics} subscription={selectedSubscription}/>
-        }
-        <NewTopicModal refreshTopics={refreshTopics} subscriptions={subscriptions}/>
+            <Button relatedModalId={SUBSCRIPTION_DETAILS_ID}>
+              <OptionsIcon/>
+            </Button>
+          </TopTitle>
+          <SubscriptionVideoCardGrid
+            refreshItem={refreshSubscriptionItem}
+            fetchMoreItems={fetchMoreItems}
+            topics={topics}
+            subscription={selectedSubscription}
+            items={subscriptionsItems}
+            filters={filters}
+            isLoading={isLoading}
+            isFinished={isFinished}
+            handleScroll={handleGridScroll}
+          />
+          <NewTopicModal refreshTopics={refreshTopics} subscriptions={subscriptions}/>
+        </Drawer>
       </Drawer>
     </div>
 

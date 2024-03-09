@@ -11,6 +11,8 @@ import {closeModal} from "../../utilities/modalAction";
 import {CrossIcon} from "../atoms/Icons";
 import Box from "../atoms/Box";
 import Dropdown from "../atoms/Dropdown";
+import FlexRow from "../atoms/FlexRow";
+import FlexColumn from "../atoms/FlexColumn";
 
 export const NewTopicModalId = "new-topic-modal";
 
@@ -34,7 +36,7 @@ const NewTopicModal = (props: NewTopicModalProps) => {
 
   return (
     <Modal id={NewTopicModalId}>
-      <div className="flex flex-col gap-4">
+      <FlexColumn>
         <h1 className="font-bold text-xl w-full text-center">Create new topic</h1>
         <InputText placeholder="New topic name" value={newTopicName} onChange={(value) => setNewTopicName(value)}/>
         <Dropdown title={"Pick subscription"} options={
@@ -42,12 +44,12 @@ const NewTopicModal = (props: NewTopicModalProps) => {
             return {key: subscription.uuid, label: subscription.name}
           })
         } onChange={(key) => onSubscriptionSelected(key)}/>
-        <Box title={"Subscriptions"} titleBackgroundColor={"bg-base-100"} borderColor={"border-primary"}>
-          <div className="flex flex-wrap gap-1">
+        <Box title={"Subscriptions"}>
+          <FlexRow position={"start"}>
             {subscriptionBadges}
-          </div>
+          </FlexRow>
         </Box>
-        <div className={"flex flex-row justify-end"}>
+        <FlexRow position={"end"}>
           <Button clickAction={async () => {
             createTopic(uuidv4(), newTopicName, subscriptionsToAdd.map(s => s.uuid)).then(
               () => {
@@ -60,9 +62,9 @@ const NewTopicModal = (props: NewTopicModalProps) => {
           }}>
             <span>Create</span>
           </Button>
-        </div>
+        </FlexRow>
 
-      </div>
+      </FlexColumn>
     </Modal>
   )
 }
