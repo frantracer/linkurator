@@ -94,7 +94,7 @@ const SubscriptionsPage: NextPage = () => {
           topics={topics}
           selectedSubscription={selectedSubscription}
           profile={profile!}/>
-        <Drawer id={SUBSCRIPTION_DETAILS_ID} right={true} alwaysOpenOnDesktop={true}>
+        <Drawer id={SUBSCRIPTION_DETAILS_ID} right={true} alwaysOpenOnDesktop={false}>
           <SubscriptionDetails subscription={selectedSubscription}
                                topics={topics}
                                filters={filters}
