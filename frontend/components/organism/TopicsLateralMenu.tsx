@@ -12,6 +12,8 @@ import LogoHeader from "../molecules/LogoHeader";
 import {hideLateralMenu} from "../../utilities/hideLateralMenu";
 import {openModal} from "../../utilities/modalAction";
 import SearchBar from "../molecules/SearchBar";
+import Sidebar from "../atoms/Sidebar";
+import Divider from "../atoms/Divider";
 
 type TopicLateralMenuProps = {
   profile: Profile;
@@ -37,9 +39,9 @@ const TopicsLateralMenu = (props: TopicLateralMenuProps) => {
   }
 
   return (
-    <div className="flex flex-col px-2 py-4 h-full w-80 bg-base-200 text-base-content gap-y-2">
+    <Sidebar>
       <LogoHeader avatarUrl={profileUrl} name={profileName}/>
-      <div className="divider m-0"></div>
+      <Divider/>
       <Button fitContent={false} clickAction={goToSubscriptions}>
         Switch to subscriptions
       </Button>
@@ -49,23 +51,19 @@ const TopicsLateralMenu = (props: TopicLateralMenuProps) => {
           <AddIcon/>
         </Button>
       </div>
-      <div className="flex-1 overflow-y-auto">
-        <LateralTopicList
-          topics={props.topics}
-          selectedTopic={props.selectedTopic}
-          searchValue={searchValue}/>
-      </div>
-      <div className="flex-[0_0_auto]">
-        {props.profile &&
-            <Button fitContent={false}
-                    clickAction={() => {
-                      window.open(configuration.LOGOUT_URL, '_self')
-                    }}>
-                <span>Logout</span>
-            </Button>
-        }
-      </div>
-    </div>
+      <LateralTopicList
+        topics={props.topics}
+        selectedTopic={props.selectedTopic}
+        searchValue={searchValue}/>
+      {props.profile &&
+          <Button fitContent={false}
+                  clickAction={() => {
+                    window.open(configuration.LOGOUT_URL, '_self')
+                  }}>
+              <span>Logout</span>
+          </Button>
+      }
+    </Sidebar>
   );
 };
 
