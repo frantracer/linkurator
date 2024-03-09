@@ -5,7 +5,8 @@ type TagProps = {
 }
 
 const Tag = (props: TagProps) => {
-  return <div className="badge badge-secondary h-fit w-fit py-1 text-primary-content whitespace-nowrap text-xs">
+  return <div className="badge badge-secondary h-fit w-fit py-1 text-primary-content justify-start
+   overflow-auto truncate whitespace-nowrap text-xs">
     <div className="flex flex-row gap-2 items-center justify-center">
       {props.children}
     </div>

@@ -70,7 +70,7 @@ const EditTopicModal = (props: AssignTopicModalProps) => {
       <FlexColumn>
         <h1 className="font-bold text-xl w-full text-center">Assign subscription</h1>
         <Box title={"Topics"}>
-          <FlexRow position={"start"}>
+          <FlexRow position={"start"} wrap={true}>
             {topicTags}
           </FlexRow>
         </Box>

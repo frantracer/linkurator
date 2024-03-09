@@ -45,7 +45,7 @@ const NewTopicModal = (props: NewTopicModalProps) => {
           })
         } onChange={(key) => onSubscriptionSelected(key)}/>
         <Box title={"Subscriptions"}>
-          <FlexRow position={"start"}>
+          <FlexRow position={"start"} wrap={true}>
             {subscriptionBadges}
           </FlexRow>
         </Box>
