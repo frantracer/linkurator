@@ -4,7 +4,7 @@ type MenuProps = {
 
 const Menu = (props: MenuProps) => {
   return (
-    <nav className="bg-base-300 rounded h-full overflow-auto">
+    <nav className="bg-base-200 rounded h-full overflow-auto">
       {props.children}
     </nav>
   );
