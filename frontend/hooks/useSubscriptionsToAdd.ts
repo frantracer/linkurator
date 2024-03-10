@@ -3,7 +3,7 @@ import {Topic} from "../entities/Topic";
 import {Subscription} from "../entities/Subscription";
 
 function useSubscriptionsToAdd(subscriptions: Subscription[], topic: Topic | undefined = undefined):
-  [Subscription[], (subscription: Subscription) => void, (subscription: Subscription) => void, () => void] {
+  [Subscription[], (subscription: Subscription) => void, (subscription: Subscription) => void, () => void, (subscriptions: Subscription[]) => void] {
   const [subscriptionsToAdd, setSubscriptionsToAdd] = useState<Subscription[]>(subscriptions);
 
   useEffect(() => {
@@ -28,7 +28,11 @@ function useSubscriptionsToAdd(subscriptions: Subscription[], topic: Topic | und
   const clearSubscriptions = () => {
     setSubscriptionsToAdd([]);
   }
-  return [subscriptionsToAdd, addSubscription, removeSubscription, clearSubscriptions];
+  const setSubscriptions = (subscriptions: Subscription[]) => {
+    setSubscriptionsToAdd(subscriptions)
+  }
+
+  return [subscriptionsToAdd, addSubscription, removeSubscription, clearSubscriptions, setSubscriptions];
 }
 
 export default useSubscriptionsToAdd;

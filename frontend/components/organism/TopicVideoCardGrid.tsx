@@ -4,11 +4,7 @@ import React from "react";
 import {SubscriptionItem} from "../../entities/SubscriptionItem";
 import {Subscription} from "../../entities/Subscription";
 import {Filters, isItemShown} from "../../entities/Filters";
-import {paths} from "../../configuration";
 import {ITEMS_PER_PAGE} from "../../utilities/constants";
-import Link from "next/link";
-import Tag from "../atoms/Tag";
-import Miniature from "../atoms/Miniature";
 
 type TopicVideoCardGridProps = {
   fetchMoreItems: () => void,
@@ -25,24 +21,7 @@ type TopicVideoCardGridProps = {
 const TopicVideoCardGrid = (props: TopicVideoCardGridProps) => {
   const cards = [];
 
-  let subscriptionTags;
   if (props.topic) {
-    const current_topic = props.topic;
-    subscriptionTags = props.subscriptions
-      .filter(subscription => {
-        return current_topic.subscriptions_ids.includes(subscription.uuid)
-      })
-      .map(subscription => {
-        return (
-          <Tag key={subscription.uuid}>
-            <Miniature src={subscription.thumbnail} alt={subscription.name}/>
-            <Link href={paths.SUBSCRIPTIONS + "/" + subscription.uuid} scroll={false}>
-              {subscription.name}
-            </Link>
-          </Tag>
-        )
-      });
-
     for (let i = 0; i < props.items.length; i++) {
       const item = props.items[i];
       if (isItemShown(item, props.filters)) {
@@ -65,9 +44,6 @@ const TopicVideoCardGrid = (props: TopicVideoCardGridProps) => {
 
   return (
     <main onScroll={props.handleScroll} className="flex flex-col w-full overflow-auto">
-      <div className="flex flex-row flex-wrap m-2 gap-2">
-        {subscriptionTags}
-      </div>
       <div className="grid grid-cols-[repeat(auto-fill,minmax(320px,1fr))] gap-4
         justify-items-center justify-content-center">
         {cards}

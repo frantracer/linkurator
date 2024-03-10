@@ -17,7 +17,7 @@ const Link = (
   }: ButtonProps
 ) => {
   return (
-    <a onClick={clickAction} className="group w-full rounded-none" href={href}>
+    <a onClick={clickAction} className="group" href={href}>
       {children}
     </a>
   );

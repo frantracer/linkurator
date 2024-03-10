@@ -3,8 +3,6 @@ import {Subscription} from "../../entities/Subscription";
 import {Topic} from "../../entities/Topic";
 import Sidebar from "../atoms/Sidebar";
 import FlexRow from "../atoms/FlexRow";
-import Tag from "../atoms/Tag";
-import Link from "next/link";
 import {paths} from "../../configuration";
 import Divider from "../atoms/Divider";
 import {
@@ -12,47 +10,61 @@ import {
   CheckIcon,
   EyeSlashIcon,
   PencilIcon,
-  RefreshIcon,
   ThumbsDownIcon,
-  ThumbsUpIcon
+  ThumbsUpIcon,
+  TrashIcon
 } from "../atoms/Icons";
 import Button from "../atoms/Button";
 import Box from "../atoms/Box";
-import Avatar from "../atoms/Avatar";
 import SearchBar from "../molecules/SearchBar";
 import FlexColumn from "../atoms/FlexColumn";
 import {Filters} from "../../entities/Filters";
 import Checkbox from "../atoms/Checkbox";
 import NumberInput from "../atoms/NumberInput";
 import {openModal} from "../../utilities/modalAction";
-import {AssignTopicModalId} from "./AssignTopicModal";
+import Miniature from "../atoms/Miniature";
+import Link from "../atoms/Link";
+import Tag from "../atoms/Tag";
 import Grid from "../atoms/Grid";
+import {deleteTopic} from "../../services/topicService";
+import {EditTopicModalId} from "./EditTopicModal";
+import {hideLateralMenu} from "../../utilities/hideLateralMenu";
 
-export const SUBSCRIPTION_DETAILS_ID = "subscription-details";
+export const TOPIC_DETAILS_ID = "topic-details";
 
-type SubscriptionDetailsProps = {
-  subscription?: Subscription;
-  topics: Topic[],
+type TopicDetailsProps = {
+  subscriptions: Subscription[];
+  topic?: Topic,
   filters: Filters,
   setFilters: (filters: Filters) => void;
-  refreshSubscription: () => void;
+  refreshTopics: () => void;
 };
 
-const SubscriptionDetails = (props: SubscriptionDetailsProps) => {
+const TopicDetails = (props: TopicDetailsProps) => {
   const [tempFilters, setTempFilters] = useState<Filters>(props.filters);
 
-  const subscriptionId = props.subscription ? props.subscription.uuid : "";
-  const subscriptionName = props.subscription ? props.subscription.name : "";
-  const subscriptionThumbnail = props.subscription ? props.subscription.thumbnail : "";
-  const relatedTopics = props.topics.filter(topic => topic.subscriptions_ids.includes(subscriptionId))
+  const topicId = props.topic ? props.topic.uuid : "";
+  const topicName = props.topic ? props.topic.name : "";
+  const relatedSubs = props.subscriptions
+    .filter(sub => props.topic?.subscriptions_ids.includes(sub.uuid))
+    .sort((a, b) => a.name.length > b.name.length ? 1 : -1)
 
-  const topicTags = relatedTopics.map(topic => (
-    <Tag key={topic.uuid}>
-      <Link href={paths.TOPICS + "/" + topic.uuid} scroll={false}>
-        {topic.name}
-      </Link>
-    </Tag>
+  const subsTags = relatedSubs.map(subscription => (
+    <Link key={subscription.uuid} href={paths.SUBSCRIPTIONS + "/" + subscription.uuid}>
+      <Tag>
+        <Miniature src={subscription.thumbnail} alt={subscription.name}/>
+        {subscription.name}
+      </Tag>
+    </Link>
   ));
+
+  const deleteTopicAction = () => {
+    deleteTopic(topicId)
+      .then(() => {
+        props.refreshTopics()
+        hideLateralMenu(TOPIC_DETAILS_ID)
+      })
+  }
 
   useEffect(() => {
     setTempFilters(props.filters)
@@ -61,16 +73,15 @@ const SubscriptionDetails = (props: SubscriptionDetailsProps) => {
   return (
     <Sidebar>
       <FlexRow position={"center"}>
-        <Avatar src={subscriptionThumbnail} alt={subscriptionName}/>
-        <span>{subscriptionName}</span>
-        <Button clickAction={() => openModal(AssignTopicModalId)}>
+        <div className="w-full whitespace-nowrap truncate text-center">{topicName}</div>
+        <Button clickAction={() => openModal(EditTopicModalId)}>
           <PencilIcon/>
         </Button>
       </FlexRow>
       <Divider/>
-      <Box title={"Topics"}>
+      <Box title={"Subscriptions"}>
         <Grid>
-          {topicTags}
+          {subsTags}
         </Grid>
       </Box>
       <Box title={"Filters"}>
@@ -130,9 +141,9 @@ const SubscriptionDetails = (props: SubscriptionDetailsProps) => {
       </Box>
       <Box title={"Actions"}>
         <FlexRow position={"end"}>
-          <Button clickAction={props.refreshSubscription}>
-            <RefreshIcon/>
-            Refresh
+          <Button clickAction={deleteTopicAction}>
+            <TrashIcon/>
+            Delete
           </Button>
         </FlexRow>
       </Box>
@@ -140,4 +151,4 @@ const SubscriptionDetails = (props: SubscriptionDetailsProps) => {
   );
 };
 
-export default SubscriptionDetails;
+export default TopicDetails;
