@@ -1,4 +1,7 @@
 import React from "react";
+import {hideLateralMenu, showLateralMenu} from "../../utilities/hideLateralMenu";
+
+const SWIPE_DELTA = 100;
 
 type DrawerProps = {
   id: string,
@@ -14,14 +17,43 @@ const Drawer = (
     alwaysOpenOnDesktop = true,
     children
   }: DrawerProps) => {
+  const [open, setOpen] = React.useState<boolean>(false);
+  const [touchStartX, setTouchStartX] = React.useState<number>(0);
+
   const childrenArray = React.Children.toArray(children);
   const sideContent = childrenArray[0];
   const mainContent = childrenArray.slice(1, childrenArray.length);
   const sideContentClass = right ? "drawer-end" : "";
   const alwaysOpenClass = alwaysOpenOnDesktop ? "lg:drawer-open" : "";
 
+  const handleTouchStart = (event: React.TouchEvent) => {
+    setTouchStartX(event.touches[0].clientX);
+  }
+
+  const handleTouchEnd = (event: React.TouchEvent) => {
+    const touchEndX = event.changedTouches[0].clientX;
+    const delta = Math.abs(touchEndX - touchStartX);
+    const swipeRight = touchEndX - touchStartX > 0;
+    const swipeLeft = touchEndX - touchStartX < 0;
+    const menuIsRight = right;
+    const menuIsLeft = !right;
+
+    if (delta > SWIPE_DELTA) {
+      if (open && (menuIsRight && swipeRight || menuIsLeft && swipeLeft)) {
+        hideLateralMenu(id);
+        setOpen(false);
+        event.stopPropagation();
+      } else if (!open && (menuIsRight && swipeLeft || menuIsLeft && swipeRight)) {
+        showLateralMenu(id);
+        setOpen(true);
+        event.stopPropagation();
+      }
+    }
+  }
+
   return (
-    <div className={`drawer w-full h-full ${sideContentClass} ${alwaysOpenClass}`}>
+    <div className={`drawer w-full h-full ${sideContentClass} ${alwaysOpenClass}`} onTouchStart={handleTouchStart}
+         onTouchEnd={handleTouchEnd}>
       <input id={id} type="checkbox" className="drawer-toggle"/>
       <div className="drawer-content flex flex-col z-10 w-full h-full overflow-auto">
         {mainContent}
