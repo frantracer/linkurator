@@ -54,10 +54,18 @@ const Drawer = (
     }
   }
 
-  const handleTouchOnBackground = (event: React.TouchEvent) => {
+  const handleClickOrTouchBackground = (event: React.MouseEvent | React.TouchEvent) => {
     if (sidebarIsOpen) {
       closeSidebar();
       event.stopPropagation();
+    }
+  }
+
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.checked) {
+      openSidebar();
+    } else {
+      closeSidebar();
     }
   }
 
@@ -72,12 +80,13 @@ const Drawer = (
   return (
     <div className={`drawer w-full h-full ${sideContentClass} ${alwaysOpenClass}`} onTouchStart={handleTouchStart}
          onTouchEnd={handleTouchEnd}>
-      <input id={id} type="checkbox" className="drawer-toggle" onTouchEnd={handleTouchOnBackground}/>
+      <input id={id} type="checkbox" className="drawer-toggle" onChange={handleInputChange}/>
       <div className="drawer-content flex flex-col z-10 w-full h-full overflow-auto">
         {mainContent}
       </div>
       <div className="drawer-side z-20">
-        <label htmlFor={id} aria-label="close sidebar" className="drawer-overlay" onTouchEnd={handleTouchOnBackground}/>
+        <label aria-label="close sidebar" className="drawer-overlay"
+               onTouchStart={handleClickOrTouchBackground} onClick={handleClickOrTouchBackground}/>
         {sideContent}
       </div>
     </div>
