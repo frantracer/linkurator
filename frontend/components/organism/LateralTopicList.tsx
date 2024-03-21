@@ -3,7 +3,6 @@ import React from "react";
 import {Topic} from "../../entities/Topic";
 import {paths} from "../../configuration";
 import {useRouter} from "next/router";
-import {hideLateralMenu} from "../../utilities/hideLateralMenu";
 import {scrollToDrawerTop} from "../../utilities/scrollToDrawerTop";
 import Menu from "../atoms/Menu";
 import Tag from "../atoms/Tag";
@@ -14,6 +13,7 @@ type LateralTopicListProps = {
   topics: Topic[];
   selectedTopic: Topic | undefined;
   searchValue: string;
+  closeMenu: () => void;
 }
 
 const LateralTopicList = (props: LateralTopicListProps) => {
@@ -21,7 +21,7 @@ const LateralTopicList = (props: LateralTopicListProps) => {
   const handleClick = (topicId: string) => {
     const topic = props.topics.find((topic) => topic.uuid === topicId);
     if (topic) {
-      hideLateralMenu(LATERAL_TOPIC_MENU_ID)
+      props.closeMenu();
       scrollToDrawerTop()
       router.push(paths.TOPICS + "/" + topic.uuid)
     }

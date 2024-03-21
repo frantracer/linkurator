@@ -16,6 +16,7 @@ type LateralMenuProps = {
   subscriptions: Subscription[];
   topics: Topic[],
   selectedSubscription: Subscription | undefined;
+  closeMenu: () => void;
 };
 
 const LateralMenu = (props: LateralMenuProps) => {
@@ -42,7 +43,9 @@ const LateralMenu = (props: LateralMenuProps) => {
               searchValue={searchValue}
               subscriptions={props.subscriptions}
               topics={props.topics}
-              selectedSubscription={props.selectedSubscription}/>
+              selectedSubscription={props.selectedSubscription}
+              closeMenu={props.closeMenu}
+          />
       }
       {props.profile &&
           <Button fitContent={false} clickAction={() => {

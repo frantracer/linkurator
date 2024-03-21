@@ -59,14 +59,13 @@ const TAGS_REF = "tags";
 const BOX_REF = "box";
 const DROPDOWN_REF = "dropdown";
 
-const closeSideBar = () => {
-  const sideBar = (document.getElementById(SIDE_BAR_NAME) as HTMLInputElement);
-  if (sideBar) {
-    sideBar.checked = false;
+const LateralMenu = (
+  {
+    closeMenu,
+  } : {
+    closeMenu: () => void
   }
-}
-
-const LateralMenu = () => {
+) => {
   const router = useRouter();
   const [anchor, setAnchor] = React.useState<string | null>(null);
 
@@ -81,7 +80,7 @@ const LateralMenu = () => {
   const handleClick = (ref: string) => {
     router.push("#" + ref).then(() => {
         setAnchor(ref);
-        closeSideBar();
+        closeMenu();
       }
     );
   }
@@ -325,12 +324,15 @@ const MainContent = () => {
 }
 
 const DesignSystemPage = () => {
+  const [sidebarIsOpen, setSidebarOpen] = React.useState<boolean>(false);
+
   return (
     <div className="h-screen w-screen">
-      <Drawer id={SIDE_BAR_NAME}>
-        <LateralMenu/>
+      <Drawer id={SIDE_BAR_NAME} sidebarIsOpen={sidebarIsOpen}
+              openSidebar={() => setSidebarOpen(true)} closeSidebar={() => setSidebarOpen(false)}>
+        <LateralMenu closeMenu={() => setSidebarOpen(false)}/>
         <TopTitle>
-          <Button relatedModalId={SIDE_BAR_NAME} showOnlyOnMobile={true}>
+          <Button clickAction={() => setSidebarOpen(true)} showOnlyOnMobile={true}>
             <MenuIcon/>
           </Button>
           <h1 className="text-2xl font-bold whitespace-nowrap truncate text-center w-full">

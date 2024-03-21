@@ -1,6 +1,6 @@
 import React, {useState} from "react";
 import {Profile} from "../../hooks/useProfile";
-import LateralTopicList, {LATERAL_TOPIC_MENU_ID} from "./LateralTopicList";
+import LateralTopicList from "./LateralTopicList";
 import {Topic} from "../../entities/Topic";
 import {Subscription} from "../../entities/Subscription";
 import {configuration, paths} from "../../configuration";
@@ -9,7 +9,6 @@ import {useRouter} from "next/router";
 import Button from "../atoms/Button";
 import {AddIcon} from "../atoms/Icons";
 import LogoHeader from "../molecules/LogoHeader";
-import {hideLateralMenu} from "../../utilities/hideLateralMenu";
 import {openModal} from "../../utilities/modalAction";
 import SearchBar from "../molecules/SearchBar";
 import Sidebar from "../atoms/Sidebar";
@@ -20,6 +19,7 @@ type TopicLateralMenuProps = {
   topics: Topic[];
   selectedTopic: Topic | undefined;
   subscriptions: Subscription[];
+  closeMenu: () => void;
 };
 
 const TopicsLateralMenu = (props: TopicLateralMenuProps) => {
@@ -35,7 +35,7 @@ const TopicsLateralMenu = (props: TopicLateralMenuProps) => {
 
   const openNewTopicModal = () => {
     openModal(NewTopicModalId);
-    hideLateralMenu(LATERAL_TOPIC_MENU_ID);
+    props.closeMenu();
   }
 
   return (
@@ -54,7 +54,9 @@ const TopicsLateralMenu = (props: TopicLateralMenuProps) => {
       <LateralTopicList
         topics={props.topics}
         selectedTopic={props.selectedTopic}
-        searchValue={searchValue}/>
+        searchValue={searchValue}
+        closeMenu={props.closeMenu}
+      />
       {props.profile &&
           <Button fitContent={false}
                   clickAction={() => {

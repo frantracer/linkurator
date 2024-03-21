@@ -28,7 +28,6 @@ import Tag from "../atoms/Tag";
 import Grid from "../atoms/Grid";
 import {deleteTopic} from "../../services/topicService";
 import {EditTopicModalId} from "./EditTopicModal";
-import {hideLateralMenu} from "../../utilities/hideLateralMenu";
 
 export const TOPIC_DETAILS_ID = "topic-details";
 
@@ -38,6 +37,7 @@ type TopicDetailsProps = {
   filters: Filters,
   setFilters: (filters: Filters) => void;
   refreshTopics: () => void;
+  closeSidebar: () => void;
 };
 
 const TopicDetails = (props: TopicDetailsProps) => {
@@ -62,7 +62,7 @@ const TopicDetails = (props: TopicDetailsProps) => {
     deleteTopic(topicId)
       .then(() => {
         props.refreshTopics()
-        hideLateralMenu(TOPIC_DETAILS_ID)
+        props.closeSidebar()
       })
   }
 

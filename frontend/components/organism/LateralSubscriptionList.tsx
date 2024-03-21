@@ -2,7 +2,6 @@ import {MenuItem} from "../atoms/MenuItem";
 import {Subscription} from "../../entities/Subscription";
 import {useRouter} from "next/router";
 import {paths} from "../../configuration";
-import {hideLateralMenu} from "../../utilities/hideLateralMenu";
 import {scrollToDrawerTop} from "../../utilities/scrollToDrawerTop";
 import Menu from "../atoms/Menu";
 import Tag from "../atoms/Tag";
@@ -17,6 +16,7 @@ type LateralItemListProps = {
   topics: Topic[];
   selectedSubscription: Subscription | undefined;
   searchValue: string;
+  closeMenu: () => void;
 }
 
 const LateralSubscriptionList = (props: LateralItemListProps) => {
@@ -24,7 +24,7 @@ const LateralSubscriptionList = (props: LateralItemListProps) => {
   const handleClick = (subscriptionId: string) => {
     const subscription = props.subscriptions.find((subscription) => subscription.uuid === subscriptionId);
     if (subscription) {
-      hideLateralMenu(LATERAL_SUBSCRIPTION_MENU_ID)
+      props.closeMenu()
       scrollToDrawerTop()
       router.push(paths.SUBSCRIPTIONS + "/" + subscription.uuid)
     }

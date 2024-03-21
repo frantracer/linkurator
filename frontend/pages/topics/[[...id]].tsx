@@ -39,6 +39,8 @@ const Home: NextPage = () => {
     refreshTopicItems,
     fetchMoreItems
   } = useTopicItems(topicIdFromQuery, filters);
+  const [leftSidebarIsOpen, setLeftSidebarOpen] = React.useState<boolean>(false);
+  const [rightSidebarIsOpen, setRightSidebarOpen] = React.useState<boolean>(false);
 
   const selectedTopic: Topic | undefined = topics.find(t => t.uuid === topicIdFromQuery);
   const topicName = selectedTopic ? selectedTopic.name : "";
@@ -77,27 +79,32 @@ const Home: NextPage = () => {
         <meta name="description" content="Linkurator"/>
         <link rel="icon" href="/logo_v1_fav.png"/>
       </Head>
-      <Drawer id={LATERAL_TOPIC_MENU_ID}>
+      <Drawer id={LATERAL_TOPIC_MENU_ID} sidebarIsOpen={leftSidebarIsOpen}
+              openSidebar={() => setLeftSidebarOpen(true)} closeSidebar={() => setLeftSidebarOpen(false)}>
         <TopicsLateralMenu
           topics={topics}
           selectedTopic={selectedTopic}
           subscriptions={subscriptions}
           profile={profile!}
+          closeMenu={() => setLeftSidebarOpen(false)}
         />
-        <Drawer id={TOPIC_DETAILS_ID} right={true} alwaysOpenOnDesktop={false}>
+        <Drawer id={TOPIC_DETAILS_ID} right={true} alwaysOpenOnDesktop={false} sidebarIsOpen={rightSidebarIsOpen}
+                openSidebar={() => setRightSidebarOpen(true)} closeSidebar={() => setRightSidebarOpen(false)}>
           <TopicDetails topic={selectedTopic}
                         subscriptions={subscriptions}
                         filters={filters}
                         setFilters={setFilters}
-                        refreshTopics={refreshTopics}/>
+                        refreshTopics={refreshTopics}
+                        closeSidebar={() => setRightSidebarOpen(false)}
+          />
           <TopTitle>
-            <Button relatedModalId={LATERAL_TOPIC_MENU_ID} showOnlyOnMobile={true}>
+            <Button clickAction={() => setLeftSidebarOpen(true)} showOnlyOnMobile={true}>
               <MenuIcon/>
             </Button>
             <h1 className="text-2xl font-bold whitespace-nowrap truncate text-center w-full">
               {topicName}
             </h1>
-            <Button relatedModalId={TOPIC_DETAILS_ID}>
+            <Button clickAction={() => setRightSidebarOpen(true)}>
               <OptionsIcon/>
             </Button>
           </TopTitle>

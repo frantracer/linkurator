@@ -33,6 +33,8 @@ const SubscriptionsPage: NextPage = () => {
   const {profile, profileIsLoading} = useProfile();
   const {subscriptions, refreshSubscriptions} = useSubscriptions(profile);
   const {topics, refreshTopics} = useTopics(profile, profileIsLoading);
+  const [leftSidebarIsOpen, setLeftSidebarOpen] = React.useState<boolean>(false);
+  const [rightSidebarIsOpen, setRightSidebarOpen] = React.useState<boolean>(false);
 
   const selectedSubscription = subscriptions.find(subscription => subscription.uuid === selectedSubscriptionId);
 
@@ -88,20 +90,24 @@ const SubscriptionsPage: NextPage = () => {
         <meta name="description" content="Linkurator"/>
         <link rel="icon" href="/logo_v1_fav.png"/>
       </Head>
-      <Drawer id={LATERAL_SUBSCRIPTION_MENU_ID}>
+      <Drawer id={LATERAL_SUBSCRIPTION_MENU_ID} sidebarIsOpen={leftSidebarIsOpen}
+              openSidebar={() => setLeftSidebarOpen(true)} closeSidebar={() => setLeftSidebarOpen(false)}>
         <SubscriptionsLateralMenu
           subscriptions={subscriptions}
           topics={topics}
           selectedSubscription={selectedSubscription}
-          profile={profile!}/>
-        <Drawer id={SUBSCRIPTION_DETAILS_ID} right={true} alwaysOpenOnDesktop={false}>
+          profile={profile!}
+          closeMenu={() => setLeftSidebarOpen(false)}
+        />
+        <Drawer id={SUBSCRIPTION_DETAILS_ID} right={true} alwaysOpenOnDesktop={false} sidebarIsOpen={rightSidebarIsOpen}
+                openSidebar={() => setRightSidebarOpen(true)} closeSidebar={() => setRightSidebarOpen(false)}>
           <SubscriptionDetails subscription={selectedSubscription}
                                topics={topics}
                                filters={filters}
                                setFilters={setFilters}
                                refreshSubscription={() => refreshSubscription(selectedSubscriptionId)}/>
           <TopTitle>
-            <Button relatedModalId={LATERAL_SUBSCRIPTION_MENU_ID} showOnlyOnMobile={true}>
+            <Button clickAction={() => setLeftSidebarOpen(true)} showOnlyOnMobile={true}>
               <MenuIcon/>
             </Button>
             <div className="flex flex-row gap-2 items-center justify-center w-full overflow-hidden hover:cursor-pointer"
@@ -111,7 +117,7 @@ const SubscriptionsPage: NextPage = () => {
                 {subscriptionName}
               </h1>
             </div>
-            <Button relatedModalId={SUBSCRIPTION_DETAILS_ID}>
+            <Button clickAction={() => setRightSidebarOpen(true)}>
               <OptionsIcon/>
             </Button>
           </TopTitle>
