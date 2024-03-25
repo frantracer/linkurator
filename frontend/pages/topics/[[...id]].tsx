@@ -29,7 +29,7 @@ const Home: NextPage = () => {
 
   const topicIdFromQuery: string | undefined = router.query.id ? router.query.id[0] as string : undefined;
 
-  const {filters, setFilters, setDefaultFilters} = useFilters();
+  const {filters, setFilters} = useFilters();
   const {profile, profileIsLoading} = useProfile();
   const {subscriptions} = useSubscriptions(profile);
   const {topics, topicsAreLoading, refreshTopics} = useTopics(profile, profileIsLoading);
@@ -71,7 +71,6 @@ const Home: NextPage = () => {
         } else if (topics.length > 0) {
           router.push(paths.TOPICS + "/" + topics[0].uuid)
         }
-        setDefaultFilters()
       }
     }
 
@@ -82,7 +81,7 @@ const Home: NextPage = () => {
       return () => clearTimeout(timer)
     }
 
-  }, [subscriptions, topicIdFromQuery, router, profile, profileIsLoading, topics, setDefaultFilters, refreshTopicItems, isTopicBeingScanned]);
+  }, [subscriptions, topicIdFromQuery, router, profile, profileIsLoading, topics, refreshTopicItems, isTopicBeingScanned]);
 
   return (
     <div className="h-screen w-screen">

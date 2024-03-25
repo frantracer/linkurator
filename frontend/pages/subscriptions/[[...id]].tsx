@@ -29,7 +29,7 @@ const SubscriptionsPage: NextPage = () => {
 
   const selectedSubscriptionId: string = router.query.id ? router.query.id[0] as string : "";
 
-  const {filters, setFilters, setDefaultFilters} = useFilters();
+  const {filters, setFilters} = useFilters();
   const {profile, profileIsLoading} = useProfile();
   const {subscriptions, refreshSubscriptions} = useSubscriptions(profile);
   const {topics, refreshTopics} = useTopics(profile, profileIsLoading);
@@ -72,7 +72,6 @@ const SubscriptionsPage: NextPage = () => {
         if (subscriptions.length > 0 && selectedSubscription === undefined) {
           router.push(paths.SUBSCRIPTIONS + "/" + subscriptions[0].uuid)
         }
-        setDefaultFilters()
       }
 
       if (selectedSubscription?.isBeingScanned) {
@@ -82,7 +81,7 @@ const SubscriptionsPage: NextPage = () => {
         return () => clearTimeout(timer)
       }
     }
-  }, [profileIsLoading, selectedSubscription, profile, subscriptions, router, setDefaultFilters, refreshSubscriptions]);
+  }, [profileIsLoading, selectedSubscription, profile, subscriptions, router, refreshSubscriptions]);
 
   return (
     <div className="h-screen w-screen">
