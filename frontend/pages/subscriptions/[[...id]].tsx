@@ -76,12 +76,13 @@ const SubscriptionsPage: NextPage = () => {
       }
 
       if (selectedSubscription?.isBeingScanned) {
-        setTimeout(() => {
+        const timer = setTimeout(() => {
           refreshSubscriptions()
         }, REFRESH_SUBSCRIPTIONS_INTERVAL)
+        return () => clearTimeout(timer)
       }
     }
-  }, [profileIsLoading, selectedSubscription, profile, subscriptions, router]);
+  }, [profileIsLoading, selectedSubscription, profile, subscriptions, router, setDefaultFilters, refreshSubscriptions]);
 
   return (
     <div className="h-screen w-screen">

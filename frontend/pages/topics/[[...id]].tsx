@@ -9,7 +9,7 @@ import TopicVideoCardGrid from "../../components/organism/TopicVideoCardGrid";
 import NewTopicModal from "../../components/organism/NewTopicModal";
 import {useTopics} from "../../hooks/useTopics";
 import EditTopicModal from "../../components/organism/EditTopicModal";
-import {Topic} from "../../entities/Topic";
+import {isTopicScanned, Topic} from "../../entities/Topic";
 import {paths} from "../../configuration";
 import useFilters from "../../hooks/useFilters";
 import TopicsLateralMenu from "../../components/organism/TopicsLateralMenu";
@@ -21,6 +21,8 @@ import Button from "../../components/atoms/Button";
 import {MenuIcon, OptionsIcon} from "../../components/atoms/Icons";
 import {LATERAL_TOPIC_MENU_ID} from "../../components/organism/LateralTopicList";
 import TopicDetails, {TOPIC_DETAILS_ID} from "../../components/organism/TopicDetails";
+
+const REFRESH_TOPICS_INTERVAL = 30000;
 
 const Home: NextPage = () => {
   const router = useRouter()
@@ -44,6 +46,8 @@ const Home: NextPage = () => {
 
   const selectedTopic: Topic | undefined = topics.find(t => t.uuid === topicIdFromQuery);
   const topicName = selectedTopic ? selectedTopic.name : "";
+
+  const isTopicBeingScanned = selectedTopic ? !isTopicScanned(selectedTopic, subscriptions) : false
 
   const handleGridScroll = (event: React.UIEvent<HTMLElement>) => {
     const element = event.currentTarget
@@ -70,7 +74,15 @@ const Home: NextPage = () => {
         setDefaultFilters()
       }
     }
-  }, [topicIdFromQuery, router, profile, profileIsLoading, topics]);
+
+    if (isTopicBeingScanned) {
+      const timer = setTimeout(() => {
+        refreshTopicItems()
+      }, REFRESH_TOPICS_INTERVAL)
+      return () => clearTimeout(timer)
+    }
+
+  }, [subscriptions, topicIdFromQuery, router, profile, profileIsLoading, topics, setDefaultFilters, refreshTopicItems, isTopicBeingScanned]);
 
   return (
     <div className="h-screen w-screen">
@@ -120,7 +132,9 @@ const Home: NextPage = () => {
                                   filters={filters}
                                   isLoading={isLoading}
                                   topicIsFinished={isFinished}
-                                  handleScroll={handleGridScroll}/>
+                                  handleScroll={handleGridScroll}
+                                  isTopicBeingScanned={isTopicBeingScanned}
+              />
           }
           <NewTopicModal refreshTopics={refreshTopics} subscriptions={subscriptions}/>
           {selectedTopic &&

@@ -16,6 +16,7 @@ type TopicVideoCardGridProps = {
   isLoading: boolean;
   topicIsFinished: boolean;
   handleScroll: (event: React.UIEvent<HTMLElement>) => void,
+  isTopicBeingScanned: boolean
 }
 
 const TopicVideoCardGrid = (props: TopicVideoCardGridProps) => {
@@ -44,6 +45,12 @@ const TopicVideoCardGrid = (props: TopicVideoCardGridProps) => {
 
   return (
     <main onScroll={props.handleScroll} className="flex flex-col w-full overflow-auto">
+      {props.isTopicBeingScanned &&
+          <div className="flex items-center justify-center h-screen">
+              <span className="loading loading-spinner loading-lg"></span>
+              <span>Fetching items for {props.topic?.name}...</span>
+          </div>
+      }
       <div className="grid grid-cols-[repeat(auto-fill,minmax(320px,1fr))] gap-4
         justify-items-center justify-content-center">
         {cards}
