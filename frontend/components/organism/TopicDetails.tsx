@@ -23,7 +23,7 @@ import Checkbox from "../atoms/Checkbox";
 import NumberInput from "../atoms/NumberInput";
 import {openModal} from "../../utilities/modalAction";
 import Miniature from "../atoms/Miniature";
-import Link from "../atoms/Link";
+import ALink from "../atoms/ALink";
 import Tag from "../atoms/Tag";
 import Grid from "../atoms/Grid";
 import {deleteTopic} from "../../services/topicService";
@@ -50,12 +50,12 @@ const TopicDetails = (props: TopicDetailsProps) => {
     .sort((a, b) => a.name.length > b.name.length ? 1 : -1)
 
   const subsTags = relatedSubs.map(subscription => (
-    <Link key={subscription.uuid} href={paths.SUBSCRIPTIONS + "/" + subscription.uuid}>
+    <ALink key={subscription.uuid} href={paths.SUBSCRIPTIONS + "/" + subscription.uuid}>
       <Tag>
         <Miniature src={subscription.thumbnail} alt={subscription.name}/>
         {subscription.name}
       </Tag>
-    </Link>
+    </ALink>
   ));
 
   const deleteTopicAction = () => {

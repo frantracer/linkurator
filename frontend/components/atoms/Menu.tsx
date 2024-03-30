@@ -1,11 +1,19 @@
 type MenuProps = {
+  isFullHeight?: boolean;
   children: React.ReactNode;
 };
 
-const Menu = (props: MenuProps) => {
+const Menu = (
+  {
+    isFullHeight = true,
+    children
+  }: MenuProps) => {
+  const heightClass = isFullHeight ? 'h-full overflow-auto' : 'h-fit';
+  const className = "bg-base-200 rounded " + heightClass;
+
   return (
-    <nav className="bg-base-200 rounded h-full overflow-auto">
-      {props.children}
+    <nav className={className}>
+      {children}
     </nav>
   );
 }

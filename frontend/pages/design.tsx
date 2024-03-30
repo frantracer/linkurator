@@ -3,7 +3,7 @@ import Drawer from "../components/molecules/Drawer";
 import ThemeToogleButton from "../components/molecules/ThemeToogleButton";
 import TopTitle from "../components/molecules/TopTitle";
 import Button from "../components/atoms/Button";
-import Link from "../components/atoms/Link";
+import ALink from "../components/atoms/ALink";
 import Head1 from "../components/atoms/Head1";
 import Section from "../components/atoms/Section";
 import SearchBar from "../components/molecules/SearchBar";
@@ -92,7 +92,7 @@ const LateralMenu = (
   const menuItems = refs.map((ref) => {
     return (
       <MenuItem key={ref} onClick={() => handleClick(ref)} selected={anchor === ref}>
-        <Link href={"#" + ref}><span className="uppercase">{replaceUnderscore(ref)}</span></Link>
+        <ALink href={"#" + ref}><span className="uppercase">{replaceUnderscore(ref)}</span></ALink>
       </MenuItem>
     );
   })
