@@ -6,7 +6,7 @@ import {Subscription} from "../../entities/Subscription";
 import {configuration, paths} from "../../configuration";
 import {NewTopicModalId} from "./NewTopicModal";
 import Button from "../atoms/Button";
-import {AddIcon} from "../atoms/Icons";
+import {AddIcon, BookmarkSquared, RectangleGroupFilled} from "../atoms/Icons";
 import LogoHeader from "../molecules/LogoHeader";
 import {openModal} from "../../utilities/modalAction";
 import SearchBar from "../molecules/SearchBar";
@@ -15,6 +15,7 @@ import Divider from "../atoms/Divider";
 import Menu from "../atoms/Menu";
 import {MenuItem} from "../atoms/MenuItem";
 import ALink from "../atoms/ALink";
+import FlexRow from "../atoms/FlexRow";
 
 type TopicLateralMenuProps = {
   profile: Profile;
@@ -42,11 +43,11 @@ const TopicsLateralMenu = (props: TopicLateralMenuProps) => {
       <Menu isFullHeight={false}>
         <ALink href={paths.TOPICS}>
           <MenuItem onClick={() => {
-          }} selected={true}>Topics</MenuItem>
+          }} selected={true}><FlexRow position={"start"}><RectangleGroupFilled/>Topics</FlexRow></MenuItem>
         </ALink>
         <ALink href={paths.SUBSCRIPTIONS}>
           <MenuItem onClick={() => {
-          }} selected={false}>Subscriptions</MenuItem>
+          }} selected={false}><FlexRow position={"start"}><BookmarkSquared/>Subscriptions</FlexRow></MenuItem>
         </ALink>
       </Menu>
       <Divider/>

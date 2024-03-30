@@ -12,6 +12,8 @@ import Divider from "../atoms/Divider";
 import ALink from "../atoms/ALink";
 import {MenuItem} from "../atoms/MenuItem";
 import Menu from "../atoms/Menu";
+import {BookmarkSquaredFilled, RectangleGroup} from "../atoms/Icons";
+import FlexRow from "../atoms/FlexRow";
 
 type LateralMenuProps = {
   profile: Profile;
@@ -34,11 +36,11 @@ const LateralMenu = (props: LateralMenuProps) => {
       <Menu isFullHeight={false}>
         <ALink href={paths.TOPICS}>
           <MenuItem onClick={() => {
-          }} selected={false}>Topics</MenuItem>
+          }} selected={false}><FlexRow position={"start"}><RectangleGroup/>Topics</FlexRow></MenuItem>
         </ALink>
         <ALink href={paths.SUBSCRIPTIONS}>
           <MenuItem onClick={() => {
-          }} selected={true}>Subscriptions</MenuItem>
+          }} selected={true}><FlexRow position={"start"}><BookmarkSquaredFilled/>Subscriptions</FlexRow></MenuItem>
         </ALink>
       </Menu>
       <Divider/>

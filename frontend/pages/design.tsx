@@ -11,7 +11,7 @@ import InputText from "../components/atoms/InputText";
 import {SwapButton} from "../components/atoms/SwapButton";
 import VideoCard from "../components/organism/VideoCard";
 import {
-  AddIcon,
+  AddIcon, BookmarkSquared, BookmarkSquaredFilled,
   CheckCircleFilledIcon,
   CheckCircleIcon,
   CheckIcon,
@@ -25,7 +25,7 @@ import {
   MenuIcon,
   MoonIcon,
   OptionsIcon,
-  PencilIcon,
+  PencilIcon, RectangleGroup, RectangleGroupFilled,
   RefreshIcon,
   SunIcon,
   ThumbsDownFilledIcon,
@@ -139,6 +139,10 @@ const IconsSection = () => {
         <EyeSlashFilledIcon/>
         <CrossIcon/>
         <CheckIcon/>
+        <RectangleGroup/>
+        <RectangleGroupFilled/>
+        <BookmarkSquared/>
+        <BookmarkSquaredFilled/>
       </div>
     </Section>
   );
