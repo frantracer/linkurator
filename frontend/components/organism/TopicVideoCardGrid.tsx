@@ -5,6 +5,8 @@ import {SubscriptionItem} from "../../entities/SubscriptionItem";
 import {Subscription} from "../../entities/Subscription";
 import {Filters, isItemShown} from "../../entities/Filters";
 import {ITEMS_PER_PAGE} from "../../utilities/constants";
+import FlexRow from "../atoms/FlexRow";
+import {Spinner} from "../atoms/Spinner";
 
 type TopicVideoCardGridProps = {
   fetchMoreItems: () => void,
@@ -47,8 +49,10 @@ const TopicVideoCardGrid = (props: TopicVideoCardGridProps) => {
     <main onScroll={props.handleScroll} className="flex flex-col w-full overflow-auto">
       {props.isTopicBeingScanned &&
           <div className="flex items-center justify-center h-screen">
-              <span className="loading loading-spinner loading-lg"></span>
-              <span>Fetching items for {props.topic?.name}...</span>
+              <FlexRow position={"start"}>
+                  <Spinner/>
+                  <span>Fetching items for {props.topic?.name}...</span>
+              </FlexRow>
           </div>
       }
       <div className="grid grid-cols-[repeat(auto-fill,minmax(320px,1fr))] gap-4
@@ -57,12 +61,15 @@ const TopicVideoCardGrid = (props: TopicVideoCardGridProps) => {
       </div>
       {props.isLoading &&
           <div className="flex justify-center items-center">
-              <button className="btn btn-sm btn-ghost loading">loading</button>
+              <FlexRow position={"start"}>
+                  <Spinner/>
+                  <span>Loading...</span>
+              </FlexRow>
           </div>
       }
-      {props.topicIsFinished &&
+      {props.topicIsFinished && !props.isLoading &&
           <div className="flex justify-center items-center">
-              <button className="btn btn-sm btn-ghost">No more items to show</button>
+              <span>No more items to show</span>
           </div>
       }
     </main>

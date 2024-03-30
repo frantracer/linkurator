@@ -5,6 +5,8 @@ import {Topic} from "../../entities/Topic";
 import React from "react";
 import {Filters, isItemShown} from "../../entities/Filters";
 import {ITEMS_PER_PAGE} from "../../utilities/constants";
+import FlexRow from "../atoms/FlexRow";
+import {Spinner} from "../atoms/Spinner";
 
 type SubscriptionVideoCardGridProps = {
   refreshItem: (itemId: string) => void,
@@ -53,18 +55,23 @@ const SubscriptionVideoCardGrid = (props: SubscriptionVideoCardGridProps) => {
         }
         {props.subscription.isBeingScanned &&
             <div className="flex items-center justify-center h-screen">
-                <span className="loading loading-spinner loading-lg"></span>
-                <span>Fetching items for {props.subscription.name}...</span>
+                <FlexRow position={"start"}>
+                    <Spinner/>
+                    <span>Fetching items for {props.subscription.name}...</span>
+                </FlexRow>
             </div>
         }
         {props.isLoading &&
             <div className="flex justify-center items-center">
-                <button className="btn btn-sm btn-ghost loading">loading</button>
+                <FlexRow position={"start"}>
+                    <Spinner/>
+                    <span>Loading...</span>
+                </FlexRow>
             </div>
         }
-        {props.isFinished &&
+        {props.isFinished && !props.isLoading &&
             <div className="flex justify-center items-center">
-                <button className="btn btn-sm btn-ghost">No more items to show</button>
+                <span>No more items to show</span>
             </div>
         }
       </main>
