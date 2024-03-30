@@ -29,7 +29,7 @@ const Home: NextPage = () => {
 
   const topicIdFromQuery: string | undefined = router.query.id ? router.query.id[0] as string : undefined;
 
-  const {filters, setFilters} = useFilters();
+  const {filters, setFilters, resetFilters} = useFilters();
   const {profile, profileIsLoading} = useProfile();
   const {subscriptions} = useSubscriptions(profile);
   const {topics, topicsAreLoading, refreshTopics} = useTopics(profile, profileIsLoading);
@@ -105,6 +105,7 @@ const Home: NextPage = () => {
                         subscriptions={subscriptions}
                         filters={filters}
                         setFilters={setFilters}
+                        resetFilters={resetFilters}
                         refreshTopics={refreshTopics}
                         closeSidebar={() => setRightSidebarOpen(false)}
           />

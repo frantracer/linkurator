@@ -11,7 +11,10 @@ import InputText from "../components/atoms/InputText";
 import {SwapButton} from "../components/atoms/SwapButton";
 import VideoCard from "../components/organism/VideoCard";
 import {
-  AddIcon, BookmarkSquared, BookmarkSquaredFilled,
+  AddIcon,
+  ArrowUturnLeft,
+  BookmarkSquared,
+  BookmarkSquaredFilled,
   CheckCircleFilledIcon,
   CheckCircleIcon,
   CheckIcon,
@@ -25,7 +28,9 @@ import {
   MenuIcon,
   MoonIcon,
   OptionsIcon,
-  PencilIcon, RectangleGroup, RectangleGroupFilled,
+  PencilIcon,
+  RectangleGroup,
+  RectangleGroupFilled,
   RefreshIcon,
   SunIcon,
   ThumbsDownFilledIcon,
@@ -62,7 +67,7 @@ const DROPDOWN_REF = "dropdown";
 const LateralMenu = (
   {
     closeMenu,
-  } : {
+  }: {
     closeMenu: () => void
   }
 ) => {
@@ -143,6 +148,7 @@ const IconsSection = () => {
         <RectangleGroupFilled/>
         <BookmarkSquared/>
         <BookmarkSquaredFilled/>
+        <ArrowUturnLeft/>
       </div>
     </Section>
   );

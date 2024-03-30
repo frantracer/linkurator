@@ -8,6 +8,7 @@ import Link from "next/link";
 import {paths} from "../../configuration";
 import Divider from "../atoms/Divider";
 import {
+  ArrowUturnLeft,
   CheckCircleIcon,
   CheckIcon,
   EyeSlashIcon,
@@ -35,6 +36,7 @@ type SubscriptionDetailsProps = {
   topics: Topic[],
   filters: Filters,
   setFilters: (filters: Filters) => void;
+  resetFilters: () => void;
   refreshSubscription: () => void;
 };
 
@@ -121,6 +123,10 @@ const SubscriptionDetails = (props: SubscriptionDetailsProps) => {
             </FlexColumn>
           </Box>
           <FlexRow position={"end"}>
+            <Button clickAction={() => props.resetFilters()}>
+              <ArrowUturnLeft/>
+              Reset
+            </Button>
             <Button clickAction={() => props.setFilters(tempFilters)}>
               <CheckIcon/>
               Apply

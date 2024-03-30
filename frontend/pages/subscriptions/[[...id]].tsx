@@ -29,7 +29,7 @@ const SubscriptionsPage: NextPage = () => {
 
   const selectedSubscriptionId: string = router.query.id ? router.query.id[0] as string : "";
 
-  const {filters, setFilters} = useFilters();
+  const {filters, setFilters, resetFilters} = useFilters();
   const {profile, profileIsLoading} = useProfile();
   const {subscriptions, refreshSubscriptions} = useSubscriptions(profile);
   const {topics, refreshTopics} = useTopics(profile, profileIsLoading);
@@ -105,6 +105,7 @@ const SubscriptionsPage: NextPage = () => {
                                topics={topics}
                                filters={filters}
                                setFilters={setFilters}
+                               resetFilters={resetFilters}
                                refreshSubscription={() => refreshSubscription(selectedSubscriptionId)}/>
           <TopTitle>
             <Button clickAction={() => setLeftSidebarOpen(true)} showOnlyOnMobile={true}>

@@ -4,7 +4,7 @@ import {Filters} from "../entities/Filters";
 type UseFilters = {
   filters: Filters,
   setFilters: (filters: Filters) => void,
-  setDefaultFilters: () => void,
+  resetFilters: () => void,
 }
 
 const defaultFilters: Filters = {
@@ -21,7 +21,7 @@ const defaultFilters: Filters = {
 const useFilters = (): UseFilters => {
   const [filters, setFilters] = useState<Filters>(defaultFilters);
 
-  return {filters, setFilters, setDefaultFilters: () => setFilters(defaultFilters)}
+  return {filters, setFilters, resetFilters: () => setFilters(defaultFilters)}
 };
 
 export default useFilters;

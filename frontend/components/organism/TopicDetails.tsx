@@ -6,6 +6,7 @@ import FlexRow from "../atoms/FlexRow";
 import {paths} from "../../configuration";
 import Divider from "../atoms/Divider";
 import {
+  ArrowUturnLeft,
   CheckCircleIcon,
   CheckIcon,
   EyeSlashIcon,
@@ -36,6 +37,7 @@ type TopicDetailsProps = {
   topic?: Topic,
   filters: Filters,
   setFilters: (filters: Filters) => void;
+  resetFilters: () => void;
   refreshTopics: () => void;
   closeSidebar: () => void;
 };
@@ -132,6 +134,10 @@ const TopicDetails = (props: TopicDetailsProps) => {
             </FlexColumn>
           </Box>
           <FlexRow position={"end"}>
+            <Button clickAction={() => props.resetFilters()}>
+              <ArrowUturnLeft/>
+              Reset
+            </Button>
             <Button clickAction={() => props.setFilters(tempFilters)}>
               <CheckIcon/>
               Apply
