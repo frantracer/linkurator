@@ -1,11 +1,12 @@
+'use client';
+
 import type {NextPage} from "next";
 import Head from "next/head";
 import React, {useEffect} from "react";
-import "tailwindcss/tailwind.css";
-import useProfile from "../hooks/useProfile";
-import {configuration, paths} from "../configuration";
-import {useRouter} from "next/router";
-import Button from "../components/atoms/Button";
+import useProfile from "../../hooks/useProfile";
+import {configuration, paths} from "../../configuration";
+import {useRouter} from "next/navigation";
+import Button from "../../components/atoms/Button";
 
 const Home: NextPage = () => {
   const router = useRouter();

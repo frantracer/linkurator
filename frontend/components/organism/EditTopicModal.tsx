@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useState} from "react";
 import {updateTopic} from "../../services/topicService";
 import useSubscriptionsToAdd from "../../hooks/useSubscriptionsToAdd";
 import {Subscription} from "../../entities/Subscription";
@@ -24,12 +24,12 @@ type EditTopicModalProps = {
 }
 
 const EditTopicModal = (props: EditTopicModalProps) => {
+  const filteredSubscriptions = props.subscriptions.filter((sub) => props.topic.subscriptions_ids.includes(sub.uuid))
+
   const [newTopicName, setNewTopicName] = useState(props.topic.name);
-  const [subscriptionsToAdd, addSubscription, removeSubscription, clearSubscriptions, setSubscriptions] = useSubscriptionsToAdd(props.subscriptions, props.topic)
+  const [subscriptionsToAdd, addSubscription, removeSubscription, clearSubscriptions] = useSubscriptionsToAdd(filteredSubscriptions, props.topic)
 
   const subscriptionBadges = subscriptionsToAdd.map(s => subscriptionToBadge(s, removeSubscription));
-
-  const filteredSubscriptions = props.subscriptions.filter((sub) => props.topic.subscriptions_ids.includes(sub.uuid))
 
   const onSubscriptionSelected = (subscriptionId: string) => {
     const subscription = props.subscriptions.find(subscription => subscription.uuid === subscriptionId);
@@ -37,11 +37,6 @@ const EditTopicModal = (props: EditTopicModalProps) => {
       addSubscription(subscription);
     }
   }
-
-  useEffect(() => {
-    setNewTopicName(props.topic.name)
-    setSubscriptions(filteredSubscriptions)
-  }, [props.topic, props.subscriptions])
 
   return (
     <Modal id={EditTopicModalId}>

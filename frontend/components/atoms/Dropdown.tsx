@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useState} from "react";
 
 type DropdownProps = {
   title?: string,
@@ -20,21 +20,18 @@ const Dropdown = (
 
   const hasDisabledTitle = title !== undefined;
 
-  useEffect(() => {
-    let currentSelected = selected;
-    if (currentSelected === undefined) {
-      if (hasDisabledTitle) {
-        currentSelected = DISABLED_OPTION_KEY;
-      } else if (options.length > 0) {
-        currentSelected = options[0].key;
-      }
+  let currentSelected = selectedOption;
+  if (currentSelected === undefined) {
+    if (hasDisabledTitle) {
+      currentSelected = DISABLED_OPTION_KEY;
+    } else if (options.length > 0) {
+      currentSelected = options[0].key;
     }
-    setSelectedOption(currentSelected);
-  }, [selected, hasDisabledTitle, options]);
+  }
 
   return (
     <select className="select select-bordered w-full border-primary"
-            value={selectedOption} onChange={e => {
+            value={currentSelected} onChange={e => {
       setSelectedOption(e.target.value);
       if (onChange) {
         onChange(e.target.value)

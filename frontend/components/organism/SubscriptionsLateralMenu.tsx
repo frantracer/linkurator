@@ -16,7 +16,7 @@ import {BookmarkSquaredFilled, RectangleGroup} from "../atoms/Icons";
 import FlexRow from "../atoms/FlexRow";
 
 type LateralMenuProps = {
-  profile: Profile;
+  profile: Profile | undefined;
   subscriptions: Subscription[];
   topics: Topic[],
   selectedSubscription: Subscription | undefined;

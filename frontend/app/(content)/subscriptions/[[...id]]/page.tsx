@@ -1,33 +1,35 @@
+'use client';
+
 import type {NextPage} from "next";
 import Head from "next/head";
 import React, {useEffect} from "react";
-import "tailwindcss/tailwind.css";
-import useSubscriptions from "../../hooks/useSubscriptions";
-import useSubscriptionItems from "../../hooks/useSubscriptionItems";
-import useProfile from "../../hooks/useProfile";
-import SubscriptionVideoCardGrid from "../../components/organism/SubscriptionVideoCardGrid";
-import NewTopicModal from "../../components/organism/NewTopicModal";
-import {useTopics} from "../../hooks/useTopics";
-import useFilters from "../../hooks/useFilters";
-import {useRouter} from "next/router";
-import SubscriptionsLateralMenu from "../../components/organism/SubscriptionsLateralMenu";
-import {paths} from "../../configuration";
-import Drawer from "../../components/molecules/Drawer";
-import TopTitle from "../../components/molecules/TopTitle";
-import Button from "../../components/atoms/Button";
-import {MenuIcon, OptionsIcon} from "../../components/atoms/Icons";
-import Avatar from "../../components/atoms/Avatar";
-import SubscriptionDetails, {SUBSCRIPTION_DETAILS_ID} from "../../components/organism/SubscriptionDetails";
-import {refreshSubscription} from "../../services/subscriptionService";
-import AssignTopicModal from "../../components/organism/AssignTopicModal";
-import {LATERAL_SUBSCRIPTION_MENU_ID} from "../../components/organism/LateralSubscriptionList";
+import useSubscriptions from "../../../../hooks/useSubscriptions";
+import useSubscriptionItems from "../../../../hooks/useSubscriptionItems";
+import useProfile from "../../../../hooks/useProfile";
+import SubscriptionVideoCardGrid from "../../../../components/organism/SubscriptionVideoCardGrid";
+import NewTopicModal from "../../../../components/organism/NewTopicModal";
+import {useTopics} from "../../../../hooks/useTopics";
+import useFilters from "../../../../hooks/useFilters";
+import {useParams, useRouter} from "next/navigation";
+import SubscriptionsLateralMenu from "../../../../components/organism/SubscriptionsLateralMenu";
+import {paths} from "../../../../configuration";
+import Drawer from "../../../../components/molecules/Drawer";
+import TopTitle from "../../../../components/molecules/TopTitle";
+import Button from "../../../../components/atoms/Button";
+import {MenuIcon, OptionsIcon} from "../../../../components/atoms/Icons";
+import Avatar from "../../../../components/atoms/Avatar";
+import SubscriptionDetails, {SUBSCRIPTION_DETAILS_ID} from "../../../../components/organism/SubscriptionDetails";
+import {refreshSubscription} from "../../../../services/subscriptionService";
+import AssignTopicModal from "../../../../components/organism/AssignTopicModal";
+import {LATERAL_SUBSCRIPTION_MENU_ID} from "../../../../components/organism/LateralSubscriptionList";
 
 const REFRESH_SUBSCRIPTIONS_INTERVAL = 30000;
 
 const SubscriptionsPage: NextPage = () => {
   const router = useRouter()
+  const pathParams = useParams<{id: string[] | string}>();
 
-  const selectedSubscriptionId: string = router.query.id ? router.query.id[0] as string : "";
+  const selectedSubscriptionId: string | undefined = pathParams.id ? (Array.isArray(pathParams.id) ? pathParams.id[0] : pathParams.id) : undefined;
 
   const {filters, setFilters, resetFilters} = useFilters();
   const {profile, profileIsLoading} = useProfile();
@@ -96,7 +98,7 @@ const SubscriptionsPage: NextPage = () => {
           subscriptions={subscriptions}
           topics={topics}
           selectedSubscription={selectedSubscription}
-          profile={profile!}
+          profile={profile}
           closeMenu={() => setLeftSidebarOpen(false)}
         />
         <Drawer id={SUBSCRIPTION_DETAILS_ID} right={true} alwaysOpenOnDesktop={false} sidebarIsOpen={rightSidebarIsOpen}
@@ -106,7 +108,7 @@ const SubscriptionsPage: NextPage = () => {
                                filters={filters}
                                setFilters={setFilters}
                                resetFilters={resetFilters}
-                               refreshSubscription={() => refreshSubscription(selectedSubscriptionId)}/>
+                               refreshSubscription={() => refreshSubscription(selectedSubscriptionId!)}/>
           <TopTitle>
             <Button clickAction={() => setLeftSidebarOpen(true)} showOnlyOnMobile={true}>
               <MenuIcon/>

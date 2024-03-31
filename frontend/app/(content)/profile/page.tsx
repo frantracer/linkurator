@@ -1,21 +1,20 @@
-import type {NextPage} from "next";
-import Head from "next/head";
-import React, {useEffect} from "react";
-import "tailwindcss/tailwind.css";
-import useProfile from "../hooks/useProfile";
-import {paths} from "../configuration";
-import {useRouter} from "next/router";
+'use client';
 
-const Home: NextPage = () => {
+import type {NextPage} from "next";
+import useProfile from "../../../hooks/useProfile";
+import {useRouter} from "next/navigation";
+import {useEffect} from "react";
+import {paths} from "../../../configuration";
+import Head from "next/head";
+
+const ProfilePage: NextPage = () => {
   const router = useRouter();
   const {profile, profileIsLoading} = useProfile();
 
   useEffect(() => {
     if (!profileIsLoading) {
-      if (profile) {
-        router.push(paths.TOPICS)
-      } else {
-        router.push(paths.LOGIN)
+      if (!profile) {
+        router.push(paths.HOME)
       }
     }
   }, [profileIsLoading, router, profile]);
@@ -27,8 +26,10 @@ const Home: NextPage = () => {
         <meta name="description" content="Linkurator"/>
         <link rel="icon" href="/logo_v1_fav.png"/>
       </Head>
+      <h1>Profile</h1>
+      <p>Profile page</p>
     </div>
   );
 };
 
-export default Home;
+export default ProfilePage;

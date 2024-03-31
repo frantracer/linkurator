@@ -1,15 +1,16 @@
-import "tailwindcss/tailwind.css";
-import Drawer from "../components/molecules/Drawer";
-import ThemeToogleButton from "../components/molecules/ThemeToogleButton";
-import TopTitle from "../components/molecules/TopTitle";
-import Button from "../components/atoms/Button";
-import ALink from "../components/atoms/ALink";
-import Head1 from "../components/atoms/Head1";
-import Section from "../components/atoms/Section";
-import SearchBar from "../components/molecules/SearchBar";
-import InputText from "../components/atoms/InputText";
-import {SwapButton} from "../components/atoms/SwapButton";
-import VideoCard from "../components/organism/VideoCard";
+'use client';
+
+import Drawer from "../../components/molecules/Drawer";
+import ThemeToogleButton from "../../components/molecules/ThemeToogleButton";
+import TopTitle from "../../components/molecules/TopTitle";
+import Button from "../../components/atoms/Button";
+import ALink from "../../components/atoms/ALink";
+import Head1 from "../../components/atoms/Head1";
+import Section from "../../components/atoms/Section";
+import SearchBar from "../../components/molecules/SearchBar";
+import InputText from "../../components/atoms/InputText";
+import {SwapButton} from "../../components/atoms/SwapButton";
+import VideoCard from "../../components/organism/VideoCard";
 import {
   AddIcon,
   ArrowUturnLeft,
@@ -38,19 +39,18 @@ import {
   ThumbsUpFilledIcon,
   ThumbsUpIcon,
   TrashIcon
-} from "../components/atoms/Icons";
+} from "../../components/atoms/Icons";
 import React, {useEffect} from "react";
-import ItemCardSkeleton from "../components/organism/ItemCardSkeleton";
-import Avatar from "../components/atoms/Avatar";
-import Tag from "../components/atoms/Tag";
-import Miniature from "../components/atoms/Miniature";
-import Box from "../components/atoms/Box";
-import Dropdown from "../components/atoms/Dropdown";
-import Menu from "../components/atoms/Menu";
-import {MenuItem} from "../components/atoms/MenuItem";
-import {useRouter} from "next/router";
-import Sidebar from "../components/atoms/Sidebar";
-import Divider from "../components/atoms/Divider";
+import ItemCardSkeleton from "../../components/organism/ItemCardSkeleton";
+import Avatar from "../../components/atoms/Avatar";
+import Tag from "../../components/atoms/Tag";
+import Miniature from "../../components/atoms/Miniature";
+import Box from "../../components/atoms/Box";
+import Dropdown from "../../components/atoms/Dropdown";
+import Menu from "../../components/atoms/Menu";
+import {MenuItem} from "../../components/atoms/MenuItem";
+import Sidebar from "../../components/atoms/Sidebar";
+import Divider from "../../components/atoms/Divider";
 
 const SIDE_BAR_NAME = "main-menu";
 const ICONS_REF = "icons";
@@ -71,7 +71,6 @@ const LateralMenu = (
     closeMenu: () => void
   }
 ) => {
-  const router = useRouter();
   const [anchor, setAnchor] = React.useState<string | null>(null);
 
   useEffect(() => {
@@ -83,11 +82,8 @@ const LateralMenu = (
     TAGS_REF, CARDS_REF, BOX_REF, DROPDOWN_REF];
 
   const handleClick = (ref: string) => {
-    router.push("#" + ref).then(() => {
-        setAnchor(ref);
-        closeMenu();
-      }
-    );
+    setAnchor(ref);
+    closeMenu();
   }
 
   const replaceUnderscore = (ref: string) => {
@@ -96,9 +92,13 @@ const LateralMenu = (
 
   const menuItems = refs.map((ref) => {
     return (
-      <MenuItem key={ref} onClick={() => handleClick(ref)} selected={anchor === ref}>
-        <ALink href={"#" + ref}><span className="uppercase">{replaceUnderscore(ref)}</span></ALink>
-      </MenuItem>
+      <ALink key={ref} href={"#" + ref}>
+        <MenuItem selected={anchor === ref} onClick={() => {
+          handleClick(ref)
+        }}>
+          <span className="uppercase">{replaceUnderscore(ref)}</span>
+        </MenuItem>
+      </ALink>
     );
   })
 

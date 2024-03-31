@@ -1,6 +1,6 @@
-import axios from "axios";
-import {useEffect, useState} from "react";
-import {configuration} from "../configuration";
+import { useQuery } from '@tanstack/react-query';
+import axios from 'axios';
+import { configuration } from '../configuration';
 
 export type Profile = {
   first_name: string
@@ -8,29 +8,22 @@ export type Profile = {
   avatar_url: string
 }
 
-export type ProfileState = {
-  profile: Profile | undefined;
-  isLoading: boolean;
-}
+const fetchProfile = async () => {
+  const { data } = await axios.get<Profile | undefined>(configuration.PROFILE_URL, { withCredentials: true });
+  return data;
+};
 
 const useProfile = () => {
-  const [profileState, setProfileState] = useState<ProfileState>({profile: undefined, isLoading: true});
+  const { data: profile, isLoading, error } = useQuery({
+    queryKey: ['profile'],
+    queryFn: fetchProfile
+  });
 
-  useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        const {data} = await axios.get<Profile | undefined>(configuration.PROFILE_URL, {withCredentials: true});
-        setProfileState({profile: data, isLoading: false});
-      } catch (error: any) {
-        console.error("Error retrieving profile", error);
-        setProfileState({profile: undefined, isLoading: false});
-      }
-    };
+  if (error) {
+    console.error("Error retrieving profile", error);
+  }
 
-    fetchProfile().then(() => {});
-  }, []);
-
-  return {profile: profileState.profile, profileIsLoading: profileState.isLoading};
+  return { profile, profileIsLoading: isLoading };
 };
 
 export default useProfile;

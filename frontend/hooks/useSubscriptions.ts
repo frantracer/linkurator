@@ -1,7 +1,7 @@
-import {useEffect, useState} from "react";
-import {Profile} from "./useProfile";
-import {Subscription, subscriptionSorting} from "../entities/Subscription";
-import {getSubscriptions} from "../services/subscriptionService";
+import {useQuery} from '@tanstack/react-query';
+import {Profile} from './useProfile';
+import {Subscription, subscriptionSorting} from '../entities/Subscription';
+import {getSubscriptions} from '../services/subscriptionService';
 
 type subscriptionState = {
   subscriptions: Subscription[];
@@ -9,26 +9,26 @@ type subscriptionState = {
 }
 
 const useSubscriptions = (profile: Profile | undefined): subscriptionState => {
-  const [subscriptions, setSubscriptions] = useState<Subscription[]>([]);
-
-  function refreshSubscriptions(profile: Profile | undefined) {
+  const fetchSubscriptions = () => {
     if (profile) {
-      getSubscriptions().then(
-        subscriptions => setSubscriptions(subscriptions.sort(subscriptionSorting))
-      ).catch(error => console.error("Error retrieving topics", error))
+      return getSubscriptions().then(
+        subscriptions => subscriptions.sort(subscriptionSorting)
+      );
     } else {
-      setSubscriptions([]);
+      return Promise.resolve([]);
     }
-  }
+  };
 
-  useEffect(() => {
-    refreshSubscriptions(profile)
-  }, [profile]);
+  const {data: subscriptions = [], refetch: refreshSubscriptions} = useQuery({
+    queryKey: ['subscriptions'],
+    queryFn: fetchSubscriptions,
+    enabled: !!profile,
+  });
 
   return {
-    subscriptions: subscriptions,
-    refreshSubscriptions: () => {refreshSubscriptions(profile)}
-  }
+    subscriptions,
+    refreshSubscriptions,
+  };
 };
 
 export default useSubscriptions;

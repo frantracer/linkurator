@@ -1,33 +1,35 @@
+'use client';
+
 import type {NextPage} from "next";
 import Head from "next/head";
 import React, {useEffect} from "react";
-import "tailwindcss/tailwind.css";
-import useSubscriptions from "../../hooks/useSubscriptions";
-import useProfile from "../../hooks/useProfile";
-import useTopicItems from "../../hooks/useTopicItems";
-import TopicVideoCardGrid from "../../components/organism/TopicVideoCardGrid";
-import NewTopicModal from "../../components/organism/NewTopicModal";
-import {useTopics} from "../../hooks/useTopics";
-import EditTopicModal from "../../components/organism/EditTopicModal";
-import {isTopicScanned, Topic} from "../../entities/Topic";
-import {paths} from "../../configuration";
-import useFilters from "../../hooks/useFilters";
-import TopicsLateralMenu from "../../components/organism/TopicsLateralMenu";
-import {useRouter} from "next/router";
-import CreateFirstTopicHero from "../../components/organism/CreateFirstTopicHero";
-import Drawer from "../../components/molecules/Drawer";
-import TopTitle from "../../components/molecules/TopTitle";
-import Button from "../../components/atoms/Button";
-import {MenuIcon, OptionsIcon} from "../../components/atoms/Icons";
-import {LATERAL_TOPIC_MENU_ID} from "../../components/organism/LateralTopicList";
-import TopicDetails, {TOPIC_DETAILS_ID} from "../../components/organism/TopicDetails";
+import useSubscriptions from "../../../../hooks/useSubscriptions";
+import useProfile from "../../../../hooks/useProfile";
+import useTopicItems from "../../../../hooks/useTopicItems";
+import TopicVideoCardGrid from "../../../../components/organism/TopicVideoCardGrid";
+import NewTopicModal from "../../../../components/organism/NewTopicModal";
+import {useTopics} from "../../../../hooks/useTopics";
+import EditTopicModal from "../../../../components/organism/EditTopicModal";
+import {isTopicScanned, Topic} from "../../../../entities/Topic";
+import {paths} from "../../../../configuration";
+import useFilters from "../../../../hooks/useFilters";
+import TopicsLateralMenu from "../../../../components/organism/TopicsLateralMenu";
+import {useParams, useRouter} from "next/navigation";
+import CreateFirstTopicHero from "../../../../components/organism/CreateFirstTopicHero";
+import Drawer from "../../../../components/molecules/Drawer";
+import TopTitle from "../../../../components/molecules/TopTitle";
+import Button from "../../../../components/atoms/Button";
+import {MenuIcon, OptionsIcon} from "../../../../components/atoms/Icons";
+import {LATERAL_TOPIC_MENU_ID} from "../../../../components/organism/LateralTopicList";
+import TopicDetails, {TOPIC_DETAILS_ID} from "../../../../components/organism/TopicDetails";
 
 const REFRESH_TOPICS_INTERVAL = 30000;
 
 const Home: NextPage = () => {
   const router = useRouter()
+  const pathParams = useParams<{ id: string[] | string }>();
 
-  const topicIdFromQuery: string | undefined = router.query.id ? router.query.id[0] as string : undefined;
+  const topicIdFromQuery: string | undefined = pathParams.id ? (Array.isArray(pathParams.id) ? pathParams.id[0] : pathParams.id) : undefined;
 
   const {filters, setFilters, resetFilters} = useFilters();
   const {profile, profileIsLoading} = useProfile();
@@ -96,7 +98,7 @@ const Home: NextPage = () => {
           topics={topics}
           selectedTopic={selectedTopic}
           subscriptions={subscriptions}
-          profile={profile!}
+          profile={profile}
           closeMenu={() => setLeftSidebarOpen(false)}
         />
         <Drawer id={TOPIC_DETAILS_ID} right={true} alwaysOpenOnDesktop={false} sidebarIsOpen={rightSidebarIsOpen}

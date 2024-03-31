@@ -1,6 +1,6 @@
 import {MenuItem} from "../atoms/MenuItem";
 import {Subscription} from "../../entities/Subscription";
-import {useRouter} from "next/router";
+import {useRouter} from "next/navigation";
 import {paths} from "../../configuration";
 import {scrollToDrawerTop} from "../../utilities/scrollToDrawerTop";
 import Menu from "../atoms/Menu";

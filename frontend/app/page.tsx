@@ -1,18 +1,22 @@
-import type {NextPage} from "next";
-import useProfile from "../hooks/useProfile";
-import {useRouter} from "next/router";
-import {useEffect} from "react";
-import {paths} from "../configuration";
-import Head from "next/head";
+'use client';
 
-const ProfilePage: NextPage = () => {
+import type {NextPage} from "next";
+import Head from "next/head";
+import React, {useEffect} from "react";
+import useProfile from "../hooks/useProfile";
+import {paths} from "../configuration";
+import {useRouter} from "next/navigation";
+
+const Home: NextPage = () => {
   const router = useRouter();
   const {profile, profileIsLoading} = useProfile();
 
   useEffect(() => {
     if (!profileIsLoading) {
-      if (!profile) {
-        router.push(paths.HOME)
+      if (profile) {
+        router.push(paths.TOPICS)
+      } else {
+        router.push(paths.LOGIN)
       }
     }
   }, [profileIsLoading, router, profile]);
@@ -24,10 +28,8 @@ const ProfilePage: NextPage = () => {
         <meta name="description" content="Linkurator"/>
         <link rel="icon" href="/logo_v1_fav.png"/>
       </Head>
-      <h1>Profile</h1>
-      <p>Profile page</p>
     </div>
   );
 };
 
-export default ProfilePage;
+export default Home;

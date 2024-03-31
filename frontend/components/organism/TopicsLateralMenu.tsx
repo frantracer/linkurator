@@ -18,7 +18,7 @@ import ALink from "../atoms/ALink";
 import FlexRow from "../atoms/FlexRow";
 
 type TopicLateralMenuProps = {
-  profile: Profile;
+  profile: Profile | undefined;
   topics: Topic[];
   selectedTopic: Topic | undefined;
   subscriptions: Subscription[];

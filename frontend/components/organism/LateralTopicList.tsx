@@ -2,7 +2,7 @@ import {MenuItem} from "../atoms/MenuItem";
 import React from "react";
 import {Topic} from "../../entities/Topic";
 import {paths} from "../../configuration";
-import {useRouter} from "next/router";
+import {useRouter} from "next/navigation";
 import {scrollToDrawerTop} from "../../utilities/scrollToDrawerTop";
 import Menu from "../atoms/Menu";
 import Tag from "../atoms/Tag";

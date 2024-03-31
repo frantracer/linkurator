@@ -1,23 +1,26 @@
-import {useEffect, useState} from "react";
+import {useState} from "react";
 import {Topic} from "../entities/Topic";
 import {Subscription} from "../entities/Subscription";
 
 function useSubscriptionsToAdd(subscriptions: Subscription[], topic: Topic | undefined = undefined):
-  [Subscription[], (subscription: Subscription) => void, (subscription: Subscription) => void, () => void, (subscriptions: Subscription[]) => void] {
-  const [subscriptionsToAdd, setSubscriptionsToAdd] = useState<Subscription[]>(subscriptions);
-
-  useEffect(() => {
-    if (topic) {
-      let filtered_subscriptions: Subscription[] = []
-      for (let i = 0; i < topic.subscriptions_ids.length; i++) {
-        const subscription = subscriptions.find(s => s.uuid === topic.subscriptions_ids[i]);
-        if (subscription) {
-          filtered_subscriptions.push(subscription);
-        }
+  [
+    Subscription[],
+    (subscription: Subscription) => void,
+    (subscription: Subscription) => void,
+    () => void,
+    (subscriptions: Subscription[]) => void
+  ] {
+  const filteredSubscriptions: Subscription[] = []
+  if (topic) {
+    for (let i = 0; i < topic.subscriptions_ids.length; i++) {
+      const subscription = subscriptions.find(s => s.uuid === topic.subscriptions_ids[i]);
+      if (subscription) {
+        filteredSubscriptions.push(subscription);
       }
-      setSubscriptionsToAdd(filtered_subscriptions);
     }
-  }, [subscriptions, topic]);
+  }
+
+  const [subscriptionsToAdd, setSubscriptionsToAdd] = useState<Subscription[]>(filteredSubscriptions);
 
   const addSubscription = (subscription: Subscription) => {
     setSubscriptionsToAdd([...subscriptionsToAdd, subscription]);
