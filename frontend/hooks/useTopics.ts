@@ -1,7 +1,7 @@
-import {useEffect, useState} from "react";
-import {Profile} from "./useProfile";
-import {Topic, topicSorting} from "../entities/Topic";
-import {getTopics} from "../services/topicService";
+import { useQuery } from '@tanstack/react-query';
+import { Profile } from './useProfile';
+import { Topic, topicSorting } from '../entities/Topic';
+import { getTopics } from '../services/topicService';
 
 type UseTopics = {
   topics: Topic[];
@@ -9,39 +9,29 @@ type UseTopics = {
   refreshTopics: () => void;
 }
 
-type TopicsState = {
-  topics: Topic[];
-  topicsAreLoading: boolean;
-}
+const fetchTopics = async (profile: Profile | undefined) => {
+  if (profile) {
+    const topics = await getTopics();
+    topics.sort(topicSorting);
+    return topics;
+  } else {
+    return [];
+  }
+};
 
 export function useTopics(profile: Profile | undefined, profileIsLoading: boolean): UseTopics {
-  const [topics, setTopics] = useState<TopicsState>({topics: [], topicsAreLoading: true});
+  const { data: topics = [], isLoading, refetch: refreshTopics } = useQuery({
+    queryKey: ['topics', profile, profileIsLoading],
+    queryFn: () => fetchTopics(profile),
+    enabled: !!profile,
+    staleTime: 60000,
+  });
 
-  function refreshTopics(profile: Profile | undefined) {
-    if (profile) {
-      getTopics()
-        .then(topics => {
-          topics.sort(topicSorting)
-          setTopics({topics: topics, topicsAreLoading: false})
-        })
-        .catch(error => console.error("Error retrieving subscriptions", error));
-    } else {
-      if (profileIsLoading) {
-        setTopics({topics: [], topicsAreLoading: true});
-      } else {
-        setTopics({topics: [], topicsAreLoading: false});
-      }
-    }
-  }
-
-  useEffect(() => {
-    setTopics({topics: [], topicsAreLoading: true})
-    refreshTopics(profile);
-  }, [profile]);
+  const topicsAreLoading = profileIsLoading || isLoading;
 
   return {
-    topics: topics.topics,
-    topicsAreLoading: topics.topicsAreLoading,
-    refreshTopics: () => refreshTopics(profile)
+    topics,
+    topicsAreLoading,
+    refreshTopics,
   };
 }

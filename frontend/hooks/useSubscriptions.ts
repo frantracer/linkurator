@@ -23,6 +23,7 @@ const useSubscriptions = (profile: Profile | undefined): subscriptionState => {
     queryKey: ['subscriptions'],
     queryFn: fetchSubscriptions,
     enabled: !!profile,
+    staleTime: 60000,
   });
 
   return {

@@ -10,13 +10,18 @@ export type Profile = {
 
 const fetchProfile = async () => {
   const { data } = await axios.get<Profile | undefined>(configuration.PROFILE_URL, { withCredentials: true });
-  return data;
+  return {
+    first_name: data?.first_name || '',
+    last_name: data?.last_name || '',
+    avatar_url: data?.avatar_url || ''
+  };
 };
 
 const useProfile = () => {
   const { data: profile, isLoading, error } = useQuery({
     queryKey: ['profile'],
-    queryFn: fetchProfile
+    queryFn: fetchProfile,
+    staleTime: 60000,
   });
 
   if (error) {
