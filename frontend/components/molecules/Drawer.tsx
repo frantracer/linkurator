@@ -1,13 +1,10 @@
-import React, {useEffect} from "react";
-import {hideLateralMenu, showLateralMenu} from "../../utilities/hideLateralMenu";
+import React from "react";
+import {hideLateralMenu, isLateralMenuOpen, showLateralMenu} from "../../utilities/hideLateralMenu";
 
 const SWIPE_DELTA = 100;
 
 type DrawerProps = {
   id: string,
-  sidebarIsOpen: boolean,
-  openSidebar: () => void,
-  closeSidebar: () => void,
   right?: boolean,
   alwaysOpenOnDesktop?: boolean,
   children?: React.ReactNode,
@@ -16,9 +13,6 @@ type DrawerProps = {
 const Drawer = (
   {
     id,
-    sidebarIsOpen,
-    openSidebar,
-    closeSidebar,
     right = false,
     alwaysOpenOnDesktop = true,
     children
@@ -33,6 +27,10 @@ const Drawer = (
 
   const handleTouchStart = (event: React.TouchEvent) => {
     setTouchStartX(event.touches[0].clientX);
+    const sidebarIsOpen = isLateralMenuOpen(id);
+    if (sidebarIsOpen) {
+      event.stopPropagation();
+    }
   }
 
   const handleTouchEnd = (event: React.TouchEvent) => {
@@ -42,51 +40,42 @@ const Drawer = (
     const swipeLeft = touchEndX - touchStartX < 0;
     const menuIsRight = right;
     const menuIsLeft = !right;
+    const sidebarIsOpen = isLateralMenuOpen(id);
 
     if (delta > SWIPE_DELTA) {
       if (sidebarIsOpen && (menuIsRight && swipeRight || menuIsLeft && swipeLeft)) {
-        closeSidebar();
+        hideLateralMenu(id);
         event.stopPropagation();
       } else if (!sidebarIsOpen && (menuIsRight && swipeLeft || menuIsLeft && swipeRight)) {
-        openSidebar();
+        showLateralMenu(id);
         event.stopPropagation();
       }
     }
   }
 
   const handleClickOrTouchBackground = (event: React.MouseEvent | React.TouchEvent) => {
+    const sidebarIsOpen = isLateralMenuOpen(id);
     if (sidebarIsOpen) {
-      closeSidebar();
+      hideLateralMenu(id);
       event.stopPropagation();
     }
   }
 
-  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.checked) {
-      openSidebar();
-    } else {
-      closeSidebar();
-    }
-  }
-
-  useEffect (() => {
-    if (sidebarIsOpen) {
-      showLateralMenu(id);
-    } else {
-      hideLateralMenu(id);
-    }
-  }, [id, sidebarIsOpen]);
-
   return (
-    <div className={`drawer w-full h-full ${sideContentClass} ${alwaysOpenClass}`} onTouchStart={handleTouchStart}
-         onTouchEnd={handleTouchEnd}>
-      <input id={id} type="checkbox" className="drawer-toggle" onChange={handleInputChange}/>
-      <div className="drawer-content flex flex-col z-10 w-full h-full overflow-auto">
+    <div className={`drawer w-full h-full ${sideContentClass} ${alwaysOpenClass}`}>
+      <input id={id} type="checkbox" className="drawer-toggle"/>
+      <div className="drawer-content flex flex-col z-10 w-full h-full overflow-auto"
+           onTouchStart={handleTouchStart}
+           onTouchEndCapture={handleTouchEnd}>
         {mainContent}
       </div>
-      <div className="drawer-side z-20">
+      <div className="drawer-side z-20"
+           onTouchStartCapture={handleTouchStart}
+           onTouchEndCapture={handleTouchEnd}>
         <label aria-label="close sidebar" className="drawer-overlay"
-               onTouchStart={handleClickOrTouchBackground} onClick={handleClickOrTouchBackground}/>
+               onTouchStartCapture={handleTouchStart}
+               onTouchEndCapture={handleTouchEnd}
+               onClick={handleClickOrTouchBackground}/>
         {sideContent}
       </div>
     </div>

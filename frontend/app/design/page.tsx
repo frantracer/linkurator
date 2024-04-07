@@ -51,6 +51,7 @@ import Menu from "../../components/atoms/Menu";
 import {MenuItem} from "../../components/atoms/MenuItem";
 import Sidebar from "../../components/atoms/Sidebar";
 import Divider from "../../components/atoms/Divider";
+import {hideLateralMenu, showLateralMenu} from "../../utilities/hideLateralMenu";
 
 const SIDE_BAR_NAME = "main-menu";
 const ICONS_REF = "icons";
@@ -334,15 +335,12 @@ const MainContent = () => {
 }
 
 const DesignSystemPage = () => {
-  const [sidebarIsOpen, setSidebarOpen] = React.useState<boolean>(false);
-
   return (
     <div className="h-screen w-screen">
-      <Drawer id={SIDE_BAR_NAME} sidebarIsOpen={sidebarIsOpen}
-              openSidebar={() => setSidebarOpen(true)} closeSidebar={() => setSidebarOpen(false)}>
-        <LateralMenu closeMenu={() => setSidebarOpen(false)}/>
+      <Drawer id={SIDE_BAR_NAME}>
+        <LateralMenu closeMenu={() => hideLateralMenu(SIDE_BAR_NAME)}/>
         <TopTitle>
-          <Button clickAction={() => setSidebarOpen(true)} showOnlyOnMobile={true}>
+          <Button clickAction={() => showLateralMenu(SIDE_BAR_NAME)} showOnlyOnMobile={true}>
             <MenuIcon/>
           </Button>
           <h1 className="text-2xl font-bold whitespace-nowrap truncate text-center w-full">

@@ -11,3 +11,9 @@ export function showLateralMenu(menuId: string) {
     lateralMenu.checked = true;
   }
 }
+
+
+export function isLateralMenuOpen(menuId: string): boolean {
+  const lateralMenu = <HTMLInputElement>document.getElementById(menuId);
+  return lateralMenu ? lateralMenu.checked : false;
+}

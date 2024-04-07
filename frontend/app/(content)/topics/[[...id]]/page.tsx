@@ -1,7 +1,6 @@
 'use client';
 
 import type {NextPage} from "next";
-import Head from "next/head";
 import React, {useEffect} from "react";
 import useSubscriptions from "../../../../hooks/useSubscriptions";
 import useProfile from "../../../../hooks/useProfile";
@@ -13,15 +12,15 @@ import EditTopicModal from "../../../../components/organism/EditTopicModal";
 import {isTopicScanned, Topic} from "../../../../entities/Topic";
 import {paths} from "../../../../configuration";
 import useFilters from "../../../../hooks/useFilters";
-import TopicsLateralMenu from "../../../../components/organism/TopicsLateralMenu";
 import {useParams, useRouter} from "next/navigation";
 import CreateFirstTopicHero from "../../../../components/organism/CreateFirstTopicHero";
 import Drawer from "../../../../components/molecules/Drawer";
 import TopTitle from "../../../../components/molecules/TopTitle";
 import Button from "../../../../components/atoms/Button";
 import {MenuIcon, OptionsIcon} from "../../../../components/atoms/Icons";
-import {LATERAL_TOPIC_MENU_ID} from "../../../../components/organism/LateralTopicList";
 import TopicDetails, {TOPIC_DETAILS_ID} from "../../../../components/organism/TopicDetails";
+import {hideLateralMenu, showLateralMenu} from "../../../../utilities/hideLateralMenu";
+import {LATERAL_NAVIGATION_MENU_ID} from "../../../../components/organism/LateralNavigationMenu";
 
 const REFRESH_TOPICS_INTERVAL = 30000;
 
@@ -43,9 +42,6 @@ const Home: NextPage = () => {
     refreshTopicItems,
     fetchMoreItems
   } = useTopicItems(topicIdFromQuery, filters);
-  const [leftSidebarIsOpen, setLeftSidebarOpen] = React.useState<boolean>(false);
-  const [rightSidebarIsOpen, setRightSidebarOpen] = React.useState<boolean>(false);
-
   const selectedTopic: Topic | undefined = topics.find(t => t.uuid === topicIdFromQuery);
   const topicName = selectedTopic ? selectedTopic.name : "";
 
@@ -86,67 +82,49 @@ const Home: NextPage = () => {
   }, [subscriptions, topicIdFromQuery, router, profile, profileIsLoading, topics, refreshTopicItems, isTopicBeingScanned]);
 
   return (
-    <div className="h-screen w-screen">
-      <Head>
-        <title>Linkurator</title>
-        <meta name="description" content="Linkurator"/>
-        <link rel="icon" href="/logo_v1_fav.png"/>
-      </Head>
-      <Drawer id={LATERAL_TOPIC_MENU_ID} sidebarIsOpen={leftSidebarIsOpen}
-              openSidebar={() => setLeftSidebarOpen(true)} closeSidebar={() => setLeftSidebarOpen(false)}>
-        <TopicsLateralMenu
-          topics={topics}
-          selectedTopic={selectedTopic}
-          subscriptions={subscriptions}
-          profile={profile}
-          closeMenu={() => setLeftSidebarOpen(false)}
-        />
-        <Drawer id={TOPIC_DETAILS_ID} right={true} alwaysOpenOnDesktop={false} sidebarIsOpen={rightSidebarIsOpen}
-                openSidebar={() => setRightSidebarOpen(true)} closeSidebar={() => setRightSidebarOpen(false)}>
-          <TopicDetails topic={selectedTopic}
-                        subscriptions={subscriptions}
-                        filters={filters}
-                        setFilters={setFilters}
-                        resetFilters={resetFilters}
-                        refreshTopics={refreshTopics}
-                        closeSidebar={() => setRightSidebarOpen(false)}
-          />
-          <TopTitle>
-            <Button clickAction={() => setLeftSidebarOpen(true)} showOnlyOnMobile={true}>
-              <MenuIcon/>
-            </Button>
-            <h1 className="text-2xl font-bold whitespace-nowrap truncate text-center w-full">
-              {topicName}
-            </h1>
-            <Button clickAction={() => setRightSidebarOpen(true)}>
-              <OptionsIcon/>
-            </Button>
-          </TopTitle>
-          {topics.length === 0 && !topicsAreLoading &&
-              <CreateFirstTopicHero/>
-          }
-          {topics.length > 0 &&
-              <TopicVideoCardGrid topic={selectedTopic}
-                                  items={topicItems}
-                                  fetchMoreItems={fetchMoreItems}
-                                  refreshItem={refreshTopicItem}
-                                  subscriptions={subscriptions}
-                                  filters={filters}
-                                  isLoading={isLoading}
-                                  topicIsFinished={isFinished}
-                                  handleScroll={handleGridScroll}
-                                  isTopicBeingScanned={isTopicBeingScanned}
-              />
-          }
-          <NewTopicModal refreshTopics={refreshTopics} subscriptions={subscriptions}/>
-          {selectedTopic &&
-              <EditTopicModal refreshTopics={refreshTopics}
+    <Drawer id={TOPIC_DETAILS_ID} right={true} alwaysOpenOnDesktop={false}>
+      <TopicDetails topic={selectedTopic}
+                    subscriptions={subscriptions}
+                    filters={filters}
+                    setFilters={setFilters}
+                    resetFilters={resetFilters}
+                    refreshTopics={refreshTopics}
+                    closeSidebar={() => hideLateralMenu(TOPIC_DETAILS_ID)}
+      />
+      <TopTitle>
+        <Button clickAction={() => showLateralMenu(LATERAL_NAVIGATION_MENU_ID)} showOnlyOnMobile={true}>
+          <MenuIcon/>
+        </Button>
+        <h1 className="text-2xl font-bold whitespace-nowrap truncate text-center w-full">
+          {topicName}
+        </h1>
+        <Button clickAction={() => showLateralMenu(TOPIC_DETAILS_ID)}>
+          <OptionsIcon/>
+        </Button>
+      </TopTitle>
+      {topics.length === 0 && !topicsAreLoading &&
+          <CreateFirstTopicHero/>
+      }
+      {topics.length > 0 &&
+          <TopicVideoCardGrid topic={selectedTopic}
+                              items={topicItems}
+                              fetchMoreItems={fetchMoreItems}
+                              refreshItem={refreshTopicItem}
                               subscriptions={subscriptions}
-                              topic={selectedTopic}
-                              refreshTopicItems={refreshTopicItems}/>}
-        </Drawer>
-      </Drawer>
-    </div>
+                              filters={filters}
+                              isLoading={isLoading}
+                              topicIsFinished={isFinished}
+                              handleScroll={handleGridScroll}
+                              isTopicBeingScanned={isTopicBeingScanned}
+          />
+      }
+      <NewTopicModal refreshTopics={refreshTopics} subscriptions={subscriptions}/>
+      {selectedTopic &&
+          <EditTopicModal refreshTopics={refreshTopics}
+                          subscriptions={subscriptions}
+                          topic={selectedTopic}
+                          refreshTopicItems={refreshTopicItems}/>}
+    </Drawer>
   );
 };
 

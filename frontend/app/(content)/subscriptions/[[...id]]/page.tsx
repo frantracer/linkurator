@@ -1,7 +1,6 @@
 'use client';
 
 import type {NextPage} from "next";
-import Head from "next/head";
 import React, {useEffect} from "react";
 import useSubscriptions from "../../../../hooks/useSubscriptions";
 import useSubscriptionItems from "../../../../hooks/useSubscriptionItems";
@@ -11,7 +10,6 @@ import NewTopicModal from "../../../../components/organism/NewTopicModal";
 import {useTopics} from "../../../../hooks/useTopics";
 import useFilters from "../../../../hooks/useFilters";
 import {useParams, useRouter} from "next/navigation";
-import SubscriptionsLateralMenu from "../../../../components/organism/SubscriptionsLateralMenu";
 import {paths} from "../../../../configuration";
 import Drawer from "../../../../components/molecules/Drawer";
 import TopTitle from "../../../../components/molecules/TopTitle";
@@ -21,13 +19,14 @@ import Avatar from "../../../../components/atoms/Avatar";
 import SubscriptionDetails, {SUBSCRIPTION_DETAILS_ID} from "../../../../components/organism/SubscriptionDetails";
 import {refreshSubscription} from "../../../../services/subscriptionService";
 import AssignTopicModal from "../../../../components/organism/AssignTopicModal";
-import {LATERAL_SUBSCRIPTION_MENU_ID} from "../../../../components/organism/LateralSubscriptionList";
+import {showLateralMenu} from "../../../../utilities/hideLateralMenu";
+import {LATERAL_NAVIGATION_MENU_ID} from "../../../../components/organism/LateralNavigationMenu";
 
 const REFRESH_SUBSCRIPTIONS_INTERVAL = 30000;
 
 const SubscriptionsPage: NextPage = () => {
   const router = useRouter()
-  const pathParams = useParams<{id: string[] | string}>();
+  const pathParams = useParams<{ id: string[] | string }>();
 
   const selectedSubscriptionId: string | undefined = pathParams.id ? (Array.isArray(pathParams.id) ? pathParams.id[0] : pathParams.id) : undefined;
 
@@ -35,8 +34,6 @@ const SubscriptionsPage: NextPage = () => {
   const {profile, profileIsLoading} = useProfile();
   const {subscriptions, refreshSubscriptions} = useSubscriptions(profile);
   const {topics, refreshTopics} = useTopics(profile, profileIsLoading);
-  const [leftSidebarIsOpen, setLeftSidebarOpen] = React.useState<boolean>(false);
-  const [rightSidebarIsOpen, setRightSidebarOpen] = React.useState<boolean>(false);
 
   const selectedSubscription = subscriptions.find(subscription => subscription.uuid === selectedSubscriptionId);
 
@@ -86,65 +83,46 @@ const SubscriptionsPage: NextPage = () => {
   }, [profileIsLoading, selectedSubscription, profile, subscriptions, router, refreshSubscriptions]);
 
   return (
-    <div className="h-screen w-screen">
-      <Head>
-        <title>Linkurator</title>
-        <meta name="description" content="Linkurator"/>
-        <link rel="icon" href="/logo_v1_fav.png"/>
-      </Head>
-      <Drawer id={LATERAL_SUBSCRIPTION_MENU_ID} sidebarIsOpen={leftSidebarIsOpen}
-              openSidebar={() => setLeftSidebarOpen(true)} closeSidebar={() => setLeftSidebarOpen(false)}>
-        <SubscriptionsLateralMenu
-          subscriptions={subscriptions}
-          topics={topics}
-          selectedSubscription={selectedSubscription}
-          profile={profile}
-          closeMenu={() => setLeftSidebarOpen(false)}
-        />
-        <Drawer id={SUBSCRIPTION_DETAILS_ID} right={true} alwaysOpenOnDesktop={false} sidebarIsOpen={rightSidebarIsOpen}
-                openSidebar={() => setRightSidebarOpen(true)} closeSidebar={() => setRightSidebarOpen(false)}>
-          <SubscriptionDetails subscription={selectedSubscription}
-                               topics={topics}
-                               filters={filters}
-                               setFilters={setFilters}
-                               resetFilters={resetFilters}
-                               refreshSubscription={() => refreshSubscription(selectedSubscriptionId!)}/>
-          <TopTitle>
-            <Button clickAction={() => setLeftSidebarOpen(true)} showOnlyOnMobile={true}>
-              <MenuIcon/>
-            </Button>
-            <div className="flex flex-row gap-2 items-center justify-center w-full overflow-hidden hover:cursor-pointer"
-                 onClick={openSubscriptionUrl}>
-              {subscriptionThumbnail && <Avatar src={subscriptionThumbnail} alt={subscriptionName}/>}
-              <h1 className="text-2xl font-bold whitespace-nowrap truncate">
-                {subscriptionName}
-              </h1>
-            </div>
-            <Button clickAction={() => setRightSidebarOpen(true)}>
-              <OptionsIcon/>
-            </Button>
-          </TopTitle>
-          <SubscriptionVideoCardGrid
-            refreshItem={refreshSubscriptionItem}
-            fetchMoreItems={fetchMoreItems}
-            topics={topics}
-            subscription={selectedSubscription}
-            items={subscriptionsItems}
-            filters={filters}
-            isLoading={isLoading}
-            isFinished={isFinished}
-            handleScroll={handleGridScroll}
-          />
-          <NewTopicModal refreshTopics={refreshTopics} subscriptions={subscriptions}/>
-          {selectedSubscription &&
-              <AssignTopicModal topics={topics}
-                                subscription={selectedSubscription}
-                                refreshTopics={refreshTopics}/>
-          }
-        </Drawer>
-      </Drawer>
-    </div>
-
+    <Drawer id={SUBSCRIPTION_DETAILS_ID} right={true} alwaysOpenOnDesktop={false}>
+      <SubscriptionDetails subscription={selectedSubscription}
+                           topics={topics}
+                           filters={filters}
+                           setFilters={setFilters}
+                           resetFilters={resetFilters}
+                           refreshSubscription={() => refreshSubscription(selectedSubscriptionId!)}/>
+      <TopTitle>
+        <Button clickAction={() => showLateralMenu(LATERAL_NAVIGATION_MENU_ID)} showOnlyOnMobile={true}>
+          <MenuIcon/>
+        </Button>
+        <div className="flex flex-row gap-2 items-center justify-center w-full overflow-hidden hover:cursor-pointer"
+             onClick={openSubscriptionUrl}>
+          {subscriptionThumbnail && <Avatar src={subscriptionThumbnail} alt={subscriptionName}/>}
+          <h1 className="text-2xl font-bold whitespace-nowrap truncate">
+            {subscriptionName}
+          </h1>
+        </div>
+        <Button clickAction={() => showLateralMenu(SUBSCRIPTION_DETAILS_ID)}>
+          <OptionsIcon/>
+        </Button>
+      </TopTitle>
+      <SubscriptionVideoCardGrid
+        refreshItem={refreshSubscriptionItem}
+        fetchMoreItems={fetchMoreItems}
+        topics={topics}
+        subscription={selectedSubscription}
+        items={subscriptionsItems}
+        filters={filters}
+        isLoading={isLoading}
+        isFinished={isFinished}
+        handleScroll={handleGridScroll}
+      />
+      <NewTopicModal refreshTopics={refreshTopics} subscriptions={subscriptions}/>
+      {selectedSubscription &&
+          <AssignTopicModal topics={topics}
+                            subscription={selectedSubscription}
+                            refreshTopics={refreshTopics}/>
+      }
+    </Drawer>
   );
 };
 
