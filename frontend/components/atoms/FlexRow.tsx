@@ -15,14 +15,14 @@ const FlexRow = (
 ) => {
   const positionClasses = {
     "start": "justify-start",
-    "center": "justify-between",
+    "center": "justify-center",
     "end": "justify-end"
   };
 
   const wrapClasses = wrap ? "flex-wrap" : "";
 
   return (
-    <div className={`flex flex-row gap-2 items-center ${wrapClasses} ${positionClasses[position]}`}>
+    <div className={`flex flex-row gap-2 items-center w-full ${wrapClasses} ${positionClasses[position]}`}>
       {children}
     </div>
   )

@@ -37,11 +37,10 @@ const ProfilePage: NextPage = () => {
         <Button clickAction={() => showLateralMenu(LATERAL_NAVIGATION_MENU_ID)} showOnlyOnMobile={true}>
           <MenuIcon/>
         </Button>
-        <FlexRow>
+        <FlexRow position={'center'}>
           {avatarUrl !== "" && <Avatar src={avatarUrl} alt={userName}></Avatar>}
           <h1>{userName}</h1>
         </FlexRow>
-        <div></div>
       </TopTitle>
       <div className={"m-8"}>
         <FlexColumn>
