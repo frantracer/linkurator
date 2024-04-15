@@ -81,7 +81,10 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
           <ALink href={'/'}>
             <LogoTitle/>
           </ALink>
-          <ALink href={'/profile'} onClick={() => setCurrentPage('profile')}>
+          <ALink href={'/profile'} onClick={() => {
+            setCurrentPage('profile');
+            closeMenu()
+          }}>
             <Avatar src={profileUrl} alt={profileName}/>
           </ALink>
         </FlexRow>
