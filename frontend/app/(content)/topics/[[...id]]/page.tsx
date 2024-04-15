@@ -6,7 +6,6 @@ import useSubscriptions from "../../../../hooks/useSubscriptions";
 import useProfile from "../../../../hooks/useProfile";
 import useTopicItems from "../../../../hooks/useTopicItems";
 import TopicVideoCardGrid from "../../../../components/organism/TopicVideoCardGrid";
-import NewTopicModal from "../../../../components/organism/NewTopicModal";
 import {useTopics} from "../../../../hooks/useTopics";
 import EditTopicModal from "../../../../components/organism/EditTopicModal";
 import {isTopicScanned, Topic} from "../../../../entities/Topic";
@@ -118,7 +117,6 @@ const Home: NextPage = () => {
                               isTopicBeingScanned={isTopicBeingScanned}
           />
       }
-      <NewTopicModal refreshTopics={refreshTopics} subscriptions={subscriptions}/>
       {selectedTopic &&
           <EditTopicModal refreshTopics={refreshTopics}
                           subscriptions={subscriptions}

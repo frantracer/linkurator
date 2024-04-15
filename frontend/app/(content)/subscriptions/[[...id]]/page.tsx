@@ -6,7 +6,6 @@ import useSubscriptions from "../../../../hooks/useSubscriptions";
 import useSubscriptionItems from "../../../../hooks/useSubscriptionItems";
 import useProfile from "../../../../hooks/useProfile";
 import SubscriptionVideoCardGrid from "../../../../components/organism/SubscriptionVideoCardGrid";
-import NewTopicModal from "../../../../components/organism/NewTopicModal";
 import {useTopics} from "../../../../hooks/useTopics";
 import useFilters from "../../../../hooks/useFilters";
 import {useParams, useRouter} from "next/navigation";
@@ -116,7 +115,6 @@ const SubscriptionsPage: NextPage = () => {
         isFinished={isFinished}
         handleScroll={handleGridScroll}
       />
-      <NewTopicModal refreshTopics={refreshTopics} subscriptions={subscriptions}/>
       {selectedSubscription &&
           <AssignTopicModal topics={topics}
                             subscription={selectedSubscription}

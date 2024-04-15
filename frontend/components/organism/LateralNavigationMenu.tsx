@@ -14,7 +14,7 @@ import SearchBar from "../molecules/SearchBar";
 import LateralSubscriptionList from "./LateralSubscriptionList";
 import LateralTopicList from "./LateralTopicList";
 import {openModal} from "../../utilities/modalAction";
-import {NewTopicModalId} from "./NewTopicModal";
+import NewTopicModal, {NewTopicModalId} from "./NewTopicModal";
 import Button from "../atoms/Button";
 import Avatar from "../atoms/Avatar";
 import ALink from "../atoms/ALink";
@@ -55,7 +55,7 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
   const [searchValue, setSearchValue] = useState<string>('');
   const {profile, profileIsLoading} = useProfile();
   const {subscriptions} = useSubscriptions(profile);
-  const {topics} = useTopics(profile, profileIsLoading);
+  const {topics, refreshTopics} = useTopics(profile, profileIsLoading);
   const [currentPage, setCurrentPage] = useState<CurrentPage>(initialPage);
 
   const selectedSubscription = subscriptions.find(subscription => subscription.uuid === selectedId);
@@ -130,6 +130,7 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
                 selectedTopic={selectedTopic}/>
         }
       </Sidebar>
+      <NewTopicModal refreshTopics={refreshTopics} subscriptions={subscriptions}/>
       {children}
     </Drawer>
   )
