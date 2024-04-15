@@ -7,10 +7,12 @@ export type Subscription = {
 };
 
 export function subscriptionSorting(s1: Subscription, s2: Subscription): number {
-  if (s1.name < s2.name) {
+  const name1 = s1.name.toLowerCase();
+  const name2 = s2.name.toLowerCase();
+  if (name1 < name2) {
     return -1;
   }
-  if (s1.name > s2.name) {
+  if (name1 > name2) {
     return 1;
   }
   return 0;

@@ -7,7 +7,7 @@ export type Topic = {
 };
 
 export function topicSorting(a: Topic, b: Topic): number {
-  return a.name.localeCompare(b.name);
+  return a.name.toLowerCase().localeCompare(b.name.toLowerCase());
 }
 
 export function isTopicScanned(topic: Topic, subscriptions: Subscription[]): boolean {
