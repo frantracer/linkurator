@@ -1,7 +1,6 @@
 'use client';
 
 import type {NextPage} from "next";
-import Head from "next/head";
 import React, {useEffect} from "react";
 import useProfile from "../../hooks/useProfile";
 import {configuration, paths} from "../../configuration";
@@ -29,7 +28,7 @@ const Home: NextPage = () => {
     )
   }
 
-  const body =
+  return (
     <main className="hero min-h-screen bg-base-200">
       <div className="hero-content text-center">
         <div className="max-w-md">
@@ -46,17 +45,7 @@ const Home: NextPage = () => {
         </div>
       </div>
     </main>
-
-  return (
-    <html>
-    <Head>
-      <title>Linkurator</title>
-      <meta name="description" content="Linkurator"/>
-      <link rel="icon" href="/logo_v1_fav.png"/>
-    </Head>
-    {body}
-    </html>
-  );
+  )
 };
 
 export default Home;

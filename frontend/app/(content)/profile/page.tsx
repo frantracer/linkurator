@@ -5,7 +5,6 @@ import useProfile from "../../../hooks/useProfile";
 import {useRouter} from "next/navigation";
 import React, {useEffect} from "react";
 import {configuration, paths} from "../../../configuration";
-import Head from "next/head";
 import Button from "../../../components/atoms/Button";
 
 const ProfilePage: NextPage = () => {
@@ -22,11 +21,6 @@ const ProfilePage: NextPage = () => {
 
   return (
     <div>
-      <Head>
-        <title>Linkurator</title>
-        <meta name="description" content="Linkurator"/>
-        <link rel="icon" href="/logo_v1_fav.png"/>
-      </Head>
       <h1>Profile</h1>
       <p>Profile page</p>
       <Button fitContent={true} clickAction={() => {
