@@ -6,6 +6,7 @@ export type Profile = {
   first_name: string
   last_name: string
   avatar_url: string
+  email: string
 }
 
 const fetchProfile = async () => {
@@ -13,7 +14,8 @@ const fetchProfile = async () => {
   return {
     first_name: data?.first_name || '',
     last_name: data?.last_name || '',
-    avatar_url: data?.avatar_url || ''
+    avatar_url: data?.avatar_url || '',
+    email: data?.email || '',
   };
 };
 
