@@ -49,7 +49,7 @@ const TopicVideoCardGrid = (props: TopicVideoCardGridProps) => {
     <main onScroll={props.handleScroll} className="flex flex-col w-full overflow-auto">
       {props.isTopicBeingScanned &&
           <div className="flex items-center justify-center h-screen">
-              <FlexRow position={"start"}>
+              <FlexRow position={"center"}>
                   <Spinner/>
                   <span>Fetching items for {props.topic?.name}...</span>
               </FlexRow>
@@ -60,17 +60,15 @@ const TopicVideoCardGrid = (props: TopicVideoCardGridProps) => {
         {cards}
       </div>
       {props.isLoading &&
-          <div className="flex justify-center items-center">
-              <FlexRow position={"start"}>
-                  <Spinner/>
-                  <span>Loading...</span>
-              </FlexRow>
-          </div>
+          <FlexRow position={"center"}>
+              <Spinner/>
+              <span>Loading...</span>
+          </FlexRow>
       }
       {props.topicIsFinished && !props.isLoading &&
-          <div className="flex justify-center items-center">
+          <FlexRow position={"center"}>
               <span>No more items to show</span>
-          </div>
+          </FlexRow>
       }
     </main>
   )

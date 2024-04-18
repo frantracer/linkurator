@@ -55,24 +55,22 @@ const SubscriptionVideoCardGrid = (props: SubscriptionVideoCardGridProps) => {
         }
         {props.subscription.isBeingScanned &&
             <div className="flex items-center justify-center h-screen">
-                <FlexRow position={"start"}>
+                <FlexRow position={"center"}>
                     <Spinner/>
                     <span>Fetching items for {props.subscription.name}...</span>
                 </FlexRow>
             </div>
         }
         {props.isLoading &&
-            <div className="flex justify-center items-center">
-                <FlexRow position={"start"}>
-                    <Spinner/>
-                    <span>Loading...</span>
-                </FlexRow>
-            </div>
+            <FlexRow position={"center"}>
+                <Spinner/>
+                <span>Loading...</span>
+            </FlexRow>
         }
         {props.isFinished && !props.isLoading &&
-            <div className="flex justify-center items-center">
+            <FlexRow position={"center"}>
                 <span>No more items to show</span>
-            </div>
+            </FlexRow>
         }
       </main>
   }
