@@ -9,7 +9,7 @@ export type Profile = {
   email: string
 }
 
-function getCookie(name: string): string | undefined {
+function getCookie(name) {
   const value = `; ${document.cookie}`;
   const parts = value.split(`; ${name}=`);
   if (parts.length === 2) {
@@ -25,7 +25,7 @@ function getCookie(name: string): string | undefined {
 const fetchProfile = async () => {
   const token = getCookie('token');
   if (!token) {
-    return undefined;
+    throw new Error('No token found');
   }
 
   try {
@@ -37,8 +37,7 @@ const fetchProfile = async () => {
       email: data?.email || '',
     };
   } catch (error) {
-    console.error("Error retrieving profile", error);
-    return undefined;
+    throw new Error(error);
   }
 };
 
@@ -51,6 +50,7 @@ const useProfile = () => {
 
   if (error) {
     console.error("Error retrieving profile", error);
+    return { profile: undefined, profileIsLoading: false };
   }
 
   return { profile, profileIsLoading: isLoading };
