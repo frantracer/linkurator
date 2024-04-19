@@ -9,25 +9,7 @@ export type Profile = {
   email: string
 }
 
-function getCookie(name) {
-  const value = `; ${document.cookie}`;
-  const parts = value.split(`; ${name}=`);
-  if (parts.length === 2) {
-    const cookie = parts.pop();
-    if (!cookie) {
-      return undefined;
-    }
-    return cookie.split(';').shift();
-  }
-  return undefined;
-}
-
 const fetchProfile = async () => {
-  const token = getCookie('token');
-  if (!token) {
-    throw new Error('No token found');
-  }
-
   try {
     const { data } = await axios.get<Profile | undefined>(configuration.PROFILE_URL, { withCredentials: true });
     return {
@@ -37,7 +19,7 @@ const fetchProfile = async () => {
       email: data?.email || '',
     };
   } catch (error) {
-    throw new Error(error);
+    return undefined;
   }
 };
 
@@ -50,7 +32,6 @@ const useProfile = () => {
 
   if (error) {
     console.error("Error retrieving profile", error);
-    return { profile: undefined, profileIsLoading: false };
   }
 
   return { profile, profileIsLoading: isLoading };
