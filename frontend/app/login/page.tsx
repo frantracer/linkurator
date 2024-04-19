@@ -6,6 +6,7 @@ import useProfile from "../../hooks/useProfile";
 import {configuration, paths} from "../../configuration";
 import {useRouter} from "next/navigation";
 import Button from "../../components/atoms/Button";
+import ALink from "../../components/atoms/ALink";
 
 const Home: NextPage = () => {
   const router = useRouter();
@@ -16,17 +17,6 @@ const Home: NextPage = () => {
       router.push(paths.TOPICS)
     }
   }, [router, profile, profileIsLoading]);
-
-  const LoginButton = () => {
-    return (
-      <Button
-        clickAction={() => {
-          window.open(configuration.LOGIN_URL, '_self')
-        }}>
-        Login
-      </Button>
-    )
-  }
 
   return (
     <main className="hero min-h-screen bg-base-200">
@@ -40,7 +30,9 @@ const Home: NextPage = () => {
           <p className="py-2">We do not use any algorithm to recommend you what to see.</p>
           <p className="py-2">We provide the tools you need to find the content you seek.</p>
           <div className="m-8">
-            <LoginButton/>
+            <ALink href={configuration.LOGIN_URL}>
+              <Button>Login</Button>
+            </ALink>
           </div>
         </div>
       </div>
