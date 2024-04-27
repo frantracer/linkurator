@@ -8,7 +8,7 @@ import useTopicItems from "../../../../hooks/useTopicItems";
 import TopicVideoCardGrid from "../../../../components/organism/TopicVideoCardGrid";
 import {useTopics} from "../../../../hooks/useTopics";
 import EditTopicModal from "../../../../components/organism/EditTopicModal";
-import {isTopicScanned, Topic} from "../../../../entities/Topic";
+import {isTopicScanned} from "../../../../entities/Topic";
 import {paths} from "../../../../configuration";
 import useFilters from "../../../../hooks/useFilters";
 import {useParams, useRouter} from "next/navigation";
@@ -20,6 +20,8 @@ import {MenuIcon, OptionsIcon} from "../../../../components/atoms/Icons";
 import TopicDetails, {TOPIC_DETAILS_ID} from "../../../../components/organism/TopicDetails";
 import {hideLateralMenu, showLateralMenu} from "../../../../utilities/hideLateralMenu";
 import {LATERAL_NAVIGATION_MENU_ID} from "../../../../components/organism/LateralNavigationMenu";
+import useTopicSubscriptions from "../../../../hooks/useTopicSubscriptions";
+import {useTopic} from "../../../../hooks/useTopic";
 
 const REFRESH_TOPICS_INTERVAL = 30000;
 
@@ -33,6 +35,8 @@ const Home: NextPage = () => {
   const {profile, profileIsLoading} = useProfile();
   const {subscriptions, refreshSubscriptions} = useSubscriptions(profile);
   const {topics, topicsAreLoading, refreshTopics} = useTopics(profile, profileIsLoading);
+  const {topic: selectedTopic, topicIsLoading, topicIsError} = useTopic(topicIdFromQuery, topics, topicsAreLoading)
+  const {topicSubscriptions} = useTopicSubscriptions(selectedTopic, subscriptions)
   const {
     topicItems,
     isLoading,
@@ -40,11 +44,13 @@ const Home: NextPage = () => {
     refreshTopicItem,
     refreshTopicItems,
     fetchMoreItems
-  } = useTopicItems(topicIdFromQuery, filters);
-  const selectedTopic: Topic | undefined = topics.find(t => t.uuid === topicIdFromQuery);
-  const topicName = selectedTopic ? selectedTopic.name : "";
+  } = useTopicItems(selectedTopic ? selectedTopic.uuid : undefined, filters);
 
+  const topicName = selectedTopic ? selectedTopic.name : "";
   const isTopicBeingScanned = selectedTopic ? !isTopicScanned(selectedTopic, subscriptions) : false
+  const isUserLogged = !!profile
+  const isUserTopic = !!(topics.find(topic => topic.uuid === topicIdFromQuery))
+  const isTopicEditable = isUserLogged && isUserTopic
 
   const handleGridScroll = (event: React.UIEvent<HTMLElement>) => {
     const element = event.currentTarget
@@ -57,18 +63,8 @@ const Home: NextPage = () => {
   }
 
   useEffect(() => {
-    if (!profileIsLoading) {
-      if (profile === undefined) {
-        router.push(paths.LOGIN)
-      } else {
-        if (topicIdFromQuery) {
-          if (topics.length > 0 && topics.find(t => t.uuid === topicIdFromQuery) === undefined) {
-            router.push(paths.TOPICS)
-          }
-        } else if (topics.length > 0) {
-          router.push(paths.TOPICS + "/" + topics[0].uuid)
-        }
-      }
+    if (!topicIdFromQuery && topics.length > 0) {
+      router.push(paths.TOPICS + "/" + topics[0].uuid)
     }
 
     if (isTopicBeingScanned) {
@@ -78,13 +74,15 @@ const Home: NextPage = () => {
       return () => clearTimeout(timer)
     }
 
-  }, [subscriptions, topicIdFromQuery, router, profile, profileIsLoading, topics, refreshTopicItems, isTopicBeingScanned]);
+  }, [subscriptions, topicIdFromQuery, router, profileIsLoading, topics, refreshTopicItems, isTopicBeingScanned]);
 
   return (
     <Drawer id={TOPIC_DETAILS_ID} right={true} alwaysOpenOnDesktop={false}>
       <TopicDetails topic={selectedTopic}
-                    subscriptions={subscriptions}
+                    subscriptions={topicSubscriptions}
                     filters={filters}
+                    editable={isTopicEditable}
+                    showInteractions={isUserLogged}
                     setFilters={setFilters}
                     resetFilters={resetFilters}
                     refreshTopics={refreshTopics}
@@ -101,20 +99,26 @@ const Home: NextPage = () => {
           <OptionsIcon/>
         </Button>
       </TopTitle>
-      {topics.length === 0 && !topicsAreLoading &&
+      {topicIsError && !topicIsLoading &&
+          <div className="flex items-center justify-center h-screen">
+              <span>Topic not found</span>
+          </div>
+      }
+      {!selectedTopic && !topicIsLoading && !topicIsError &&
           <CreateFirstTopicHero/>
       }
-      {topics.length > 0 &&
+      {selectedTopic &&
           <TopicVideoCardGrid topic={selectedTopic}
                               items={topicItems}
                               fetchMoreItems={fetchMoreItems}
                               refreshItem={refreshTopicItem}
-                              subscriptions={subscriptions}
+                              subscriptions={topicSubscriptions}
                               filters={filters}
                               isLoading={isLoading}
                               topicIsFinished={isFinished}
                               handleScroll={handleGridScroll}
                               isTopicBeingScanned={isTopicBeingScanned}
+                              displayInteractions={isUserLogged}
           />
       }
       {selectedTopic &&

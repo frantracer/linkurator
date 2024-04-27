@@ -21,6 +21,7 @@ import ALink from "../atoms/ALink";
 import {LogoImage} from "../atoms/LogoImage";
 import {LogoTitle} from "../atoms/LogoTitle";
 import {hideLateralMenu} from "../../utilities/hideLateralMenu";
+import {paths} from "../../configuration";
 
 export const LATERAL_NAVIGATION_MENU_ID = 'lateral-navigation-menu';
 
@@ -61,9 +62,6 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
   const selectedSubscription = subscriptions.find(subscription => subscription.uuid === selectedId);
   const selectedTopic = topics.find(topic => topic.uuid === selectedId);
 
-  const profileUrl = profile ? profile.avatar_url : '';
-  const profileName = profile ? profile.first_name : '';
-
   const closeMenu = () => {
     hideLateralMenu(LATERAL_NAVIGATION_MENU_ID)
   }
@@ -81,28 +79,41 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
           <ALink href={'/'}>
             <LogoTitle/>
           </ALink>
-          <ALink href={'/profile'} onClick={() => {
-            setCurrentPage('profile');
-            closeMenu()
-          }}>
-            <Avatar src={profileUrl} alt={profileName}/>
-          </ALink>
+          {profile &&
+              <ALink href={paths.PROFILE} onClick={() => {
+                setCurrentPage('profile');
+                closeMenu()
+              }}>
+                  <Avatar src={profile.avatar_url} alt={profile.first_name}/>
+              </ALink>
+          }
         </FlexRow>
         <Divider/>
-        <Menu isFullHeight={false}>
-          <MenuItem onClick={() => {
-            setCurrentPage('topics');
-          }} selected={currentPage === 'topics'}>
-            <FlexRow position={"start"}><RectangleGroup/>Topics</FlexRow>
-          </MenuItem>
-          <MenuItem onClick={() => {
-            setCurrentPage('subscriptions');
-          }} selected={currentPage === 'subscriptions'}>
-            <FlexRow position={"start"}><BookmarkSquaredFilled/>Subscriptions</FlexRow>
-          </MenuItem>
-        </Menu>
-        <Divider/>
-        {currentPage === 'subscriptions' &&
+        {!profile && !profileIsLoading &&
+            <FlexRow position={"center"}>
+                <ALink href={"/login"}>
+                    <Button>
+                        Register
+                    </Button>
+                </ALink>
+            </FlexRow>
+        }
+        {profile &&
+            <Menu isFullHeight={false}>
+                <MenuItem onClick={() => {
+                  setCurrentPage('topics');
+                }} selected={currentPage === 'topics'}>
+                    <FlexRow position={"start"}><RectangleGroup/>Topics</FlexRow>
+                </MenuItem>
+                <MenuItem onClick={() => {
+                  setCurrentPage('subscriptions');
+                }} selected={currentPage === 'subscriptions'}>
+                    <FlexRow position={"start"}><BookmarkSquaredFilled/>Subscriptions</FlexRow>
+                </MenuItem>
+            </Menu>
+        }
+        {profile && <Divider/>}
+        {profile && currentPage === 'subscriptions' &&
             <SearchBar value={searchValue} handleChange={setSearchValue}/>
         }
         {profile && currentPage === 'subscriptions' &&
@@ -114,7 +125,7 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
                 closeMenu={closeMenu}
             />
         }
-        {currentPage === 'topics' &&
+        {profile && currentPage === 'topics' &&
             <FlexRow>
                 <SearchBar value={searchValue} handleChange={setSearchValue}/>
                 <Button clickAction={openNewTopicModal}>

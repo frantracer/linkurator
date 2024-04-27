@@ -78,6 +78,25 @@ export async function getSubscriptions(): Promise<Subscription[]> {
   return subscriptions
 }
 
+export async function getSubscription(uuid: string): Promise<Subscription | undefined> {
+  try {
+    const url = configuration.SUBSCRIPTIONS_URL + uuid;
+    const response = await axios.get(url, {withCredentials: true});
+    if (response.status === 200) {
+      return {
+        uuid: response.data.uuid,
+        name: response.data.name,
+        url: response.data.url,
+        thumbnail: response.data.thumbnail,
+        isBeingScanned: Date.parse(response.data.scanned_at) < 946684800000, // It was scanned before 2000-01-01
+      };
+    }
+  } catch (error: any) {
+    console.error("Error retrieving subscription", error);
+  }
+  return undefined;
+}
+
 export async function getSubscriptionItems(
   uuid: string,
   minDuration: number,

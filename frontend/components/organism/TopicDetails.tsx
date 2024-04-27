@@ -34,8 +34,10 @@ export const TOPIC_DETAILS_ID = "topic-details";
 
 type TopicDetailsProps = {
   subscriptions: Subscription[];
-  topic?: Topic,
+  topic: Topic | null,
   filters: Filters,
+  editable: boolean,
+  showInteractions: boolean,
   setFilters: (filters: Filters) => void;
   resetFilters: () => void;
   refreshTopics: () => void;
@@ -76,9 +78,11 @@ const TopicDetails = (props: TopicDetailsProps) => {
     <Sidebar>
       <FlexRow position={"center"}>
         <div className="w-full whitespace-nowrap truncate text-center">{topicName}</div>
-        <Button clickAction={() => openModal(EditTopicModalId)}>
-          <PencilIcon/>
-        </Button>
+        {props.editable &&
+            <Button clickAction={() => openModal(EditTopicModalId)}>
+                <PencilIcon/>
+            </Button>
+        }
       </FlexRow>
       <Divider/>
       <Box title={"Subscriptions"}>
@@ -100,39 +104,50 @@ const TopicDetails = (props: TopicDetailsProps) => {
                            onChange={(value) => setTempFilters({...tempFilters, maxDuration: value})}/>
             </FlexColumn>
           </Box>
-          <Box title={"Interactions"}>
-            <FlexColumn>
-              <FlexRow position={"start"}>
-                <Checkbox checked={tempFilters.displayRecommended}
-                          onChange={(checked) => setTempFilters({...tempFilters, displayRecommended: checked})}/>
-                <ThumbsUpIcon/>
-                <label>Recommended</label>
-              </FlexRow>
-              <FlexRow position={"start"}>
-                <Checkbox checked={tempFilters.displayDiscouraged}
-                          onChange={(checked) => setTempFilters({...tempFilters, displayDiscouraged: checked})}/>
-                <ThumbsDownIcon/>
-                <label>Discouraged</label>
-              </FlexRow>
-              <FlexRow position={"start"}>
-                <Checkbox checked={tempFilters.displayHidden}
-                          onChange={(checked) => setTempFilters({...tempFilters, displayHidden: checked})}/>
-                <EyeSlashIcon/>
-                <label>Hidden</label>
-              </FlexRow>
-              <FlexRow position={"start"}>
-                <Checkbox checked={tempFilters.displayViewed}
-                          onChange={(checked) => setTempFilters({...tempFilters, displayViewed: checked})}/>
-                <CheckCircleIcon/>
-                <label>Viewed</label>
-              </FlexRow>
-              <FlexRow position={"start"}>
-                <Checkbox checked={tempFilters.displayWithoutInteraction}
-                          onChange={(checked) => setTempFilters({...tempFilters, displayWithoutInteraction: checked})}/>
-                <label>No interactions</label>
-              </FlexRow>
-            </FlexColumn>
-          </Box>
+          {props.showInteractions &&
+              <Box title={"Interactions"}>
+                  <FlexColumn>
+                      <FlexRow position={"start"}>
+                          <Checkbox checked={tempFilters.displayRecommended}
+                                    onChange={(checked) => setTempFilters({
+                                      ...tempFilters,
+                                      displayRecommended: checked
+                                    })}/>
+                          <ThumbsUpIcon/>
+                          <label>Recommended</label>
+                      </FlexRow>
+                      <FlexRow position={"start"}>
+                          <Checkbox checked={tempFilters.displayDiscouraged}
+                                    onChange={(checked) => setTempFilters({
+                                      ...tempFilters,
+                                      displayDiscouraged: checked
+                                    })}/>
+                          <ThumbsDownIcon/>
+                          <label>Discouraged</label>
+                      </FlexRow>
+                      <FlexRow position={"start"}>
+                          <Checkbox checked={tempFilters.displayHidden}
+                                    onChange={(checked) => setTempFilters({...tempFilters, displayHidden: checked})}/>
+                          <EyeSlashIcon/>
+                          <label>Hidden</label>
+                      </FlexRow>
+                      <FlexRow position={"start"}>
+                          <Checkbox checked={tempFilters.displayViewed}
+                                    onChange={(checked) => setTempFilters({...tempFilters, displayViewed: checked})}/>
+                          <CheckCircleIcon/>
+                          <label>Viewed</label>
+                      </FlexRow>
+                      <FlexRow position={"start"}>
+                          <Checkbox checked={tempFilters.displayWithoutInteraction}
+                                    onChange={(checked) => setTempFilters({
+                                      ...tempFilters,
+                                      displayWithoutInteraction: checked
+                                    })}/>
+                          <label>No interactions</label>
+                      </FlexRow>
+                  </FlexColumn>
+              </Box>
+          }
           <FlexRow position={"end"}>
             <Button clickAction={() => props.resetFilters()}>
               <ArrowUturnLeft/>
@@ -145,14 +160,16 @@ const TopicDetails = (props: TopicDetailsProps) => {
           </FlexRow>
         </FlexColumn>
       </Box>
-      <Box title={"Actions"}>
-        <FlexRow position={"end"}>
-          <Button clickAction={deleteTopicAction}>
-            <TrashIcon/>
-            Delete
-          </Button>
-        </FlexRow>
-      </Box>
+      {props.editable &&
+          <Box title={"Actions"}>
+              <FlexRow position={"end"}>
+                  <Button clickAction={deleteTopicAction}>
+                      <TrashIcon/>
+                      Delete
+                  </Button>
+              </FlexRow>
+          </Box>
+      }
     </Sidebar>
   );
 };

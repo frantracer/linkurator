@@ -34,6 +34,22 @@ export async function getTopics(): Promise<Topic[]> {
   return topics
 }
 
+export async function getTopic(uuid: string): Promise<Topic | null> {
+  const {data, status} = await axios.get(
+    configuration.TOPICS_URL + uuid,
+    {withCredentials: true});
+  if (status === 200) {
+    return {
+      uuid: data.uuid,
+      name: data.name,
+      subscriptions_ids: data.subscriptions_ids,
+    };
+  } else {
+    console.error("Error retrieving topic", data);
+    return null;
+  }
+}
+
 export async function createTopic(uuid: string, name: string, subscriptions: string[]) {
   const {data, status} = await axios.post(
     configuration.TOPICS_URL,

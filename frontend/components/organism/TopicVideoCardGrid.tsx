@@ -11,14 +11,15 @@ import {Spinner} from "../atoms/Spinner";
 type TopicVideoCardGridProps = {
   fetchMoreItems: () => void,
   refreshItem: (itemId: string) => void,
-  topic: Topic | undefined;
+  topic: Topic | null;
   items: SubscriptionItem[];
   subscriptions: Subscription[];
   filters: Filters;
   isLoading: boolean;
   topicIsFinished: boolean;
   handleScroll: (event: React.UIEvent<HTMLElement>) => void,
-  isTopicBeingScanned: boolean
+  isTopicBeingScanned: boolean,
+  displayInteractions: boolean
 }
 
 const TopicVideoCardGrid = (props: TopicVideoCardGridProps) => {
@@ -34,6 +35,7 @@ const TopicVideoCardGrid = (props: TopicVideoCardGridProps) => {
               item={item}
               subscription={props.subscriptions.find((s) => s.uuid == item.subscription_uuid)}
               onChange={() => props.refreshItem(item.uuid)}
+              withInteractions={props.displayInteractions}
             />
           </div>
         );

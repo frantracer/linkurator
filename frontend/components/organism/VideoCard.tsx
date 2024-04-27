@@ -22,6 +22,7 @@ import Miniature from "../atoms/Miniature";
 type VideoCardProps = {
   item: SubscriptionItem;
   subscription?: Subscription;
+  withInteractions?: boolean;
   onChange?: () => void;
   onChangeSwapButton?: (itemUuid: string, interactionType: InteractionType, checked: boolean) => Promise<void>;
 };
@@ -53,6 +54,7 @@ const VideoCard = (
   {
     item,
     subscription,
+    withInteractions = true,
     onChange = undefined,
     onChangeSwapButton = defaultOnChangeSwapButton
   }: VideoCardProps) => {
@@ -89,36 +91,42 @@ const VideoCard = (
               </div>}
           <div className="flex flex-column">
             <p>{readableAgoUnits(item.published_at)}</p>
-            <div className="card-actions justify-end">
-              <SwapButton defaultChecked={item.discouraged}
-                          onChange={
-                            (isChecked) => onChangeSwapButton &&
-                              onChangeSwapButton(item.uuid, InteractionType.Discouraged, isChecked).then(onChange)
-                          }>
-                <ThumbsDownFilledIcon/>
-                <ThumbsDownIcon/>
-              </SwapButton>
-              <SwapButton defaultChecked={item.recommended}
-                          onChange={
-                            (isChecked) => onChangeSwapButton &&
-                              onChangeSwapButton(item.uuid, InteractionType.Recommended, isChecked).then(onChange)
-                          }>
-                <ThumbsUpFilledIcon/>
-                <ThumbsUpIcon/>
-              </SwapButton>
-              <SwapButton defaultChecked={item.hidden}
-                          onChange={(isChecked) => onChangeSwapButton &&
-                            onChangeSwapButton(item.uuid, InteractionType.Hidden, isChecked).then(onChange)}>
-                <EyeSlashFilledIcon/>
-                <EyeSlashIcon/>
-              </SwapButton>
-              <SwapButton defaultChecked={item.viewed}
-                          onChange={(isChecked) => onChangeSwapButton &&
-                            onChangeSwapButton(item.uuid, InteractionType.Viewed, isChecked).then(onChange)}>
-                <CheckCircleFilledIcon/>
-                <CheckCircleIcon/>
-              </SwapButton>
-            </div>
+            {withInteractions &&
+                <div className="card-actions justify-end">
+                    <SwapButton
+                        defaultChecked={item.discouraged}
+                        onChange={
+                          (isChecked) => onChangeSwapButton &&
+                            onChangeSwapButton(item.uuid, InteractionType.Discouraged, isChecked).then(onChange)
+                        }>
+                        <ThumbsDownFilledIcon/>
+                        <ThumbsDownIcon/>
+                    </SwapButton>
+                    <SwapButton
+                        defaultChecked={item.recommended}
+                        onChange={
+                          (isChecked) => onChangeSwapButton &&
+                            onChangeSwapButton(item.uuid, InteractionType.Recommended, isChecked).then(onChange)
+                        }>
+                        <ThumbsUpFilledIcon/>
+                        <ThumbsUpIcon/>
+                    </SwapButton>
+                    <SwapButton
+                        defaultChecked={item.hidden}
+                        onChange={(isChecked) => onChangeSwapButton &&
+                          onChangeSwapButton(item.uuid, InteractionType.Hidden, isChecked).then(onChange)}>
+                        <EyeSlashFilledIcon/>
+                        <EyeSlashIcon/>
+                    </SwapButton>
+                    <SwapButton
+                        defaultChecked={item.viewed}
+                        onChange={(isChecked) => onChangeSwapButton &&
+                          onChangeSwapButton(item.uuid, InteractionType.Viewed, isChecked).then(onChange)}>
+                        <CheckCircleFilledIcon/>
+                        <CheckCircleIcon/>
+                    </SwapButton>
+                </div>
+            }
           </div>
         </div>
       </div>

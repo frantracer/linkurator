@@ -238,6 +238,7 @@ const CardSection = () => {
         <ItemCardSkeleton/>
         <VideoCard item={item} subscription={subscription} onChange={undefined} onChangeSwapButton={async () => {
         }}/>
+        <VideoCard item={item} subscription={subscription} withInteractions={false}/>
       </div>
     </Section>
   );
