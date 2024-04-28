@@ -1,6 +1,6 @@
-import {Profile} from "../../hooks/useProfile";
 import React from "react";
 import Avatar from "./Avatar";
+import {Profile} from "../../services/profileService";
 
 type ProfileMenuProps = {
   profile: Profile | undefined

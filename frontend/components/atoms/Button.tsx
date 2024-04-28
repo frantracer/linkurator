@@ -5,6 +5,7 @@ type ButtonProps = {
   relatedModalId?: string
   showOnlyOnMobile?: boolean
   fitContent?: boolean
+  disabled?: boolean
   children?: React.ReactNode
 }
 
@@ -17,6 +18,7 @@ const Button = (
     relatedModalId = undefined,
     showOnlyOnMobile = false,
     fitContent = true,
+    disabled = false,
     children
   }: ButtonProps
 ) => {
@@ -28,6 +30,11 @@ const Button = (
   }
   if (showOnlyOnMobile) {
     className += " lg:hidden";
+  }
+  if (disabled) {
+    className += " opacity-50 cursor-not-allowed";
+    clickAction = noAction;
+    relatedModalId = undefined;
   }
 
   return (

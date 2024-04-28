@@ -14,6 +14,10 @@ import Box from "../../../components/atoms/Box";
 import {showLateralMenu} from "../../../utilities/hideLateralMenu";
 import {LATERAL_NAVIGATION_MENU_ID} from "../../../components/organism/LateralNavigationMenu";
 import {MenuIcon} from "../../../components/atoms/Icons";
+import Divider from "../../../components/atoms/Divider";
+import {deleteProfile} from "../../../services/profileService";
+import DeleteAccountModal, {DeleteAccountModalId} from "../../../components/organism/DeleteAccountModal";
+import {openModal} from "../../../utilities/modalAction";
 
 const ProfilePage: NextPage = () => {
   const router = useRouter();
@@ -55,8 +59,19 @@ const ProfilePage: NextPage = () => {
           }}>
             <span>Logout</span>
           </Button>
+          <Divider/>
+          <Button fitContent={true} clickAction={() => openModal(DeleteAccountModalId)}>
+            <span>Delete account</span>
+          </Button>
         </FlexColumn>
       </div>
+      <DeleteAccountModal userEmail={email} onDeleteAccount={() => {
+        deleteProfile().then(() => {
+          router.push(configuration.LOGOUT_URL);
+        }).catch((error) => {
+          console.error("Error deleting profile", error);
+        });
+      }}/>
     </main>
   );
 };

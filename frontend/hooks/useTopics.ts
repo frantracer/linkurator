@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
-import { Profile } from './useProfile';
 import { Topic, topicSorting } from '../entities/Topic';
 import { getTopics } from '../services/topicService';
+import {Profile} from "../services/profileService";
 
 type UseTopics = {
   topics: Topic[];

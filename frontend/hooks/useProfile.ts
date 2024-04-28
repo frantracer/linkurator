@@ -1,30 +1,13 @@
-import { useQuery } from '@tanstack/react-query';
-import axios from 'axios';
-import { configuration } from '../configuration';
+import {useQuery} from '@tanstack/react-query';
+import {getProfile} from "../services/profileService";
 
-export type Profile = {
-  first_name: string
-  last_name: string
-  avatar_url: string
-  email: string
-}
 
 const fetchProfile = async () => {
-  try {
-    const { data } = await axios.get<Profile | undefined>(configuration.PROFILE_URL, { withCredentials: true });
-    return {
-      first_name: data?.first_name || '',
-      last_name: data?.last_name || '',
-      avatar_url: data?.avatar_url || '',
-      email: data?.email || '',
-    };
-  } catch (error) {
-    return undefined;
-  }
+  return await getProfile();
 };
 
 const useProfile = () => {
-  const { data: profile, isLoading, error } = useQuery({
+  const {data: profile, isLoading, error} = useQuery({
     queryKey: ['profile'],
     queryFn: fetchProfile,
     staleTime: 60000,
@@ -34,7 +17,7 @@ const useProfile = () => {
     console.error("Error retrieving profile", error);
   }
 
-  return { profile, profileIsLoading: isLoading };
+  return {profile, profileIsLoading: isLoading};
 };
 
 export default useProfile;

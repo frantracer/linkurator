@@ -1,7 +1,7 @@
 import {useQuery} from '@tanstack/react-query';
-import {Profile} from './useProfile';
 import {Subscription, subscriptionSorting} from '../entities/Subscription';
 import {getSubscriptions} from '../services/subscriptionService';
+import {Profile} from "../services/profileService";
 
 type subscriptionState = {
   subscriptions: Subscription[];
