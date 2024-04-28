@@ -1,12 +1,31 @@
 'use client';
 
 import type {NextPage} from "next";
-import React, {useEffect} from "react";
+import React, {Suspense, useEffect} from "react";
 import useProfile from "../../hooks/useProfile";
 import {configuration, paths} from "../../configuration";
-import {useRouter} from "next/navigation";
+import {useRouter, useSearchParams} from "next/navigation";
 import Button from "../../components/atoms/Button";
 import ALink from "../../components/atoms/ALink";
+import FlexColumn from "../../components/atoms/FlexColumn";
+import Divider from "../../components/atoms/Divider";
+import {GoogleIcon} from "../../components/atoms/Icons";
+import {ErrorBanner} from "../../components/atoms/ErrorBanner";
+
+const RegisterErrorBanner = () => {
+  const searchParams = useSearchParams();
+  const loginError = searchParams.get('error');
+
+  if (!loginError) {
+    return;
+  }
+
+  return (
+    <ErrorBanner>
+      It is required to create account and give permissions to access your youtube account
+    </ErrorBanner>
+  );
+}
 
 const Home: NextPage = () => {
   const router = useRouter();
@@ -30,9 +49,24 @@ const Home: NextPage = () => {
           <p className="py-2">We do not use any algorithm to recommend you what to see.</p>
           <p className="py-2">We provide the tools you need to find the content you seek.</p>
           <div className="m-8">
-            <ALink href={configuration.LOGIN_URL}>
-              <Button>Login</Button>
-            </ALink>
+            <FlexColumn>
+              <ALink href={configuration.REGISTER_URL}>
+                <Button><GoogleIcon/>Sign up with google</Button>
+              </ALink>
+              <p>
+                By signing up, you agree to the &nbsp;
+                <ALink href={configuration.TERMS_OF_SERVICE_URL}><b>Terms of Service</b></ALink> and &nbsp;
+                <ALink href={configuration.PRIVACY_POLICY_URL}><b>Privacy Policy</b></ALink>
+              </p>
+              <Divider/>
+              <p>Do you already have an account?</p>
+              <ALink href={configuration.LOGIN_URL}>
+                <Button><GoogleIcon/>Sign in with google</Button>
+              </ALink>
+              <Suspense>
+                <RegisterErrorBanner/>
+              </Suspense>
+            </FlexColumn>
           </div>
         </div>
       </div>

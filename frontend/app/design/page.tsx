@@ -20,10 +20,10 @@ import {
   CheckCircleIcon,
   CheckIcon,
   CrossIcon,
-  DownloadIcon,
+  DownloadIcon, ExclamationCircle,
   EyeSlashFilledIcon,
   EyeSlashIcon,
-  FunnelIcon,
+  FunnelIcon, GoogleIcon,
   LikeIcon,
   MagnifyingGlassIcon,
   MenuIcon,
@@ -52,6 +52,7 @@ import {MenuItem} from "../../components/atoms/MenuItem";
 import Sidebar from "../../components/atoms/Sidebar";
 import Divider from "../../components/atoms/Divider";
 import {hideLateralMenu, showLateralMenu} from "../../utilities/hideLateralMenu";
+import {ErrorBanner} from "../../components/atoms/ErrorBanner";
 
 const SIDE_BAR_NAME = "main-menu";
 const ICONS_REF = "icons";
@@ -64,6 +65,7 @@ const AVATARS_REF = "avatars";
 const TAGS_REF = "tags";
 const BOX_REF = "box";
 const DROPDOWN_REF = "dropdown";
+const ERROR_BANNER_REF = "error_banner";
 
 const LateralMenu = (
   {
@@ -80,7 +82,7 @@ const LateralMenu = (
   }, []);
 
   const refs = [ICONS_REF, BUTTONS_REF, SWAP_BUTTONS_REF, INPUTS_REF, MINIATURES_REF, AVATARS_REF,
-    TAGS_REF, CARDS_REF, BOX_REF, DROPDOWN_REF];
+    TAGS_REF, CARDS_REF, BOX_REF, DROPDOWN_REF, ERROR_BANNER_REF];
 
   const handleClick = (ref: string) => {
     setAnchor(ref);
@@ -150,6 +152,8 @@ const IconsSection = () => {
         <BookmarkSquared/>
         <BookmarkSquaredFilled/>
         <ArrowUturnLeft/>
+        <ExclamationCircle/>
+        <GoogleIcon/>
       </div>
     </Section>
   );
@@ -317,6 +321,18 @@ const DropdownSection = () => {
   );
 }
 
+const ErrorBannerSection = () => {
+  return (
+    <Section>
+      <Head1 id={ERROR_BANNER_REF}># Error Banner</Head1>
+      <ErrorBanner>
+        Error Banner
+      </ErrorBanner>
+    </Section>
+  );
+
+}
+
 const MainContent = () => {
   return (
     <main className="bg-base-300 text-base-content w-full h-full z-0 p-2 overflow-auto">
@@ -330,6 +346,7 @@ const MainContent = () => {
       <CardSection/>
       <BoxSection/>
       <DropdownSection/>
+      <ErrorBannerSection/>
     </main>
   );
 }

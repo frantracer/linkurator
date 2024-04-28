@@ -281,3 +281,22 @@ export const ArrowUturnLeft = () => {
     </svg>
   )
 }
+
+export const ExclamationCircle = () => {
+  return(
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor"
+         className="w-6 h-6">
+      <path strokeLinecap="round" strokeLinejoin="round"
+            d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z"/>
+    </svg>
+  )
+}
+
+
+export const GoogleIcon = () => {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="24" height="24" viewBox="0 0 16 16">
+      <path
+        d="M 7.5 1 C 3.921875 1 1 3.921875 1 7.5 C 1 11.078125 3.921875 14 7.5 14 C 10.878906 14 13.671875 11.398438 13.96875 8.089844 L 14.066406 7 L 8 7 L 8 9 L 11.671875 9 C 11.046875 10.734375 9.457031 12 7.5 12 C 5.003906 12 3 9.996094 3 7.5 C 3 5.003906 5.003906 3 7.5 3 C 8.691406 3 9.765625 3.460938 10.570313 4.210938 L 11.9375 2.75 C 10.773438 1.664063 9.210938 1 7.5 1 Z"></path>
+    </svg>)
+}
