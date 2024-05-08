@@ -14,7 +14,7 @@ const defaultFilters: Filters = {
   displayDiscouraged: false,
   displayRecommended: false,
   displayWithoutInteraction: true,
-  minDuration: 61,
+  minDuration: 62,
   maxDuration: 100000,
 }
 
