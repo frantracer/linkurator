@@ -31,7 +31,7 @@ const Home: NextPage = () => {
 
   const {filters, setFilters, resetFilters} = useFilters();
   const {profile, profileIsLoading} = useProfile();
-  const {subscriptions} = useSubscriptions(profile);
+  const {subscriptions, refreshSubscriptions} = useSubscriptions(profile);
   const {topics, topicsAreLoading, refreshTopics} = useTopics(profile, profileIsLoading);
   const {
     topicItems,
@@ -121,7 +121,10 @@ const Home: NextPage = () => {
           <EditTopicModal refreshTopics={refreshTopics}
                           subscriptions={subscriptions}
                           topic={selectedTopic}
-                          refreshTopicItems={refreshTopicItems}/>}
+                          refreshTopicItems={refreshTopicItems}
+                          refreshSubscriptions={refreshSubscriptions}
+          />
+      }
     </Drawer>
   );
 };

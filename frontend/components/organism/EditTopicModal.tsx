@@ -21,13 +21,16 @@ type EditTopicModalProps = {
   subscriptions: Subscription[];
   refreshTopics: () => void;
   refreshTopicItems: () => void;
+  refreshSubscriptions: () => void;
 }
 
 const EditTopicModal = (props: EditTopicModalProps) => {
-  const filteredSubscriptions = props.subscriptions.filter((sub) => props.topic.subscriptions_ids.includes(sub.uuid))
-
   const [newTopicName, setNewTopicName] = useState(props.topic.name);
-  const [subscriptionsToAdd, addSubscription, removeSubscription, clearSubscriptions] = useSubscriptionsToAdd(filteredSubscriptions, props.topic)
+  const {
+    subscriptionsToAdd,
+    addSubscription,
+    removeSubscription
+  } = useSubscriptionsToAdd(props.subscriptions, props.topic)
 
   const subscriptionBadges = subscriptionsToAdd.map(s => subscriptionToBadge(s, removeSubscription));
 
@@ -57,10 +60,9 @@ const EditTopicModal = (props: EditTopicModalProps) => {
           <Button clickAction={async () => {
             updateTopic(props.topic.uuid, newTopicName, subscriptionsToAdd.map(s => s.uuid)).then(
               () => {
-                setNewTopicName("");
                 props.refreshTopics();
                 props.refreshTopicItems();
-                clearSubscriptions();
+                props.refreshSubscriptions();
                 closeModal(EditTopicModalId);
               }
             )

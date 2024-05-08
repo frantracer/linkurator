@@ -23,7 +23,7 @@ type NewTopicModalProps = {
 
 const NewTopicModal = (props: NewTopicModalProps) => {
   const [newTopicName, setNewTopicName] = useState("");
-  const [subscriptionsToAdd, addSubscription, removeSubscription, clearSubscriptions] = useSubscriptionsToAdd([], undefined)
+  const {subscriptionsToAdd, addSubscription, removeSubscription, clearSubscriptions} = useSubscriptionsToAdd([], undefined)
 
   const subscriptionBadges = subscriptionsToAdd.map(s => subscriptionToBadge(s, removeSubscription));
 
