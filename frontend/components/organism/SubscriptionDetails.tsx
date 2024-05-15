@@ -32,9 +32,11 @@ import Grid from "../atoms/Grid";
 export const SUBSCRIPTION_DETAILS_ID = "subscription-details";
 
 type SubscriptionDetailsProps = {
-  subscription?: Subscription;
+  subscription: Subscription | null;
   topics: Topic[],
   filters: Filters,
+  editable: boolean,
+  showInteractions: boolean,
   setFilters: (filters: Filters) => void;
   resetFilters: () => void;
   refreshSubscription: () => void;
@@ -65,16 +67,20 @@ const SubscriptionDetails = (props: SubscriptionDetailsProps) => {
       <FlexRow position={"center"}>
         <Avatar src={subscriptionThumbnail} alt={subscriptionName}/>
         <span>{subscriptionName}</span>
-        <Button clickAction={() => openModal(AssignTopicModalId)}>
-          <PencilIcon/>
-        </Button>
+        {props.editable &&
+            <Button clickAction={() => openModal(AssignTopicModalId)}>
+                <PencilIcon/>
+            </Button>
+        }
       </FlexRow>
       <Divider/>
-      <Box title={"Topics"}>
-        <Grid>
-          {topicTags}
-        </Grid>
-      </Box>
+      {props.editable &&
+          <Box title={"Topics"}>
+              <Grid>
+                {topicTags}
+              </Grid>
+          </Box>
+      }
       <Box title={"Filters"}>
         <FlexColumn>
           <SearchBar handleChange={(value) => setTempFilters({...tempFilters, textSearch: value})}
@@ -89,39 +95,50 @@ const SubscriptionDetails = (props: SubscriptionDetailsProps) => {
                            onChange={(value) => setTempFilters({...tempFilters, maxDuration: value})}/>
             </FlexColumn>
           </Box>
-          <Box title={"Interactions"}>
-            <FlexColumn>
-              <FlexRow position={"start"}>
-                <Checkbox checked={tempFilters.displayRecommended}
-                          onChange={(checked) => setTempFilters({...tempFilters, displayRecommended: checked})}/>
-                <ThumbsUpIcon/>
-                <label>Recommended</label>
-              </FlexRow>
-              <FlexRow position={"start"}>
-                <Checkbox checked={tempFilters.displayDiscouraged}
-                          onChange={(checked) => setTempFilters({...tempFilters, displayDiscouraged: checked})}/>
-                <ThumbsDownIcon/>
-                <label>Discouraged</label>
-              </FlexRow>
-              <FlexRow position={"start"}>
-                <Checkbox checked={tempFilters.displayHidden}
-                          onChange={(checked) => setTempFilters({...tempFilters, displayHidden: checked})}/>
-                <EyeSlashIcon/>
-                <label>Hidden</label>
-              </FlexRow>
-              <FlexRow position={"start"}>
-                <Checkbox checked={tempFilters.displayViewed}
-                          onChange={(checked) => setTempFilters({...tempFilters, displayViewed: checked})}/>
-                <CheckCircleIcon/>
-                <label>Viewed</label>
-              </FlexRow>
-              <FlexRow position={"start"}>
-                <Checkbox checked={tempFilters.displayWithoutInteraction}
-                          onChange={(checked) => setTempFilters({...tempFilters, displayWithoutInteraction: checked})}/>
-                <label>No interactions</label>
-              </FlexRow>
-            </FlexColumn>
-          </Box>
+          {props.showInteractions &&
+              <Box title={"Interactions"}>
+                  <FlexColumn>
+                      <FlexRow position={"start"}>
+                          <Checkbox checked={tempFilters.displayRecommended}
+                                    onChange={(checked) => setTempFilters({
+                                      ...tempFilters,
+                                      displayRecommended: checked
+                                    })}/>
+                          <ThumbsUpIcon/>
+                          <label>Recommended</label>
+                      </FlexRow>
+                      <FlexRow position={"start"}>
+                          <Checkbox checked={tempFilters.displayDiscouraged}
+                                    onChange={(checked) => setTempFilters({
+                                      ...tempFilters,
+                                      displayDiscouraged: checked
+                                    })}/>
+                          <ThumbsDownIcon/>
+                          <label>Discouraged</label>
+                      </FlexRow>
+                      <FlexRow position={"start"}>
+                          <Checkbox checked={tempFilters.displayHidden}
+                                    onChange={(checked) => setTempFilters({...tempFilters, displayHidden: checked})}/>
+                          <EyeSlashIcon/>
+                          <label>Hidden</label>
+                      </FlexRow>
+                      <FlexRow position={"start"}>
+                          <Checkbox checked={tempFilters.displayViewed}
+                                    onChange={(checked) => setTempFilters({...tempFilters, displayViewed: checked})}/>
+                          <CheckCircleIcon/>
+                          <label>Viewed</label>
+                      </FlexRow>
+                      <FlexRow position={"start"}>
+                          <Checkbox checked={tempFilters.displayWithoutInteraction}
+                                    onChange={(checked) => setTempFilters({
+                                      ...tempFilters,
+                                      displayWithoutInteraction: checked
+                                    })}/>
+                          <label>No interactions</label>
+                      </FlexRow>
+                  </FlexColumn>
+              </Box>
+          }
           <FlexRow position={"end"}>
             <Button clickAction={() => props.resetFilters()}>
               <ArrowUturnLeft/>
@@ -134,14 +151,16 @@ const SubscriptionDetails = (props: SubscriptionDetailsProps) => {
           </FlexRow>
         </FlexColumn>
       </Box>
-      <Box title={"Actions"}>
-        <FlexRow position={"end"}>
-          <Button clickAction={props.refreshSubscription}>
-            <RefreshIcon/>
-            Refresh
-          </Button>
-        </FlexRow>
-      </Box>
+      {props.editable &&
+          <Box title={"Actions"}>
+              <FlexRow position={"end"}>
+                  <Button clickAction={props.refreshSubscription}>
+                      <RefreshIcon/>
+                      Refresh
+                  </Button>
+              </FlexRow>
+          </Box>
+      }
     </Sidebar>
   );
 };

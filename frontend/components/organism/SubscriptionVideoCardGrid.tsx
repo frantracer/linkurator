@@ -12,9 +12,10 @@ type SubscriptionVideoCardGridProps = {
   refreshItem: (itemId: string) => void,
   fetchMoreItems: () => void,
   topics: Topic[];
-  subscription: Subscription | undefined;
+  subscription: Subscription | null;
   items: SubscriptionItem[];
   filters: Filters;
+  showInteractions: boolean;
   isLoading: boolean;
   isFinished: boolean;
   handleScroll: (event: React.UIEvent<HTMLElement>) => void,
@@ -34,6 +35,7 @@ const SubscriptionVideoCardGrid = (props: SubscriptionVideoCardGridProps) => {
             <VideoCard
               item={item}
               subscription={undefined}
+              withInteractions={props.showInteractions}
               onChange={() => props.refreshItem(item.uuid)}
             />
           </div>

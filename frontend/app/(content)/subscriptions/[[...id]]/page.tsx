@@ -20,6 +20,7 @@ import {refreshSubscription} from "../../../../services/subscriptionService";
 import AssignTopicModal from "../../../../components/organism/AssignTopicModal";
 import {showLateralMenu} from "../../../../utilities/hideLateralMenu";
 import {LATERAL_NAVIGATION_MENU_ID} from "../../../../components/organism/LateralNavigationMenu";
+import useSubscription from "../../../../hooks/useSubscription";
 
 const REFRESH_SUBSCRIPTIONS_INTERVAL = 30000;
 
@@ -33,12 +34,15 @@ const SubscriptionsPage: NextPage = () => {
   const {profile, profileIsLoading} = useProfile();
   const {subscriptions, refreshSubscriptions} = useSubscriptions(profile);
   const {topics, refreshTopics} = useTopics(profile, profileIsLoading);
-
-  const selectedSubscription = subscriptions.find(subscription => subscription.uuid === selectedSubscriptionId);
+  const {subscription: selectedSubscription, isSubscriptionError} = useSubscription(selectedSubscriptionId, subscriptions);
 
   const subscriptionUrl = selectedSubscription ? selectedSubscription.url : "";
   const subscriptionName = selectedSubscription ? selectedSubscription.name : "";
   const subscriptionThumbnail = selectedSubscription ? selectedSubscription.thumbnail : "";
+
+  const isUserSubscription = !!(subscriptions.find(subscription => subscription.uuid === selectedSubscriptionId))
+  const isUserLogged = !!(profile)
+  const editable = isUserLogged && isUserSubscription
 
   const openSubscriptionUrl = () => {
     if (subscriptionUrl) window.open(subscriptionUrl, "_blank");
@@ -64,12 +68,8 @@ const SubscriptionsPage: NextPage = () => {
 
   useEffect(() => {
     if (!profileIsLoading) {
-      if (profile === undefined) {
-        router.push(paths.LOGIN)
-      } else {
-        if (subscriptions.length > 0 && selectedSubscription === undefined) {
-          router.push(paths.SUBSCRIPTIONS + "/" + subscriptions[0].uuid)
-        }
+      if (profile && subscriptions.length > 0 && selectedSubscription === undefined) {
+        router.push(paths.SUBSCRIPTIONS + "/" + subscriptions[0].uuid)
       }
 
       if (selectedSubscription?.isBeingScanned) {
@@ -86,6 +86,8 @@ const SubscriptionsPage: NextPage = () => {
       <SubscriptionDetails subscription={selectedSubscription}
                            topics={topics}
                            filters={filters}
+                           editable={editable}
+                           showInteractions={isUserLogged}
                            setFilters={setFilters}
                            resetFilters={resetFilters}
                            refreshSubscription={() => refreshSubscription(selectedSubscriptionId!)}/>
@@ -104,6 +106,11 @@ const SubscriptionsPage: NextPage = () => {
           <OptionsIcon/>
         </Button>
       </TopTitle>
+      {isSubscriptionError &&
+        <div className="flex items-center justify-center h-screen">
+          <span>Subscription not found</span>
+        </div>
+      }
       <SubscriptionVideoCardGrid
         refreshItem={refreshSubscriptionItem}
         fetchMoreItems={fetchMoreItems}
@@ -111,6 +118,7 @@ const SubscriptionsPage: NextPage = () => {
         subscription={selectedSubscription}
         items={subscriptionsItems}
         filters={filters}
+        showInteractions={isUserLogged}
         isLoading={isLoading}
         isFinished={isFinished}
         handleScroll={handleGridScroll}

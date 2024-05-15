@@ -9,7 +9,7 @@ import {Subscription} from "../entities/Subscription";
 import {Filters} from "../entities/Filters";
 import {mapFiltersToInteractionParams} from "../services/common";
 
-type OptionalSubscription = Subscription | undefined;
+type OptionalSubscription = Subscription | null;
 
 type UseSubscriptionItems = {
   subscriptionsItems: SubscriptionItem[],
@@ -29,9 +29,9 @@ const useSubscriptionItems = (subscription: OptionalSubscription, filters: Filte
     isFetching,
     isFetchingNextPage
   } = useInfiniteQuery<SubscriptionItemsResponse>({
-    queryKey: ["subscriptionItems", subscription?.uuid, subscription?.isBeingScanned, filters],
+    queryKey: ["subscriptionItems", subscription, filters],
     queryFn: async ({pageParam = undefined}) => {
-      if (subscription === undefined || subscription.isBeingScanned) {
+      if (!subscription || (subscription && subscription.isBeingScanned)) {
         const emptyResponse: SubscriptionItemsResponse = {elements: [], nextPage: undefined};
         return emptyResponse;
       }
