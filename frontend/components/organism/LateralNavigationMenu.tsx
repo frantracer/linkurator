@@ -22,6 +22,7 @@ import {LogoImage} from "../atoms/LogoImage";
 import {LogoTitle} from "../atoms/LogoTitle";
 import {hideLateralMenu} from "../../utilities/hideLateralMenu";
 import {paths} from "../../configuration";
+import FlexColumn from "../atoms/FlexColumn";
 
 export const LATERAL_NAVIGATION_MENU_ID = 'lateral-navigation-menu';
 
@@ -90,13 +91,12 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
         </FlexRow>
         <Divider/>
         {!profile && !profileIsLoading &&
-            <FlexRow position={"center"}>
+            <FlexColumn>
+                <p className={"text-center"}><b>Create your own categories</b></p>
                 <ALink href={"/login"}>
-                    <Button>
-                        Register
-                    </Button>
+                    <Button fitContent={false}>Sign up</Button>
                 </ALink>
-            </FlexRow>
+            </FlexColumn>
         }
         {profile &&
             <Menu isFullHeight={false}>
