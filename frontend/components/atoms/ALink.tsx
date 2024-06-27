@@ -18,7 +18,7 @@ const ALink = (
   }
 
   return (
-    <Link className="group" href={href} onClick={handleClick}>
+    <Link className="group w-full" href={href} onClick={handleClick}>
       {children}
     </Link>
   );

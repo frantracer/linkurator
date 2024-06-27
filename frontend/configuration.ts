@@ -10,6 +10,8 @@ const LOGOUT_URL = `${API_BASE_URL}/logout/?redirect_uri=${encodeURI(WEB_LOGIN_U
 const REGISTER_URL = `${API_BASE_URL}/register/?redirect_uri=${encodeURI(WEB_LOGIN_URL)}`;
 const TERMS_OF_SERVICE_URL = `${WEB_BASE_URL}/tos`;
 const PRIVACY_POLICY_URL = `${WEB_BASE_URL}/privacy`;
+const EXAMPLE_PROGRAMMING_TOPIC_URL = `${WEB_BASE_URL}/topics/f5e01f25-64b1-4b9c-b0a3-75769fe0d617`;
+const EXAMPLE_VIDEO_GAMES_NEWS_TOPIC_URL = `${WEB_BASE_URL}/topics/ffd2f348-6e99-413b-be75-0f7b01ea9b01`;
 
 const configuration = {
   SUBSCRIPTIONS_URL,
@@ -21,7 +23,9 @@ const configuration = {
   ITEMS_URL,
   API_BASE_URL,
   TERMS_OF_SERVICE_URL,
-  PRIVACY_POLICY_URL
+  PRIVACY_POLICY_URL,
+  EXAMPLE_PROGRAMMING_TOPIC_URL,
+  EXAMPLE_VIDEO_GAMES_NEWS_TOPIC_URL
 };
 
 const paths = {
