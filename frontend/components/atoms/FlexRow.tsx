@@ -1,4 +1,4 @@
-type Position = "start" | "center" | "end";
+type Position = "start" | "center" | "end" | "between";
 
 type FlexRowProps = {
   position?: Position;
@@ -16,6 +16,7 @@ const FlexRow = (
   const positionClasses = {
     "start": "justify-start",
     "center": "justify-center",
+    "between": "justify-between",
     "end": "justify-end"
   };
 

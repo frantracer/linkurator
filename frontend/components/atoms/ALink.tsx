@@ -4,6 +4,7 @@ import Link from "next/link";
 type ButtonProps = {
   href: string
   onClick?: () => void
+  fitContent?: boolean
   children?: React.ReactNode
 }
 
@@ -11,14 +12,17 @@ const ALink = (
   {
     href,
     onClick,
-    children
+    fitContent = true,
+    children,
   }: ButtonProps
 ) => {
   const handleClick = onClick ? onClick : () => {
   }
 
+  const className = fitContent ? "" : "w-full";
+
   return (
-    <Link className="group w-full" href={href} onClick={handleClick}>
+    <Link className={"group " + className} href={href} onClick={handleClick}>
       {children}
     </Link>
   );

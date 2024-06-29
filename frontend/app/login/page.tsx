@@ -52,10 +52,10 @@ const Home: NextPage = () => {
           <p className="py-2">Check out some examples!</p>
           <div className="w-full">
             <FlexRow>
-              <ALink href={configuration.EXAMPLE_PROGRAMMING_TOPIC_URL}>
+              <ALink fitContent={false} href={configuration.EXAMPLE_PROGRAMMING_TOPIC_URL}>
                 <Button fitContent={false}>💻️ Programming</Button>
               </ALink>
-              <ALink href={configuration.EXAMPLE_VIDEO_GAMES_NEWS_TOPIC_URL}>
+              <ALink fitContent={false} href={configuration.EXAMPLE_VIDEO_GAMES_NEWS_TOPIC_URL}>
                 <Button fitContent={false}>🕹️️ Video games News</Button>
               </ALink>
             </FlexRow>
