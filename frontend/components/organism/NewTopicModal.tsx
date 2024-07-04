@@ -37,14 +37,15 @@ const NewTopicModal = (props: NewTopicModalProps) => {
   return (
     <Modal id={NewTopicModalId}>
       <FlexColumn>
-        <h1 className="font-bold text-xl w-full text-center">Create new topic</h1>
-        <InputText placeholder="New topic name" value={newTopicName} onChange={(value) => setNewTopicName(value)}/>
-        <Dropdown title={"Pick subscription"} options={
+        <h1 className="font-bold text-xl w-full text-center">{"Crear nueva categoría"}</h1>
+        <InputText placeholder="Nombre de la nueva categoría" value={newTopicName}
+                   onChange={(value) => setNewTopicName(value)}/>
+        <Dropdown title={"Selecciona varias subscripciones"} options={
           props.subscriptions.map(subscription => {
             return {key: subscription.uuid, label: subscription.name}
           })
         } onChange={(key) => onSubscriptionSelected(key)}/>
-        <Box title={"Subscriptions"}>
+        <Box title={"Subscripciones"}>
           <FlexRow position={"start"} wrap={true}>
             {subscriptionBadges}
           </FlexRow>
@@ -60,7 +61,7 @@ const NewTopicModal = (props: NewTopicModalProps) => {
               }
             )
           }}>
-            <span>Create</span>
+            <span>{"Crear"}</span>
           </Button>
         </FlexRow>
 

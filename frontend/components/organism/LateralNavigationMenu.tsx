@@ -94,9 +94,9 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
         <Divider/>
         {!profile && !profileIsLoading &&
             <FlexColumn>
-                <p className={"text-center"}><b>Create your own categories</b></p>
+                <p className={"text-center"}><b>{"Crea tus propias categorías"}</b></p>
                 <ALink href={"/login"}>
-                    <Button fitContent={false}>Sign up</Button>
+                    <Button fitContent={false}>{"Regístrate"}</Button>
                 </ALink>
             </FlexColumn>
         }
@@ -105,12 +105,12 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
                 <MenuItem onClick={() => {
                   setCurrentPage('topics');
                 }} selected={currentPage === 'topics'}>
-                    <FlexRow position={"start"}><RectangleGroup/>Topics</FlexRow>
+                    <FlexRow position={"start"}><RectangleGroup/>{"Categorías"}</FlexRow>
                 </MenuItem>
                 <MenuItem onClick={() => {
                   setCurrentPage('subscriptions');
                 }} selected={currentPage === 'subscriptions'}>
-                    <FlexRow position={"start"}><BookmarkSquaredFilled/>Subscriptions</FlexRow>
+                    <FlexRow position={"start"}><BookmarkSquaredFilled/>{"Subscripciones"}</FlexRow>
                 </MenuItem>
             </Menu>
         }

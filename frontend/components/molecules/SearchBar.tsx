@@ -10,7 +10,7 @@ type SearchBarProps = {
 
 const SearchBar = (
   {
-    placeholder = "Search...",
+    placeholder = "Buscar...",
     handleChange = undefined,
     value = ""
   }: SearchBarProps

@@ -6,7 +6,8 @@ import {Metadata} from "next";
 
 export const metadata: Metadata = {
   title: 'Linkurator',
-  description: 'Linkurator is a tool to organize and share your favorite links.',
+  description: 'Linkurator es un agregador de contenidos donde agrupar tus fuentes favoritos en categorías ' +
+    'y un buscador de contenido para encontrar lo que necesitas.',
 }
 
 export default function RootLayout(

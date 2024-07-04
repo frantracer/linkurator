@@ -48,7 +48,7 @@ const ProfilePage: NextPage = () => {
       </TopTitle>
       <div className={"m-8"}>
         <FlexColumn>
-          <Box title={"Name"}>
+          <Box title={"Nombre"}>
             <span>{userName}</span>
           </Box>
           <Box title={"Email"}>
@@ -57,11 +57,11 @@ const ProfilePage: NextPage = () => {
           <Button fitContent={true} clickAction={() => {
             window.open(configuration.LOGOUT_URL, '_self')
           }}>
-            <span>Logout</span>
+            <span>{"Cerrar sesión"}</span>
           </Button>
           <Divider/>
           <Button fitContent={true} clickAction={() => openModal(DeleteAccountModalId)}>
-            <span>Delete account</span>
+            <span>{"Borrar cuenta"}</span>
           </Button>
         </FlexColumn>
       </div>

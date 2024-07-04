@@ -68,21 +68,21 @@ const AssignTopicModal = (props: AssignTopicModalProps) => {
   return (
     <Modal id={AssignTopicModalId}>
       <FlexColumn>
-        <h1 className="font-bold text-xl w-full text-center">Assign subscription</h1>
-        <Box title={"Topics"}>
+        <h1 className="font-bold text-xl w-full text-center">{"Añadir subscripciones"}</h1>
+        <Box title={"Categorías"}>
           <FlexRow position={"start"} wrap={true}>
             {topicTags}
           </FlexRow>
         </Box>
-        <Dropdown title={"Pick topic"} options={options}
+        <Dropdown title={"Selecciona varias categorías"} options={options}
                   onChange={(key) => assignButtonAction(key)}/>
         <FlexRow>
-          <InputText placeholder={"New topic name"}
+          <InputText placeholder={"Nombre de la nueva categoría"}
                      value={topicName} onChange={(value) => setTopicName(value)}/>
           <Button clickAction={() => {
             newTopicButtonAction(topicName);
           }}>
-            Assign
+            {"Crear"}
           </Button>
         </FlexRow>
       </FlexColumn>
