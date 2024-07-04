@@ -13,6 +13,8 @@ import {SwapButton} from "../../components/atoms/SwapButton";
 import VideoCard from "../../components/organism/VideoCard";
 import {
   AddIcon,
+  ArchiveBoxFilledIcon,
+  ArchiveBoxIcon,
   ArrowUturnLeft,
   BookmarkSquared,
   BookmarkSquaredFilled,
@@ -154,6 +156,8 @@ const IconsSection = () => {
         <ArrowUturnLeft/>
         <ExclamationCircle/>
         <GoogleIcon/>
+        <ArchiveBoxIcon/>
+        <ArchiveBoxFilledIcon/>
       </div>
     </Section>
   );

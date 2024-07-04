@@ -8,14 +8,15 @@ import Link from "next/link";
 import {paths} from "../../configuration";
 import Divider from "../atoms/Divider";
 import {
+  ArchiveBoxFilledIcon,
   ArrowUturnLeft,
+  CheckCircleFilledIcon,
   CheckCircleIcon,
   CheckIcon,
-  EyeSlashIcon,
   PencilIcon,
   RefreshIcon,
-  ThumbsDownIcon,
-  ThumbsUpIcon
+  ThumbsDownFilledIcon,
+  ThumbsUpFilledIcon
 } from "../atoms/Icons";
 import Button from "../atoms/Button";
 import Box from "../atoms/Box";
@@ -104,7 +105,7 @@ const SubscriptionDetails = (props: SubscriptionDetailsProps) => {
                                       ...tempFilters,
                                       displayRecommended: checked
                                     })}/>
-                          <ThumbsUpIcon/>
+                          <ThumbsUpFilledIcon/>
                           <label>{"Recomendado"}</label>
                       </FlexRow>
                       <FlexRow position={"start"}>
@@ -113,19 +114,19 @@ const SubscriptionDetails = (props: SubscriptionDetailsProps) => {
                                       ...tempFilters,
                                       displayDiscouraged: checked
                                     })}/>
-                          <ThumbsDownIcon/>
+                          <ThumbsDownFilledIcon/>
                           <label>{"No recomendado"}</label>
                       </FlexRow>
                       <FlexRow position={"start"}>
                           <Checkbox checked={tempFilters.displayHidden}
                                     onChange={(checked) => setTempFilters({...tempFilters, displayHidden: checked})}/>
-                          <EyeSlashIcon/>
-                          <label>{"Oculto"}</label>
+                          <ArchiveBoxFilledIcon/>
+                          <label>{"Archivado"}</label>
                       </FlexRow>
                       <FlexRow position={"start"}>
                           <Checkbox checked={tempFilters.displayViewed}
                                     onChange={(checked) => setTempFilters({...tempFilters, displayViewed: checked})}/>
-                          <CheckCircleIcon/>
+                          <CheckCircleFilledIcon/>
                           <label>{"Visto"}</label>
                       </FlexRow>
                       <FlexRow position={"start"}>
@@ -134,7 +135,8 @@ const SubscriptionDetails = (props: SubscriptionDetailsProps) => {
                                       ...tempFilters,
                                       displayWithoutInteraction: checked
                                     })}/>
-                          <label>{"Sin interacciones"}</label>
+                          <CheckCircleIcon/>
+                          <label>{"No visto"}</label>
                       </FlexRow>
                   </FlexColumn>
               </Box>

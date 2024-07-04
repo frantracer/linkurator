@@ -7,10 +7,10 @@ import Link from "next/link";
 import {useInView} from "react-intersection-observer";
 import {SwapButton} from "../atoms/SwapButton";
 import {
+  ArchiveBoxFilledIcon,
+  ArchiveBoxIcon,
   CheckCircleFilledIcon,
   CheckCircleIcon,
-  EyeSlashFilledIcon,
-  EyeSlashIcon,
   ThumbsDownFilledIcon,
   ThumbsDownIcon,
   ThumbsUpFilledIcon,
@@ -115,8 +115,8 @@ const VideoCard = (
                         defaultChecked={item.hidden}
                         onChange={(isChecked) => onChangeSwapButton &&
                           onChangeSwapButton(item.uuid, InteractionType.Hidden, isChecked).then(onChange)}>
-                        <EyeSlashFilledIcon/>
-                        <EyeSlashIcon/>
+                        <ArchiveBoxFilledIcon/>
+                        <ArchiveBoxIcon/>
                     </SwapButton>
                     <SwapButton
                         defaultChecked={item.viewed}
