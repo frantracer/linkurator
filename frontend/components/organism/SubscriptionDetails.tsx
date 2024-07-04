@@ -65,7 +65,7 @@ const SubscriptionDetails = (props: SubscriptionDetailsProps) => {
 
   return (
     <Sidebar>
-      <FlexRow position={"center"}>
+      <FlexRow position={"between"}>
         <Avatar src={subscriptionThumbnail} alt={subscriptionName}/>
         <span>{subscriptionName}</span>
         {props.editable &&
