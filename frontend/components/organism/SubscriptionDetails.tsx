@@ -23,12 +23,13 @@ import Box from "../atoms/Box";
 import Avatar from "../atoms/Avatar";
 import SearchBar from "../molecules/SearchBar";
 import FlexColumn from "../atoms/FlexColumn";
-import {Filters} from "../../entities/Filters";
+import {durationOptions, Filters} from "../../entities/Filters";
 import Checkbox from "../atoms/Checkbox";
 import NumberInput from "../atoms/NumberInput";
 import {openModal} from "../../utilities/modalAction";
 import {AssignTopicModalId} from "./AssignTopicModal";
 import Grid from "../atoms/Grid";
+import Dropdown from "../atoms/Dropdown";
 
 export const SUBSCRIPTION_DETAILS_ID = "subscription-details";
 
@@ -45,6 +46,7 @@ type SubscriptionDetailsProps = {
 
 const SubscriptionDetails = (props: SubscriptionDetailsProps) => {
   const [tempFilters, setTempFilters] = useState<Filters>(props.filters);
+  const [showCustomDuration, setShowCustomDuration] = useState<boolean>(false);
 
   const subscriptionId = props.subscription ? props.subscription.uuid : "";
   const subscriptionName = props.subscription ? props.subscription.name : "";
@@ -59,8 +61,43 @@ const SubscriptionDetails = (props: SubscriptionDetailsProps) => {
     </Tag>
   ));
 
+  const resetFilters = () => {
+    props.resetFilters();
+    setTempFilters(props.filters)
+  }
+
+  const handleDurationChange = (key: string) => {
+    switch (key) {
+      case "short":
+        setTempFilters({...tempFilters, durationGroup: "short"});
+        setShowCustomDuration(false);
+        break;
+      case "medium":
+        setTempFilters({...tempFilters, durationGroup: "medium"});
+        setShowCustomDuration(false);
+        break;
+      case "long":
+        setTempFilters({...tempFilters, durationGroup: "long"});
+        setShowCustomDuration(false);
+        break;
+      case "all":
+        setTempFilters({...tempFilters, durationGroup: "all"});
+        setShowCustomDuration(false);
+        break;
+      case "custom":
+        setTempFilters({...tempFilters, minDuration: 0, maxDuration: 999999, durationGroup: "custom"});
+        setShowCustomDuration(true);
+        break;
+    }
+  }
+
   useEffect(() => {
     setTempFilters(props.filters)
+    if (props.filters.durationGroup == "custom") {
+      setShowCustomDuration(true);
+    } else {
+      setShowCustomDuration(false);
+    }
   }, [props.filters]);
 
   return (
@@ -86,14 +123,26 @@ const SubscriptionDetails = (props: SubscriptionDetailsProps) => {
         <FlexColumn>
           <SearchBar handleChange={(value) => setTempFilters({...tempFilters, textSearch: value})}
                      value={tempFilters.textSearch}/>
-          <Box title={"Duración (segundos)"}>
+          <Box title={"Duración"}>
             <FlexColumn>
-              <NumberInput placeholder={"Mínima"}
-                           value={tempFilters.minDuration}
-                           onChange={(value) => setTempFilters({...tempFilters, minDuration: value})}/>
-              <NumberInput placeholder={"Máxima"}
-                           value={tempFilters.maxDuration}
-                           onChange={(value) => setTempFilters({...tempFilters, maxDuration: value})}/>
+              <Dropdown selected={tempFilters.durationGroup} options={durationOptions} onChange={handleDurationChange}/>
+              {showCustomDuration &&
+                  <FlexColumn>
+                      <FlexRow>
+                          <p>{"Min"}</p>
+                          <NumberInput placeholder={"Mínima"}
+                                       value={tempFilters.minDuration}
+                                       onChange={(value) => setTempFilters({...tempFilters, minDuration: value})}/>
+
+                      </FlexRow>
+                      <FlexRow>
+                          <p>{"Max"}</p>
+                          <NumberInput placeholder={"Máxima"}
+                                       value={tempFilters.maxDuration}
+                                       onChange={(value) => setTempFilters({...tempFilters, maxDuration: value})}/>
+                      </FlexRow>
+                  </FlexColumn>
+              }
             </FlexColumn>
           </Box>
           {props.showInteractions &&
@@ -142,7 +191,7 @@ const SubscriptionDetails = (props: SubscriptionDetailsProps) => {
               </Box>
           }
           <FlexRow position={"end"}>
-            <Button clickAction={() => props.resetFilters()}>
+            <Button clickAction={resetFilters}>
               <ArrowUturnLeft/>
               {"Restaurar"}
             </Button>

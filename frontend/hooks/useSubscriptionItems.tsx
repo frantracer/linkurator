@@ -6,7 +6,7 @@ import {
 } from "../services/subscriptionService";
 import {useInfiniteQuery} from "@tanstack/react-query";
 import {Subscription} from "../entities/Subscription";
-import {Filters} from "../entities/Filters";
+import {Filters, getFilterDuration} from "../entities/Filters";
 import {mapFiltersToInteractionParams} from "../services/common";
 
 type OptionalSubscription = Subscription | null;
@@ -36,7 +36,8 @@ const useSubscriptionItems = (subscription: OptionalSubscription, filters: Filte
         return emptyResponse;
       }
       if (pageParam === undefined) {
-        return await getSubscriptionItems(subscription.uuid, filters.minDuration, filters.maxDuration,
+        const filterDuration = getFilterDuration(filters);
+        return await getSubscriptionItems(subscription.uuid, filterDuration.min, filterDuration.max,
           filters.textSearch, mapFiltersToInteractionParams(filters));
       }
       return await getSubscriptionItemsFromUrl(pageParam as URL);

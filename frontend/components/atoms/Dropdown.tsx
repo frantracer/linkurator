@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 
 type DropdownProps = {
   title?: string,
@@ -17,6 +17,10 @@ const Dropdown = (
     onChange = undefined
   }: DropdownProps) => {
   const [selectedOption, setSelectedOption] = useState<undefined | string>(selected);
+
+  useEffect(() => {
+    setSelectedOption(selected)
+  }, [selected]);
 
   const hasDisabledTitle = title !== undefined;
 

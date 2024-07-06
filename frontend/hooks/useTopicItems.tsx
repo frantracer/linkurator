@@ -1,7 +1,7 @@
 import {getTopicItems, getTopicItemsFromUrl, TopicItemsResponse} from "../services/topicService";
 import {SubscriptionItem} from "../entities/SubscriptionItem";
 import {useInfiniteQuery} from "@tanstack/react-query";
-import {Filters} from "../entities/Filters";
+import {Filters, getFilterDuration} from "../entities/Filters";
 import {mapFiltersToInteractionParams} from "../services/common";
 
 type OptionalTopicId = string | undefined;
@@ -31,7 +31,8 @@ const useTopicItems = (topicId: OptionalTopicId, filters: Filters): UseTopicItem
         return emptyResponse;
       }
       if (pageParam === undefined) {
-        return await getTopicItems(topicId, filters.minDuration, filters.maxDuration, filters.textSearch,
+        const filterDuration = getFilterDuration(filters);
+        return await getTopicItems(topicId, filterDuration.min, filterDuration.max, filters.textSearch,
           mapFiltersToInteractionParams(filters));
       }
       return await getTopicItemsFromUrl(pageParam);

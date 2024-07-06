@@ -1,6 +1,6 @@
 import InputText from "../atoms/InputText";
 import {CrossIcon, MagnifyingGlassIcon} from "../atoms/Icons";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 
 type SearchBarProps = {
   placeholder?: string;
@@ -16,6 +16,10 @@ const SearchBar = (
   }: SearchBarProps
 ) => {
   const [searchValue, setSearchValue] = useState(value);
+
+  useEffect(() => {
+    setSearchValue(value);
+  }, [value]);
 
   const setValue = (value: string) => {
     setSearchValue(value);
