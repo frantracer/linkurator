@@ -21,19 +21,19 @@ const DeleteAccountModal = (props: DeleteAccountModalProps) => {
   return (
     <Modal id={DeleteAccountModalId}>
       <FlexColumn>
-        <h1 className="font-bold text-xl w-full text-center">Delete account</h1>
-        <p className="text-center">All your data will be lost, are you sure you want to delete your account?</p>
-        <p className="text-center">Write your email if you want to continue</p>
+        <h1 className="font-bold text-xl w-full text-center">Borrar tu cuenta</h1>
+        <p className="text-center">Todos tus datos serán borrados</p>
+        <p className="text-center">Escribe tu email si quieres continuar</p>
         <InputText placeholder="Email" value={inputValue} onChange={(value) => setInputValue(value)}/>
         <FlexRow position={"end"}>
           <Button clickAction={() => closeModal(DeleteAccountModalId)}>
-            <span>Cancel</span>
+            <span>Cancelar</span>
           </Button>
           <Button disabled={buttonDisabled} clickAction={async () => {
             props.onDeleteAccount();
             closeModal(DeleteAccountModalId);
           }}>
-            <span>Delete</span>
+            <span>Borrar</span>
           </Button>
         </FlexRow>
       </FlexColumn>
