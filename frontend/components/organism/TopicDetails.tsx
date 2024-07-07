@@ -180,6 +180,21 @@ const TopicDetails = (props: TopicDetailsProps) => {
               <Box title={"Interacciones"}>
                   <FlexColumn>
                       <FlexRow position={"start"}>
+                          <Checkbox checked={tempFilters.displayWithoutInteraction}
+                                    onChange={(checked) => setTempFilters({
+                                      ...tempFilters,
+                                      displayWithoutInteraction: checked
+                                    })}/>
+                          <CheckCircleIcon/>
+                          <label>{"No visto"}</label>
+                      </FlexRow>
+                      <FlexRow position={"start"}>
+                          <Checkbox checked={tempFilters.displayViewed}
+                                    onChange={(checked) => setTempFilters({...tempFilters, displayViewed: checked})}/>
+                          <CheckCircleFilledIcon/>
+                          <label>{"Visto"}</label>
+                      </FlexRow>
+                      <FlexRow position={"start"}>
                           <Checkbox checked={tempFilters.displayRecommended}
                                     onChange={(checked) => setTempFilters({
                                       ...tempFilters,
@@ -202,21 +217,6 @@ const TopicDetails = (props: TopicDetailsProps) => {
                                     onChange={(checked) => setTempFilters({...tempFilters, displayHidden: checked})}/>
                           <ArchiveBoxFilledIcon/>
                           <label>{"Archivado"}</label>
-                      </FlexRow>
-                      <FlexRow position={"start"}>
-                          <Checkbox checked={tempFilters.displayViewed}
-                                    onChange={(checked) => setTempFilters({...tempFilters, displayViewed: checked})}/>
-                          <CheckCircleFilledIcon/>
-                          <label>{"Visto"}</label>
-                      </FlexRow>
-                      <FlexRow position={"start"}>
-                          <Checkbox checked={tempFilters.displayWithoutInteraction}
-                                    onChange={(checked) => setTempFilters({
-                                      ...tempFilters,
-                                      displayWithoutInteraction: checked
-                                    })}/>
-                          <CheckCircleIcon/>
-                          <label>{"No visto"}</label>
                       </FlexRow>
                   </FlexColumn>
               </Box>
