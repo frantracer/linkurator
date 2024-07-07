@@ -27,7 +27,7 @@ const InputText = (
 
   return (
     <input
-      className={"input input-bordered input-primary bg-base-200 w-full " + padding}
+      className={"input input-sm input-bordered input-primary bg-base-200 w-full " + padding}
       type="text"
       placeholder={placeholder}
       value={searchValue}
