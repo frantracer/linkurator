@@ -121,20 +121,32 @@ const TopicDetails = (props: TopicDetailsProps) => {
     <Sidebar>
       <FlexRow position={"center"}>
         <div className="w-full whitespace-nowrap truncate text-center">{topicName}</div>
-        {props.editable &&
-            <Button clickAction={() => openModal(EditTopicModalId)}>
-                <PencilIcon/>
-            </Button>
-        }
       </FlexRow>
       <Divider/>
-      <Box title={"Subscripciones"}>
-        <Grid>
-          {subsTags}
-        </Grid>
-      </Box>
+      {props.editable &&
+          <FlexRow position={"end"}>
+              <Button clickAction={() => openModal(EditTopicModalId)}>
+                  <PencilIcon/>
+                {"Editar"}
+              </Button>
+              <Button clickAction={deleteTopicAction}>
+                  <TrashIcon/>
+                {"Borrar"}
+              </Button>
+          </FlexRow>
+      }
       <Box title={"Filtros"}>
         <FlexColumn>
+          <FlexRow position={"between"}>
+            <Button clickAction={resetFilters}>
+              <ArrowUturnLeft/>
+              {"Restaurar"}
+            </Button>
+            <Button clickAction={() => props.setFilters(tempFilters)}>
+              <CheckIcon/>
+              {"Aplicar"}
+            </Button>
+          </FlexRow>
           <SearchBar handleChange={(value) => setTempFilters({...tempFilters, textSearch: value})}
                      value={tempFilters.textSearch}/>
           <Box title={"Duración"}>
@@ -204,28 +216,13 @@ const TopicDetails = (props: TopicDetailsProps) => {
                   </FlexColumn>
               </Box>
           }
-          <FlexRow position={"end"}>
-            <Button clickAction={resetFilters}>
-              <ArrowUturnLeft/>
-              {"Restaurar"}
-            </Button>
-            <Button clickAction={() => props.setFilters(tempFilters)}>
-              <CheckIcon/>
-              {"Aplicar"}
-            </Button>
-          </FlexRow>
         </FlexColumn>
       </Box>
-      {props.editable &&
-          <Box title={"Acciones"}>
-              <FlexRow position={"end"}>
-                  <Button clickAction={deleteTopicAction}>
-                      <TrashIcon/>
-                    {"Borrar"}
-                  </Button>
-              </FlexRow>
-          </Box>
-      }
+      <Box title={"Subscripciones"}>
+        <Grid>
+          {subsTags}
+        </Grid>
+      </Box>
     </Sidebar>
   );
 };

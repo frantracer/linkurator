@@ -8,12 +8,13 @@ import Link from "next/link";
 import {paths} from "../../configuration";
 import Divider from "../atoms/Divider";
 import {
+  AddIcon,
   ArchiveBoxFilledIcon,
   ArrowUturnLeft,
   CheckCircleFilledIcon,
   CheckCircleIcon,
   CheckIcon,
-  PencilIcon,
+  CrossIcon,
   RefreshIcon,
   ThumbsDownFilledIcon,
   ThumbsUpFilledIcon
@@ -102,25 +103,35 @@ const SubscriptionDetails = (props: SubscriptionDetailsProps) => {
 
   return (
     <Sidebar>
-      <FlexRow position={"between"}>
+      <FlexRow position={"center"}>
         <Avatar src={subscriptionThumbnail} alt={subscriptionName}/>
         <span>{subscriptionName}</span>
-        {props.editable &&
-            <Button clickAction={() => openModal(AssignTopicModalId)}>
-                <PencilIcon/>
-            </Button>
-        }
       </FlexRow>
       <Divider/>
       {props.editable &&
-          <Box title={"Categorías"}>
-              <Grid>
-                {topicTags}
-              </Grid>
-          </Box>
+          <FlexRow position={"between"}>
+              <Button clickAction={() => openModal(AssignTopicModalId)}>
+                  <AddIcon/>
+                {"Asignar"}
+              </Button>
+              <Button clickAction={props.refreshSubscription}>
+                  <RefreshIcon/>
+                {"Actualizar"}
+              </Button>
+          </FlexRow>
       }
       <Box title={"Filtros"}>
         <FlexColumn>
+          <FlexRow position={"between"}>
+            <Button clickAction={resetFilters}>
+              <ArrowUturnLeft/>
+              {"Restaurar"}
+            </Button>
+            <Button clickAction={() => props.setFilters(tempFilters)}>
+              <CheckIcon/>
+              {"Aplicar"}
+            </Button>
+          </FlexRow>
           <SearchBar handleChange={(value) => setTempFilters({...tempFilters, textSearch: value})}
                      value={tempFilters.textSearch}/>
           <Box title={"Duración"}>
@@ -190,26 +201,13 @@ const SubscriptionDetails = (props: SubscriptionDetailsProps) => {
                   </FlexColumn>
               </Box>
           }
-          <FlexRow position={"end"}>
-            <Button clickAction={resetFilters}>
-              <ArrowUturnLeft/>
-              {"Restaurar"}
-            </Button>
-            <Button clickAction={() => props.setFilters(tempFilters)}>
-              <CheckIcon/>
-              {"Aplicar"}
-            </Button>
-          </FlexRow>
         </FlexColumn>
       </Box>
       {props.editable &&
-          <Box title={"Acciones"}>
-              <FlexRow position={"end"}>
-                  <Button clickAction={props.refreshSubscription}>
-                      <RefreshIcon/>
-                    {"Actualizar"}
-                  </Button>
-              </FlexRow>
+          <Box title={"Categorías"}>
+              <Grid>
+                {topicTags}
+              </Grid>
           </Box>
       }
     </Sidebar>
