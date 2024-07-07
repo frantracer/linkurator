@@ -18,7 +18,7 @@ import Avatar from "../../../../components/atoms/Avatar";
 import SubscriptionDetails, {SUBSCRIPTION_DETAILS_ID} from "../../../../components/organism/SubscriptionDetails";
 import {refreshSubscription} from "../../../../services/subscriptionService";
 import AssignTopicModal from "../../../../components/organism/AssignTopicModal";
-import {showLateralMenu} from "../../../../utilities/hideLateralMenu";
+import {showLateralMenu} from "../../../../utilities/lateralMenuAction";
 import {LATERAL_NAVIGATION_MENU_ID} from "../../../../components/organism/LateralNavigationMenu";
 import useSubscription from "../../../../hooks/useSubscription";
 

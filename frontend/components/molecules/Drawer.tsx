@@ -1,5 +1,5 @@
 import React from "react";
-import {hideLateralMenu, isLateralMenuOpen, showLateralMenu} from "../../utilities/hideLateralMenu";
+import {hideLateralMenu, isLateralMenuOpen, showLateralMenu} from "../../utilities/lateralMenuAction";
 
 const SWIPE_DELTA = 100;
 

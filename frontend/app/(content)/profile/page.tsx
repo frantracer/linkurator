@@ -11,7 +11,7 @@ import TopTitle from "../../../components/molecules/TopTitle";
 import FlexRow from "../../../components/atoms/FlexRow";
 import Avatar from "../../../components/atoms/Avatar";
 import Box from "../../../components/atoms/Box";
-import {showLateralMenu} from "../../../utilities/hideLateralMenu";
+import {showLateralMenu} from "../../../utilities/lateralMenuAction";
 import {LATERAL_NAVIGATION_MENU_ID} from "../../../components/organism/LateralNavigationMenu";
 import {MenuIcon} from "../../../components/atoms/Icons";
 import Divider from "../../../components/atoms/Divider";

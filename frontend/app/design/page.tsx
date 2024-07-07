@@ -53,7 +53,7 @@ import Menu from "../../components/atoms/Menu";
 import {MenuItem} from "../../components/atoms/MenuItem";
 import Sidebar from "../../components/atoms/Sidebar";
 import Divider from "../../components/atoms/Divider";
-import {hideLateralMenu, showLateralMenu} from "../../utilities/hideLateralMenu";
+import {hideLateralMenu, showLateralMenu} from "../../utilities/lateralMenuAction";
 import {ErrorBanner} from "../../components/atoms/ErrorBanner";
 
 const SIDE_BAR_NAME = "main-menu";

@@ -20,7 +20,7 @@ import Avatar from "../atoms/Avatar";
 import ALink from "../atoms/ALink";
 import {LogoImage} from "../atoms/LogoImage";
 import {LogoTitle} from "../atoms/LogoTitle";
-import {hideLateralMenu} from "../../utilities/hideLateralMenu";
+import {hideLateralMenu} from "../../utilities/lateralMenuAction";
 import {paths} from "../../configuration";
 import FlexColumn from "../atoms/FlexColumn";
 
