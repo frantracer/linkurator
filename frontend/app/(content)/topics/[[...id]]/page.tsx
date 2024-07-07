@@ -18,7 +18,7 @@ import TopTitle from "../../../../components/molecules/TopTitle";
 import Button from "../../../../components/atoms/Button";
 import {MenuIcon, OptionsIcon} from "../../../../components/atoms/Icons";
 import TopicDetails, {TOPIC_DETAILS_ID} from "../../../../components/organism/TopicDetails";
-import {hideLateralMenu, showLateralMenu} from "../../../../utilities/lateralMenuAction";
+import {showLateralMenu} from "../../../../utilities/lateralMenuAction";
 import {LATERAL_NAVIGATION_MENU_ID} from "../../../../components/organism/LateralNavigationMenu";
 import useTopicSubscriptions from "../../../../hooks/useTopicSubscriptions";
 import {useTopic} from "../../../../hooks/useTopic";
@@ -86,7 +86,6 @@ const Home: NextPage = () => {
                     setFilters={setFilters}
                     resetFilters={resetFilters}
                     refreshTopics={refreshTopics}
-                    closeSidebar={() => hideLateralMenu(TOPIC_DETAILS_ID)}
       />
       <TopTitle>
         <Button clickAction={() => showLateralMenu(LATERAL_NAVIGATION_MENU_ID)} showOnlyOnMobile={true}>

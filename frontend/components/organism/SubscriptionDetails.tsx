@@ -14,7 +14,6 @@ import {
   CheckCircleFilledIcon,
   CheckCircleIcon,
   CheckIcon,
-  CrossIcon,
   RefreshIcon,
   ThumbsDownFilledIcon,
   ThumbsUpFilledIcon
@@ -31,6 +30,7 @@ import {openModal} from "../../utilities/modalAction";
 import {AssignTopicModalId} from "./AssignTopicModal";
 import Grid from "../atoms/Grid";
 import Dropdown from "../atoms/Dropdown";
+import {hideLateralMenu} from "../../utilities/lateralMenuAction";
 
 export const SUBSCRIPTION_DETAILS_ID = "subscription-details";
 
@@ -92,6 +92,11 @@ const SubscriptionDetails = (props: SubscriptionDetailsProps) => {
     }
   }
 
+  const handleApplyFilters = () => {
+    props.setFilters(tempFilters)
+    hideLateralMenu(SUBSCRIPTION_DETAILS_ID)
+  }
+
   useEffect(() => {
     setTempFilters(props.filters)
     if (props.filters.durationGroup == "custom") {
@@ -127,7 +132,7 @@ const SubscriptionDetails = (props: SubscriptionDetailsProps) => {
               <ArrowUturnLeft/>
               {"Restaurar"}
             </Button>
-            <Button clickAction={() => props.setFilters(tempFilters)}>
+            <Button clickAction={handleApplyFilters}>
               <CheckIcon/>
               {"Aplicar"}
             </Button>

@@ -31,6 +31,7 @@ import Grid from "../atoms/Grid";
 import {deleteTopic} from "../../services/topicService";
 import {EditTopicModalId} from "./EditTopicModal";
 import Dropdown from "../atoms/Dropdown";
+import {hideLateralMenu} from "../../utilities/lateralMenuAction";
 
 export const TOPIC_DETAILS_ID = "topic-details";
 
@@ -43,7 +44,6 @@ type TopicDetailsProps = {
   setFilters: (filters: Filters) => void;
   resetFilters: () => void;
   refreshTopics: () => void;
-  closeSidebar: () => void;
 };
 
 const TopicDetails = (props: TopicDetailsProps) => {
@@ -69,7 +69,7 @@ const TopicDetails = (props: TopicDetailsProps) => {
     deleteTopic(topicId)
       .then(() => {
         props.refreshTopics()
-        props.closeSidebar()
+        hideLateralMenu(TOPIC_DETAILS_ID)
       })
   }
 
@@ -108,6 +108,11 @@ const TopicDetails = (props: TopicDetailsProps) => {
     }
   }
 
+  const handleApplyFilters = () => {
+    props.setFilters(tempFilters)
+    hideLateralMenu(TOPIC_DETAILS_ID)
+  }
+
   useEffect(() => {
     setTempFilters(props.filters)
     if (props.filters.durationGroup == "custom") {
@@ -142,7 +147,7 @@ const TopicDetails = (props: TopicDetailsProps) => {
               <ArrowUturnLeft/>
               {"Restaurar"}
             </Button>
-            <Button clickAction={() => props.setFilters(tempFilters)}>
+            <Button clickAction={handleApplyFilters}>
               <CheckIcon/>
               {"Aplicar"}
             </Button>
