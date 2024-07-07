@@ -6,6 +6,7 @@ type ButtonProps = {
   showOnlyOnMobile?: boolean
   fitContent?: boolean
   disabled?: boolean
+  grow?: boolean
   children?: React.ReactNode
 }
 
@@ -19,10 +20,11 @@ const Button = (
     showOnlyOnMobile = false,
     fitContent = true,
     disabled = false,
+    grow = true,
     children
   }: ButtonProps
 ) => {
-  let className = "btn btn-primary rounded px-3 grow";
+  let className = "btn btn-primary rounded px-3";
   if (fitContent) {
     className += " w-fit";
   } else {
@@ -30,6 +32,9 @@ const Button = (
   }
   if (showOnlyOnMobile) {
     className += " lg:hidden";
+  }
+  if (grow) {
+    className += " grow";
   }
   if (disabled) {
     className += " opacity-50 cursor-not-allowed";

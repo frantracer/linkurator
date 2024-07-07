@@ -12,6 +12,8 @@ import Box from "../atoms/Box";
 import Tag from "../atoms/Tag";
 import FlexColumn from "../atoms/FlexColumn";
 import {CrossIcon} from "../atoms/Icons";
+import Divider from "../atoms/Divider";
+import {closeModal} from "../../utilities/modalAction";
 
 export const AssignTopicModalId = "assign-topic-modal";
 
@@ -70,12 +72,24 @@ const AssignTopicModal = (props: AssignTopicModalProps) => {
       <FlexColumn>
         <h1 className="font-bold text-xl w-full text-center">{"Añadir subscripciones"}</h1>
         <Box title={"Categorías"}>
-          <FlexRow position={"start"} wrap={true}>
-            {topicTags}
-          </FlexRow>
+          <FlexColumn>
+            <Dropdown title={"Selecciona una categoría existente"} options={options}
+                      onChange={(key) => assignButtonAction(key)}/>
+            <FlexRow position={"start"} wrap={true}>
+              {topicTags}
+            </FlexRow>
+          </FlexColumn>
         </Box>
-        <Dropdown title={"Selecciona varias categorías"} options={options}
-                  onChange={(key) => assignButtonAction(key)}/>
+        <FlexRow position={"end"}>
+          <Button grow={false} clickAction={() => {
+            closeModal(AssignTopicModalId);
+          }}>
+            <span>{"Aceptar"}</span>
+          </Button>
+        </FlexRow>
+
+        <Divider/>
+        <p>O crea una nueva categoría</p>
         <FlexRow>
           <InputText placeholder={"Nombre de la nueva categoría"}
                      value={topicName} onChange={(value) => setTopicName(value)}/>
