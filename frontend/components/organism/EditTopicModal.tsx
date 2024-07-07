@@ -46,15 +46,17 @@ const EditTopicModal = (props: EditTopicModalProps) => {
       <FlexColumn>
         <h1 className="font-bold text-xl w-full text-center">{"Editar categoría"}</h1>
         <InputText placeholder="Nombre de la categoría" value={newTopicName} onChange={(value) => setNewTopicName(value)}/>
-        <Dropdown title={"Selecciona varias subscripciones"} options={
-          props.subscriptions.map(subscription => {
-            return {key: subscription.uuid, label: subscription.name}
-          })
-        } onChange={(key) => onSubscriptionSelected(key)}/>
         <Box title={"Subscripciones"}>
-          <FlexRow position={"start"} wrap={true}>
-            {subscriptionBadges}
-          </FlexRow>
+          <FlexColumn>
+            <Dropdown title={"Selecciona varias subscripciones"} options={
+              props.subscriptions.map(subscription => {
+                return {key: subscription.uuid, label: subscription.name}
+              })
+            } onChange={(key) => onSubscriptionSelected(key)}/>
+            <FlexRow position={"start"} wrap={true}>
+              {subscriptionBadges}
+            </FlexRow>
+          </FlexColumn>
         </Box>
         <FlexRow position={"end"}>
           <Button clickAction={async () => {

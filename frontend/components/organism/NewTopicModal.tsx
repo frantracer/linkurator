@@ -23,7 +23,12 @@ type NewTopicModalProps = {
 
 const NewTopicModal = (props: NewTopicModalProps) => {
   const [newTopicName, setNewTopicName] = useState("");
-  const {subscriptionsToAdd, addSubscription, removeSubscription, clearSubscriptions} = useSubscriptionsToAdd([], undefined)
+  const {
+    subscriptionsToAdd,
+    addSubscription,
+    removeSubscription,
+    clearSubscriptions
+  } = useSubscriptionsToAdd([], undefined)
 
   const subscriptionBadges = subscriptionsToAdd.map(s => subscriptionToBadge(s, removeSubscription));
 
@@ -40,15 +45,17 @@ const NewTopicModal = (props: NewTopicModalProps) => {
         <h1 className="font-bold text-xl w-full text-center">{"Crear nueva categoría"}</h1>
         <InputText placeholder="Nombre de la nueva categoría" value={newTopicName}
                    onChange={(value) => setNewTopicName(value)}/>
-        <Dropdown title={"Selecciona varias subscripciones"} options={
-          props.subscriptions.map(subscription => {
-            return {key: subscription.uuid, label: subscription.name}
-          })
-        } onChange={(key) => onSubscriptionSelected(key)}/>
         <Box title={"Subscripciones"}>
-          <FlexRow position={"start"} wrap={true}>
-            {subscriptionBadges}
-          </FlexRow>
+          <FlexColumn>
+            <Dropdown title={"Selecciona varias subscripciones"} options={
+              props.subscriptions.map(subscription => {
+                return {key: subscription.uuid, label: subscription.name}
+              })
+            } onChange={(key) => onSubscriptionSelected(key)}/>
+            <FlexRow position={"start"} wrap={true}>
+              {subscriptionBadges}
+            </FlexRow>
+          </FlexColumn>
         </Box>
         <FlexRow position={"end"}>
           <Button clickAction={async () => {
