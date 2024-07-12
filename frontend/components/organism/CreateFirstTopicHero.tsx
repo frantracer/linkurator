@@ -9,11 +9,11 @@ const CreateFirstTopicHero = () => {
     <div className="hero min-h-screen bg-base-100">
       <div className="hero-content text-center">
         <div className="max-w-md">
-          <p className="text-5xl font-bold">It is time to create your first topic!</p>
-          <p className="py-2">Choose some of your subscriptions and group them into a topic</p>
+          <p className="text-5xl font-bold">¡Crea tu primera categoría!</p>
+          <p className="py-2">Elige algunas de tus subscripciones y agrúpalas en una categoría</p>
           <Button clickAction={() => openModal(NewTopicModalId)}>
             <AddIcon/>
-            <span>New Topic</span>
+            <span>Nueva categoría</span>
           </Button>
         </div>
       </div>
