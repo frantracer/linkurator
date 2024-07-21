@@ -64,12 +64,12 @@ const TopicVideoCardGrid = (props: TopicVideoCardGridProps) => {
       {props.isLoading &&
           <FlexRow position={"center"}>
               <Spinner/>
-              <span>Loading...</span>
+              <span>{"Cargando..."}</span>
           </FlexRow>
       }
       {props.topicIsFinished && !props.isLoading &&
           <FlexRow position={"center"}>
-              <span>No more items to show</span>
+              <span>{"No hay más contenido que mostrar"}</span>
           </FlexRow>
       }
     </main>

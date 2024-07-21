@@ -7,7 +7,7 @@ const ItemCardSkeleton = () => {
       </figure>
       <div className="card-body">
         <h2 className="card-title cursor-pointer">
-          {"Loading..."}
+          {"Cargando..."}
         </h2>
         <div className="h-12">
         </div>

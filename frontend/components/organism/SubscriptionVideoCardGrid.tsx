@@ -66,12 +66,12 @@ const SubscriptionVideoCardGrid = (props: SubscriptionVideoCardGridProps) => {
         {props.isLoading &&
             <FlexRow position={"center"}>
                 <Spinner/>
-                <span>Loading...</span>
+                <span>{"Cargando..."}</span>
             </FlexRow>
         }
         {props.isFinished && !props.isLoading &&
             <FlexRow position={"center"}>
-                <span>No more items to show</span>
+                <span>{"No hay más contenido que mostrar"}</span>
             </FlexRow>
         }
       </main>
