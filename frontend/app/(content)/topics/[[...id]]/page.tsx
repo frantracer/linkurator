@@ -49,8 +49,6 @@ const Home: NextPage = () => {
   const topicName = selectedTopic ? selectedTopic.name : "";
   const isTopicBeingScanned = selectedTopic ? !isTopicScanned(selectedTopic, subscriptions) : false
   const isUserLogged = !!profile
-  const isUserTopic = !!(topics.find(topic => topic.uuid === topicIdFromQuery))
-  const isTopicEditable = isUserLogged && isUserTopic
 
   const handleGridScroll = (event: React.UIEvent<HTMLElement>) => {
     const element = event.currentTarget
@@ -81,7 +79,6 @@ const Home: NextPage = () => {
       <TopicDetails topic={selectedTopic}
                     subscriptions={topicSubscriptions}
                     filters={filters}
-                    editable={isTopicEditable}
                     showInteractions={isUserLogged}
                     setFilters={setFilters}
                     resetFilters={resetFilters}

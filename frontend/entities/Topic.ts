@@ -4,6 +4,8 @@ export type Topic = {
   uuid: string;
   name: string;
   subscriptions_ids: string[];
+  is_owner: boolean;
+  followed: boolean;
 };
 
 export function topicSorting(a: Topic, b: Topic): number {

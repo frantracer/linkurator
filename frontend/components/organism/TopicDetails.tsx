@@ -28,7 +28,7 @@ import Miniature from "../atoms/Miniature";
 import ALink from "../atoms/ALink";
 import Tag from "../atoms/Tag";
 import Grid from "../atoms/Grid";
-import {deleteTopic} from "../../services/topicService";
+import {deleteTopic, followTopic, unfollowTopic} from "../../services/topicService";
 import {EditTopicModalId} from "./EditTopicModal";
 import Dropdown from "../atoms/Dropdown";
 import {hideLateralMenu} from "../../utilities/lateralMenuAction";
@@ -39,7 +39,6 @@ type TopicDetailsProps = {
   subscriptions: Subscription[];
   topic: Topic | null,
   filters: Filters,
-  editable: boolean,
   showInteractions: boolean,
   setFilters: (filters: Filters) => void;
   resetFilters: () => void;
@@ -113,6 +112,20 @@ const TopicDetails = (props: TopicDetailsProps) => {
     hideLateralMenu(TOPIC_DETAILS_ID)
   }
 
+  const handleFollowTopic = (topic_id: string) => {
+    followTopic(topic_id)
+      .then(() => {
+        props.refreshTopics()
+      })
+  }
+
+  const handleUnfollowTopic = (topic_id: string) => {
+    unfollowTopic(topic_id)
+      .then(() => {
+        props.refreshTopics()
+      })
+  }
+
   useEffect(() => {
     setTempFilters(props.filters)
     if (props.filters.durationGroup == "custom") {
@@ -128,7 +141,7 @@ const TopicDetails = (props: TopicDetailsProps) => {
         <div className="w-full whitespace-nowrap truncate text-center">{topicName}</div>
       </FlexRow>
       <Divider/>
-      {props.editable &&
+      {props.topic?.is_owner &&
           <FlexRow position={"end"}>
               <Button clickAction={() => openModal(EditTopicModalId)}>
                   <PencilIcon/>
@@ -137,6 +150,20 @@ const TopicDetails = (props: TopicDetailsProps) => {
               <Button clickAction={deleteTopicAction}>
                   <TrashIcon/>
                 {"Borrar"}
+              </Button>
+          </FlexRow>
+      }
+      {props.topic !== null && props.topic.followed &&
+          <FlexRow position={"center"}>
+              <Button clickAction={() => handleUnfollowTopic(topicId)}>
+                {"Dejar de seguir"}
+              </Button>
+          </FlexRow>
+      }
+      {props.topic !== null && !props.topic.followed &&
+          <FlexRow position={"center"}>
+              <Button clickAction={() => handleFollowTopic(topicId)}>
+                {"Seguir"}
               </Button>
           </FlexRow>
       }

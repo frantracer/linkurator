@@ -43,6 +43,8 @@ export async function getTopic(uuid: string): Promise<Topic | null> {
       uuid: data.uuid,
       name: data.name,
       subscriptions_ids: data.subscriptions_ids,
+      is_owner: data.is_owner,
+      followed: data.followed,
     };
   } else {
     console.error("Error retrieving topic", data);
@@ -148,6 +150,25 @@ export async function unassignSubscriptionToTopic(topic_uuid: string, subscripti
   }
 }
 
+export async function followTopic(uuid: string): Promise<void> {
+  const {data, status} = await axios.post(
+    configuration.TOPICS_URL + uuid + "/follow",
+    {},
+    {withCredentials: true});
+  if (status !== 201) {
+    throw ("Error following topic " + data);
+  }
+}
+
+export async function unfollowTopic(uuid: string): Promise<void> {
+  const {data, status} = await axios.delete(
+    configuration.TOPICS_URL + uuid + "/follow",
+    {withCredentials: true});
+  if (status !== 204) {
+    throw ("Error unfollowing topic " + data);
+  }
+}
+
 const mapJsonToTopicResponse = (json: Record<string, any>): TopicResponse => {
   let nextPage: URL | undefined = undefined;
   if (json.next_page) {
@@ -160,6 +181,8 @@ const mapJsonToTopicResponse = (json: Record<string, any>): TopicResponse => {
         uuid: element.uuid,
         name: element.name,
         subscriptions_ids: element.subscriptions_ids,
+        is_owner: element.is_owner,
+        followed: element.followed,
       };
     }),
     next_page: nextPage,
