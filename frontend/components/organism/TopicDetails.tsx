@@ -153,14 +153,14 @@ const TopicDetails = (props: TopicDetailsProps) => {
               </Button>
           </FlexRow>
       }
-      {props.topic !== null && props.topic.followed &&
+      {props.topic !== null && !props.topic.is_owner && props.topic.followed &&
           <FlexRow position={"center"}>
               <Button clickAction={() => handleUnfollowTopic(topicId)}>
                 {"Dejar de seguir"}
               </Button>
           </FlexRow>
       }
-      {props.topic !== null && !props.topic.followed &&
+      {props.topic !== null && !props.topic.is_owner && !props.topic.followed &&
           <FlexRow position={"center"}>
               <Button clickAction={() => handleFollowTopic(topicId)}>
                 {"Seguir"}
