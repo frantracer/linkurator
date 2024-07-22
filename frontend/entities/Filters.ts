@@ -25,7 +25,7 @@ export function getFilterDuration(filters: Filters): { min: number, max: number 
     case "all":
       return {min: 0, max: 999999};
     default:
-      return {min: filters.minDuration, max: filters.maxDuration};
+      return {min: filters.minDuration * 60, max: filters.maxDuration * 60};
   }
 }
 
@@ -49,5 +49,5 @@ export const durationOptions = [
   {key: "medium", label: "Intermedia"},
   {key: "long", label: "Larga"},
   {key: "all", label: "Cualquiera"},
-  {key: "custom", label: "Personalizada"}
+  {key: "custom", label: "Personalizada (minutos)"}
 ]
