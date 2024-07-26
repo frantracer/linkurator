@@ -31,7 +31,9 @@ const ProfilePage: NextPage = () => {
     }
   }, [profileIsLoading, router, profile]);
 
-  const userName = profile ? `${profile.first_name} ${profile.last_name}` : "";
+  const firstName = profile ? profile.first_name : ""
+  const lastName = profile ? profile.last_name : ""
+  const username = profile ? profile.username : ""
   const email = profile ? profile.email : "";
   const avatarUrl = profile ? profile.avatar_url : "";
 
@@ -42,14 +44,20 @@ const ProfilePage: NextPage = () => {
           <MenuIcon/>
         </Button>
         <FlexRow position={'center'}>
-          {avatarUrl !== "" && <Avatar src={avatarUrl} alt={userName}></Avatar>}
-          <h1>{userName}</h1>
+          {avatarUrl !== "" && <Avatar src={avatarUrl} alt={username}></Avatar>}
+          <h1>{username}</h1>
         </FlexRow>
       </TopTitle>
       <div className={"m-8"}>
         <FlexColumn>
           <Box title={"Nombre"}>
-            <span>{userName}</span>
+            <span>{firstName}</span>
+          </Box>
+          <Box title={"Apellidos"}>
+            <span>{lastName}</span>
+          </Box>
+          <Box title={"Usuario"}>
+            <span>{username}</span>
           </Box>
           <Box title={"Email"}>
             <span>{email}</span>
