@@ -55,6 +55,7 @@ import Sidebar from "../../components/atoms/Sidebar";
 import Divider from "../../components/atoms/Divider";
 import {hideLateralMenu, showLateralMenu} from "../../utilities/lateralMenuAction";
 import {ErrorBanner} from "../../components/atoms/ErrorBanner";
+import {Tabs} from "../../components/atoms/Tabs";
 
 const SIDE_BAR_NAME = "main-menu";
 const ICONS_REF = "icons";
@@ -68,6 +69,7 @@ const TAGS_REF = "tags";
 const BOX_REF = "box";
 const DROPDOWN_REF = "dropdown";
 const ERROR_BANNER_REF = "error_banner";
+const TABS_REF = "tabs";
 
 const LateralMenu = (
   {
@@ -84,7 +86,7 @@ const LateralMenu = (
   }, []);
 
   const refs = [ICONS_REF, BUTTONS_REF, SWAP_BUTTONS_REF, INPUTS_REF, MINIATURES_REF, AVATARS_REF,
-    TAGS_REF, CARDS_REF, BOX_REF, DROPDOWN_REF, ERROR_BANNER_REF];
+    TAGS_REF, CARDS_REF, BOX_REF, DROPDOWN_REF, ERROR_BANNER_REF, TABS_REF];
 
   const handleClick = (ref: string) => {
     setAnchor(ref);
@@ -335,7 +337,15 @@ const ErrorBannerSection = () => {
       </ErrorBanner>
     </Section>
   );
+}
 
+const TabsSection = () => {
+  return (
+    <Section>
+      <Head1># Tabs</Head1>
+      <Tabs tabsText={["Tab 1", "Tab 2", "Tab 3"]} selectedTab={"Tab 1"} onTabSelected={(tab) => console.log(tab)}/>
+    </Section>
+  );
 }
 
 const MainContent = () => {
@@ -352,6 +362,7 @@ const MainContent = () => {
       <BoxSection/>
       <DropdownSection/>
       <ErrorBannerSection/>
+      <TabsSection/>
     </main>
   );
 }
