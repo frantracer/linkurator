@@ -5,6 +5,7 @@ const TOPICS_URL = `${API_BASE_URL}/topics/`;
 const ITEMS_URL = `${API_BASE_URL}/items/`;
 const PROFILE_URL = `${API_BASE_URL}/profile/`;
 const WEB_LOGIN_URL = `${WEB_BASE_URL}/login/`;
+const CURATORS_URL = `${API_BASE_URL}/curators/`;
 const LOGIN_URL = `${API_BASE_URL}/login/?redirect_uri=${encodeURI(WEB_LOGIN_URL)}`;
 const LOGOUT_URL = `${API_BASE_URL}/logout/?redirect_uri=${encodeURI(WEB_LOGIN_URL)}`;
 const REGISTER_URL = `${API_BASE_URL}/register/?redirect_uri=${encodeURI(WEB_LOGIN_URL)}`;
@@ -21,6 +22,7 @@ const configuration = {
   REGISTER_URL,
   TOPICS_URL,
   ITEMS_URL,
+  CURATORS_URL,
   API_BASE_URL,
   TERMS_OF_SERVICE_URL,
   PRIVACY_POLICY_URL,
