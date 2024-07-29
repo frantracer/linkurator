@@ -28,7 +28,7 @@ import {
   FunnelIcon, GoogleIcon,
   LikeIcon,
   MagnifyingGlassIcon,
-  MenuIcon,
+  MenuIcon, MinusIcon,
   MoonIcon,
   OptionsIcon,
   PencilIcon,
@@ -130,6 +130,7 @@ const IconsSection = () => {
       <div className="grid grid-cols-6 md:grid-cols-10 lg:grid-cols-12 gap-y-8 m-2 py-8 px-4
       rounded border-2 border-base-100 justify-items-center items-center">
         <AddIcon/>
+        <MinusIcon/>
         <DownloadIcon/>
         <FunnelIcon/>
         <LikeIcon/>
