@@ -148,9 +148,12 @@ const NewTopicModal = (props: NewTopicModalProps) => {
                             <span>{curator.username}</span>
                         </FlexRow>
                     }
+                    {debouncedCuratorSearch === "" &&
+                        <FlexRow position={"center"}>{"Busca un curador de contenido"}</FlexRow>
+                    }
                     {curatorTopicsIsLoading && <span>{"Cargando categorías..."}</span>}
                     {curatorTopics &&
-                        <div className={"max-h-48 overflow-y-auto"}>
+                        <div className={"max-h-48  overflow-y-auto"}>
                             <Menu isFullHeight={true}>
                               {curatorTopics.sort(topicSorting).map(topic =>
                                 <MenuItem key={topic.uuid} selected={false} onClick={
