@@ -23,6 +23,8 @@ import {useCurator} from "../../hooks/useCurator";
 import {useCuratorTopics} from "../../hooks/useCuratorTopics";
 import {ErrorBanner} from "../atoms/ErrorBanner";
 import {useDebounce} from "../../hooks/useDebounce";
+import {useRouter} from "next/navigation";
+import {paths} from "../../configuration";
 
 const NEW_TOPIC_TAB = "Nueva categoría"
 const FOLLOW_TOPIC_TAB = "Seguir categoría"
@@ -35,6 +37,8 @@ type NewTopicModalProps = {
 }
 
 const NewTopicModal = (props: NewTopicModalProps) => {
+  const router = useRouter();
+
   const tabsText = [NEW_TOPIC_TAB, FOLLOW_TOPIC_TAB];
   const [selectedTab, setSelectedTab] = useState(NEW_TOPIC_TAB);
 
@@ -82,6 +86,11 @@ const NewTopicModal = (props: NewTopicModalProps) => {
         props.refreshTopics();
       });
     });
+  }
+
+  const handleClickCuratorTopic = (topicId: string)  => {
+    router.push(paths.TOPICS + "/" + topicId);
+    closeModal(NewTopicModalId);
   }
 
   return (
@@ -142,8 +151,10 @@ const NewTopicModal = (props: NewTopicModalProps) => {
                     {curatorTopics &&
                         <Menu isFullHeight={false}>
                           {curatorTopics.map(topic =>
-                            <MenuItem key={topic.uuid} selected={false} onClick={() => {
-                            }}>
+                            <MenuItem key={topic.uuid} selected={false} onClick={
+                              () => {
+                                handleClickCuratorTopic(topic.uuid)
+                              }}>
                               <FlexRow position={"between"}>
                                 <FlexRow position={"start"}>
                                   <span>{topic.name}</span>
