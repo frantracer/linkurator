@@ -25,6 +25,7 @@ import {ErrorBanner} from "../atoms/ErrorBanner";
 import {useDebounce} from "../../hooks/useDebounce";
 import {useRouter} from "next/navigation";
 import {paths} from "../../configuration";
+import {topicSorting} from "../../entities/Topic";
 
 const NEW_TOPIC_TAB = "Nueva categoría"
 const FOLLOW_TOPIC_TAB = "Seguir categoría"
@@ -151,7 +152,7 @@ const NewTopicModal = (props: NewTopicModalProps) => {
                     {curatorTopics &&
                         <div className={"max-h-48 overflow-y-auto"}>
                             <Menu isFullHeight={true}>
-                              {curatorTopics.map(topic =>
+                              {curatorTopics.sort(topicSorting).map(topic =>
                                 <MenuItem key={topic.uuid} selected={false} onClick={
                                   () => {
                                     handleClickCuratorTopic(topic.uuid)
