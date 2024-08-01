@@ -88,7 +88,7 @@ const NewTopicModal = (props: NewTopicModalProps) => {
     });
   }
 
-  const handleClickCuratorTopic = (topicId: string)  => {
+  const handleClickCuratorTopic = (topicId: string) => {
     router.push(paths.TOPICS + "/" + topicId);
     closeModal(NewTopicModalId);
   }
@@ -149,31 +149,33 @@ const NewTopicModal = (props: NewTopicModalProps) => {
                     }
                     {curatorTopicsIsLoading && <span>{"Cargando categorías..."}</span>}
                     {curatorTopics &&
-                        <Menu isFullHeight={false}>
-                          {curatorTopics.map(topic =>
-                            <MenuItem key={topic.uuid} selected={false} onClick={
-                              () => {
-                                handleClickCuratorTopic(topic.uuid)
-                              }}>
-                              <FlexRow position={"between"}>
-                                <FlexRow position={"start"}>
-                                  <span>{topic.name}</span>
-                                </FlexRow>
-                                <FlexRow position={"end"}>
-                                  {topic.followed && <Tag>Siguiendo</Tag>}
-                                  {!topic.followed &&
-                                      <Button clickAction={() => handleFollowTopic(topic.uuid)}
-                                              disabled={topic.is_owner} grow={false}><AddIcon/></Button>
-                                  }
-                                  {topic.followed &&
-                                      <Button clickAction={() => handleUnfollowTopic(topic.uuid)}
-                                              disabled={topic.is_owner} grow={false}><MinusIcon/></Button>
-                                  }
-                                </FlexRow>
-                              </FlexRow>
-                            </MenuItem>
-                          )}
-                        </Menu>
+                        <div className={"max-h-48 overflow-y-auto"}>
+                            <Menu isFullHeight={true}>
+                              {curatorTopics.map(topic =>
+                                <MenuItem key={topic.uuid} selected={false} onClick={
+                                  () => {
+                                    handleClickCuratorTopic(topic.uuid)
+                                  }}>
+                                  <FlexRow position={"between"}>
+                                    <FlexRow position={"start"}>
+                                      <span>{topic.name}</span>
+                                    </FlexRow>
+                                    <FlexRow position={"end"}>
+                                      {topic.followed && <Tag>Siguiendo</Tag>}
+                                      {!topic.followed &&
+                                          <Button clickAction={() => handleFollowTopic(topic.uuid)}
+                                                  disabled={topic.is_owner} grow={false}><AddIcon/></Button>
+                                      }
+                                      {topic.followed &&
+                                          <Button clickAction={() => handleUnfollowTopic(topic.uuid)}
+                                                  disabled={topic.is_owner} grow={false}><MinusIcon/></Button>
+                                      }
+                                    </FlexRow>
+                                  </FlexRow>
+                                </MenuItem>
+                              )}
+                            </Menu>
+                        </div>
                     }
                   </FlexColumn>
               </Box>
