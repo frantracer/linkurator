@@ -42,8 +42,15 @@ const Button = (
     relatedModalId = undefined;
   }
 
+  const handleClick = (e: React.MouseEvent<HTMLLabelElement>) => {
+    e.stopPropagation();
+    if (clickAction) {
+      clickAction();
+    }
+  }
+
   return (
-    <label role={"button"} onClick={clickAction} htmlFor={relatedModalId} className={className}>
+    <label role={"button"} onClick={handleClick} htmlFor={relatedModalId} className={className}>
       {children}
     </label>
   );
