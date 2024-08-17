@@ -38,6 +38,7 @@ const paths = {
   SUBSCRIPTIONS: '/subscriptions',
   PROFILE: '/profile',
   REGISTER: '/register',
+  CURATORS: '/curators',
 }
 
 export { configuration, paths };

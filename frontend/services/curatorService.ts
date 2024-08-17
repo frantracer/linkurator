@@ -33,6 +33,37 @@ export async function getCurator(username: string | null): Promise<Curator | nul
   }
 }
 
+export async function getCurators(): Promise<Curator[]> {
+  const {
+    data,
+    status
+  } = await axios.get<Curator[]>(configuration.CURATORS_URL, {withCredentials: true});
+  if (status === 200) {
+    return data
+  } else {
+    console.error("Error retrieving curators", data);
+    return [];
+  }
+}
+
+export async function followCurator(curatorId: string): Promise<void> {
+  const {
+    status
+  } = await axios.post(configuration.CURATORS_URL + curatorId + "/follow", {}, {withCredentials: true});
+  if (status !== 201) {
+    console.error("Error following curator", status);
+  }
+}
+
+export async function unfollowCurator(curatorId: string): Promise<void> {
+  const {
+    status
+  } = await axios.delete(configuration.CURATORS_URL + curatorId + "/follow", {withCredentials: true});
+  if (status !== 204) {
+    console.error("Error unfollowing curator", status);
+  }
+}
+
 export async function getCuratorTopics(curatorId: string | null): Promise<Topic[]> {
   if (curatorId === null) {
     return [];
@@ -50,15 +81,25 @@ export async function getCuratorTopics(curatorId: string | null): Promise<Topic[
   }
 }
 
-export async function getCuratorItems(curatorId: string | null): Promise<CuratorItemsResponse> {
+export async function getCuratorItems(
+  curatorId: string | null,
+  minDuration: number,
+  maxDuration: number,
+  searchText: string = "",
+): Promise<CuratorItemsResponse> {
   if (curatorId === null) {
     return {elements: [], nextPage: undefined};
   }
+  const searchParam = searchText ? "&search=" + searchText : "";
+  const minDurationParam = "&min_duration=" + minDuration;
+  const maxDurationParam = "&max_duration=" + maxDuration;
+  const url = configuration.CURATORS_URL + curatorId + "/items?" + searchParam + minDurationParam + maxDurationParam;
 
   const {
     data,
     status
-  } = await axios.get<CuratorItemsResponse>(configuration.CURATORS_URL + curatorId + "/items", {withCredentials: true});
+  } = await axios.get<CuratorItemsResponse>(url, {withCredentials: true});
+
   if (status === 200) {
     const response = mapJsonToCuratorItemsResponse(data);
     return {elements: response.elements, nextPage: response.nextPage};

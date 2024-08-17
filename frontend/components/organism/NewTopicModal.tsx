@@ -49,7 +49,7 @@ const NewTopicModal = (props: NewTopicModalProps) => {
   const {
     curator,
     curatorIsLoading
-  } = useCurator(debouncedCuratorSearch);
+  } = useCurator(debouncedCuratorSearch, []);
   const {
     topics: curatorTopics,
     topicsIsLoading: curatorTopicsIsLoading,

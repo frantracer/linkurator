@@ -40,7 +40,7 @@ import {
   ThumbsDownIcon,
   ThumbsUpFilledIcon,
   ThumbsUpIcon,
-  TrashIcon
+  TrashIcon, UserIconFilled
 } from "../../components/atoms/Icons";
 import React, {useEffect} from "react";
 import ItemCardSkeleton from "../../components/organism/ItemCardSkeleton";
@@ -161,6 +161,7 @@ const IconsSection = () => {
         <GoogleIcon/>
         <ArchiveBoxIcon/>
         <ArchiveBoxFilledIcon/>
+        <UserIconFilled/>
       </div>
     </Section>
   );

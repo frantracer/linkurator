@@ -1,6 +1,7 @@
 import {CuratorItemsResponse, getCuratorItems, getCuratorItemsFromUrl} from "../services/curatorService";
 import {SubscriptionItem} from "../entities/SubscriptionItem";
 import {useInfiniteQuery} from "@tanstack/react-query";
+import {Filters, getFilterDuration} from "../entities/Filters";
 
 type OptionalCuratorId = string | null;
 
@@ -13,7 +14,7 @@ type UseCuratorItems = {
   fetchMoreItems: () => void,
 }
 
-const useCuratorItems = (curatorId: OptionalCuratorId): UseCuratorItems => {
+const useCuratorItems = (curatorId: OptionalCuratorId, filters: Filters): UseCuratorItems => {
   const {
     data,
     refetch,
@@ -22,14 +23,15 @@ const useCuratorItems = (curatorId: OptionalCuratorId): UseCuratorItems => {
     isFetching,
     isFetchingNextPage
   } = useInfiniteQuery<CuratorItemsResponse>({
-    queryKey: ["curatorItems", curatorId],
+    queryKey: ["curatorItems", curatorId, filters],
     queryFn: async ({pageParam = undefined}) => {
       if (curatorId === null) {
         const emptyResponse: CuratorItemsResponse = {elements: [], nextPage: undefined};
         return emptyResponse;
       }
       if (pageParam === undefined) {
-        return await getCuratorItems(curatorId);
+        const filterDuration = getFilterDuration(filters);
+        return await getCuratorItems(curatorId, filterDuration.min, filterDuration.max, filters.textSearch);
       }
       return await getCuratorItemsFromUrl(pageParam);
     },

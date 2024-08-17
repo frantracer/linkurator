@@ -9,7 +9,7 @@ import Divider from "../atoms/Divider";
 import Menu from "../atoms/Menu";
 import {MenuItem} from "../atoms/MenuItem";
 import FlexRow from "../atoms/FlexRow";
-import {AddIcon, BookmarkSquaredFilled, RectangleGroup} from "../atoms/Icons";
+import {AddIcon, BookmarkSquaredFilled, RectangleGroup, UserIconFilled} from "../atoms/Icons";
 import SearchBar from "../molecules/SearchBar";
 import LateralSubscriptionList from "./LateralSubscriptionList";
 import LateralTopicList from "./LateralTopicList";
@@ -23,10 +23,13 @@ import {LogoTitle} from "../atoms/LogoTitle";
 import {hideLateralMenu} from "../../utilities/lateralMenuAction";
 import {paths} from "../../configuration";
 import FlexColumn from "../atoms/FlexColumn";
+import {useCurators} from "../../hooks/useCurators";
+import LateralCuratorList from "./LateralCuratorList";
+import FolowCuratorModal, {FollowCuratorModalId} from "./FollowCuratorModal";
 
 export const LATERAL_NAVIGATION_MENU_ID = 'lateral-navigation-menu';
 
-type CurrentPage = 'topics' | 'subscriptions' | 'profile' | 'other';
+type CurrentPage = 'topics' | 'subscriptions' | 'profile' | 'curators' | 'other';
 
 type LateralNavigationMenuProps = {
   children?: React.ReactNode;
@@ -40,6 +43,8 @@ const mapStringToPage = (page: string): CurrentPage => {
       return 'subscriptions';
     case 'profile':
       return 'profile';
+    case 'curators':
+      return 'curators';
     default:
       return 'other';
   }
@@ -57,11 +62,13 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
   const [searchValue, setSearchValue] = useState<string>('');
   const {profile, profileIsLoading} = useProfile();
   const {subscriptions} = useSubscriptions(profile);
+  const {curators, refreshCurators} = useCurators(profile, profileIsLoading);
   const {topics, refreshTopics} = useTopics(profile, profileIsLoading);
   const [currentPage, setCurrentPage] = useState<CurrentPage>(initialPage);
 
   const selectedSubscription = subscriptions.find(subscription => subscription.uuid === selectedId);
   const selectedTopic = topics.find(topic => topic.uuid === selectedId);
+  const selectedCurator = curators.find(curator => curator.id === selectedId);
 
   const closeMenu = () => {
     hideLateralMenu(LATERAL_NAVIGATION_MENU_ID)
@@ -69,6 +76,11 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
 
   const openNewTopicModal = () => {
     openModal(NewTopicModalId);
+    closeMenu();
+  }
+
+  const openFollowCuratorModal = () => {
+    openModal(FollowCuratorModalId);
     closeMenu();
   }
 
@@ -112,6 +124,11 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
                 }} selected={currentPage === 'subscriptions'}>
                     <FlexRow position={"start"}><BookmarkSquaredFilled/>{"Subscripciones"}</FlexRow>
                 </MenuItem>
+                <MenuItem onClick={() => {
+                  setCurrentPage('curators');
+                }} selected={currentPage === 'curators'}>
+                    <FlexRow position={"start"}><UserIconFilled/>{"Curadores"}</FlexRow>
+                </MenuItem>
             </Menu>
         }
         {profile && <Divider/>}
@@ -142,8 +159,22 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
                 closeMenu={closeMenu}
                 selectedTopic={selectedTopic}/>
         }
+        {profile && currentPage === 'curators' &&
+            <Button clickAction={openFollowCuratorModal}
+                    fitContent={false}>
+              {"Seguir curador"}
+            </Button>
+        }
+        {profile && currentPage === 'curators' &&
+            <LateralCuratorList
+                curators={curators}
+                closeMenu={closeMenu}
+                selectedCurator={selectedCurator}
+            />
+        }
       </Sidebar>
       <NewTopicModal refreshTopics={refreshTopics} subscriptions={subscriptions}/>
+      <FolowCuratorModal refreshCurators={refreshCurators} curators={curators}/>
       {children}
     </Drawer>
   )
