@@ -8,7 +8,6 @@ import {InteractionFilter} from "./common";
 
 export type SubscriptionResponse = {
   elements: Subscription[];
-  nextPage: URL | undefined;
 }
 
 export type SubscriptionItemsResponse = {
@@ -57,23 +56,17 @@ const mapJsonToSubscriptionResponse = (json: Record<string, any>): SubscriptionR
         isBeingScanned: Date.parse(element.scanned_at) < 946684800000, // It was scanned before 2000-01-01
       };
     }),
-    nextPage: json.next_page ? replaceBaseUrl(new URL(json.next_page), new URL(configuration.API_BASE_URL)) : undefined,
   };
 }
 
 export async function getSubscriptions(): Promise<Subscription[]> {
   let subscriptions: Subscription[] = []
-  let nextPage = configuration.SUBSCRIPTIONS_URL;
-  while (nextPage !== "") {
-    const {data, status} = await axios.get(nextPage, {withCredentials: true});
-    if (status === 200) {
-      const response = mapJsonToSubscriptionResponse(data);
-      subscriptions = subscriptions.concat(response.elements);
-      nextPage = response.nextPage?.toString() || "";
-    } else {
-      console.error("Error retrieving subscriptions", data);
-      nextPage = "";
-    }
+  const {data, status} = await axios.get(configuration.SUBSCRIPTIONS_URL, {withCredentials: true});
+  if (status === 200) {
+    const response = mapJsonToSubscriptionResponse(data);
+    subscriptions = response.elements;
+  } else {
+    console.error("Error retrieving subscriptions", data);
   }
   return subscriptions
 }
