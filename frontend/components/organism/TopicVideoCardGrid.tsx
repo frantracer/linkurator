@@ -53,7 +53,7 @@ const TopicVideoCardGrid = (props: TopicVideoCardGridProps) => {
           <div className="flex items-center justify-center h-screen">
               <FlexRow position={"center"}>
                   <Spinner/>
-                  <span>Fetching items for {props.topic?.name}...</span>
+                  <span>Descargando contenido de {props.topic?.name}...</span>
               </FlexRow>
           </div>
       }
@@ -61,13 +61,13 @@ const TopicVideoCardGrid = (props: TopicVideoCardGridProps) => {
         justify-items-center justify-content-center">
         {cards}
       </div>
-      {props.isLoading &&
+      {!props.isTopicBeingScanned && props.isLoading &&
           <FlexRow position={"center"}>
               <Spinner/>
               <span>{"Cargando..."}</span>
           </FlexRow>
       }
-      {props.topicIsFinished && !props.isLoading &&
+      {!props.isTopicBeingScanned && props.topicIsFinished && !props.isLoading &&
           <FlexRow position={"center"}>
               <span>{"No hay más contenido que mostrar"}</span>
           </FlexRow>
