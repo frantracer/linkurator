@@ -27,6 +27,7 @@ import {useCurators} from "../../hooks/useCurators";
 import LateralCuratorList from "./LateralCuratorList";
 import FolowCuratorModal, {FollowCuratorModalId} from "./FollowCuratorModal";
 import NewSubscriptionModal, {NewSubscriptionModalId} from "./NewSubscriptionModal";
+import FlexItem from "../atoms/FlexItem";
 
 export const LATERAL_NAVIGATION_MENU_ID = 'lateral-navigation-menu';
 
@@ -123,17 +124,53 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
                 <MenuItem onClick={() => {
                   setCurrentPage('topics');
                 }} selected={currentPage === 'topics'}>
-                    <FlexRow position={"start"}><RectangleGroup/>{"Categorías"}</FlexRow>
+                    <FlexRow position={"start"}>
+                        <FlexItem>
+                            <RectangleGroup/>
+                        </FlexItem>
+                        <FlexItem grow={true}>
+                          {"Categorías"}
+                        </FlexItem>
+                        <FlexItem grow={false}>
+                            <Button fitContent={true} clickAction={openNewTopicModal}>
+                                <AddIcon/>
+                            </Button>
+                        </FlexItem>
+                    </FlexRow>
                 </MenuItem>
                 <MenuItem onClick={() => {
                   setCurrentPage('subscriptions');
                 }} selected={currentPage === 'subscriptions'}>
-                    <FlexRow position={"start"}><BookmarkSquaredFilled/>{"Subscripciones"}</FlexRow>
+                    <FlexRow position={"start"}>
+                        <FlexItem>
+                            <BookmarkSquaredFilled/>
+                        </FlexItem>
+                        <FlexItem grow={true}>
+                          {"Subscripciones"}
+                        </FlexItem>
+                        <FlexItem grow={false}>
+                            <Button clickAction={openNewSubscriptionModal}>
+                                <AddIcon/>
+                            </Button>
+                        </FlexItem>
+                    </FlexRow>
                 </MenuItem>
                 <MenuItem onClick={() => {
                   setCurrentPage('curators');
                 }} selected={currentPage === 'curators'}>
-                    <FlexRow position={"start"}><UserIconFilled/>{"Curadores"}</FlexRow>
+                    <FlexRow position={"start"}>
+                        <FlexItem>
+                            <UserIconFilled/>
+                        </FlexItem>
+                        <FlexItem grow={true}>
+                          {"Curadores"}
+                        </FlexItem>
+                        <FlexItem grow={false}>
+                            <Button fitContent={true} clickAction={openFollowCuratorModal}>
+                                <AddIcon/>
+                            </Button>
+                        </FlexItem>
+                    </FlexRow>
                 </MenuItem>
             </Menu>
         }
@@ -141,9 +178,6 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
         {profile && currentPage === 'subscriptions' &&
             <FlexRow>
                 <SearchBar value={searchValue} handleChange={setSearchValue}/>
-                <Button clickAction={openNewSubscriptionModal}>
-                    <AddIcon/>
-                </Button>
             </FlexRow>
         }
         {profile && currentPage === 'subscriptions' &&
@@ -158,9 +192,6 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
         {profile && currentPage === 'topics' &&
             <FlexRow>
                 <SearchBar value={searchValue} handleChange={setSearchValue}/>
-                <Button clickAction={openNewTopicModal}>
-                    <AddIcon/>
-                </Button>
             </FlexRow>
         }
         {profile && currentPage === 'topics' &&
@@ -169,12 +200,6 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
                 topics={topics}
                 closeMenu={closeMenu}
                 selectedTopic={selectedTopic}/>
-        }
-        {profile && currentPage === 'curators' &&
-            <Button clickAction={openFollowCuratorModal}
-                    fitContent={false}>
-              {"Seguir curador"}
-            </Button>
         }
         {profile && currentPage === 'curators' &&
             <LateralCuratorList
