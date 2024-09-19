@@ -3,6 +3,8 @@ export type Subscription = {
   name: string;
   url: string;
   thumbnail: string;
+  topicUuid: string;
+  followed: boolean;
   isBeingScanned: boolean;
 };
 

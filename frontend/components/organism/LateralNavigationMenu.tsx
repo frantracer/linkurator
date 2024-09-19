@@ -26,6 +26,7 @@ import FlexColumn from "../atoms/FlexColumn";
 import {useCurators} from "../../hooks/useCurators";
 import LateralCuratorList from "./LateralCuratorList";
 import FolowCuratorModal, {FollowCuratorModalId} from "./FollowCuratorModal";
+import NewSubscriptionModal, {NewSubscriptionModalId} from "./NewSubscriptionModal";
 
 export const LATERAL_NAVIGATION_MENU_ID = 'lateral-navigation-menu';
 
@@ -61,7 +62,7 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
 
   const [searchValue, setSearchValue] = useState<string>('');
   const {profile, profileIsLoading} = useProfile();
-  const {subscriptions} = useSubscriptions(profile);
+  const {subscriptions, refreshSubscriptions} = useSubscriptions(profile);
   const {curators, refreshCurators} = useCurators(profile, profileIsLoading);
   const {topics, refreshTopics} = useTopics(profile, profileIsLoading);
   const [currentPage, setCurrentPage] = useState<CurrentPage>(initialPage);
@@ -76,6 +77,11 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
 
   const openNewTopicModal = () => {
     openModal(NewTopicModalId);
+    closeMenu();
+  }
+
+  const openNewSubscriptionModal = () => {
+    openModal(NewSubscriptionModalId);
     closeMenu();
   }
 
@@ -133,7 +139,12 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
         }
         {profile && <Divider/>}
         {profile && currentPage === 'subscriptions' &&
-            <SearchBar value={searchValue} handleChange={setSearchValue}/>
+            <FlexRow>
+                <SearchBar value={searchValue} handleChange={setSearchValue}/>
+                <Button clickAction={openNewSubscriptionModal}>
+                    <AddIcon/>
+                </Button>
+            </FlexRow>
         }
         {profile && currentPage === 'subscriptions' &&
             <LateralSubscriptionList
@@ -174,6 +185,7 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
         }
       </Sidebar>
       <NewTopicModal refreshTopics={refreshTopics} subscriptions={subscriptions}/>
+      <NewSubscriptionModal refreshSubscriptions={refreshSubscriptions}/>
       <FolowCuratorModal refreshCurators={refreshCurators} curators={curators}/>
       {children}
     </Drawer>

@@ -235,7 +235,9 @@ const CardSection = () => {
     name: "Subscription",
     url: "https://www.linkurator.com",
     thumbnail: "/logo_v1_medium.png",
-    isBeingScanned: false
+    isBeingScanned: false,
+    followed: true,
+    topicUuid: "98fbbe67-af08-4954-8249-15ea99e95611"
   }
 
   return (

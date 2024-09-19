@@ -7,6 +7,7 @@ type ButtonProps = {
   fitContent?: boolean
   disabled?: boolean
   grow?: boolean
+  primary?: boolean
   children?: React.ReactNode
 }
 
@@ -21,10 +22,16 @@ const Button = (
     fitContent = true,
     disabled = false,
     grow = true,
+    primary = true,
     children
   }: ButtonProps
 ) => {
-  let className = "btn btn-sm btn-primary rounded px-1";
+  let className = "btn btn-sm rounded px-1";
+  if (primary) {
+    className += " btn-primary";
+  } else {
+    className += " btn-secondary";
+  }
   if (fitContent) {
     className += " w-fit";
   } else {

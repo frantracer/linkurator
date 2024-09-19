@@ -1,7 +1,7 @@
 'use client';
 
 import type {NextPage} from "next";
-import React, {useEffect} from "react";
+import React, {useEffect, useState} from "react";
 import useSubscriptions from "../../../../hooks/useSubscriptions";
 import useSubscriptionItems from "../../../../hooks/useSubscriptionItems";
 import useProfile from "../../../../hooks/useProfile";
@@ -13,14 +13,16 @@ import {paths} from "../../../../configuration";
 import Drawer from "../../../../components/molecules/Drawer";
 import TopTitle from "../../../../components/molecules/TopTitle";
 import Button from "../../../../components/atoms/Button";
-import {MenuIcon, OptionsIcon} from "../../../../components/atoms/Icons";
+import {CrossIcon, MenuIcon, OptionsIcon} from "../../../../components/atoms/Icons";
 import Avatar from "../../../../components/atoms/Avatar";
 import SubscriptionDetails, {SUBSCRIPTION_DETAILS_ID} from "../../../../components/organism/SubscriptionDetails";
-import {refreshSubscription} from "../../../../services/subscriptionService";
+import {followSubscription, refreshSubscription, unfollowSubscription} from "../../../../services/subscriptionService";
 import AssignTopicModal from "../../../../components/organism/AssignTopicModal";
 import {showLateralMenu} from "../../../../utilities/lateralMenuAction";
 import {LATERAL_NAVIGATION_MENU_ID} from "../../../../components/organism/LateralNavigationMenu";
 import useSubscription from "../../../../hooks/useSubscription";
+import Tag from "../../../../components/atoms/Tag";
+import {ErrorBanner} from "../../../../components/atoms/ErrorBanner";
 
 const REFRESH_SUBSCRIPTIONS_INTERVAL = 30000;
 
@@ -30,11 +32,16 @@ const SubscriptionsPage: NextPage = () => {
 
   const selectedSubscriptionId: string | undefined = pathParams.id ? (Array.isArray(pathParams.id) ? pathParams.id[0] : pathParams.id) : undefined;
 
+  const [error, setError] = useState<string | null>(null);
+
   const {filters, setFilters, resetFilters} = useFilters();
   const {profile, profileIsLoading} = useProfile();
   const {subscriptions, refreshSubscriptions} = useSubscriptions(profile);
   const {topics, refreshTopics} = useTopics(profile, profileIsLoading);
-  const {subscription: selectedSubscription, isSubscriptionError} = useSubscription(selectedSubscriptionId, subscriptions);
+  const {
+    subscription: selectedSubscription,
+    isSubscriptionError
+  } = useSubscription(selectedSubscriptionId, subscriptions);
 
   const subscriptionUrl = selectedSubscription ? selectedSubscription.url : "";
   const subscriptionName = selectedSubscription ? selectedSubscription.name : "";
@@ -66,6 +73,22 @@ const SubscriptionsPage: NextPage = () => {
     }
   }
 
+  const handleFollowSubscription = () => {
+    followSubscription(selectedSubscriptionId!).then(() => {
+      refreshSubscriptions();
+    });
+  }
+
+  const handleUnfollowSubscription = () => {
+    unfollowSubscription(selectedSubscriptionId!).then((resultOk) => {
+      if (resultOk) {
+        refreshSubscriptions();
+      } else {
+        setError("No puedes cancelar una suscripción asociada a una categoría");
+      }
+    })
+  }
+
   useEffect(() => {
     if (!profileIsLoading) {
       if (profile && subscriptions.length > 0 && selectedSubscription === undefined) {
@@ -95,21 +118,42 @@ const SubscriptionsPage: NextPage = () => {
         <Button clickAction={() => showLateralMenu(LATERAL_NAVIGATION_MENU_ID)} showOnlyOnMobile={true}>
           <MenuIcon/>
         </Button>
-        <div className="flex flex-row gap-2 items-center justify-center w-full overflow-hidden hover:cursor-pointer"
-             onClick={openSubscriptionUrl}>
+        <div className="flex flex-row gap-2 items-center justify-center w-full overflow-hidden">
           {subscriptionThumbnail && <Avatar src={subscriptionThumbnail} alt={subscriptionName}/>}
-          <h1 className="text-2xl font-bold whitespace-nowrap truncate">
+          <h1 className="text-2xl font-bold whitespace-nowrap truncate hover:cursor-pointer"
+              onClick={openSubscriptionUrl}>
             {subscriptionName}
           </h1>
+          {selectedSubscription?.followed &&
+              <Tag>
+                <span>
+                  {"Siguiendo"}
+                </span>
+                  <div className="hover:cursor-pointer" onClick={handleUnfollowSubscription}>
+                      <CrossIcon/>
+                  </div>
+              </Tag>
+          }
+          {!selectedSubscription?.followed &&
+              <Button grow={false} primary={false} clickAction={handleFollowSubscription}>{"Seguir"}</Button>
+          }
         </div>
         <Button clickAction={() => showLateralMenu(SUBSCRIPTION_DETAILS_ID)}>
           <OptionsIcon/>
         </Button>
       </TopTitle>
+      {error &&
+          <ErrorBanner>
+              <span>{error}</span>
+              <div className={"hover:cursor-pointer"} onClick={() => setError(null)}>
+                  <CrossIcon/>
+              </div>
+          </ErrorBanner>
+      }
       {isSubscriptionError &&
-        <div className="flex items-center justify-center h-screen">
-          <span>Subscription not found</span>
-        </div>
+          <div className="flex items-center justify-center h-screen">
+              <span>{"La subscripción no existe"}</span>
+          </div>
       }
       <SubscriptionVideoCardGrid
         refreshItem={refreshSubscriptionItem}

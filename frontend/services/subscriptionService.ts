@@ -52,7 +52,8 @@ const mapJsonToSubscriptionResponse = (json: Record<string, any>): SubscriptionR
         name: element.name,
         url: element.url,
         thumbnail: element.thumbnail,
-        topic_uuid: element.topic_uuid,
+        topicUuid: element.topic_uuid,
+        followed: element.followed,
         isBeingScanned: Date.parse(element.scanned_at) < 946684800000, // It was scanned before 2000-01-01
       };
     }),
@@ -71,6 +72,19 @@ export async function getSubscriptions(): Promise<Subscription[]> {
   return subscriptions
 }
 
+export async function getSubscriptionsByNameOrUrl(nameOrUrl: string): Promise<Subscription[]> {
+  let subscriptions: Subscription[] = []
+  const {data, status} = await axios.get(configuration.SUBSCRIPTIONS_URL + "search?name_or_url=" + nameOrUrl,
+    {withCredentials: true});
+  if (status === 200) {
+    const response = mapJsonToSubscriptionResponse(data);
+    subscriptions = response.elements;
+  } else {
+    console.error("Error retrieving subscriptions", data);
+  }
+  return subscriptions
+}
+
 export async function getSubscription(uuid: string): Promise<Subscription | undefined> {
   try {
     const url = configuration.SUBSCRIPTIONS_URL + uuid;
@@ -80,6 +94,8 @@ export async function getSubscription(uuid: string): Promise<Subscription | unde
         uuid: response.data.uuid,
         name: response.data.name,
         url: response.data.url,
+        topicUuid: response.data.topic_uuid,
+        followed: response.data.followed,
         thumbnail: response.data.thumbnail,
         isBeingScanned: Date.parse(response.data.scanned_at) < 946684800000, // It was scanned before 2000-01-01
       };
@@ -156,6 +172,32 @@ export async function refreshSubscription(uuid: string): Promise<boolean> {
     }
   } catch (error: any) {
     console.error("Error refreshing subscription", error);
+  }
+  return false;
+}
+
+export async function followSubscription(uuid: string): Promise<boolean> {
+  try {
+    const url = configuration.SUBSCRIPTIONS_URL + uuid + "/follow";
+    const response = await axios.post(url, {}, {withCredentials: true});
+    if (response.status === 201) {
+      return true;
+    }
+  } catch (error: any) {
+    console.error("Error following subscription", error);
+  }
+  return false;
+}
+
+export async function unfollowSubscription(uuid: string): Promise<boolean> {
+  try {
+    const url = configuration.SUBSCRIPTIONS_URL + uuid + "/follow";
+    const response = await axios.delete(url, {withCredentials: true});
+    if (response.status === 204) {
+      return true;
+    }
+  } catch (error: any) {
+    console.error("Error unfollowing subscription", error);
   }
   return false;
 }
