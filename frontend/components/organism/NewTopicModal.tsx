@@ -97,11 +97,9 @@ const NewTopicModal = (props: NewTopicModalProps) => {
   return (
     <Modal id={NewTopicModalId}>
       <Tabs tabsText={tabsText} selectedTab={selectedTab} onTabSelected={setSelectedTab}/>
-      <Divider/>
       {selectedTab === NEW_TOPIC_TAB &&
           <FlexColumn>
-              <h1 className="font-bold text-xl w-full text-center">{"Crear nueva categoría"}</h1>
-              <InputText placeholder="Nombre de la nueva categoría" value={newTopicName}
+              <InputText placeholder="Introduce el nombre de la nueva categoría" value={newTopicName}
                          onChange={(value) => setNewTopicName(value)}/>
               <Box title={"Subscripciones"}>
                   <FlexColumn>
@@ -133,8 +131,7 @@ const NewTopicModal = (props: NewTopicModalProps) => {
       }
       {selectedTab === FOLLOW_TOPIC_TAB &&
           <FlexColumn>
-              <h1 className="font-bold text-xl w-full text-center">{"Seguir categoría"}</h1>
-              <SearchBar placeholder="Buscar curador de contenido" value={curatorSearch}
+              <SearchBar placeholder="Introduce el nombre de un curador" value={curatorSearch}
                          handleChange={setCuratorSearch}/>
               <Box title={"Curador"}>
                   <FlexColumn>
