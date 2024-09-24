@@ -6,6 +6,9 @@ import {useRouter} from "next/navigation";
 import {scrollToDrawerTop} from "../../utilities/scrollToDrawerTop";
 import Menu from "../atoms/Menu";
 import Tag from "../atoms/Tag";
+import FlexRow from "../atoms/FlexRow";
+import FlexItem from "../atoms/FlexItem";
+import Miniature from "../atoms/Miniature";
 
 export const LATERAL_TOPIC_MENU_ID = 'lateral-topic-menu';
 
@@ -37,10 +40,12 @@ const LateralTopicList = (props: LateralTopicListProps) => {
         onClick={() => handleClick(topic.uuid)}
         selected={topic.uuid === props.selectedTopic?.uuid}
       >
-        <div className="flex flex-row gap-2 items-center">
-          <div className="whitespace-nowrap overflow-auto truncate w-full">{topic.name}</div>
+        <FlexRow>
+          <span>{topic.name}</span>
+          <FlexItem grow={true}/>
+          <Miniature src={topic.curator.avatar_url} alt={topic.curator.username}/>
           <Tag>{topic.subscriptions_ids.length}</Tag>
-        </div>
+        </FlexRow>
       </MenuItem>
     ))
 
