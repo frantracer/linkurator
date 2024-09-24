@@ -6,6 +6,12 @@ export type Topic = {
   subscriptions_ids: string[];
   is_owner: boolean;
   followed: boolean;
+  curator: {
+    id: string;
+    username: string;
+    avatar_url: string;
+    followed: boolean;
+  };
 };
 
 export function topicSorting(a: Topic, b: Topic): number {

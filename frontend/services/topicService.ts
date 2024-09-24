@@ -45,11 +45,34 @@ export async function getTopic(uuid: string): Promise<Topic | null> {
       subscriptions_ids: data.subscriptions_ids,
       is_owner: data.is_owner,
       followed: data.followed,
+      curator: {
+        id: data.curator.id,
+        username: data.curator.username,
+        avatar_url: data.curator.avatar_url,
+        followed: data.curator.followed,
+      }
     };
   } else {
     console.error("Error retrieving topic", data);
     return null;
   }
+}
+
+export async function getTopicsByName(name: string): Promise<Topic[]> {
+  let topics: Topic[] = []
+  let nextPage = configuration.TOPICS_URL + "name/" + name;
+  while (nextPage !== "") {
+    const {data, status} = await axios.get(nextPage, {withCredentials: true});
+    if (status === 200) {
+      const response = mapJsonToTopicResponse(data);
+      topics = topics.concat(response.elements);
+      nextPage = response.next_page?.toString() || "";
+    } else {
+      console.error("Error retrieving topics", data);
+      nextPage = "";
+    }
+  }
+  return topics
 }
 
 export async function createTopic(uuid: string, name: string, subscriptions: string[]) {
@@ -183,6 +206,12 @@ const mapJsonToTopicResponse = (json: Record<string, any>): TopicResponse => {
         subscriptions_ids: element.subscriptions_ids,
         is_owner: element.is_owner,
         followed: element.followed,
+        curator: {
+          id: element.curator.id,
+          username: element.curator.username,
+          avatar_url: element.curator.avatar_url,
+          followed: element.curator.followed,
+        }
       };
     }),
     next_page: nextPage,

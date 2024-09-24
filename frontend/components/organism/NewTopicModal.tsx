@@ -15,22 +15,36 @@ import FlexColumn from "../atoms/FlexColumn";
 import {Tabs} from "../atoms/Tabs";
 import SearchBar from "../molecules/SearchBar";
 import Tag from "../atoms/Tag";
-import Avatar from "../atoms/Avatar";
-import Divider from "../atoms/Divider";
 import Menu from "../atoms/Menu";
 import {MenuItem} from "../atoms/MenuItem";
-import {useCurator} from "../../hooks/useCurator";
-import {useCuratorTopics} from "../../hooks/useCuratorTopics";
 import {ErrorBanner} from "../atoms/ErrorBanner";
 import {useDebounce} from "../../hooks/useDebounce";
 import {useRouter} from "next/navigation";
 import {paths} from "../../configuration";
-import {topicSorting} from "../../entities/Topic";
+import useFindTopics from "../../hooks/useFindTopics";
+import useProfile from "../../hooks/useProfile";
+import FlexItem from "../atoms/FlexItem";
+import Miniature from "../atoms/Miniature";
+import Collapse from "../atoms/Collapse";
+import {Topic} from "../../entities/Topic";
 
 const NEW_TOPIC_TAB = "Nueva categoría"
 const FOLLOW_TOPIC_TAB = "Seguir categoría"
 
 export const NewTopicModalId = "new-topic-modal";
+
+type TopicsGroupedByCurator = {
+  [curatorId: string]: Topic[];
+};
+
+type CuratorsIndexedById = {
+  [curatorId: string]: {
+    id: string;
+    username: string;
+    avatar_url: string;
+    followed: boolean;
+  };
+};
 
 type NewTopicModalProps = {
   subscriptions: Subscription[];
@@ -40,21 +54,65 @@ type NewTopicModalProps = {
 const NewTopicModal = (props: NewTopicModalProps) => {
   const router = useRouter();
 
+  const {profile} = useProfile()
+
   const tabsText = [NEW_TOPIC_TAB, FOLLOW_TOPIC_TAB];
   const [selectedTab, setSelectedTab] = useState(NEW_TOPIC_TAB);
 
-  const [curatorSearch, setCuratorSearch] = useState("");
-  const debouncedCuratorSearch = useDebounce(curatorSearch, 500);
+  const [topicSearch, setTopicSearch] = useState("");
+  const debouncedTopicSearch = useDebounce(topicSearch, 500);
 
-  const {
-    curator,
-    curatorIsLoading
-  } = useCurator(debouncedCuratorSearch, []);
-  const {
-    topics: curatorTopics,
-    topicsIsLoading: curatorTopicsIsLoading,
-    refetchTopics: refreshCuratorTopics
-  } = useCuratorTopics(curator === null ? null : curator.id);
+  const {topics, topicsAreLoading, refreshTopics} = useFindTopics(profile, debouncedTopicSearch);
+  const topicsGroupedByCurator = topics.reduce((acc, topic) => {
+    if (!acc[topic.curator.id]) {
+      acc[topic.curator.id] = [];
+    }
+    acc[topic.curator.id].push(topic);
+    return acc;
+  }, {} as TopicsGroupedByCurator);
+  const curatorsIndexedById = topics.reduce((acc, topic) => {
+    acc[topic.curator.id] = topic.curator;
+    return acc;
+  }, {} as CuratorsIndexedById);
+
+  const CollapsableMenuItems = Object.keys(topicsGroupedByCurator).map(curatorId => {
+    const curator = curatorsIndexedById[curatorId];
+    const titleElement = (
+      <FlexRow position={"start"}>
+        <Miniature src={curator.avatar_url} alt={curator.username}/>
+        <span>{curator.username}</span>
+      </FlexRow>
+    );
+    const contentElement = topicsGroupedByCurator[curatorId].map(topic =>
+      <MenuItem key={topic.uuid} selected={false} onClick={() => handleClickCuratorTopic(topic.uuid)}>
+        <FlexRow position={"start"}>
+          <FlexItem>
+            <FlexRow>
+              <span>{topic.name}</span>
+              {topic.followed && <Tag>Siguiendo</Tag>}
+            </FlexRow>
+          </FlexItem>
+          <FlexItem grow={true}/>
+          <FlexItem>
+            {!topic.followed &&
+                <Button clickAction={() => handleFollowTopic(topic.uuid)} disabled={topic.is_owner} grow={false}>
+                    <AddIcon/>
+                    <span>{"Seguir"}</span>
+                </Button>
+            }
+            {topic.followed &&
+                <Button clickAction={() => handleUnfollowTopic(topic.uuid)} disabled={topic.is_owner} grow={false}>
+                    <MinusIcon/>
+                    <span>{"Dejar de seguir"}</span>
+                </Button>
+            }
+          </FlexItem>
+        </FlexRow>
+      </MenuItem>
+    )
+
+    return <Collapse title={titleElement} content={contentElement} key={curatorId} isOpen={true}/>
+  });
 
   const [newTopicName, setNewTopicName] = useState("");
   const {
@@ -75,17 +133,15 @@ const NewTopicModal = (props: NewTopicModalProps) => {
 
   const handleFollowTopic = (topicId: string) => {
     followTopic(topicId).then(() => {
-      refreshCuratorTopics().then(() => {
-        props.refreshTopics();
-      });
+      refreshTopics();
+      props.refreshTopics()
     });
   }
 
   const handleUnfollowTopic = (topicId: string) => {
     unfollowTopic(topicId).then(() => {
-      refreshCuratorTopics().then(() => {
-        props.refreshTopics();
-      });
+      refreshTopics();
+      props.refreshTopics();
     });
   }
 
@@ -131,50 +187,21 @@ const NewTopicModal = (props: NewTopicModalProps) => {
       }
       {selectedTab === FOLLOW_TOPIC_TAB &&
           <FlexColumn>
-              <SearchBar placeholder="Introduce el nombre de un curador" value={curatorSearch}
-                         handleChange={setCuratorSearch}/>
-              <Box title={"Curador"}>
+              <SearchBar placeholder="Introduce una palabra para buscar categorías" value={topicSearch}
+                         handleChange={setTopicSearch}/>
+              <Box title={"Categorías"}>
                   <FlexColumn>
-                    {debouncedCuratorSearch !== "" && curator === null && !curatorIsLoading &&
-                        <ErrorBanner>{"No se encontró el curador " + debouncedCuratorSearch}</ErrorBanner>
+                    {debouncedTopicSearch === "" &&
+                        <span>{"Introduce una palabra para buscar categorías"}</span>
                     }
-                    {curatorIsLoading && <span>{"Cargando..."}</span>}
-                    {curator !== null &&
-                        <FlexRow>
-                            <Avatar src={curator.avatar_url} alt={curator.username}/>
-                            <span>{curator.username}</span>
-                        </FlexRow>
+                    {topics.length === 0 && !topicsAreLoading && debouncedTopicSearch !== "" &&
+                        <ErrorBanner>{"No se encontró nada relacionado con " + debouncedTopicSearch}</ErrorBanner>
                     }
-                    {debouncedCuratorSearch === "" &&
-                        <FlexRow position={"center"}>{"Busca un curador de contenido"}</FlexRow>
-                    }
-                    {curatorTopicsIsLoading && <span>{"Cargando categorías..."}</span>}
-                    {curatorTopics &&
-                        <div className={"max-h-48  overflow-y-auto"}>
+                    {topicsAreLoading && <span>{"Cargando..."}</span>}
+                    {topics.length > 0 &&
+                        <div className={"max-h-72 overflow-y-auto"}>
                             <Menu isFullHeight={true}>
-                              {curatorTopics.sort(topicSorting).map(topic =>
-                                <MenuItem key={topic.uuid} selected={false} onClick={
-                                  () => {
-                                    handleClickCuratorTopic(topic.uuid)
-                                  }}>
-                                  <FlexRow position={"between"}>
-                                    <FlexRow position={"start"}>
-                                      <span>{topic.name}</span>
-                                    </FlexRow>
-                                    <FlexRow position={"end"}>
-                                      {topic.followed && <Tag>Siguiendo</Tag>}
-                                      {!topic.followed &&
-                                          <Button clickAction={() => handleFollowTopic(topic.uuid)}
-                                                  disabled={topic.is_owner} grow={false}><AddIcon/></Button>
-                                      }
-                                      {topic.followed &&
-                                          <Button clickAction={() => handleUnfollowTopic(topic.uuid)}
-                                                  disabled={topic.is_owner} grow={false}><MinusIcon/></Button>
-                                      }
-                                    </FlexRow>
-                                  </FlexRow>
-                                </MenuItem>
-                              )}
+                              {CollapsableMenuItems}
                             </Menu>
                         </div>
                     }
