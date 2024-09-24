@@ -41,9 +41,11 @@ const LateralTopicList = (props: LateralTopicListProps) => {
         selected={topic.uuid === props.selectedTopic?.uuid}
       >
         <FlexRow>
+          {!topic.is_owner &&
+            <Miniature src={topic.curator.avatar_url} alt={topic.curator.username}/>
+          }
           <span>{topic.name}</span>
           <FlexItem grow={true}/>
-          <Miniature src={topic.curator.avatar_url} alt={topic.curator.username}/>
           <Tag>{topic.subscriptions_ids.length}</Tag>
         </FlexRow>
       </MenuItem>
