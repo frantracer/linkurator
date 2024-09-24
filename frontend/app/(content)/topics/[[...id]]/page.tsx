@@ -7,7 +7,7 @@ import useProfile from "../../../../hooks/useProfile";
 import useTopicItems from "../../../../hooks/useTopicItems";
 import TopicVideoCardGrid from "../../../../components/organism/TopicVideoCardGrid";
 import {useTopics} from "../../../../hooks/useTopics";
-import EditTopicModal from "../../../../components/organism/EditTopicModal";
+import EditTopicModal, {EditTopicModalId} from "../../../../components/organism/EditTopicModal";
 import {isTopicScanned} from "../../../../entities/Topic";
 import {paths} from "../../../../configuration";
 import useFilters from "../../../../hooks/useFilters";
@@ -16,12 +16,18 @@ import CreateFirstTopicHero from "../../../../components/organism/CreateFirstTop
 import Drawer from "../../../../components/molecules/Drawer";
 import TopTitle from "../../../../components/molecules/TopTitle";
 import Button from "../../../../components/atoms/Button";
-import {MenuIcon, OptionsIcon} from "../../../../components/atoms/Icons";
+import {CrossIcon, MenuIcon, OptionsIcon} from "../../../../components/atoms/Icons";
 import TopicDetails, {TOPIC_DETAILS_ID} from "../../../../components/organism/TopicDetails";
 import {showLateralMenu} from "../../../../utilities/lateralMenuAction";
 import {LATERAL_NAVIGATION_MENU_ID} from "../../../../components/organism/LateralNavigationMenu";
 import useTopicSubscriptions from "../../../../hooks/useTopicSubscriptions";
 import {useTopic} from "../../../../hooks/useTopic";
+import FlexRow from "../../../../components/atoms/FlexRow";
+import Tag from "../../../../components/atoms/Tag";
+import FlexItem from "../../../../components/atoms/FlexItem";
+import Avatar from "../../../../components/atoms/Avatar";
+import {followTopic, unfollowTopic} from "../../../../services/topicService";
+import {openModal} from "../../../../utilities/modalAction";
 
 const REFRESH_TOPICS_INTERVAL = 30000;
 
@@ -60,6 +66,18 @@ const Home: NextPage = () => {
     }
   }
 
+  const handleFollowTopic = (topicId: string) => {
+    followTopic(topicId).then(() => {
+      refreshTopics()
+    })
+  }
+
+  const handleUnfollowTopic = (topicId: string) => {
+    unfollowTopic(topicId).then(() => {
+      refreshTopics()
+    })
+  }
+
   useEffect(() => {
     if (!topicIdFromQuery && topics.length > 0) {
       router.push(paths.TOPICS + "/" + topics[0].uuid)
@@ -85,15 +103,46 @@ const Home: NextPage = () => {
                     refreshTopics={refreshTopics}
       />
       <TopTitle>
-        <Button clickAction={() => showLateralMenu(LATERAL_NAVIGATION_MENU_ID)} showOnlyOnMobile={true}>
-          <MenuIcon/>
-        </Button>
-        <h1 className="text-2xl font-bold whitespace-nowrap truncate text-center w-full">
-          {topicName}
-        </h1>
-        <Button clickAction={() => showLateralMenu(TOPIC_DETAILS_ID)}>
-          <OptionsIcon/>
-        </Button>
+        <FlexRow position={"between"}>
+          <FlexItem>
+            <Button clickAction={() => showLateralMenu(LATERAL_NAVIGATION_MENU_ID)} showOnlyOnMobile={true}>
+              <MenuIcon/>
+            </Button>
+          </FlexItem>
+          <FlexItem>
+            <FlexRow position={"start"}>
+              {selectedTopic &&
+                  <Avatar src={selectedTopic.curator.avatar_url} alt={selectedTopic.curator.username}/>
+              }
+              <h1 className="text-2xl font-bold text-center">
+                {topicName}
+              </h1>
+              {selectedTopic && selectedTopic.followed && !selectedTopic.is_owner &&
+                  <Tag>
+                    {"Siguiendo"}
+                      <div className="hover:cursor-pointer" onClick={() => handleUnfollowTopic(selectedTopic.uuid)}>
+                          <CrossIcon/>
+                      </div>
+                  </Tag>
+              }
+              {selectedTopic && !selectedTopic.followed && !selectedTopic.is_owner &&
+                <Button primary={false} clickAction={() => handleFollowTopic(selectedTopic.uuid)}>
+                  {"Seguir"}
+                </Button>
+              }
+              {selectedTopic && selectedTopic.is_owner &&
+                  <Button primary={false} clickAction={() => openModal(EditTopicModalId)}>
+                    {"Editar"}
+                  </Button>
+              }
+            </FlexRow>
+          </FlexItem>
+          <FlexItem>
+            <Button clickAction={() => showLateralMenu(TOPIC_DETAILS_ID)}>
+              <OptionsIcon/>
+            </Button>
+          </FlexItem>
+        </FlexRow>
       </TopTitle>
       {topicIsError && !topicIsLoading &&
           <div className="flex items-center justify-center h-screen">
