@@ -28,6 +28,7 @@ import FlexItem from "../../../../components/atoms/FlexItem";
 import Avatar from "../../../../components/atoms/Avatar";
 import {followTopic, unfollowTopic} from "../../../../services/topicService";
 import {openModal} from "../../../../utilities/modalAction";
+import ALink from "../../../../components/atoms/ALink";
 
 const REFRESH_TOPICS_INTERVAL = 30000;
 
@@ -112,7 +113,9 @@ const Home: NextPage = () => {
           <FlexItem>
             <FlexRow position={"start"}>
               {selectedTopic &&
-                  <Avatar src={selectedTopic.curator.avatar_url} alt={selectedTopic.curator.username}/>
+                  <ALink href={paths.CURATORS + "/" + selectedTopic.curator.username}>
+                      <Avatar src={selectedTopic.curator.avatar_url} alt={selectedTopic.curator.username}/>
+                  </ALink>
               }
               <h1 className="text-2xl font-bold text-center">
                 {topicName}
