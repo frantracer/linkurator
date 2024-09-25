@@ -6,7 +6,7 @@ import useProfile from "../../../../hooks/useProfile";
 import {useParams} from "next/navigation";
 import TopTitle from "../../../../components/molecules/TopTitle";
 import Button from "../../../../components/atoms/Button";
-import {MenuIcon, OptionsIcon} from "../../../../components/atoms/Icons";
+import {CrossIcon, MenuIcon, OptionsIcon} from "../../../../components/atoms/Icons";
 import Avatar from "../../../../components/atoms/Avatar";
 import {showLateralMenu} from "../../../../utilities/lateralMenuAction";
 import {LATERAL_NAVIGATION_MENU_ID} from "../../../../components/organism/LateralNavigationMenu";
@@ -17,6 +17,10 @@ import CuratorDetails, {CURATOR_DETAILS_ID} from "../../../../components/organis
 import Drawer from "../../../../components/molecules/Drawer";
 import useFilters from "../../../../hooks/useFilters";
 import {useCurators} from "../../../../hooks/useCurators";
+import FlexRow from "../../../../components/atoms/FlexRow";
+import FlexItem from "../../../../components/atoms/FlexItem";
+import Tag from "../../../../components/atoms/Tag";
+import {followCurator, unfollowCurator} from "../../../../services/curatorService";
 
 
 const CuratorsPage: NextPage = () => {
@@ -52,6 +56,18 @@ const CuratorsPage: NextPage = () => {
     }
   }
 
+  const handleFollowCurator = (curatorId: string) => {
+    followCurator(curatorId).then(() => {
+      refreshCurators()
+    })
+  }
+
+  const handleUnfollowCurator = (curatorId: string) => {
+    unfollowCurator(curatorId).then(() => {
+      refreshCurators()
+    })
+  }
+
   return (
     <Drawer id={CURATOR_DETAILS_ID} right={true} alwaysOpenOnDesktop={false}>
       <CuratorDetails curator={curator} filters={filters} setFilters={setFilters} resetFilters={resetFilters}
@@ -60,12 +76,29 @@ const CuratorsPage: NextPage = () => {
         <Button clickAction={() => showLateralMenu(LATERAL_NAVIGATION_MENU_ID)} showOnlyOnMobile={true}>
           <MenuIcon/>
         </Button>
-        <div className="flex flex-row gap-2 items-center justify-center w-full overflow-hidden">
+        <FlexRow>
           {curatorThumbnail && <Avatar src={curatorThumbnail} alt={curatorName}/>}
-          <h1 className="text-2xl font-bold whitespace-nowrap truncate">
+          <h1 className="text-2xl font-bold truncate">
             {curatorName}
           </h1>
-        </div>
+          {curator && curator.followed &&
+              <FlexItem>
+                  <Tag>
+                    {"Siguiendo"}
+                      <div className="hover:cursor-pointer" onClick={() => handleUnfollowCurator(curator.id)}>
+                          <CrossIcon/>
+                      </div>
+                  </Tag>
+              </FlexItem>
+          }
+          {curator && !curator.followed &&
+              <FlexItem>
+                  <Button primary={false} clickAction={() => handleFollowCurator(curator.id)}>
+                    {"Seguir"}
+                  </Button>
+              </FlexItem>
+          }
+        </FlexRow>
         <Button clickAction={() => showLateralMenu(CURATOR_DETAILS_ID)}>
           <OptionsIcon/>
         </Button>
