@@ -23,7 +23,7 @@ const FlexRow = (
   const wrapClasses = wrap ? "flex-wrap" : "";
 
   return (
-    <div className={`flex flex-row gap-2 items-center w-full ${wrapClasses} ${positionClasses[position]}`}>
+    <div className={`flex flex-row gap-2 items-center min-h-fit w-full overflow-hidden ${wrapClasses} ${positionClasses[position]}`}>
       {children}
     </div>
   )

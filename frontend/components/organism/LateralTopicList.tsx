@@ -42,11 +42,15 @@ const LateralTopicList = (props: LateralTopicListProps) => {
       >
         <FlexRow>
           {!topic.is_owner &&
-            <Miniature src={topic.curator.avatar_url} alt={topic.curator.username}/>
+              <FlexItem>
+                  <Miniature src={topic.curator.avatar_url} alt={topic.curator.username}/>
+              </FlexItem>
           }
-          <span>{topic.name}</span>
+          <span className={"truncate"}>{topic.name}</span>
           <FlexItem grow={true}/>
-          <Tag>{topic.subscriptions_ids.length}</Tag>
+          <FlexItem>
+            <Tag>{topic.subscriptions_ids.length}</Tag>
+          </FlexItem>
         </FlexRow>
       </MenuItem>
     ))

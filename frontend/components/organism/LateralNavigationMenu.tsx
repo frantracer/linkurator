@@ -95,20 +95,24 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
     <Drawer id={LATERAL_NAVIGATION_MENU_ID}>
       <Sidebar>
         <FlexRow position={"between"}>
-          <ALink href={'/'}>
-            <FlexRow position={"start"}>
-              <LogoImage/>
-              <LogoTitle/>
-            </FlexRow>
-          </ALink>
-          {profile &&
-              <ALink href={paths.PROFILE} onClick={() => {
-                setCurrentPage('profile');
-                closeMenu()
-              }}>
-                  <Avatar src={profile.avatar_url} alt={profile.first_name}/>
-              </ALink>
-          }
+          <FlexItem>
+            <ALink href={'/'}>
+              <FlexRow position={"start"}>
+                <LogoImage/>
+                <LogoTitle/>
+              </FlexRow>
+            </ALink>
+          </FlexItem>
+          <FlexItem>
+            {profile &&
+                <ALink href={paths.PROFILE} onClick={() => {
+                  setCurrentPage('profile');
+                  closeMenu()
+                }}>
+                    <Avatar src={profile.avatar_url} alt={profile.first_name}/>
+                </ALink>
+            }
+          </FlexItem>
         </FlexRow>
         <Divider/>
         {!profile && !profileIsLoading &&
@@ -212,7 +216,9 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
       <NewTopicModal refreshTopics={refreshTopics} subscriptions={subscriptions}/>
       <NewSubscriptionModal refreshSubscriptions={refreshSubscriptions}/>
       <FolowCuratorModal refreshCurators={refreshCurators} curators={curators}/>
-      {children}
+      {
+        children
+      }
     </Drawer>
   )
 }
