@@ -98,8 +98,12 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
           <FlexItem>
             <ALink href={'/'}>
               <FlexRow position={"start"}>
-                <LogoImage/>
-                <LogoTitle/>
+                <FlexItem>
+                  <LogoImage/>
+                </FlexItem>
+                <FlexItem>
+                  <LogoTitle/>
+                </FlexItem>
               </FlexRow>
             </ALink>
           </FlexItem>
