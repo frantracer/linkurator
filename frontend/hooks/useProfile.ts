@@ -7,7 +7,7 @@ const fetchProfile = async () => {
 };
 
 const useProfile = () => {
-  const {data: profile, isLoading, error} = useQuery({
+  const {data: profile, isLoading, error, refetch} = useQuery({
     queryKey: ['profile'],
     queryFn: fetchProfile,
     staleTime: 60000,
@@ -17,7 +17,7 @@ const useProfile = () => {
     console.error("Error retrieving profile", error);
   }
 
-  return {profile, profileIsLoading: isLoading};
+  return {profile, profileIsLoading: isLoading, refreshProfile: refetch};
 };
 
 export default useProfile;

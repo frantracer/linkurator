@@ -5,6 +5,7 @@ type InputTextProps = {
   withLeftPadding?: boolean;
   onChange?: (value: string) => void;
   value?: string;
+  disabled?: boolean;
 };
 
 const InputText = (
@@ -12,7 +13,8 @@ const InputText = (
     placeholder = "Input",
     withLeftPadding = false,
     onChange = undefined,
-    value = ""
+    value = "",
+    disabled = false
   }: InputTextProps) => {
   const [searchValue, setSearchValue] = useState(value);
 
@@ -31,6 +33,7 @@ const InputText = (
       type="text"
       placeholder={placeholder}
       value={searchValue}
+      disabled={disabled}
       onChange={(e) => {
         setSearchValue(e.target.value);
         if (onChange) {
