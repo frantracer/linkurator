@@ -6,7 +6,7 @@ type InfoBannerProps = {
 
 export const InfoBanner = ({children}: InfoBannerProps) => {
   return (
-    <div role="alert" className="alert alert-info">
+    <div role="alert" className="alert alert-info w-fit">
       <InfoCircleIcon/>
       {children}
     </div>
