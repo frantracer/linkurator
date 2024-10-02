@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import Drawer from "../molecules/Drawer";
 import useProfile from "../../hooks/useProfile";
 import useSubscriptions from "../../hooks/useSubscriptions";
@@ -9,7 +9,7 @@ import Divider from "../atoms/Divider";
 import Menu from "../atoms/Menu";
 import {MenuItem} from "../atoms/MenuItem";
 import FlexRow from "../atoms/FlexRow";
-import {AddIcon, BookmarkSquaredFilled, RectangleGroup, UserIconFilled} from "../atoms/Icons";
+import {AddIcon, BookmarkSquaredFilled, FunnelIcon, RectangleGroup, UserIconFilled} from "../atoms/Icons";
 import SearchBar from "../molecules/SearchBar";
 import LateralSubscriptionList from "./LateralSubscriptionList";
 import LateralTopicList from "./LateralTopicList";
@@ -20,7 +20,7 @@ import Avatar from "../atoms/Avatar";
 import ALink from "../atoms/ALink";
 import {LogoImage} from "../atoms/LogoImage";
 import {LogoTitle} from "../atoms/LogoTitle";
-import {hideLateralMenu} from "../../utilities/lateralMenuAction";
+import {hideLateralMenu, showLateralMenu} from "../../utilities/lateralMenuAction";
 import {paths} from "../../configuration";
 import FlexColumn from "../atoms/FlexColumn";
 import {useCurators} from "../../hooks/useCurators";
@@ -28,6 +28,9 @@ import LateralCuratorList from "./LateralCuratorList";
 import FolowCuratorModal, {FollowCuratorModalId} from "./FollowCuratorModal";
 import NewSubscriptionModal, {NewSubscriptionModalId} from "./NewSubscriptionModal";
 import FlexItem from "../atoms/FlexItem";
+import {SUBSCRIPTION_DETAILS_ID} from "./SubscriptionDetails";
+import {TOPIC_DETAILS_ID} from "./TopicDetails";
+import {CURATOR_DETAILS_ID} from "./CuratorDetails";
 
 export const LATERAL_NAVIGATION_MENU_ID = 'lateral-navigation-menu';
 
@@ -67,10 +70,15 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
   const {curators, refreshCurators} = useCurators(profile, profileIsLoading);
   const {topics, refreshTopics} = useTopics(profile, profileIsLoading);
   const [currentPage, setCurrentPage] = useState<CurrentPage>(initialPage);
+  const [currentTab, setCurrentTab] = useState<CurrentPage>(initialPage);
 
   const selectedSubscription = subscriptions.find(subscription => subscription.uuid === selectedId);
   const selectedTopic = topics.find(topic => topic.uuid === selectedId);
   const selectedCurator = curators.find(curator => curator.id === selectedId);
+
+  useEffect(() => {
+    setCurrentPage(initialPage);
+  }, [initialPage]);
 
   const closeMenu = () => {
     hideLateralMenu(LATERAL_NAVIGATION_MENU_ID)
@@ -89,6 +97,21 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
   const openFollowCuratorModal = () => {
     openModal(FollowCuratorModalId);
     closeMenu();
+  }
+
+  const openFilters = (page: CurrentPage) => {
+    switch (page) {
+      case 'subscriptions':
+        showLateralMenu(SUBSCRIPTION_DETAILS_ID);
+        break;
+      case 'topics':
+        showLateralMenu(TOPIC_DETAILS_ID);
+        break;
+      case 'curators':
+        showLateralMenu(CURATOR_DETAILS_ID);
+        break;
+    }
+    hideLateralMenu(LATERAL_NAVIGATION_MENU_ID);
   }
 
   return (
@@ -110,7 +133,7 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
           <FlexItem>
             {profile &&
                 <ALink href={paths.PROFILE} onClick={() => {
-                  setCurrentPage('profile');
+                  setCurrentTab('profile');
                   closeMenu()
                 }}>
                     <Avatar src={profile.avatar_url} alt={profile.first_name}/>
@@ -119,6 +142,15 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
           </FlexItem>
         </FlexRow>
         <Divider/>
+        {profile &&
+            <FlexRow>
+                <SearchBar value={searchValue} handleChange={setSearchValue}/>
+                <Button fitContent={true} clickAction={() => openFilters(currentPage)}>
+                    <FunnelIcon/>
+                    <span>Filtrar</span>
+                </Button>
+            </FlexRow>
+        }
         {!profile && !profileIsLoading &&
             <FlexColumn>
                 <p className={"text-center"}><b>{"Crea tus propias categorías"}</b></p>
@@ -130,8 +162,8 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
         {profile &&
             <Menu isFullHeight={false}>
                 <MenuItem onClick={() => {
-                  setCurrentPage('topics');
-                }} selected={currentPage === 'topics'}>
+                  setCurrentTab('topics');
+                }} selected={currentTab === 'topics'}>
                     <FlexRow position={"start"}>
                         <FlexItem>
                             <RectangleGroup/>
@@ -147,8 +179,8 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
                     </FlexRow>
                 </MenuItem>
                 <MenuItem onClick={() => {
-                  setCurrentPage('subscriptions');
-                }} selected={currentPage === 'subscriptions'}>
+                  setCurrentTab('subscriptions');
+                }} selected={currentTab === 'subscriptions'}>
                     <FlexRow position={"start"}>
                         <FlexItem>
                             <BookmarkSquaredFilled/>
@@ -164,8 +196,8 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
                     </FlexRow>
                 </MenuItem>
                 <MenuItem onClick={() => {
-                  setCurrentPage('curators');
-                }} selected={currentPage === 'curators'}>
+                  setCurrentTab('curators');
+                }} selected={currentTab === 'curators'}>
                     <FlexRow position={"start"}>
                         <FlexItem>
                             <UserIconFilled/>
@@ -182,15 +214,8 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
                 </MenuItem>
             </Menu>
         }
-        {profile && <Divider/>}
-        {profile && currentPage === 'subscriptions' &&
-            <FlexRow>
-                <FlexItem>
-                    <SearchBar value={searchValue} handleChange={setSearchValue}/>
-                </FlexItem>
-            </FlexRow>
-        }
-        {profile && currentPage === 'subscriptions' &&
+        <Divider/>
+        {profile && currentTab === 'subscriptions' &&
             <LateralSubscriptionList
                 searchValue={searchValue}
                 subscriptions={subscriptions}
@@ -199,22 +224,16 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
                 closeMenu={closeMenu}
             />
         }
-        {profile && currentPage === 'topics' &&
-            <FlexRow>
-                <FlexItem>
-                    <SearchBar value={searchValue} handleChange={setSearchValue}/>
-                </FlexItem>
-            </FlexRow>
-        }
-        {profile && currentPage === 'topics' &&
+        {profile && currentTab === 'topics' &&
             <LateralTopicList
                 searchValue={searchValue}
                 topics={topics}
                 closeMenu={closeMenu}
                 selectedTopic={selectedTopic}/>
         }
-        {profile && currentPage === 'curators' &&
+        {profile && currentTab === 'curators' &&
             <LateralCuratorList
+                searchValue={searchValue}
                 curators={curators}
                 closeMenu={closeMenu}
                 selectedCurator={selectedCurator}

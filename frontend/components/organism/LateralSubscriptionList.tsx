@@ -8,6 +8,7 @@ import Tag from "../atoms/Tag";
 import React from "react";
 import {Topic} from "../../entities/Topic";
 import Miniature from "../atoms/Miniature";
+import {InfoBanner} from "../atoms/InfoBanner";
 
 export const LATERAL_SUBSCRIPTION_MENU_ID = 'lateral-subscription-menu';
 
@@ -54,9 +55,15 @@ const LateralSubscriptionList = (props: LateralItemListProps) => {
       </MenuItem>
     ))
 
+  const noItems = (
+    <InfoBanner>
+      <span className={"text-sm"}>No se encontraron subscripciones</span>
+    </InfoBanner>
+  )
+
   return (
     <Menu>
-      {items}
+      {items.length > 0 ? items : noItems}
     </Menu>
   )
 }

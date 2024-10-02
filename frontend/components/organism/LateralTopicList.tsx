@@ -9,6 +9,7 @@ import Tag from "../atoms/Tag";
 import FlexRow from "../atoms/FlexRow";
 import FlexItem from "../atoms/FlexItem";
 import Miniature from "../atoms/Miniature";
+import {InfoBanner} from "../atoms/InfoBanner";
 
 export const LATERAL_TOPIC_MENU_ID = 'lateral-topic-menu';
 
@@ -55,9 +56,15 @@ const LateralTopicList = (props: LateralTopicListProps) => {
       </MenuItem>
     ))
 
+  const noItems = (
+    <InfoBanner>
+      <span className={"text-sm"}>No se encontraron categorías</span>
+    </InfoBanner>
+  )
+
   return (
     <Menu>
-      {items}
+      {items.length > 0 ? items : noItems}
     </Menu>
   )
 }

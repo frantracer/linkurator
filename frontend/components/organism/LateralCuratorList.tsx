@@ -7,8 +7,10 @@ import {scrollToDrawerTop} from "../../utilities/scrollToDrawerTop";
 import Menu from "../atoms/Menu";
 import FlexRow from "../atoms/FlexRow";
 import Miniature from "../atoms/Miniature";
+import {InfoBanner} from "../atoms/InfoBanner";
 
 type LateralCuratorListProps = {
+  searchValue: string;
   curators: Curator[];
   selectedCurator: Curator | undefined;
   closeMenu: () => void;
@@ -26,6 +28,9 @@ const LateralCuratorList = (props: LateralCuratorListProps) => {
   }
 
   const items = props.curators
+    .filter((curator) => {
+      return curator.username.toLowerCase().includes(props.searchValue.toLowerCase());
+    })
     .map((curator) => (
       <MenuItem
         key={curator.id}
@@ -39,9 +44,15 @@ const LateralCuratorList = (props: LateralCuratorListProps) => {
       </MenuItem>
     ))
 
+  const noItems = (
+    <InfoBanner>
+      <span className={"text-sm"}>No se encontraron curadores</span>
+    </InfoBanner>
+  )
+
   return (
     <Menu>
-      {items}
+      {items.length > 0 ? items : noItems}
     </Menu>
   )
 }
