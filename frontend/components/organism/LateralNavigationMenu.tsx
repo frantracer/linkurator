@@ -214,7 +214,7 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
                 </MenuItem>
             </Menu>
         }
-        <Divider/>
+        {profile && <Divider/>}
         {profile && currentTab === 'subscriptions' &&
             <LateralSubscriptionList
                 searchValue={searchValue}
