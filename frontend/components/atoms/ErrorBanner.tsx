@@ -6,7 +6,7 @@ type ErrorBannerProps = {
 
 export const ErrorBanner = ({children}: ErrorBannerProps) => {
   return (
-    <div role="alert" className="alert alert-error">
+    <div role="alert" className="alert alert-error w-fit p-2 m-1">
       <ExclamationCircle/>
       {children}
     </div>
