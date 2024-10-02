@@ -29,6 +29,7 @@ import {followTopic, unfollowTopic} from "../../../../services/topicService";
 import {openModal} from "../../../../utilities/modalAction";
 import ALink from "../../../../components/atoms/ALink";
 import FlexRow from "../../../../components/atoms/FlexRow";
+import {ErrorBanner} from "../../../../components/atoms/ErrorBanner";
 
 const REFRESH_TOPICS_INTERVAL = 30000;
 
@@ -159,9 +160,11 @@ const Home: NextPage = () => {
         </FlexRow>
       </TopTitle>
       {topicIsError && !topicIsLoading &&
-          <div className="flex items-center justify-center h-screen">
-              <span>Topic not found</span>
-          </div>
+          <FlexRow position={"center"}>
+              <ErrorBanner>
+                  <span>Categoría no encontrada</span>
+              </ErrorBanner>
+          </FlexRow>
       }
       {!selectedTopic && !topicIsLoading && !topicIsError &&
           <CreateFirstTopicHero/>
