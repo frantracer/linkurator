@@ -27,7 +27,7 @@ const FlexItem = (
   }
 
   return (
-    <div className={className}>
+    <div className={"self-center " + className}>
       {children}
     </div>
   )

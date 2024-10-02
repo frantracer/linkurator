@@ -104,50 +104,59 @@ const Home: NextPage = () => {
                     refreshTopics={refreshTopics}
       />
       <TopTitle>
-        <FlexItem>
-          <Button clickAction={() => showLateralMenu(LATERAL_NAVIGATION_MENU_ID)} showOnlyOnMobile={true}>
-            <MenuIcon/>
-          </Button>
-        </FlexItem>
-        {selectedTopic &&
-            <FlexRow>
-                <ALink href={paths.CURATORS + "/" + selectedTopic.curator.username}>
-                    <Avatar src={selectedTopic.curator.avatar_url} alt={selectedTopic.curator.username}/>
-                </ALink>
-                <h1 className="text-2xl font-bold whitespace-nowrap truncate hover:cursor-pointer">
-                  {topicName}
-                </h1>
-              {selectedTopic.followed && !selectedTopic.is_owner &&
-                  <FlexItem shrink={false}>
-                      <Tag>
-                        {"Siguiendo"}
-                          <div className="hover:cursor-pointer" onClick={() => handleUnfollowTopic(selectedTopic.uuid)}>
-                              <CrossIcon/>
-                          </div>
-                      </Tag>
-                  </FlexItem>
-              }
-              {!selectedTopic.followed && !selectedTopic.is_owner &&
-                  <FlexItem grow={false}>
-                      <Button primary={false} clickAction={() => handleFollowTopic(selectedTopic.uuid)}>
-                        {"Seguir"}
-                      </Button>
-                  </FlexItem>
-              }
-              {selectedTopic.is_owner &&
-                  <FlexItem grow={false}>
-                      <Button primary={false} clickAction={() => openModal(EditTopicModalId)}>
-                        {"Editar"}
-                      </Button>
-                  </FlexItem>
-              }
-            </FlexRow>
-        }
-        <FlexItem>
-          <Button clickAction={() => showLateralMenu(TOPIC_DETAILS_ID)}>
-            <OptionsIcon/>
-          </Button>
-        </FlexItem>
+        <FlexRow>
+          <FlexItem>
+            <Button clickAction={() => showLateralMenu(LATERAL_NAVIGATION_MENU_ID)} showOnlyOnMobile={true}>
+              <MenuIcon/>
+            </Button>
+          </FlexItem>
+          <FlexItem grow={true}>
+            {selectedTopic &&
+                <FlexRow position={"center"}>
+                    <FlexItem>
+                        <ALink href={paths.CURATORS + "/" + selectedTopic.curator.username}>
+                            <Avatar src={selectedTopic.curator.avatar_url} alt={selectedTopic.curator.username}/>
+                        </ALink>
+                    </FlexItem>
+                    <FlexItem>
+                        <h1 className="text-2xl font-bold whitespace-nowrap truncate hover:cursor-pointer">
+                          {topicName}
+                        </h1>
+                    </FlexItem>
+                  {selectedTopic.followed && !selectedTopic.is_owner &&
+                      <FlexItem shrink={false}>
+                          <Tag>
+                            {"Siguiendo"}
+                              <div className="hover:cursor-pointer"
+                                   onClick={() => handleUnfollowTopic(selectedTopic.uuid)}>
+                                  <CrossIcon/>
+                              </div>
+                          </Tag>
+                      </FlexItem>
+                  }
+                  {!selectedTopic.followed && !selectedTopic.is_owner &&
+                      <FlexItem grow={false}>
+                          <Button primary={false} clickAction={() => handleFollowTopic(selectedTopic.uuid)}>
+                            {"Seguir"}
+                          </Button>
+                      </FlexItem>
+                  }
+                  {selectedTopic.is_owner &&
+                      <FlexItem grow={false}>
+                          <Button primary={false} clickAction={() => openModal(EditTopicModalId)}>
+                            {"Editar"}
+                          </Button>
+                      </FlexItem>
+                  }
+                </FlexRow>
+            }
+          </FlexItem>
+          <FlexItem>
+            <Button clickAction={() => showLateralMenu(TOPIC_DETAILS_ID)}>
+              <OptionsIcon/>
+            </Button>
+          </FlexItem>
+        </FlexRow>
       </TopTitle>
       {topicIsError && !topicIsLoading &&
           <div className="flex items-center justify-center h-screen">
