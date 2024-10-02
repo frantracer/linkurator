@@ -123,91 +123,101 @@ const ProfilePage: NextPage = () => {
   }, [profileIsLoading, router, profile]);
 
   return (
-    <main className="min-h-screen bg-base-100">
+    <main className="min-h-screen w-full bg-base-100">
       <TopTitle>
-        <Button clickAction={() => showLateralMenu(LATERAL_NAVIGATION_MENU_ID)} showOnlyOnMobile={true}>
-          <MenuIcon/>
-        </Button>
         <FlexRow position={'center'}>
-          <h1 className="text-2xl font-bold">
-            {"Mi perfil"}
-          </h1>
+          <FlexItem>
+            <Button clickAction={() => showLateralMenu(LATERAL_NAVIGATION_MENU_ID)} showOnlyOnMobile={true}>
+              <MenuIcon/>
+            </Button>
+          </FlexItem>
+          <FlexItem grow={true}>
+            <h1 className="text-2xl font-bold text-center">
+              {"Mi perfil"}
+            </h1>
+          </FlexItem>
         </FlexRow>
       </TopTitle>
       <FlexRow position={"center"}>
         <FlexItem grow={true}/>
-        <FlexItem>
-          <div className={"m-8 min-w-96"}>
-            <FlexColumn>
-              <Box title={"Foto de perfil"}>
-                <Avatar src={avatarUrl} alt={username ? username : ""}/>
-              </Box>
-              <Box title={"Datos personales"}>
+        <FlexItem grow={true}>
+          <FlexRow>
+            <FlexItem grow={true}/>
+            <FlexItem grow={true}>
+              <div className={"m-8 min-w-80 max-w-96"}>
                 <FlexColumn>
-                  <span className={"font-bold"}>Nombre</span>
-                  <InputText value={firstName === null ? "" : firstName} onChange={(value) => {
-                    setFirstName(value)
-                  }}/>
-                  {changeFirstNameOk === false &&
-                      <ErrorBanner>
-                        {"Error cambiando el nombre"}
-                      </ErrorBanner>
-                  }
-                  {changeFirstNameOk === true &&
-                      <InfoBanner>
-                        {"Nombre cambiado correctamente"}
-                      </InfoBanner>
-                  }
-                  <span className={"font-bold"}>Apellidos</span>
-                  <InputText value={lastName === null ? "" : lastName} onChange={(value) => {
-                    setLastName(value)
-                  }}/>
-                  {changeLastNameOk === false &&
-                      <ErrorBanner>
-                        {"Error cambiando los apellidos"}
-                      </ErrorBanner>
-                  }
-                  {changeLastNameOk === true &&
-                      <InfoBanner>
-                        {"Apellidos cambiados correctamente"}
-                      </InfoBanner>
-                  }
+                  <Box title={"Foto de perfil"}>
+                    <Avatar src={avatarUrl} alt={username ? username : ""}/>
+                  </Box>
+                  <Box title={"Datos personales"}>
+                    <FlexColumn>
+                      <span className={"font-bold"}>Nombre</span>
+                      <InputText value={firstName === null ? "" : firstName} onChange={(value) => {
+                        setFirstName(value)
+                      }}/>
+                      {changeFirstNameOk === false &&
+                          <ErrorBanner>
+                            {"Error cambiando el nombre"}
+                          </ErrorBanner>
+                      }
+                      {changeFirstNameOk === true &&
+                          <InfoBanner>
+                            {"Nombre cambiado correctamente"}
+                          </InfoBanner>
+                      }
+                      <span className={"font-bold"}>Apellidos</span>
+                      <InputText value={lastName === null ? "" : lastName} onChange={(value) => {
+                        setLastName(value)
+                      }}/>
+                      {changeLastNameOk === false &&
+                          <ErrorBanner>
+                            {"Error cambiando los apellidos"}
+                          </ErrorBanner>
+                      }
+                      {changeLastNameOk === true &&
+                          <InfoBanner>
+                            {"Apellidos cambiados correctamente"}
+                          </InfoBanner>
+                      }
 
-                  <span className={"font-bold"}>Usuario</span>
-                  <InputText value={username === null ? "" : username} onChange={(value) => {
-                    setUsername(value)
-                  }}/>
-                  {changeUsernameOk === false &&
-                      <ErrorBanner>
-                        {"Error cambiando el usuario"}
-                      </ErrorBanner>
-                  }
-                  {changeUsernameOk === true &&
-                      <InfoBanner>
-                        {"Usuario cambiado correctamente"}
-                      </InfoBanner>
-                  }
+                      <span className={"font-bold"}>Usuario</span>
+                      <InputText value={username === null ? "" : username} onChange={(value) => {
+                        setUsername(value)
+                      }}/>
+                      {changeUsernameOk === false &&
+                          <ErrorBanner>
+                            {"Error cambiando el usuario"}
+                          </ErrorBanner>
+                      }
+                      {changeUsernameOk === true &&
+                          <InfoBanner>
+                            {"Usuario cambiado correctamente"}
+                          </InfoBanner>
+                      }
 
-                  <span className={"font-bold"}>Email</span>
-                  <InputText value={email} disabled={true}/>
+                      <span className={"font-bold"}>Email</span>
+                      <InputText value={email} disabled={true}/>
+                    </FlexColumn>
+                  </Box>
+                  <Divider/>
+                  <Box title={"Sesión"}>
+                    <Button fitContent={true} clickAction={() => {
+                      window.open(configuration.LOGOUT_URL, '_self')
+                    }}>
+                      <span>{"Cerrar sesión"}</span>
+                    </Button>
+                  </Box>
+                  <Divider/>
+                  <Box title={"Privacidad"}>
+                    <Button fitContent={true} clickAction={() => openModal(DeleteAccountModalId)}>
+                      <span>{"Borrar cuenta"}</span>
+                    </Button>
+                  </Box>
                 </FlexColumn>
-              </Box>
-              <Divider/>
-              <Box title={"Sesión"}>
-                <Button fitContent={true} clickAction={() => {
-                  window.open(configuration.LOGOUT_URL, '_self')
-                }}>
-                  <span>{"Cerrar sesión"}</span>
-                </Button>
-              </Box>
-              <Divider/>
-              <Box title={"Privacidad"}>
-                <Button fitContent={true} clickAction={() => openModal(DeleteAccountModalId)}>
-                  <span>{"Borrar cuenta"}</span>
-                </Button>
-              </Box>
-            </FlexColumn>
-          </div>
+              </div>
+            </FlexItem>
+            <FlexItem grow={true}/>
+          </FlexRow>
         </FlexItem>
         <FlexItem grow={true}/>
       </FlexRow>
