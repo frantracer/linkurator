@@ -7,6 +7,7 @@ import {Filters, isItemShown} from "../../entities/Filters";
 import {ITEMS_PER_PAGE} from "../../utilities/constants";
 import FlexRow from "../atoms/FlexRow";
 import {Spinner} from "../atoms/Spinner";
+import {InfoBanner} from "../atoms/InfoBanner";
 
 type SubscriptionVideoCardGridProps = {
   refreshItem: (itemId: string) => void,
@@ -71,7 +72,7 @@ const SubscriptionVideoCardGrid = (props: SubscriptionVideoCardGridProps) => {
         }
         {!props.subscription.isBeingScanned && props.isFinished && !props.isLoading &&
             <FlexRow position={"center"}>
-                <span>{"No hay más contenido que mostrar"}</span>
+                <InfoBanner>{"No hay más contenido que mostrar"}</InfoBanner>
             </FlexRow>
         }
       </main>
