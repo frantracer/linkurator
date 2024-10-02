@@ -1,4 +1,4 @@
-import {CheckCircleIcon} from "./Icons";
+import {InfoCircleIcon} from "./Icons";
 
 type InfoBannerProps = {
   children: React.ReactNode;
@@ -7,7 +7,7 @@ type InfoBannerProps = {
 export const InfoBanner = ({children}: InfoBannerProps) => {
   return (
     <div role="alert" className="alert alert-info">
-      <CheckCircleIcon/>
+      <InfoCircleIcon/>
       {children}
     </div>
   );

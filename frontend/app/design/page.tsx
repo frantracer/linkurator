@@ -25,7 +25,7 @@ import {
   DownloadIcon, ExclamationCircle,
   EyeSlashFilledIcon,
   EyeSlashIcon,
-  FunnelIcon, GoogleIcon,
+  FunnelIcon, GoogleIcon, InfoCircleIcon,
   LikeIcon,
   MagnifyingGlassIcon,
   MenuIcon, MinusIcon,
@@ -162,6 +162,7 @@ const IconsSection = () => {
         <ArchiveBoxIcon/>
         <ArchiveBoxFilledIcon/>
         <UserIconFilled/>
+        <InfoCircleIcon/>
       </div>
     </Section>
   );
