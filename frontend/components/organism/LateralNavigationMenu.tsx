@@ -185,7 +185,9 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
         {profile && <Divider/>}
         {profile && currentPage === 'subscriptions' &&
             <FlexRow>
-                <SearchBar value={searchValue} handleChange={setSearchValue}/>
+                <FlexItem>
+                    <SearchBar value={searchValue} handleChange={setSearchValue}/>
+                </FlexItem>
             </FlexRow>
         }
         {profile && currentPage === 'subscriptions' &&
@@ -199,7 +201,9 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
         }
         {profile && currentPage === 'topics' &&
             <FlexRow>
-                <SearchBar value={searchValue} handleChange={setSearchValue}/>
+                <FlexItem>
+                    <SearchBar value={searchValue} handleChange={setSearchValue}/>
+                </FlexItem>
             </FlexRow>
         }
         {profile && currentPage === 'topics' &&
