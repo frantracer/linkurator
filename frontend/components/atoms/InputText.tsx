@@ -1,11 +1,17 @@
 import { useState, useEffect } from "react";
 
+export enum InputType {
+  TEXT = "text",
+  PASSWORD = "password"
+}
+
 type InputTextProps = {
   placeholder?: string;
   withLeftPadding?: boolean;
   onChange?: (value: string) => void;
   value?: string;
   disabled?: boolean;
+  inputType?: InputType;
 };
 
 const InputText = (
@@ -14,7 +20,8 @@ const InputText = (
     withLeftPadding = false,
     onChange = undefined,
     value = "",
-    disabled = false
+    disabled = false,
+    inputType = InputType.TEXT
   }: InputTextProps) => {
   const [searchValue, setSearchValue] = useState(value);
 
@@ -30,7 +37,7 @@ const InputText = (
   return (
     <input
       className={"input input-sm input-bordered input-primary bg-base-200 w-full " + padding}
-      type="text"
+      type={inputType?.toString()}
       placeholder={placeholder}
       value={searchValue}
       disabled={disabled}

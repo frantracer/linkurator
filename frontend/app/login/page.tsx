@@ -1,17 +1,20 @@
 'use client';
 
 import type {NextPage} from "next";
-import React, {Suspense, useEffect} from "react";
+import React, {Suspense, useEffect, useState} from "react";
 import useProfile from "../../hooks/useProfile";
 import {configuration, paths} from "../../configuration";
 import {useRouter, useSearchParams} from "next/navigation";
 import Button from "../../components/atoms/Button";
 import ALink from "../../components/atoms/ALink";
-import FlexColumn from "../../components/atoms/FlexColumn";
-import Divider from "../../components/atoms/Divider";
 import {GoogleIcon} from "../../components/atoms/Icons";
+import Divider from "../../components/atoms/Divider";
+import FlexColumn from "../../components/atoms/FlexColumn";
+import Box from "../../components/atoms/Box";
+import InputText, {InputType} from "../../components/atoms/InputText";
+import {login} from "../../services/profileService";
 import {ErrorBanner} from "../../components/atoms/ErrorBanner";
-import FlexRow from "../../components/atoms/FlexRow";
+import LinkuratorHeader from "../../components/organism/LinkuratorHeader";
 
 const RegisterErrorBanner = () => {
   const searchParams = useSearchParams();
@@ -32,56 +35,73 @@ const Home: NextPage = () => {
   const router = useRouter();
   const {profile, profileIsLoading} = useProfile();
 
+  const [loginError, setLoginError] = useState<string | null>(null);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
   useEffect(() => {
     if (!profileIsLoading && profile) {
       router.push(paths.TOPICS)
     }
   }, [router, profile, profileIsLoading]);
 
+  const handleLogin = () => {
+    login(email, password).then(() => {
+      router.push(paths.TOPICS);
+    }).catch(() => {
+      setLoginError("Email o contraseña incorrectos");
+    });
+  }
+
   return (
     <main className="hero min-h-screen bg-base-200">
-      <div className="hero-content text-center">
+      <div className="hero-content">
         <div className="max-w-md">
-          <h1 className="text-5xl font-bold py-5 uppercase">
-            <img src="/logo_v1_medium.png" alt="Linkurator logo" className="w-20 h-20 inline-block mx-4"/>
-            Linkurator
-          </h1>
-          <h2 className="text-3xl font-bold py-5">{"Aquí tú decides el contenido que quieres ver"}</h2>
-          <p className="py-2">{"Crea categorías para agrupar tus creadores de contenido favoritos"}</p>
-          <p className="py-2">{"Filtra el contenido por título o duración"}</p>
-          <p className="py-2">{"¡Haz click en estos ejemplos!"}</p>
-          <div className="w-full">
-            <FlexRow>
-              <ALink fitContent={false} href={configuration.EXAMPLE_PROGRAMMING_TOPIC_URL}>
-                <Button fitContent={false}>💻️ Programación</Button>
-              </ALink>
-              <ALink fitContent={false} href={configuration.EXAMPLE_VIDEO_GAMES_NEWS_TOPIC_URL}>
-                <Button fitContent={false}>🕹️️ Noticias Videojuegos</Button>
-              </ALink>
-            </FlexRow>
-          </div>
+          <LinkuratorHeader/>
 
-          <div className="m-8">
-            <FlexColumn>
-              <Divider/>
-              <p>{"¿Tienes cuenta?"}</p>
-              <ALink href={configuration.LOGIN_URL}>
-                <Button><GoogleIcon/>Accede con Google</Button>
-              </ALink>
-              <p>{"¿Todavía no tienes cuenta?"}</p>
-              <ALink href={configuration.REGISTER_URL}>
-                <Button><GoogleIcon/>Regístrate con Google</Button>
-              </ALink>
-              <p>
-                {"Al registrarte aceptas: "}
-                <ALink href={configuration.TERMS_OF_SERVICE_URL}><b>{"Términos del servicio"}</b></ALink> {" y "}
-                <ALink href={configuration.PRIVACY_POLICY_URL}><b>{"Política de privacidad"}</b></ALink>
-              </p>
-              <Suspense>
-                <RegisterErrorBanner/>
-              </Suspense>
-            </FlexColumn>
-          </div>
+          <FlexColumn>
+            <h2 className="text-3xl font-bold py-5">{"Inicia sesión"}</h2>
+            <Box>
+              <FlexColumn>
+                <span className={"font-bold"}>{"Email"}</span>
+                <InputText placeholder={"Introduce tu email"} value={email}
+                           onChange={(value) => setEmail(value)}/>
+                <span className={"font-bold"}>{"Contraseña"}</span>
+                <InputText placeholder={"Introduce tu contraseña"} value={password} inputType={InputType.PASSWORD}
+                           onChange={(value) => setPassword(value)}/>
+                <Button fitContent={false} clickAction={handleLogin}>
+                  {"Inicia sesión"}
+                </Button>
+                {loginError &&
+                    <ErrorBanner>
+                        <FlexColumn>
+                            <span>{loginError}</span>
+                        </FlexColumn>
+                    </ErrorBanner>
+                }
+              </FlexColumn>
+            </Box>
+
+            <Suspense>
+              <RegisterErrorBanner/>
+            </Suspense>
+
+            <ALink href={paths.FORGOT_PASSWORD}>
+              {"¿Has olvidado tu contraseña?"}
+            </ALink>
+
+            <Divider text={"O"}/>
+
+            <ALink href={configuration.LOGIN_URL}>
+              <Button fitContent={false}><GoogleIcon/>Accede con Google</Button>
+            </ALink>
+
+            <div className={"h-4"}/>
+
+            <ALink href={paths.REGISTER}>
+              {"¿No tienes cuenta? Regístrate"}
+            </ALink>
+          </FlexColumn>
         </div>
       </div>
     </main>

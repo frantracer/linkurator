@@ -8,18 +8,26 @@ const WEB_LOGIN_URL = `${WEB_BASE_URL}/login/`;
 const CURATORS_URL = `${API_BASE_URL}/curators/`;
 const LOGIN_URL = `${API_BASE_URL}/login/?redirect_uri=${encodeURI(WEB_LOGIN_URL)}`;
 const LOGOUT_URL = `${API_BASE_URL}/logout/?redirect_uri=${encodeURI(WEB_LOGIN_URL)}`;
+const LOGIN_EMAIL_URL = `${API_BASE_URL}/login_email`;
 const REGISTER_URL = `${API_BASE_URL}/register/?redirect_uri=${encodeURI(WEB_LOGIN_URL)}`;
+
 const TERMS_OF_SERVICE_URL = `${WEB_BASE_URL}/tos`;
 const PRIVACY_POLICY_URL = `${WEB_BASE_URL}/privacy`;
 const EXAMPLE_PROGRAMMING_TOPIC_URL = `${WEB_BASE_URL}/topics/f5e01f25-64b1-4b9c-b0a3-75769fe0d617`;
 const EXAMPLE_VIDEO_GAMES_NEWS_TOPIC_URL = `${WEB_BASE_URL}/topics/ffd2f348-6e99-413b-be75-0f7b01ea9b01`;
+const REGISTER_VALIDATE_BASE_URL = `${WEB_BASE_URL}/register/validate`;
+const FORGOT_PASSWORD_BASE_URL = `${WEB_BASE_URL}/login/forgot-password`;
 
 const configuration = {
   SUBSCRIPTIONS_URL,
   PROFILE_URL,
   LOGIN_URL,
+  LOGIN_EMAIL_URL,
   LOGOUT_URL,
   REGISTER_URL,
+  REGISTER_EMAIL_URL: `${API_BASE_URL}/register_email/`,
+  VALIDATE_EMAIL_URL: `${API_BASE_URL}/validate_email/`,
+  FORGOT_PASSWORD_URL: `${API_BASE_URL}/change_password/`,
   TOPICS_URL,
   ITEMS_URL,
   CURATORS_URL,
@@ -27,7 +35,9 @@ const configuration = {
   TERMS_OF_SERVICE_URL,
   PRIVACY_POLICY_URL,
   EXAMPLE_PROGRAMMING_TOPIC_URL,
-  EXAMPLE_VIDEO_GAMES_NEWS_TOPIC_URL
+  EXAMPLE_VIDEO_GAMES_NEWS_TOPIC_URL,
+  REGISTER_VALIDATE_BASE_URL,
+  FORGOT_PASSWORD_BASE_URL
 };
 
 const paths = {
@@ -39,6 +49,9 @@ const paths = {
   PROFILE: '/profile',
   REGISTER: '/register',
   CURATORS: '/curators',
+  FORGOT_PASSWORD: '/login/forgot-password',
+  REGISTER_EMAIL_SENT: '/register/email-sent',
+  REGISTER_VALIDATE: '/register/validate',
 }
 
 export { configuration, paths };
