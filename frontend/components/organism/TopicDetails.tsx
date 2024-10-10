@@ -30,7 +30,7 @@ import Tag from "../atoms/Tag";
 import Grid from "../atoms/Grid";
 import {deleteTopic, followTopic, unfollowTopic} from "../../services/topicService";
 import {EditTopicModalId} from "./EditTopicModal";
-import Dropdown from "../atoms/Dropdown";
+import Select from "../atoms/Select";
 import {hideLateralMenu} from "../../utilities/lateralMenuAction";
 
 export const TOPIC_DETAILS_ID = "topic-details";
@@ -183,7 +183,7 @@ const TopicDetails = (props: TopicDetailsProps) => {
                      value={tempFilters.textSearch}/>
           <Box title={"Duración"}>
             <FlexColumn>
-              <Dropdown selected={tempFilters.durationGroup} options={durationOptions} onChange={handleDurationChange}/>
+              <Select selected={tempFilters.durationGroup} options={durationOptions} onChange={handleDurationChange}/>
               {showCustomDuration &&
                   <FlexColumn>
                       <FlexRow>

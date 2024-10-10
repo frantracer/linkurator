@@ -9,7 +9,7 @@ type DropdownProps = {
 
 const DISABLED_OPTION_KEY = "0";
 
-const Dropdown = (
+const Select = (
   {
     title = undefined,
     options = [],
@@ -49,4 +49,4 @@ const Dropdown = (
   )
 }
 
-export default Dropdown;
+export default Select;

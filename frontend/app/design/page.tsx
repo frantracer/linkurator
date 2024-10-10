@@ -48,7 +48,7 @@ import Avatar from "../../components/atoms/Avatar";
 import Tag from "../../components/atoms/Tag";
 import Miniature from "../../components/atoms/Miniature";
 import Box from "../../components/atoms/Box";
-import Dropdown from "../../components/atoms/Dropdown";
+import Select from "../../components/atoms/Select";
 import Menu from "../../components/atoms/Menu";
 import {MenuItem} from "../../components/atoms/MenuItem";
 import Sidebar from "../../components/atoms/Sidebar";
@@ -67,7 +67,7 @@ const MINIATURES_REF = "miniatures";
 const AVATARS_REF = "avatars";
 const TAGS_REF = "tags";
 const BOX_REF = "box";
-const DROPDOWN_REF = "dropdown";
+const SELECT_REF = "select";
 const ERROR_BANNER_REF = "error_banner";
 const TABS_REF = "tabs";
 
@@ -86,7 +86,7 @@ const LateralMenu = (
   }, []);
 
   const refs = [ICONS_REF, BUTTONS_REF, SWAP_BUTTONS_REF, INPUTS_REF, MINIATURES_REF, AVATARS_REF,
-    TAGS_REF, CARDS_REF, BOX_REF, DROPDOWN_REF, ERROR_BANNER_REF, TABS_REF];
+    TAGS_REF, CARDS_REF, BOX_REF, SELECT_REF, ERROR_BANNER_REF, TABS_REF];
 
   const handleClick = (ref: string) => {
     setAnchor(ref);
@@ -315,13 +315,13 @@ const BoxSection = () => {
   );
 }
 
-const DropdownSection = () => {
+const SelectSection = () => {
   return (
     <Section>
-      <Head1 id={DROPDOWN_REF}># Dropdown</Head1>
+      <Head1 id={SELECT_REF}># Select</Head1>
       <div className="flex flex-col gap-6 p-6 w-full
       border-base-100 border-solid border-2 rounded justify-items-center items-center">
-        <Dropdown title={"Pick option"} options={
+        <Select title={"Pick option"} options={
           [
             {key: "1", label: "Option 1"},
             {key: "2", label: "Option 2"},
@@ -365,6 +365,7 @@ const MainContent = () => {
       <TagSection/>
       <CardSection/>
       <BoxSection/>
+      <SelectSection/>
       <DropdownSection/>
       <ErrorBannerSection/>
       <TabsSection/>

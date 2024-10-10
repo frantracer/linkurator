@@ -9,7 +9,7 @@ import Modal from "../atoms/Modal";
 import {closeModal} from "../../utilities/modalAction";
 import {CrossIcon} from "../atoms/Icons";
 import Box from "../atoms/Box";
-import Dropdown from "../atoms/Dropdown";
+import Select from "../atoms/Select";
 import FlexRow from "../atoms/FlexRow";
 import FlexColumn from "../atoms/FlexColumn";
 import {Topic} from "../../entities/Topic";
@@ -48,7 +48,7 @@ const EditTopicModal = (props: EditTopicModalProps) => {
         <InputText placeholder="Nombre de la categoría" value={newTopicName} onChange={(value) => setNewTopicName(value)}/>
         <Box title={"Subscripciones"}>
           <FlexColumn>
-            <Dropdown title={"Selecciona varias subscripciones"} options={
+            <Select title={"Selecciona varias subscripciones"} options={
               props.subscriptions.map(subscription => {
                 return {key: subscription.uuid, label: subscription.name}
               })

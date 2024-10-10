@@ -11,7 +11,7 @@ import FlexColumn from "../atoms/FlexColumn";
 import {durationOptions, Filters} from "../../entities/Filters";
 import NumberInput from "../atoms/NumberInput";
 import {followCurator, unfollowCurator} from "../../services/curatorService";
-import Dropdown from "../atoms/Dropdown";
+import Select from "../atoms/Select";
 import {hideLateralMenu} from "../../utilities/lateralMenuAction";
 
 export const CURATOR_DETAILS_ID = "curator-details";
@@ -130,7 +130,7 @@ const CuratorDetails = (props: CuratorDetailsProps) => {
                      value={tempFilters.textSearch}/>
           <Box title={"Duración"}>
             <FlexColumn>
-              <Dropdown selected={tempFilters.durationGroup} options={durationOptions} onChange={handleDurationChange}/>
+              <Select selected={tempFilters.durationGroup} options={durationOptions} onChange={handleDurationChange}/>
               {showCustomDuration &&
                   <FlexColumn>
                       <FlexRow>

@@ -4,7 +4,7 @@ import {Topic} from "../../entities/Topic";
 import {Subscription} from "../../entities/Subscription";
 import {v4 as uuidv4} from 'uuid';
 import Modal from "../atoms/Modal";
-import Dropdown from "../atoms/Dropdown";
+import Select from "../atoms/Select";
 import InputText from "../atoms/InputText";
 import FlexRow from "../atoms/FlexRow";
 import Button from "../atoms/Button";
@@ -73,8 +73,8 @@ const AssignTopicModal = (props: AssignTopicModalProps) => {
         <h1 className="font-bold text-xl w-full text-center">{"Añadir subscripciones"}</h1>
         <Box title={"Categorías"}>
           <FlexColumn>
-            <Dropdown title={"Selecciona una categoría existente"} options={options}
-                      onChange={(key) => assignButtonAction(key)}/>
+            <Select title={"Selecciona una categoría existente"} options={options}
+                    onChange={(key) => assignButtonAction(key)}/>
             <FlexRow position={"start"} wrap={true}>
               {topicTags}
             </FlexRow>
