@@ -61,6 +61,9 @@ import Divider from "../../components/atoms/Divider";
 import {hideLateralMenu, showLateralMenu} from "../../utilities/lateralMenuAction";
 import {ErrorBanner} from "../../components/atoms/ErrorBanner";
 import {Tabs} from "../../components/atoms/Tabs";
+import Dropdown from "../../components/atoms/Dropdown";
+import FlexColumn from "../../components/atoms/FlexColumn";
+import FlexRow from "../../components/atoms/FlexRow";
 
 const SIDE_BAR_NAME = "main-menu";
 const ICONS_REF = "icons";
@@ -73,6 +76,7 @@ const AVATARS_REF = "avatars";
 const TAGS_REF = "tags";
 const BOX_REF = "box";
 const SELECT_REF = "select";
+const DROPDOWN_REF = "dropdown";
 const ERROR_BANNER_REF = "error_banner";
 const TABS_REF = "tabs";
 
@@ -91,7 +95,7 @@ const LateralMenu = (
   }, []);
 
   const refs = [ICONS_REF, BUTTONS_REF, SWAP_BUTTONS_REF, INPUTS_REF, MINIATURES_REF, AVATARS_REF,
-    TAGS_REF, CARDS_REF, BOX_REF, SELECT_REF, ERROR_BANNER_REF, TABS_REF];
+    TAGS_REF, CARDS_REF, BOX_REF, SELECT_REF, DROPDOWN_REF, ERROR_BANNER_REF, TABS_REF];
 
   const handleClick = (ref: string) => {
     setAnchor(ref);
@@ -338,6 +342,41 @@ const SelectSection = () => {
   );
 }
 
+const DropdownSection = () => {
+  const DropdownButton = ({text}: { text: string }) => {
+    return (
+      <FlexRow>
+        <MenuIcon/>
+        <span>{text}</span>
+      </FlexRow>
+    )
+  }
+
+  return (
+    <Section>
+      <Head1># Dropdown</Head1>
+      <FlexColumn position={"center"}>
+        <Dropdown button={<DropdownButton text={"Bottom start"}/>}>
+          <Button fitContent={false}>Item 1</Button>
+          <Button fitContent={false}>Item 2</Button>
+        </Dropdown>
+        <Dropdown button={<DropdownButton text={"Bottom end"}/>} start={false}>
+          <Button fitContent={false}>Item 1</Button>
+          <Button fitContent={false}>Item 2</Button>
+        </Dropdown>
+        <Dropdown button={<DropdownButton text={"Top start"}/>} bottom={false}>
+          <Button fitContent={false}>Item 1</Button>
+          <Button fitContent={false}>Item 2</Button>
+        </Dropdown>
+        <Dropdown button={<DropdownButton text={"Top end"}/>} bottom={false} start={false}>
+          <Button fitContent={false}>Item 1</Button>
+          <Button fitContent={false}>Item 2</Button>
+        </Dropdown>
+      </FlexColumn>
+    </Section>
+  );
+}
+
 const ErrorBannerSection = () => {
   return (
     <Section>
@@ -370,6 +409,7 @@ const MainContent = () => {
       <TagSection/>
       <CardSection/>
       <BoxSection/>
+      <DropdownSection/>
       <SelectSection/>
       <ErrorBannerSection/>
       <TabsSection/>
