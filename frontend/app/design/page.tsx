@@ -22,13 +22,17 @@ import {
   CheckCircleIcon,
   CheckIcon,
   CrossIcon,
-  DownloadIcon, ExclamationCircle,
+  DownloadIcon,
+  ExclamationCircle,
   EyeSlashFilledIcon,
   EyeSlashIcon,
-  FunnelIcon, GoogleIcon, InfoCircleIcon,
+  FunnelIcon,
+  GoogleIcon,
+  InfoCircleIcon,
   LikeIcon,
   MagnifyingGlassIcon,
-  MenuIcon, MinusIcon,
+  MenuIcon,
+  MinusIcon,
   MoonIcon,
   OptionsIcon,
   PencilIcon,
@@ -40,7 +44,8 @@ import {
   ThumbsDownIcon,
   ThumbsUpFilledIcon,
   ThumbsUpIcon,
-  TrashIcon, UserIconFilled
+  TrashIcon,
+  UserIconFilled
 } from "../../components/atoms/Icons";
 import React, {useEffect} from "react";
 import ItemCardSkeleton from "../../components/organism/ItemCardSkeleton";
@@ -366,7 +371,6 @@ const MainContent = () => {
       <CardSection/>
       <BoxSection/>
       <SelectSection/>
-      <DropdownSection/>
       <ErrorBannerSection/>
       <TabsSection/>
     </main>
