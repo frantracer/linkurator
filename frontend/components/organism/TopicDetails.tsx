@@ -32,6 +32,7 @@ import {deleteTopic, followTopic, unfollowTopic} from "../../services/topicServi
 import {EditTopicModalId} from "./EditTopicModal";
 import Select from "../atoms/Select";
 import {hideLateralMenu} from "../../utilities/lateralMenuAction";
+import FlexItem from "../atoms/FlexItem";
 
 export const TOPIC_DETAILS_ID = "topic-details";
 
@@ -143,26 +144,30 @@ const TopicDetails = (props: TopicDetailsProps) => {
       <Divider/>
       {props.topic?.is_owner &&
           <FlexRow position={"end"}>
-              <Button clickAction={() => openModal(EditTopicModalId)}>
-                  <PencilIcon/>
-                {"Editar"}
-              </Button>
-              <Button clickAction={deleteTopicAction}>
-                  <TrashIcon/>
-                {"Borrar"}
-              </Button>
+              <FlexItem grow={true}>
+                  <Button fitContent={false} clickAction={() => openModal(EditTopicModalId)}>
+                      <PencilIcon/>
+                    {"Editar"}
+                  </Button>
+              </FlexItem>
+              <FlexItem grow={true}>
+                  <Button fitContent={false} clickAction={deleteTopicAction}>
+                      <TrashIcon/>
+                    {"Borrar"}
+                  </Button>
+              </FlexItem>
           </FlexRow>
       }
       {props.topic !== null && !props.topic.is_owner && props.topic.followed &&
           <FlexRow position={"center"}>
-              <Button clickAction={() => handleUnfollowTopic(topicId)}>
+              <Button fitContent={false} clickAction={() => handleUnfollowTopic(topicId)}>
                 {"Dejar de seguir"}
               </Button>
           </FlexRow>
       }
       {props.topic !== null && !props.topic.is_owner && !props.topic.followed &&
           <FlexRow position={"center"}>
-              <Button clickAction={() => handleFollowTopic(topicId)}>
+              <Button fitContent={false} clickAction={() => handleFollowTopic(topicId)}>
                 {"Seguir"}
               </Button>
           </FlexRow>
@@ -170,14 +175,18 @@ const TopicDetails = (props: TopicDetailsProps) => {
       <Box title={"Filtros"}>
         <FlexColumn>
           <FlexRow position={"between"}>
-            <Button clickAction={resetFilters}>
-              <ArrowUturnLeft/>
-              {"Restaurar"}
-            </Button>
-            <Button clickAction={handleApplyFilters}>
-              <CheckIcon/>
-              {"Aplicar"}
-            </Button>
+            <FlexItem grow={true}>
+              <Button fitContent={false} clickAction={resetFilters}>
+                <ArrowUturnLeft/>
+                {"Restaurar"}
+              </Button>
+            </FlexItem>
+            <FlexItem grow={true}>
+              <Button fitContent={false} clickAction={handleApplyFilters}>
+                <CheckIcon/>
+                {"Aplicar"}
+              </Button>
+            </FlexItem>
           </FlexRow>
           <SearchBar handleChange={(value) => setTempFilters({...tempFilters, textSearch: value})}
                      value={tempFilters.textSearch}/>

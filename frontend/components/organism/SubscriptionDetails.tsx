@@ -31,6 +31,7 @@ import {AssignTopicModalId} from "./AssignTopicModal";
 import Grid from "../atoms/Grid";
 import Select from "../atoms/Select";
 import {hideLateralMenu} from "../../utilities/lateralMenuAction";
+import FlexItem from "../atoms/FlexItem";
 
 export const SUBSCRIPTION_DETAILS_ID = "subscription-details";
 
@@ -115,27 +116,35 @@ const SubscriptionDetails = (props: SubscriptionDetailsProps) => {
       <Divider/>
       {props.editable &&
           <FlexRow position={"between"}>
-              <Button clickAction={() => openModal(AssignTopicModalId)}>
-                  <AddIcon/>
-                {"Asignar"}
-              </Button>
-              <Button clickAction={props.refreshSubscription}>
-                  <RefreshIcon/>
-                {"Actualizar"}
-              </Button>
+              <FlexItem grow={true}>
+                  <Button fitContent={false} clickAction={() => openModal(AssignTopicModalId)}>
+                      <AddIcon/>
+                    {"Asignar"}
+                  </Button>
+              </FlexItem>
+              <FlexItem grow={true}>
+                  <Button fitContent={false} clickAction={props.refreshSubscription}>
+                      <RefreshIcon/>
+                    {"Actualizar"}
+                  </Button>
+              </FlexItem>
           </FlexRow>
       }
       <Box title={"Filtros"}>
         <FlexColumn>
           <FlexRow position={"between"}>
-            <Button clickAction={resetFilters}>
-              <ArrowUturnLeft/>
-              {"Restaurar"}
-            </Button>
-            <Button clickAction={handleApplyFilters}>
-              <CheckIcon/>
-              {"Aplicar"}
-            </Button>
+            <FlexItem grow={true}>
+              <Button fitContent={false} clickAction={resetFilters}>
+                <ArrowUturnLeft/>
+                {"Restaurar"}
+              </Button>
+            </FlexItem>
+            <FlexItem grow={true}>
+              <Button fitContent={false} clickAction={handleApplyFilters}>
+                <CheckIcon/>
+                {"Aplicar"}
+              </Button>
+            </FlexItem>
           </FlexRow>
           <SearchBar handleChange={(value) => setTempFilters({...tempFilters, textSearch: value})}
                      value={tempFilters.textSearch}/>

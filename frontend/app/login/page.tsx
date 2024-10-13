@@ -92,9 +92,7 @@ const Home: NextPage = () => {
 
             <Divider text={"O"}/>
 
-            <ALink href={configuration.LOGIN_URL}>
-              <Button fitContent={false}><GoogleIcon/>Accede con Google</Button>
-            </ALink>
+            <Button href={configuration.LOGIN_URL} fitContent={false}><GoogleIcon/>Accede con Google</Button>
 
             <div className={"h-4"}/>
 

@@ -135,7 +135,7 @@ const SubscriptionsPage: NextPage = () => {
               </Tag>
           }
           {!selectedSubscription?.followed &&
-              <Button grow={false} primary={false} clickAction={handleFollowSubscription}>{"Seguir"}</Button>
+              <Button primary={false} clickAction={handleFollowSubscription}>{"Seguir"}</Button>
           }
         </div>
         <Button clickAction={() => showLateralMenu(SUBSCRIPTION_DETAILS_ID)}>

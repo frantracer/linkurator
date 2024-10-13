@@ -13,6 +13,7 @@ import NumberInput from "../atoms/NumberInput";
 import {followCurator, unfollowCurator} from "../../services/curatorService";
 import Select from "../atoms/Select";
 import {hideLateralMenu} from "../../utilities/lateralMenuAction";
+import FlexItem from "../atoms/FlexItem";
 
 export const CURATOR_DETAILS_ID = "curator-details";
 
@@ -102,14 +103,14 @@ const CuratorDetails = (props: CuratorDetailsProps) => {
       <Divider/>
       {props.curator !== null && props.curator.followed &&
           <FlexRow position={"center"}>
-              <Button clickAction={() => handleUnfollowCurator(curatorId)}>
+              <Button fitContent={false} clickAction={() => handleUnfollowCurator(curatorId)}>
                 {"Dejar de seguir"}
               </Button>
           </FlexRow>
       }
       {props.curator !== null && !props.curator.followed &&
           <FlexRow position={"center"}>
-              <Button clickAction={() => handleFollowCurator(curatorId)}>
+              <Button fitContent={false} clickAction={() => handleFollowCurator(curatorId)}>
                 {"Seguir"}
               </Button>
           </FlexRow>
@@ -117,14 +118,18 @@ const CuratorDetails = (props: CuratorDetailsProps) => {
       <Box title={"Filtros"}>
         <FlexColumn>
           <FlexRow position={"between"}>
-            <Button clickAction={resetFilters}>
-              <ArrowUturnLeft/>
-              {"Restaurar"}
-            </Button>
-            <Button clickAction={handleApplyFilters}>
-              <CheckIcon/>
-              {"Aplicar"}
-            </Button>
+            <FlexItem grow={true}>
+              <Button fitContent={false} clickAction={resetFilters}>
+                <ArrowUturnLeft/>
+                {"Restaurar"}
+              </Button>
+            </FlexItem>
+            <FlexItem grow={true}>
+              <Button fitContent={false} clickAction={handleApplyFilters}>
+                <CheckIcon/>
+                {"Aplicar"}
+              </Button>
+            </FlexItem>
           </FlexRow>
           <SearchBar handleChange={(value) => setTempFilters({...tempFilters, textSearch: value})}
                      value={tempFilters.textSearch}/>

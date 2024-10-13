@@ -14,6 +14,7 @@ import {followCurator, unfollowCurator} from "../../services/curatorService";
 import Button from "../atoms/Button";
 import {Curator} from "../../entities/Curators";
 import ALink from "../atoms/ALink";
+import FlexItem from "../atoms/FlexItem";
 
 
 export const FollowCuratorModalId = "follow-curator-modal";
@@ -48,8 +49,10 @@ const FolowCuratorModal = (props: FolowCuratorModalProps) => {
     <Modal id={FollowCuratorModalId}>
       <FlexColumn>
         <h1 className="font-bold text-xl w-full text-center">{"Seguir curador"}</h1>
-        <SearchBar placeholder="Buscar curador de contenido" value={curatorSearch}
-                   handleChange={setCuratorSearch}/>
+        <FlexItem grow={true}>
+          <SearchBar placeholder="Buscar curador de contenido" value={curatorSearch}
+                     handleChange={setCuratorSearch}/>
+        </FlexItem>
         <Box title={"Curador"}>
           <FlexColumn>
             {debouncedCuratorSearch !== "" && curator === null && !curatorIsLoading &&

@@ -95,13 +95,13 @@ const NewTopicModal = (props: NewTopicModalProps) => {
           <FlexItem grow={true}/>
           <FlexItem>
             {!topic.followed &&
-                <Button clickAction={() => handleFollowTopic(topic.uuid)} disabled={topic.is_owner} grow={false}>
+                <Button clickAction={() => handleFollowTopic(topic.uuid)} disabled={topic.is_owner}>
                     <AddIcon/>
                     <span>{"Seguir"}</span>
                 </Button>
             }
             {topic.followed &&
-                <Button clickAction={() => handleUnfollowTopic(topic.uuid)} disabled={topic.is_owner} grow={false}>
+                <Button clickAction={() => handleUnfollowTopic(topic.uuid)} disabled={topic.is_owner}>
                     <MinusIcon/>
                     <span>{"Dejar de seguir"}</span>
                 </Button>

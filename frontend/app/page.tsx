@@ -6,11 +6,11 @@ import useProfile from "../hooks/useProfile";
 import {configuration, paths} from "../configuration";
 import {useRouter} from "next/navigation";
 import Button from "../components/atoms/Button";
-import ALink from "../components/atoms/ALink";
 import FlexColumn from "../components/atoms/FlexColumn";
 import Divider from "../components/atoms/Divider";
 import FlexRow from "../components/atoms/FlexRow";
 import LinkuratorHeader from "../components/organism/LinkuratorHeader";
+import FlexItem from "../components/atoms/FlexItem";
 
 const Home: NextPage = () => {
   const router = useRouter();
@@ -33,12 +33,12 @@ const Home: NextPage = () => {
           <p className="py-2">{"¡Haz click en estos ejemplos!"}</p>
           <div className="w-full">
             <FlexRow>
-              <ALink fitContent={false} href={configuration.EXAMPLE_PROGRAMMING_TOPIC_URL}>
-                <Button fitContent={false}>💻️ Programación</Button>
-              </ALink>
-              <ALink fitContent={false} href={configuration.EXAMPLE_VIDEO_GAMES_NEWS_TOPIC_URL}>
-                <Button fitContent={false}>🕹️️ Noticias Videojuegos</Button>
-              </ALink>
+              <FlexItem grow={true}>
+                <Button href={configuration.EXAMPLE_PROGRAMMING_TOPIC_URL} fitContent={false}>💻️ Programación</Button>
+              </FlexItem>
+              <FlexItem grow={true}>
+                <Button href={configuration.EXAMPLE_VIDEO_GAMES_NEWS_TOPIC_URL} fitContent={false}>🕹️️ Noticias Videojuegos</Button>
+              </FlexItem>
             </FlexRow>
           </div>
 
@@ -46,13 +46,9 @@ const Home: NextPage = () => {
             <FlexColumn>
               <Divider/>
               <p>{"¿Tienes cuenta?"}</p>
-              <ALink href={paths.LOGIN}>
-                <Button primary={false} fitContent={false}>Inicia sesión</Button>
-              </ALink>
+              <Button href={paths.LOGIN} primary={false} fitContent={false}>Inicia sesión</Button>
               <p>{"¿Todavía no tienes cuenta?"}</p>
-              <ALink href={paths.REGISTER}>
-                <Button fitContent={false}>Regístrate</Button>
-              </ALink>
+              <Button href={paths.REGISTER} fitContent={false}>Regístrate</Button>
             </FlexColumn>
           </div>
         </div>

@@ -123,9 +123,9 @@ const Home: NextPage = () => {
 
             <Divider text={"O"}/>
 
-            <ALink href={configuration.REGISTER_URL}>
-              <Button fitContent={false}><GoogleIcon/>Regístrate con Google (Beta)</Button>
-            </ALink>
+            <Button href={configuration.REGISTER_URL} fitContent={false}>
+              <GoogleIcon/>Regístrate con Google (Beta)
+            </Button>
           </FlexColumn>
         </div>
       </div>

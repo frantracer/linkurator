@@ -1,12 +1,13 @@
 import React from "react";
+import Link from "next/link";
 
 type ButtonProps = {
   clickAction?: () => void
+  href?: string
   relatedModalId?: string
   showOnlyOnMobile?: boolean
   fitContent?: boolean
   disabled?: boolean
-  grow?: boolean
   primary?: boolean
   children?: React.ReactNode
 }
@@ -17,11 +18,11 @@ const noAction = () => {
 const Button = (
   {
     clickAction = noAction,
+    href = undefined,
     relatedModalId = undefined,
     showOnlyOnMobile = false,
     fitContent = true,
     disabled = false,
-    grow = true,
     primary = true,
     children
   }: ButtonProps
@@ -40,9 +41,6 @@ const Button = (
   if (showOnlyOnMobile) {
     className += " lg:hidden";
   }
-  if (grow) {
-    className += " grow";
-  }
   if (disabled) {
     className += " opacity-50 cursor-not-allowed";
     clickAction = noAction;
@@ -54,6 +52,14 @@ const Button = (
     if (clickAction) {
       clickAction();
     }
+  }
+
+  if (href) {
+    return (
+      <Link href={href} className={className}>
+        {children}
+      </Link>
+    );
   }
 
   return (

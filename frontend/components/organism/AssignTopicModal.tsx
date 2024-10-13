@@ -81,7 +81,7 @@ const AssignTopicModal = (props: AssignTopicModalProps) => {
           </FlexColumn>
         </Box>
         <FlexRow position={"end"}>
-          <Button grow={false} clickAction={() => {
+          <Button clickAction={() => {
             closeModal(AssignTopicModalId);
           }}>
             <span>{"Aceptar"}</span>

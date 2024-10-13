@@ -76,13 +76,13 @@ const NewSubscriptionModal = (props: NewSubscritionModalProps) => {
           </FlexItem>
           <FlexItem grow={true}/>
           {subscription.followed &&
-              <Button grow={false} clickAction={() => handleUnfollow(subscription.uuid)}>
+              <Button clickAction={() => handleUnfollow(subscription.uuid)}>
                   <MinusIcon/>
                 {"Dejar de seguir"}
               </Button>
           }
           {!subscription.followed &&
-              <Button grow={false} clickAction={() => handleFollow(subscription.uuid)}>
+              <Button clickAction={() => handleFollow(subscription.uuid)}>
                   <AddIcon/>
                 {"Seguir"}
               </Button>
