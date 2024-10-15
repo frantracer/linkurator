@@ -118,17 +118,11 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
     <Drawer id={LATERAL_NAVIGATION_MENU_ID}>
       <Sidebar>
         <FlexRow position={"between"}>
-          <FlexItem>
-            <ALink href={'/'}>
+          <FlexItem grow={true}>
               <FlexRow position={"start"}>
-                <FlexItem>
                   <LogoImage/>
-                </FlexItem>
-                <FlexItem>
                   <LogoTitle/>
-                </FlexItem>
               </FlexRow>
-            </ALink>
           </FlexItem>
           <FlexItem>
             {profile &&
