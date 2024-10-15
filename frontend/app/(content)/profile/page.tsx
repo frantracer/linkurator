@@ -139,12 +139,11 @@ const ProfilePage: NextPage = () => {
         </FlexRow>
       </TopTitle>
       <FlexRow position={"center"}>
-        <FlexItem grow={true}/>
         <FlexItem grow={true}>
           <FlexRow>
             <FlexItem grow={true}/>
             <FlexItem grow={true}>
-              <div className={"m-8 min-w-80 max-w-96"}>
+              <div className={"m-8 min-w-80"}>
                 <FlexColumn>
                   <Box title={"Foto de perfil"}>
                     <Avatar src={avatarUrl} alt={username ? username : ""}/>
@@ -219,7 +218,6 @@ const ProfilePage: NextPage = () => {
             <FlexItem grow={true}/>
           </FlexRow>
         </FlexItem>
-        <FlexItem grow={true}/>
       </FlexRow>
       <DeleteAccountModal userEmail={email} onDeleteAccount={() => {
         deleteProfile().then(() => {
