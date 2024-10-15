@@ -144,11 +144,17 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
         <Divider/>
         {profile &&
             <FlexRow>
-                <SearchBar value={searchValue} handleChange={setSearchValue}/>
-                <Button fitContent={true} clickAction={() => openFilters(currentPage)}>
-                    <FunnelIcon/>
-                    <span>Filtrar</span>
-                </Button>
+                <FlexItem grow={true}>
+                    <SearchBar value={searchValue} handleChange={setSearchValue}/>
+                </FlexItem>
+                <FlexItem shrink={false}>
+                    <Button fitContent={true} clickAction={() => openFilters(currentPage)}>
+                        <FlexRow>
+                            <FunnelIcon/>
+                            <span>Filtrar</span>
+                        </FlexRow>
+                    </Button>
+                </FlexItem>
             </FlexRow>
         }
         {!profile && !profileIsLoading &&

@@ -96,8 +96,10 @@ const NewSubscriptionModal = (props: NewSubscritionModalProps) => {
     <Modal id={NewSubscriptionModalId}>
       <FlexColumn>
         <h1 className="font-bold text-xl w-full text-center">{"Seguir subscripción"}</h1>
-        <SearchBar placeholder="Busca una subscripción por nombre o URL" value={subscriptionSearch}
-                   handleChange={setSubscriptionSearch}/>
+        <FlexItem grow={true}>
+          <SearchBar placeholder="Busca una subscripción por nombre o URL" value={subscriptionSearch}
+                     handleChange={setSubscriptionSearch}/>
+        </FlexItem>
         <Box title={"Subscripciones"}>
           {debouncedSubscriptionSearch === "" &&
               <FlexRow position={"center"}>{"Busca una subscripción por nombre o URL"}</FlexRow>

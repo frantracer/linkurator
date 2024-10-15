@@ -187,8 +187,10 @@ const NewTopicModal = (props: NewTopicModalProps) => {
       }
       {selectedTab === FOLLOW_TOPIC_TAB &&
           <FlexColumn>
-              <SearchBar placeholder="Introduce una palabra para buscar categorías" value={topicSearch}
-                         handleChange={setTopicSearch}/>
+              <FlexItem grow={true}>
+                  <SearchBar placeholder="Introduce una palabra para buscar categorías" value={topicSearch}
+                             handleChange={setTopicSearch}/>
+              </FlexItem>
               <Box title={"Categorías"}>
                   <FlexColumn>
                     {debouncedTopicSearch === "" &&
