@@ -23,6 +23,8 @@ import {LATERAL_NAVIGATION_MENU_ID} from "../../../../components/organism/Latera
 import useSubscription from "../../../../hooks/useSubscription";
 import Tag from "../../../../components/atoms/Tag";
 import {ErrorBanner} from "../../../../components/atoms/ErrorBanner";
+import FlexRow from "../../../../components/atoms/FlexRow";
+import FlexItem from "../../../../components/atoms/FlexItem";
 
 const REFRESH_SUBSCRIPTIONS_INTERVAL = 30000;
 
@@ -115,10 +117,11 @@ const SubscriptionsPage: NextPage = () => {
                            resetFilters={resetFilters}
                            refreshSubscription={() => refreshSubscription(selectedSubscriptionId!)}/>
       <TopTitle>
-        <Button clickAction={() => showLateralMenu(LATERAL_NAVIGATION_MENU_ID)} showOnlyOnMobile={true}>
-          <MenuIcon/>
-        </Button>
-        <div className="flex flex-row gap-2 items-center justify-center w-full overflow-hidden">
+        <FlexRow>
+          <Button clickAction={() => showLateralMenu(LATERAL_NAVIGATION_MENU_ID)} showOnlyOnMobile={true}>
+            <MenuIcon/>
+          </Button>
+          <FlexItem grow={true}/>
           {subscriptionThumbnail && <Avatar src={subscriptionThumbnail} alt={subscriptionName}/>}
           <h1 className="text-2xl font-bold whitespace-nowrap truncate hover:cursor-pointer"
               onClick={openSubscriptionUrl}>
@@ -137,10 +140,11 @@ const SubscriptionsPage: NextPage = () => {
           {!selectedSubscription?.followed &&
               <Button primary={false} clickAction={handleFollowSubscription}>{"Seguir"}</Button>
           }
-        </div>
-        <Button clickAction={() => showLateralMenu(SUBSCRIPTION_DETAILS_ID)}>
-          <OptionsIcon/>
-        </Button>
+          <FlexItem grow={true}/>
+          <Button clickAction={() => showLateralMenu(SUBSCRIPTION_DETAILS_ID)}>
+            <OptionsIcon/>
+          </Button>
+        </FlexRow>
       </TopTitle>
       {error &&
           <ErrorBanner>

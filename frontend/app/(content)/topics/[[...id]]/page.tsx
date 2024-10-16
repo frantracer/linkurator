@@ -23,13 +23,13 @@ import {LATERAL_NAVIGATION_MENU_ID} from "../../../../components/organism/Latera
 import useTopicSubscriptions from "../../../../hooks/useTopicSubscriptions";
 import {useTopic} from "../../../../hooks/useTopic";
 import Tag from "../../../../components/atoms/Tag";
-import FlexItem from "../../../../components/atoms/FlexItem";
 import Avatar from "../../../../components/atoms/Avatar";
 import {followTopic, unfollowTopic} from "../../../../services/topicService";
 import {openModal} from "../../../../utilities/modalAction";
 import ALink from "../../../../components/atoms/ALink";
 import FlexRow from "../../../../components/atoms/FlexRow";
 import {ErrorBanner} from "../../../../components/atoms/ErrorBanner";
+import FlexItem from "../../../../components/atoms/FlexItem";
 
 const REFRESH_TOPICS_INTERVAL = 30000;
 
@@ -105,58 +105,44 @@ const Home: NextPage = () => {
                     refreshTopics={refreshTopics}
       />
       <TopTitle>
-        <FlexRow>
-          <FlexItem>
-            <Button clickAction={() => showLateralMenu(LATERAL_NAVIGATION_MENU_ID)} showOnlyOnMobile={true}>
-              <MenuIcon/>
-            </Button>
-          </FlexItem>
-          <FlexItem grow={true}>
-            {selectedTopic &&
-                <FlexRow position={"center"}>
-                    <FlexItem>
-                        <ALink href={paths.CURATORS + "/" + selectedTopic.curator.username}>
-                            <Avatar src={selectedTopic.curator.avatar_url} alt={selectedTopic.curator.username}/>
-                        </ALink>
-                    </FlexItem>
-                    <FlexItem>
-                        <h1 className="text-2xl font-bold whitespace-nowrap truncate hover:cursor-pointer">
-                          {topicName}
-                        </h1>
-                    </FlexItem>
-                  {selectedTopic.followed && !selectedTopic.is_owner &&
-                      <FlexItem shrink={false}>
-                          <Tag>
-                            {"Siguiendo"}
-                              <div className="hover:cursor-pointer"
-                                   onClick={() => handleUnfollowTopic(selectedTopic.uuid)}>
-                                  <CrossIcon/>
-                              </div>
-                          </Tag>
-                      </FlexItem>
-                  }
-                  {!selectedTopic.followed && !selectedTopic.is_owner &&
-                      <FlexItem grow={false}>
-                          <Button primary={false} clickAction={() => handleFollowTopic(selectedTopic.uuid)}>
-                            {"Seguir"}
-                          </Button>
-                      </FlexItem>
-                  }
-                  {selectedTopic.is_owner &&
-                      <FlexItem grow={false}>
-                          <Button primary={false} clickAction={() => openModal(EditTopicModalId)}>
-                            {"Editar"}
-                          </Button>
-                      </FlexItem>
-                  }
-                </FlexRow>
-            }
-          </FlexItem>
-          <FlexItem>
-            <Button clickAction={() => showLateralMenu(TOPIC_DETAILS_ID)}>
-              <OptionsIcon/>
-            </Button>
-          </FlexItem>
+        <FlexRow position={"center"}>
+          <Button clickAction={() => showLateralMenu(LATERAL_NAVIGATION_MENU_ID)} showOnlyOnMobile={true}>
+            <MenuIcon/>
+          </Button>
+          <FlexItem grow={true}/>
+          {selectedTopic &&
+              <>
+                  <ALink href={paths.CURATORS + "/" + selectedTopic.curator.username}>
+                      <Avatar src={selectedTopic.curator.avatar_url} alt={selectedTopic.curator.username}/>
+                  </ALink>
+                  <h1 className="text-2xl font-bold whitespace-nowrap truncate hover:cursor-pointer">
+                    {topicName}
+                  </h1>
+                {selectedTopic.followed && !selectedTopic.is_owner &&
+                    <Tag>
+                      {"Siguiendo"}
+                        <div className="hover:cursor-pointer"
+                             onClick={() => handleUnfollowTopic(selectedTopic.uuid)}>
+                            <CrossIcon/>
+                        </div>
+                    </Tag>
+                }
+                {!selectedTopic.followed && !selectedTopic.is_owner &&
+                    <Button primary={false} clickAction={() => handleFollowTopic(selectedTopic.uuid)}>
+                      {"Seguir"}
+                    </Button>
+                }
+                {selectedTopic.is_owner &&
+                    <Button primary={false} clickAction={() => openModal(EditTopicModalId)}>
+                      {"Editar"}
+                    </Button>
+                }
+              </>
+          }
+          <FlexItem grow={true}/>
+          <Button clickAction={() => showLateralMenu(TOPIC_DETAILS_ID)}>
+            <OptionsIcon/>
+          </Button>
         </FlexRow>
       </TopTitle>
       {topicIsError && !topicIsLoading &&

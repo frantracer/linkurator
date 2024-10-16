@@ -12,17 +12,14 @@ const ALink = (
   {
     href,
     onClick,
-    fitContent = true,
     children,
   }: ButtonProps
 ) => {
   const handleClick = onClick ? onClick : () => {
   }
 
-  const className = fitContent ? "" : "w-full";
-
   return (
-    <Link className={"group " + className} href={href} onClick={handleClick}>
+    <Link className={"group w-fit h-fit flex"} href={href} onClick={handleClick}>
       {children}
     </Link>
   );

@@ -73,10 +73,11 @@ const CuratorsPage: NextPage = () => {
       <CuratorDetails curator={curator} filters={filters} setFilters={setFilters} resetFilters={resetFilters}
                       refreshCurators={refreshCurators}/>
       <TopTitle>
-        <Button clickAction={() => showLateralMenu(LATERAL_NAVIGATION_MENU_ID)} showOnlyOnMobile={true}>
-          <MenuIcon/>
-        </Button>
         <FlexRow>
+          <Button clickAction={() => showLateralMenu(LATERAL_NAVIGATION_MENU_ID)} showOnlyOnMobile={true}>
+            <MenuIcon/>
+          </Button>
+          <FlexItem grow={true}/>
           {curatorThumbnail && <Avatar src={curatorThumbnail} alt={curatorName}/>}
           <h1 className="text-2xl font-bold truncate">
             {curatorName}
@@ -98,10 +99,11 @@ const CuratorsPage: NextPage = () => {
                   </Button>
               </FlexItem>
           }
+          <FlexItem grow={true}/>
+          <Button clickAction={() => showLateralMenu(CURATOR_DETAILS_ID)}>
+            <OptionsIcon/>
+          </Button>
         </FlexRow>
-        <Button clickAction={() => showLateralMenu(CURATOR_DETAILS_ID)}>
-          <OptionsIcon/>
-        </Button>
       </TopTitle>
       <CuratorVideoCardGrid
         refreshItem={refreshCuratorItem}
