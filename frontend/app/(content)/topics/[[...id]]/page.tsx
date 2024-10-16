@@ -1,7 +1,7 @@
 'use client';
 
 import type {NextPage} from "next";
-import React, {useEffect} from "react";
+import React, {useEffect, useState} from "react";
 import useSubscriptions from "../../../../hooks/useSubscriptions";
 import useProfile from "../../../../hooks/useProfile";
 import useTopicItems from "../../../../hooks/useTopicItems";
@@ -16,7 +16,15 @@ import CreateFirstTopicHero from "../../../../components/organism/CreateFirstTop
 import Drawer from "../../../../components/molecules/Drawer";
 import TopTitle from "../../../../components/molecules/TopTitle";
 import Button from "../../../../components/atoms/Button";
-import {CrossIcon, MenuIcon, OptionsIcon} from "../../../../components/atoms/Icons";
+import {
+  AddIcon,
+  CrossIcon,
+  FunnelIcon,
+  MenuIcon, MinusIcon,
+  OptionsIcon,
+  PencilIcon,
+  TrashIcon
+} from "../../../../components/atoms/Icons";
 import TopicDetails, {TOPIC_DETAILS_ID} from "../../../../components/organism/TopicDetails";
 import {showLateralMenu} from "../../../../utilities/lateralMenuAction";
 import {LATERAL_NAVIGATION_MENU_ID} from "../../../../components/organism/LateralNavigationMenu";
@@ -24,12 +32,13 @@ import useTopicSubscriptions from "../../../../hooks/useTopicSubscriptions";
 import {useTopic} from "../../../../hooks/useTopic";
 import Tag from "../../../../components/atoms/Tag";
 import Avatar from "../../../../components/atoms/Avatar";
-import {followTopic, unfollowTopic} from "../../../../services/topicService";
+import {deleteTopic, followTopic, unfollowTopic} from "../../../../services/topicService";
 import {openModal} from "../../../../utilities/modalAction";
 import ALink from "../../../../components/atoms/ALink";
 import FlexRow from "../../../../components/atoms/FlexRow";
 import {ErrorBanner} from "../../../../components/atoms/ErrorBanner";
 import FlexItem from "../../../../components/atoms/FlexItem";
+import Dropdown from "../../../../components/atoms/Dropdown";
 
 const REFRESH_TOPICS_INTERVAL = 30000;
 
@@ -39,6 +48,7 @@ const Home: NextPage = () => {
 
   const topicIdFromQuery: string | undefined = pathParams.id ? (Array.isArray(pathParams.id) ? pathParams.id[0] : pathParams.id) : undefined;
 
+  const [dropdownOpen, setDropdownOpen] = useState(false);
   const {filters, setFilters, resetFilters} = useFilters();
   const {profile, profileIsLoading} = useProfile();
   const {subscriptions, refreshSubscriptions} = useSubscriptions(profile);
@@ -68,6 +78,11 @@ const Home: NextPage = () => {
     }
   }
 
+  const handleShowFilters = () => {
+    showLateralMenu(TOPIC_DETAILS_ID);
+    setDropdownOpen(false);
+  }
+
   const handleFollowTopic = (topicId: string) => {
     followTopic(topicId).then(() => {
       refreshTopics()
@@ -78,6 +93,13 @@ const Home: NextPage = () => {
     unfollowTopic(topicId).then(() => {
       refreshTopics()
     })
+  }
+
+  const handleDeleteTopic = (topicId: string) => {
+    deleteTopic(topicId)
+      .then(() => {
+        refreshTopics()
+      })
   }
 
   useEffect(() => {
@@ -94,6 +116,44 @@ const Home: NextPage = () => {
 
   }, [subscriptions, topicIdFromQuery, router, profileIsLoading, topics, refreshTopicItems, isTopicBeingScanned]);
 
+  const dropdownButtons = []
+  dropdownButtons.push(
+    <Button fitContent={false} clickAction={handleShowFilters}>
+      <FunnelIcon/>
+      Filtrar
+    </Button>
+  )
+  if (selectedTopic && selectedTopic.is_owner) {
+    dropdownButtons.push(
+      <Button fitContent={false} clickAction={() => openModal(EditTopicModalId)}>
+        <PencilIcon/>
+        Editar
+      </Button>
+    )
+    dropdownButtons.push(
+      <Button fitContent={false} clickAction={() => handleDeleteTopic(selectedTopic.uuid)}>
+        <TrashIcon/>
+        Borrar
+      </Button>
+    )
+  }
+  if (selectedTopic && selectedTopic.followed && !selectedTopic.is_owner) {
+    dropdownButtons.push(
+      <Button fitContent={false} clickAction={() => handleUnfollowTopic(selectedTopic.uuid)}>
+        <MinusIcon/>
+        Dejar de seguir
+      </Button>
+    )
+  }
+  if (selectedTopic && !selectedTopic.followed && !selectedTopic.is_owner) {
+    dropdownButtons.push(
+      <Button fitContent={false} clickAction={() => handleFollowTopic(selectedTopic.uuid)}>
+        <AddIcon/>
+        Seguir
+      </Button>
+    )
+  }
+
   return (
     <Drawer id={TOPIC_DETAILS_ID} right={true} alwaysOpenOnDesktop={false}>
       <TopicDetails topic={selectedTopic}
@@ -105,10 +165,10 @@ const Home: NextPage = () => {
                     refreshTopics={refreshTopics}
       />
       <TopTitle>
+        <Button clickAction={() => showLateralMenu(LATERAL_NAVIGATION_MENU_ID)} showOnlyOnMobile={true}>
+          <MenuIcon/>
+        </Button>
         <FlexRow position={"center"}>
-          <Button clickAction={() => showLateralMenu(LATERAL_NAVIGATION_MENU_ID)} showOnlyOnMobile={true}>
-            <MenuIcon/>
-          </Button>
           <FlexItem grow={true}/>
           {selectedTopic &&
               <>
@@ -140,10 +200,10 @@ const Home: NextPage = () => {
               </>
           }
           <FlexItem grow={true}/>
-          <Button clickAction={() => showLateralMenu(TOPIC_DETAILS_ID)}>
-            <OptionsIcon/>
-          </Button>
         </FlexRow>
+        <Dropdown open={dropdownOpen} onChange={setDropdownOpen} button={<OptionsIcon/>} start={false} bottom={true}>
+          {dropdownButtons}
+        </Dropdown>
       </TopTitle>
       {topicIsError && !topicIsLoading &&
           <FlexRow position={"center"}>

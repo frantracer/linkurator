@@ -11,10 +11,8 @@ import {
   CheckCircleFilledIcon,
   CheckCircleIcon,
   CheckIcon,
-  PencilIcon,
   ThumbsDownFilledIcon,
-  ThumbsUpFilledIcon,
-  TrashIcon
+  ThumbsUpFilledIcon
 } from "../atoms/Icons";
 import Button from "../atoms/Button";
 import Box from "../atoms/Box";
@@ -23,13 +21,10 @@ import FlexColumn from "../atoms/FlexColumn";
 import {durationOptions, Filters} from "../../entities/Filters";
 import Checkbox from "../atoms/Checkbox";
 import NumberInput from "../atoms/NumberInput";
-import {openModal} from "../../utilities/modalAction";
 import Miniature from "../atoms/Miniature";
 import ALink from "../atoms/ALink";
 import Tag from "../atoms/Tag";
 import Grid from "../atoms/Grid";
-import {deleteTopic, followTopic, unfollowTopic} from "../../services/topicService";
-import {EditTopicModalId} from "./EditTopicModal";
 import Select from "../atoms/Select";
 import {hideLateralMenu} from "../../utilities/lateralMenuAction";
 import FlexItem from "../atoms/FlexItem";
@@ -50,7 +45,6 @@ const TopicDetails = (props: TopicDetailsProps) => {
   const [tempFilters, setTempFilters] = useState<Filters>(props.filters);
   const [showCustomDuration, setShowCustomDuration] = useState<boolean>(false);
 
-  const topicId = props.topic ? props.topic.uuid : "";
   const topicName = props.topic ? props.topic.name : "";
   const relatedSubs = props.subscriptions
     .filter(sub => props.topic?.subscriptions_ids.includes(sub.uuid))
@@ -64,14 +58,6 @@ const TopicDetails = (props: TopicDetailsProps) => {
       </Tag>
     </ALink>
   ));
-
-  const deleteTopicAction = () => {
-    deleteTopic(topicId)
-      .then(() => {
-        props.refreshTopics()
-        hideLateralMenu(TOPIC_DETAILS_ID)
-      })
-  }
 
   const resetFilters = () => {
     props.resetFilters();
@@ -113,20 +99,6 @@ const TopicDetails = (props: TopicDetailsProps) => {
     hideLateralMenu(TOPIC_DETAILS_ID)
   }
 
-  const handleFollowTopic = (topic_id: string) => {
-    followTopic(topic_id)
-      .then(() => {
-        props.refreshTopics()
-      })
-  }
-
-  const handleUnfollowTopic = (topic_id: string) => {
-    unfollowTopic(topic_id)
-      .then(() => {
-        props.refreshTopics()
-      })
-  }
-
   useEffect(() => {
     setTempFilters(props.filters)
     if (props.filters.durationGroup == "custom") {
@@ -142,36 +114,6 @@ const TopicDetails = (props: TopicDetailsProps) => {
         <div className="w-full whitespace-nowrap truncate text-center">{topicName}</div>
       </FlexRow>
       <Divider/>
-      {props.topic?.is_owner &&
-          <FlexRow position={"end"}>
-              <FlexItem grow={true}>
-                  <Button fitContent={false} clickAction={() => openModal(EditTopicModalId)}>
-                      <PencilIcon/>
-                    {"Editar"}
-                  </Button>
-              </FlexItem>
-              <FlexItem grow={true}>
-                  <Button fitContent={false} clickAction={deleteTopicAction}>
-                      <TrashIcon/>
-                    {"Borrar"}
-                  </Button>
-              </FlexItem>
-          </FlexRow>
-      }
-      {props.topic !== null && !props.topic.is_owner && props.topic.followed &&
-          <FlexRow position={"center"}>
-              <Button fitContent={false} clickAction={() => handleUnfollowTopic(topicId)}>
-                {"Dejar de seguir"}
-              </Button>
-          </FlexRow>
-      }
-      {props.topic !== null && !props.topic.is_owner && !props.topic.followed &&
-          <FlexRow position={"center"}>
-              <Button fitContent={false} clickAction={() => handleFollowTopic(topicId)}>
-                {"Seguir"}
-              </Button>
-          </FlexRow>
-      }
       <Box title={"Filtros"}>
         <FlexColumn>
           <FlexRow position={"between"}>

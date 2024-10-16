@@ -1,7 +1,9 @@
-import React, {Children} from "react";
+import React, {Children, useEffect, useState} from "react";
 
 type DropdownProps = {
   button: React.ReactNode
+  open?: boolean
+  onChange?: (open: boolean) => void
   bottom?: boolean
   start?: boolean
   children?: React.ReactNode
@@ -10,24 +12,38 @@ type DropdownProps = {
 const Dropdown = (
   {
     button,
+    open = false,
+    onChange = () => {},
     bottom = true,
     start = true,
     children
   }: DropdownProps) => {
+  const [dropdownOpen, setDropdownOpen] = useState(open);
+
   const verticalPosition = bottom ? "dropdown-bottom" : "dropdown-top";
   const horizontalPosition = start ? "dropdown-start" : "dropdown-end";
 
+  const handleOpen = (e: any) => {
+    e.preventDefault();
+    onChange(!dropdownOpen);
+    setDropdownOpen(!dropdownOpen);
+  }
+
+  useEffect(() => {
+    setDropdownOpen(open);
+  }, [open]);
+
   return (
-    <div className={"dropdown " + verticalPosition + " " + horizontalPosition}>
-      <div tabIndex={0} role="button" className="btn btn-sm m-1 bg-primary">{button}</div>
-      <ul tabIndex={0} className="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
+    <details onClick={handleOpen} open={dropdownOpen} className={"dropdown " + verticalPosition + " " + horizontalPosition}>
+      <summary className="btn btn-sm m-1 btn-primary border-0">{button}</summary>
+      <ul className="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
         {
           Children.map(children, (child, index) => {
             return <li className="my-0.5" key={index}>{child}</li>
           })
         }
       </ul>
-    </div>
+    </details>
   )
 }
 
