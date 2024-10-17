@@ -13,11 +13,19 @@ import {paths} from "../../../../configuration";
 import Drawer from "../../../../components/molecules/Drawer";
 import TopTitle from "../../../../components/molecules/TopTitle";
 import Button from "../../../../components/atoms/Button";
-import {CrossIcon, MenuIcon, OptionsIcon} from "../../../../components/atoms/Icons";
+import {
+  AddIcon,
+  CrossIcon,
+  FunnelIcon,
+  MenuIcon,
+  MinusIcon,
+  OptionsIcon,
+  RefreshIcon
+} from "../../../../components/atoms/Icons";
 import Avatar from "../../../../components/atoms/Avatar";
 import SubscriptionDetails, {SUBSCRIPTION_DETAILS_ID} from "../../../../components/organism/SubscriptionDetails";
 import {followSubscription, refreshSubscription, unfollowSubscription} from "../../../../services/subscriptionService";
-import AssignTopicModal from "../../../../components/organism/AssignTopicModal";
+import AssignTopicModal, {AssignTopicModalId} from "../../../../components/organism/AssignTopicModal";
 import {showLateralMenu} from "../../../../utilities/lateralMenuAction";
 import {LATERAL_NAVIGATION_MENU_ID} from "../../../../components/organism/LateralNavigationMenu";
 import useSubscription from "../../../../hooks/useSubscription";
@@ -25,6 +33,8 @@ import Tag from "../../../../components/atoms/Tag";
 import {ErrorBanner} from "../../../../components/atoms/ErrorBanner";
 import FlexRow from "../../../../components/atoms/FlexRow";
 import FlexItem from "../../../../components/atoms/FlexItem";
+import Dropdown from "../../../../components/atoms/Dropdown";
+import {openModal} from "../../../../utilities/modalAction";
 
 const REFRESH_SUBSCRIPTIONS_INTERVAL = 30000;
 
@@ -35,6 +45,7 @@ const SubscriptionsPage: NextPage = () => {
   const selectedSubscriptionId: string | undefined = pathParams.id ? (Array.isArray(pathParams.id) ? pathParams.id[0] : pathParams.id) : undefined;
 
   const [error, setError] = useState<string | null>(null);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
 
   const {filters, setFilters, resetFilters} = useFilters();
   const {profile, profileIsLoading} = useProfile();
@@ -75,14 +86,29 @@ const SubscriptionsPage: NextPage = () => {
     }
   }
 
-  const handleFollowSubscription = () => {
-    followSubscription(selectedSubscriptionId!).then(() => {
+  const handleShowFilters = () => {
+    showLateralMenu(SUBSCRIPTION_DETAILS_ID);
+    setDropdownOpen(false);
+  }
+
+  const handleAssignSubscription = () => {
+    openModal(AssignTopicModalId);
+    setDropdownOpen(false);
+  }
+
+  const handleRefreshSubscription = (subscriptionId: string) => {
+    refreshSubscription(subscriptionId)
+    setDropdownOpen(false);
+  }
+
+  const handleFollowSubscription = (subscriptionId: string) => {
+    followSubscription(subscriptionId).then(() => {
       refreshSubscriptions();
     });
   }
 
-  const handleUnfollowSubscription = () => {
-    unfollowSubscription(selectedSubscriptionId!).then((resultOk) => {
+  const handleUnfollowSubscription = (subscriptionId: string) => {
+    unfollowSubscription(subscriptionId).then((resultOk) => {
       if (resultOk) {
         refreshSubscriptions();
       } else {
@@ -106,6 +132,44 @@ const SubscriptionsPage: NextPage = () => {
     }
   }, [profileIsLoading, selectedSubscription, profile, subscriptions, router, refreshSubscriptions]);
 
+  const dropdownButtons = []
+  dropdownButtons.push(
+    <Button fitContent={false} clickAction={handleShowFilters}>
+      <FunnelIcon/>
+      Filtrar
+    </Button>
+  )
+  if (selectedSubscription) {
+    dropdownButtons.push(
+      <Button fitContent={false} clickAction={handleAssignSubscription}>
+        <AddIcon/>
+        Asignar
+      </Button>
+    )
+    dropdownButtons.push(
+      <Button fitContent={false} clickAction={() => handleRefreshSubscription(selectedSubscription.uuid)}>
+        <RefreshIcon/>
+        Actualizar
+      </Button>
+    )
+  }
+  if (selectedSubscription && selectedSubscription.followed) {
+    dropdownButtons.push(
+      <Button fitContent={false} clickAction={() => handleUnfollowSubscription(selectedSubscription.uuid)}>
+        <MinusIcon/>
+        Dejar de seguir
+      </Button>
+    )
+  }
+  if (selectedSubscription && !selectedSubscription.followed) {
+    dropdownButtons.push(
+      <Button fitContent={false} clickAction={() => handleFollowSubscription(selectedSubscription.uuid)}>
+        <AddIcon/>
+        Seguir
+      </Button>
+    )
+  }
+
   return (
     <Drawer id={SUBSCRIPTION_DETAILS_ID} right={true} alwaysOpenOnDesktop={false}>
       <SubscriptionDetails subscription={selectedSubscription}
@@ -117,34 +181,36 @@ const SubscriptionsPage: NextPage = () => {
                            resetFilters={resetFilters}
                            refreshSubscription={() => refreshSubscription(selectedSubscriptionId!)}/>
       <TopTitle>
+        <Button clickAction={() => showLateralMenu(LATERAL_NAVIGATION_MENU_ID)} showOnlyOnMobile={true}>
+          <MenuIcon/>
+        </Button>
         <FlexRow>
-          <Button clickAction={() => showLateralMenu(LATERAL_NAVIGATION_MENU_ID)} showOnlyOnMobile={true}>
-            <MenuIcon/>
-          </Button>
           <FlexItem grow={true}/>
           {subscriptionThumbnail && <Avatar src={subscriptionThumbnail} alt={subscriptionName}/>}
           <h1 className="text-2xl font-bold whitespace-nowrap truncate hover:cursor-pointer"
               onClick={openSubscriptionUrl}>
             {subscriptionName}
           </h1>
-          {selectedSubscription?.followed &&
+          {selectedSubscription && selectedSubscription.followed &&
               <Tag>
                 <span>
                   {"Siguiendo"}
                 </span>
-                  <div className="hover:cursor-pointer" onClick={handleUnfollowSubscription}>
+                  <div className="hover:cursor-pointer"
+                       onClick={() => handleUnfollowSubscription(selectedSubscription.uuid)}>
                       <CrossIcon/>
                   </div>
               </Tag>
           }
-          {!selectedSubscription?.followed &&
-              <Button primary={false} clickAction={handleFollowSubscription}>{"Seguir"}</Button>
+          {selectedSubscription && !selectedSubscription.followed &&
+              <Button primary={false}
+                      clickAction={() => handleFollowSubscription(selectedSubscription.uuid)}>{"Seguir"}</Button>
           }
           <FlexItem grow={true}/>
-          <Button clickAction={() => showLateralMenu(SUBSCRIPTION_DETAILS_ID)}>
-            <OptionsIcon/>
-          </Button>
         </FlexRow>
+        <Dropdown open={dropdownOpen} onChange={setDropdownOpen} button={<OptionsIcon/>} start={false} bottom={true}>
+          {dropdownButtons}
+        </Dropdown>
       </TopTitle>
       {error &&
           <ErrorBanner>

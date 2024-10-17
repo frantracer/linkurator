@@ -8,13 +8,11 @@ import Link from "next/link";
 import {paths} from "../../configuration";
 import Divider from "../atoms/Divider";
 import {
-  AddIcon,
   ArchiveBoxFilledIcon,
   ArrowUturnLeft,
   CheckCircleFilledIcon,
   CheckCircleIcon,
   CheckIcon,
-  RefreshIcon,
   ThumbsDownFilledIcon,
   ThumbsUpFilledIcon
 } from "../atoms/Icons";
@@ -26,8 +24,6 @@ import FlexColumn from "../atoms/FlexColumn";
 import {durationOptions, Filters} from "../../entities/Filters";
 import Checkbox from "../atoms/Checkbox";
 import NumberInput from "../atoms/NumberInput";
-import {openModal} from "../../utilities/modalAction";
-import {AssignTopicModalId} from "./AssignTopicModal";
 import Grid from "../atoms/Grid";
 import Select from "../atoms/Select";
 import {hideLateralMenu} from "../../utilities/lateralMenuAction";
@@ -114,22 +110,6 @@ const SubscriptionDetails = (props: SubscriptionDetailsProps) => {
         <span>{subscriptionName}</span>
       </FlexRow>
       <Divider/>
-      {props.editable &&
-          <FlexRow position={"between"}>
-              <FlexItem grow={true}>
-                  <Button fitContent={false} clickAction={() => openModal(AssignTopicModalId)}>
-                      <AddIcon/>
-                    {"Asignar"}
-                  </Button>
-              </FlexItem>
-              <FlexItem grow={true}>
-                  <Button fitContent={false} clickAction={props.refreshSubscription}>
-                      <RefreshIcon/>
-                    {"Actualizar"}
-                  </Button>
-              </FlexItem>
-          </FlexRow>
-      }
       <Box title={"Filtros"}>
         <FlexColumn>
           <FlexRow position={"between"}>
