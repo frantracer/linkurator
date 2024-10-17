@@ -201,7 +201,7 @@ const NewTopicModal = (props: NewTopicModalProps) => {
                     }
                     {topicsAreLoading && <span>{"Cargando..."}</span>}
                     {topics.length > 0 &&
-                        <div className={"max-h-72 overflow-y-auto"}>
+                        <div className={"max-h-72 overflow-y-auto w-full"}>
                             <Menu isFullHeight={true}>
                               {CollapsableMenuItems}
                             </Menu>
