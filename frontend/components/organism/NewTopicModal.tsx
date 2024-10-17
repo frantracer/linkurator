@@ -86,27 +86,22 @@ const NewTopicModal = (props: NewTopicModalProps) => {
     const contentElement = topicsGroupedByCurator[curatorId].map(topic =>
       <MenuItem key={topic.uuid} selected={false} onClick={() => handleClickCuratorTopic(topic.uuid)}>
         <FlexRow position={"start"}>
-          <FlexItem>
-            <FlexRow>
-              <span>{topic.name}</span>
-              {topic.followed && <Tag>Siguiendo</Tag>}
-            </FlexRow>
+          <FlexItem grow={true}>
+            <span>{topic.name}</span>
           </FlexItem>
-          <FlexItem grow={true}/>
-          <FlexItem>
-            {!topic.followed &&
-                <Button clickAction={() => handleFollowTopic(topic.uuid)} disabled={topic.is_owner}>
-                    <AddIcon/>
-                    <span>{"Seguir"}</span>
-                </Button>
-            }
-            {topic.followed &&
-                <Button clickAction={() => handleUnfollowTopic(topic.uuid)} disabled={topic.is_owner}>
-                    <MinusIcon/>
-                    <span>{"Dejar de seguir"}</span>
-                </Button>
-            }
-          </FlexItem>
+          {topic.followed && <Tag>Siguiendo</Tag>}
+          {!topic.followed &&
+              <Button clickAction={() => handleFollowTopic(topic.uuid)} disabled={topic.is_owner}>
+                  <AddIcon/>
+                  <span>{"Seguir"}</span>
+              </Button>
+          }
+          {topic.followed &&
+              <Button clickAction={() => handleUnfollowTopic(topic.uuid)} disabled={topic.is_owner}>
+                  <MinusIcon/>
+                  <span>{"Dejar de seguir"}</span>
+              </Button>
+          }
         </FlexRow>
       </MenuItem>
     )
