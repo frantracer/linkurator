@@ -24,7 +24,6 @@ import NumberInput from "../atoms/NumberInput";
 import Miniature from "../atoms/Miniature";
 import ALink from "../atoms/ALink";
 import Tag from "../atoms/Tag";
-import Grid from "../atoms/Grid";
 import Select from "../atoms/Select";
 import {hideLateralMenu} from "../../utilities/lateralMenuAction";
 import FlexItem from "../atoms/FlexItem";
@@ -202,9 +201,9 @@ const TopicDetails = (props: TopicDetailsProps) => {
         </FlexColumn>
       </Box>
       <Box title={"Subscripciones"}>
-        <Grid>
+        <FlexColumn>
           {subsTags}
-        </Grid>
+        </FlexColumn>
       </Box>
     </Sidebar>
   );
