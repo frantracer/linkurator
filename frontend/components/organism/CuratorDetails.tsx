@@ -10,7 +10,6 @@ import SearchBar from "../molecules/SearchBar";
 import FlexColumn from "../atoms/FlexColumn";
 import {durationOptions, Filters} from "../../entities/Filters";
 import NumberInput from "../atoms/NumberInput";
-import {followCurator, unfollowCurator} from "../../services/curatorService";
 import Select from "../atoms/Select";
 import {hideLateralMenu} from "../../utilities/lateralMenuAction";
 import FlexItem from "../atoms/FlexItem";
@@ -29,7 +28,6 @@ const CuratorDetails = (props: CuratorDetailsProps) => {
   const [tempFilters, setTempFilters] = useState<Filters>(props.filters);
   const [showCustomDuration, setShowCustomDuration] = useState<boolean>(false);
 
-  const curatorId = props.curator ? props.curator.id : "";
   const curatorName = props.curator ? props.curator.username : "";
 
   const resetFilters = () => {
@@ -71,21 +69,7 @@ const CuratorDetails = (props: CuratorDetailsProps) => {
     props.setFilters(tempFilters)
     hideLateralMenu(CURATOR_DETAILS_ID)
   }
-
-  const handleFollowCurator = (curator_id: string) => {
-    followCurator(curator_id)
-      .then(() => {
-        props.refreshCurators()
-      })
-  }
-
-  const handleUnfollowCurator = (curator_id: string) => {
-    unfollowCurator(curator_id)
-      .then(() => {
-        props.refreshCurators()
-      })
-  }
-
+  
   useEffect(() => {
     setTempFilters(props.filters)
     if (props.filters.durationGroup == "custom") {
@@ -101,20 +85,6 @@ const CuratorDetails = (props: CuratorDetailsProps) => {
         <div className="w-full whitespace-nowrap truncate text-center">{curatorName}</div>
       </FlexRow>
       <Divider/>
-      {props.curator !== null && props.curator.followed &&
-          <FlexRow position={"center"}>
-              <Button fitContent={false} clickAction={() => handleUnfollowCurator(curatorId)}>
-                {"Dejar de seguir"}
-              </Button>
-          </FlexRow>
-      }
-      {props.curator !== null && !props.curator.followed &&
-          <FlexRow position={"center"}>
-              <Button fitContent={false} clickAction={() => handleFollowCurator(curatorId)}>
-                {"Seguir"}
-              </Button>
-          </FlexRow>
-      }
       <Box title={"Filtros"}>
         <FlexColumn>
           <FlexRow position={"between"}>

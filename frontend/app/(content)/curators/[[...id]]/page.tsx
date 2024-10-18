@@ -1,12 +1,12 @@
 'use client';
 
 import type {NextPage} from "next";
-import React from "react";
+import React, {useState} from "react";
 import useProfile from "../../../../hooks/useProfile";
 import {useParams} from "next/navigation";
 import TopTitle from "../../../../components/molecules/TopTitle";
 import Button from "../../../../components/atoms/Button";
-import {CrossIcon, MenuIcon, OptionsIcon} from "../../../../components/atoms/Icons";
+import {AddIcon, CrossIcon, FunnelIcon, MenuIcon, MinusIcon, OptionsIcon} from "../../../../components/atoms/Icons";
 import Avatar from "../../../../components/atoms/Avatar";
 import {showLateralMenu} from "../../../../utilities/lateralMenuAction";
 import {LATERAL_NAVIGATION_MENU_ID} from "../../../../components/organism/LateralNavigationMenu";
@@ -21,6 +21,7 @@ import FlexRow from "../../../../components/atoms/FlexRow";
 import FlexItem from "../../../../components/atoms/FlexItem";
 import Tag from "../../../../components/atoms/Tag";
 import {followCurator, unfollowCurator} from "../../../../services/curatorService";
+import Dropdown from "../../../../components/atoms/Dropdown";
 
 
 const CuratorsPage: NextPage = () => {
@@ -28,6 +29,7 @@ const CuratorsPage: NextPage = () => {
 
   const curatorName: string = pathParams.id ? (Array.isArray(pathParams.id) ? pathParams.id[0] : pathParams.id) : "";
 
+  const [dropdownOpen, setDropdownOpen] = useState(false);
   const {filters, setFilters, resetFilters} = useFilters();
   const {profile, profileIsLoading} = useProfile();
   const {curators, refreshCurators} = useCurators(profile, profileIsLoading);
@@ -68,15 +70,40 @@ const CuratorsPage: NextPage = () => {
     })
   }
 
+  const dropdownButtons = []
+  if (isUserLogged && curator) {
+    dropdownButtons.push(
+      <Button fitContent={false} clickAction={() => showLateralMenu(CURATOR_DETAILS_ID)}>
+        <FunnelIcon/>
+        {"Filtrar"}
+      </Button>
+    )
+    if (curator.followed) {
+      dropdownButtons.push(
+        <Button fitContent={false} clickAction={() => handleUnfollowCurator(curator.id)}>
+          <MinusIcon/>
+          {"Dejar de seguir"}
+        </Button>
+      )
+    } else {
+      dropdownButtons.push(
+        <Button fitContent={false} clickAction={() => handleFollowCurator(curator.id)}>
+          <AddIcon/>
+          {"Seguir"}
+        </Button>
+      )
+    }
+  }
+
   return (
     <Drawer id={CURATOR_DETAILS_ID} right={true} alwaysOpenOnDesktop={false}>
       <CuratorDetails curator={curator} filters={filters} setFilters={setFilters} resetFilters={resetFilters}
                       refreshCurators={refreshCurators}/>
       <TopTitle>
+        <Button clickAction={() => showLateralMenu(LATERAL_NAVIGATION_MENU_ID)} showOnlyOnMobile={true}>
+          <MenuIcon/>
+        </Button>
         <FlexRow>
-          <Button clickAction={() => showLateralMenu(LATERAL_NAVIGATION_MENU_ID)} showOnlyOnMobile={true}>
-            <MenuIcon/>
-          </Button>
           <FlexItem grow={true}/>
           {curatorThumbnail && <Avatar src={curatorThumbnail} alt={curatorName}/>}
           <h1 className="text-2xl font-bold truncate">
@@ -100,10 +127,10 @@ const CuratorsPage: NextPage = () => {
               </FlexItem>
           }
           <FlexItem grow={true}/>
-          <Button clickAction={() => showLateralMenu(CURATOR_DETAILS_ID)}>
-            <OptionsIcon/>
-          </Button>
         </FlexRow>
+        <Dropdown start={false} bottom={true} button={<OptionsIcon/>} open={dropdownOpen} onChange={(open) => setDropdownOpen(open)}>
+          {dropdownButtons}
+        </Dropdown>
       </TopTitle>
       <CuratorVideoCardGrid
         refreshItem={refreshCuratorItem}
