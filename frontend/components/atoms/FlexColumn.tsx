@@ -2,12 +2,14 @@ type Position = "start" | "center" | "end";
 
 type FlexColumnProps = {
   position?: Position;
+  gap?: number;
   children?: React.ReactNode;
 };
 
 const FlexColumn = (
   {
     position = "start",
+    gap = 4,
     children
   }: FlexColumnProps
 ) => {
@@ -20,7 +22,7 @@ const FlexColumn = (
   const positionClass = positionMap[position];
 
   return (
-    <div className={`flex flex-col min-w-fit h-full gap-4 ${positionClass}`}>
+    <div className={`flex flex-col h-full gap-${gap} ${positionClass}`}>
       {children}
     </div>
   )
