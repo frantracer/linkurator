@@ -35,6 +35,7 @@ import FlexRow from "../../../../components/atoms/FlexRow";
 import FlexItem from "../../../../components/atoms/FlexItem";
 import Dropdown from "../../../../components/atoms/Dropdown";
 import {openModal} from "../../../../utilities/modalAction";
+import FlexColumn from "../../../../components/atoms/FlexColumn";
 
 const REFRESH_SUBSCRIPTIONS_INTERVAL = 30000;
 
@@ -186,26 +187,37 @@ const SubscriptionsPage: NextPage = () => {
         </Button>
         <FlexRow>
           <FlexItem grow={true}/>
-          {subscriptionThumbnail && <Avatar src={subscriptionThumbnail} alt={subscriptionName}/>}
-          <h1 className="text-2xl font-bold whitespace-nowrap truncate hover:cursor-pointer"
-              onClick={openSubscriptionUrl}>
-            {subscriptionName}
-          </h1>
-          {selectedSubscription && selectedSubscription.followed &&
-              <Tag>
-                <span>
-                  {"Siguiendo"}
-                </span>
-                  <div className="hover:cursor-pointer"
-                       onClick={() => handleUnfollowSubscription(selectedSubscription.uuid)}>
-                      <CrossIcon/>
-                  </div>
-              </Tag>
+          {subscriptionThumbnail &&
+              <Avatar src={subscriptionThumbnail} alt={subscriptionName}/>
           }
-          {selectedSubscription && !selectedSubscription.followed &&
-              <Button primary={false}
-                      clickAction={() => handleFollowSubscription(selectedSubscription.uuid)}>{"Seguir"}</Button>
-          }
+          <FlexRow>
+            <FlexItem>
+              <FlexColumn gap={0} position={"center"}>
+                <FlexRow>
+                  <h1 className="text-xl font-bold whitespace-nowrap truncate hover:cursor-pointer"
+                      onClick={openSubscriptionUrl}>
+                    {subscriptionName}
+                  </h1>
+                </FlexRow>
+                {selectedSubscription && selectedSubscription.followed &&
+                    <Tag>
+                        <span>
+                          {"Siguiendo"}
+                        </span>
+                        <div className="hover:cursor-pointer"
+                             onClick={() => handleUnfollowSubscription(selectedSubscription.uuid)}>
+                            <CrossIcon/>
+                        </div>
+                    </Tag>
+                }
+                {selectedSubscription && !selectedSubscription.followed &&
+                    <Button primary={false} clickAction={() => handleFollowSubscription(selectedSubscription.uuid)}>
+                      {"Seguir"}
+                    </Button>
+                }
+              </FlexColumn>
+            </FlexItem>
+          </FlexRow>
           <FlexItem grow={true}/>
         </FlexRow>
         <Dropdown open={dropdownOpen} onChange={setDropdownOpen} button={<OptionsIcon/>} start={false} bottom={true}>
