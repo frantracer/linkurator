@@ -20,7 +20,8 @@ import {
   AddIcon,
   CrossIcon,
   FunnelIcon,
-  MenuIcon, MinusIcon,
+  MenuIcon,
+  MinusIcon,
   OptionsIcon,
   PencilIcon,
   TrashIcon
@@ -39,6 +40,7 @@ import FlexRow from "../../../../components/atoms/FlexRow";
 import {ErrorBanner} from "../../../../components/atoms/ErrorBanner";
 import FlexItem from "../../../../components/atoms/FlexItem";
 import Dropdown from "../../../../components/atoms/Dropdown";
+import FlexColumn from "../../../../components/atoms/FlexColumn";
 
 const REFRESH_TOPICS_INTERVAL = 30000;
 
@@ -168,17 +170,22 @@ const Home: NextPage = () => {
         <Button clickAction={() => showLateralMenu(LATERAL_NAVIGATION_MENU_ID)} showOnlyOnMobile={true}>
           <MenuIcon/>
         </Button>
-        <FlexRow position={"center"}>
+        <FlexRow>
           <FlexItem grow={true}/>
           {selectedTopic &&
-              <>
-                  <ALink href={paths.CURATORS + "/" + selectedTopic.curator.username}>
-                      <Avatar src={selectedTopic.curator.avatar_url} alt={selectedTopic.curator.username}/>
-                  </ALink>
-                  <h1 className="text-2xl font-bold whitespace-nowrap truncate hover:cursor-pointer">
+              <ALink href={paths.CURATORS + "/" + selectedTopic.curator.username}>
+                  <Avatar src={selectedTopic.curator.avatar_url} alt={selectedTopic.curator.username}/>
+              </ALink>
+          }
+          <FlexRow>
+            <FlexItem>
+              <FlexColumn gap={0} position={"center"}>
+                <FlexRow>
+                  <h1 className="text-xl font-bold whitespace-nowrap truncate">
                     {topicName}
                   </h1>
-                {selectedTopic.followed && !selectedTopic.is_owner &&
+                </FlexRow>
+                {selectedTopic && selectedTopic.followed && !selectedTopic.is_owner &&
                     <Tag>
                       {"Siguiendo"}
                         <div className="hover:cursor-pointer"
@@ -187,18 +194,19 @@ const Home: NextPage = () => {
                         </div>
                     </Tag>
                 }
-                {!selectedTopic.followed && !selectedTopic.is_owner &&
+                {selectedTopic && !selectedTopic.followed && !selectedTopic.is_owner &&
                     <Button primary={false} clickAction={() => handleFollowTopic(selectedTopic.uuid)}>
                       {"Seguir"}
                     </Button>
                 }
-                {selectedTopic.is_owner &&
-                    <Button primary={false} clickAction={() => openModal(EditTopicModalId)}>
-                      {"Editar"}
-                    </Button>
+                {selectedTopic && selectedTopic.is_owner &&
+                    <Tag>
+                      {"Mis categorías"}
+                    </Tag>
                 }
-              </>
-          }
+              </FlexColumn>
+            </FlexItem>
+          </FlexRow>
           <FlexItem grow={true}/>
         </FlexRow>
         <Dropdown open={dropdownOpen} onChange={setDropdownOpen} button={<OptionsIcon/>} start={false} bottom={true}>
