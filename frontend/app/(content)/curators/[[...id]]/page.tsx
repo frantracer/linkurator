@@ -22,6 +22,7 @@ import FlexItem from "../../../../components/atoms/FlexItem";
 import Tag from "../../../../components/atoms/Tag";
 import {followCurator, unfollowCurator} from "../../../../services/curatorService";
 import Dropdown from "../../../../components/atoms/Dropdown";
+import FlexColumn from "../../../../components/atoms/FlexColumn";
 
 
 const CuratorsPage: NextPage = () => {
@@ -105,30 +106,39 @@ const CuratorsPage: NextPage = () => {
         </Button>
         <FlexRow>
           <FlexItem grow={true}/>
-          {curatorThumbnail && <Avatar src={curatorThumbnail} alt={curatorName}/>}
-          <h1 className="text-2xl font-bold truncate">
-            {curatorName}
-          </h1>
-          {curator && curator.followed &&
-              <FlexItem>
-                  <Tag>
-                    {"Siguiendo"}
-                      <div className="hover:cursor-pointer" onClick={() => handleUnfollowCurator(curator.id)}>
-                          <CrossIcon/>
-                      </div>
-                  </Tag>
-              </FlexItem>
+          {curatorThumbnail &&
+              <Avatar src={curatorThumbnail} alt={curatorName}/>
           }
-          {curator && !curator.followed &&
-              <FlexItem>
-                  <Button primary={false} clickAction={() => handleFollowCurator(curator.id)}>
-                    {"Seguir"}
-                  </Button>
-              </FlexItem>
-          }
+          <FlexRow>
+            <FlexItem>
+              <FlexColumn gap={0} position={"center"}>
+                <FlexRow>
+                  <h1 className="text-xl font-bold whitespace-nowrap truncate">
+                    {curatorName}
+                  </h1>
+                </FlexRow>
+                {curator && curator.followed &&
+                    <Tag>
+                      <span>
+                      {"Siguiendo"}
+                      </span>
+                        <div className="hover:cursor-pointer" onClick={() => handleUnfollowCurator(curator.id)}>
+                            <CrossIcon/>
+                        </div>
+                    </Tag>
+                }
+                {curator && !curator.followed &&
+                    <Button primary={false} clickAction={() => handleFollowCurator(curator.id)}>
+                      {"Seguir"}
+                    </Button>
+                }
+              </FlexColumn>
+            </FlexItem>
+          </FlexRow>
           <FlexItem grow={true}/>
         </FlexRow>
-        <Dropdown start={false} bottom={true} button={<OptionsIcon/>} open={dropdownOpen} onChange={(open) => setDropdownOpen(open)}>
+        <Dropdown start={false} bottom={true} button={<OptionsIcon/>} open={dropdownOpen}
+                  onChange={(open) => setDropdownOpen(open)}>
           {dropdownButtons}
         </Dropdown>
       </TopTitle>
