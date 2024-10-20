@@ -7,9 +7,8 @@ import Button from "../atoms/Button";
 import InputText from "../atoms/InputText";
 import Modal from "../atoms/Modal";
 import {closeModal} from "../../utilities/modalAction";
-import {AddIcon, CrossIcon, MinusIcon} from "../atoms/Icons";
+import {AddIcon, CheckCircleIcon, CircleIcon, MinusIcon} from "../atoms/Icons";
 import Box from "../atoms/Box";
-import Select from "../atoms/Select";
 import FlexRow from "../atoms/FlexRow";
 import FlexColumn from "../atoms/FlexColumn";
 import {Tabs} from "../atoms/Tabs";
@@ -27,6 +26,7 @@ import FlexItem from "../atoms/FlexItem";
 import Miniature from "../atoms/Miniature";
 import Collapse from "../atoms/Collapse";
 import {Topic} from "../../entities/Topic";
+import Dropdown from "../atoms/Dropdown";
 
 const NEW_TOPIC_TAB = "Nueva categoría"
 const FOLLOW_TOPIC_TAB = "Seguir categoría"
@@ -58,6 +58,7 @@ const NewTopicModal = (props: NewTopicModalProps) => {
 
   const tabsText = [NEW_TOPIC_TAB, FOLLOW_TOPIC_TAB];
   const [selectedTab, setSelectedTab] = useState(NEW_TOPIC_TAB);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
 
   const [topicSearch, setTopicSearch] = useState("");
   const debouncedTopicSearch = useDebounce(topicSearch, 500);
@@ -117,15 +118,6 @@ const NewTopicModal = (props: NewTopicModalProps) => {
     clearSubscriptions
   } = useSubscriptionsToAdd([], undefined)
 
-  const subscriptionBadges = subscriptionsToAdd.map(s => subscriptionToBadge(s, removeSubscription));
-
-  const onSubscriptionSelected = (subscriptionId: string) => {
-    const subscription = props.subscriptions.find(subscription => subscription.uuid === subscriptionId);
-    if (subscription && !subscriptionsToAdd.map(s => s.uuid).includes(subscription.uuid)) {
-      addSubscription(subscription);
-    }
-  }
-
   const handleFollowTopic = (topicId: string) => {
     followTopic(topicId).then(() => {
       refreshTopics();
@@ -145,6 +137,27 @@ const NewTopicModal = (props: NewTopicModalProps) => {
     closeModal(NewTopicModalId);
   }
 
+  const subscriptionsMenuItems = props.subscriptions.map(subscription => {
+    const isSelected = subscriptionsToAdd.map(s => s.uuid).includes(subscription.uuid);
+    const handleClick = () => {
+      if (isSelected) {
+        removeSubscription(subscription);
+      } else {
+        addSubscription(subscription);
+      }
+    }
+    return <MenuItem key={subscription.uuid}
+                     selected={false}
+                     onClick={handleClick}>
+      <FlexRow position={"start"}>
+        <Miniature src={subscription.thumbnail} alt={subscription.name}/>
+        {subscription.name}
+        <FlexItem grow={true}/>
+        {isSelected && <FlexItem><CheckCircleIcon/></FlexItem>}
+        {!isSelected && <FlexItem><CircleIcon/></FlexItem>}
+      </FlexRow>
+    </MenuItem>
+  })
   return (
     <Modal id={NewTopicModalId}>
       <Tabs tabsText={tabsText} selectedTab={selectedTab} onTabSelected={setSelectedTab}/>
@@ -152,17 +165,14 @@ const NewTopicModal = (props: NewTopicModalProps) => {
           <FlexColumn>
               <InputText placeholder="Introduce el nombre de la nueva categoría" value={newTopicName}
                          onChange={(value) => setNewTopicName(value)}/>
-              <Box title={"Subscripciones"}>
-                  <FlexColumn>
-                      <Select title={"Selecciona varias subscripciones"} options={
-                        props.subscriptions.map(subscription => {
-                          return {key: subscription.uuid, label: subscription.name}
-                        })
-                      } onChange={(key) => onSubscriptionSelected(key)}/>
-                      <FlexRow position={"start"} wrap={true}>
-                        {subscriptionBadges}
-                      </FlexRow>
-                  </FlexColumn>
+              <Box title={"Subscripciones (" + subscriptionsToAdd.length + ")"}>
+                  <Dropdown open={dropdownOpen} onChange={(open) => setDropdownOpen(open)}
+                            start={true} bottom={false}
+                            button={<FlexRow><span>Selecciona varias subscripciones</span></FlexRow>}>
+                      <Menu>
+                        {subscriptionsMenuItems}
+                      </Menu>
+                  </Dropdown>
               </Box>
               <FlexRow position={"end"}>
                   <Button clickAction={async () => {
@@ -207,18 +217,6 @@ const NewTopicModal = (props: NewTopicModalProps) => {
           </FlexColumn>}
     </Modal>
   )
-}
-
-function subscriptionToBadge(subscription: Subscription, removeSubscription: (subscription: Subscription) =>
-  void) {
-  return <Tag key={subscription.uuid}>
-    <div className="flex flex-row gap-1">
-      <div onClick={() => removeSubscription(subscription)} className="hover:cursor-pointer">
-        <CrossIcon/>
-      </div>
-      {subscription.name}
-    </div>
-  </Tag>
 }
 
 export default NewTopicModal;
