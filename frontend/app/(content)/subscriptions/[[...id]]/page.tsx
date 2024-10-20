@@ -135,20 +135,23 @@ const SubscriptionsPage: NextPage = () => {
 
   const dropdownButtons = []
   dropdownButtons.push(
-    <Button fitContent={false} clickAction={handleShowFilters}>
+    <Button key={"subscriptions-show-filters"}
+            fitContent={false} clickAction={handleShowFilters}>
       <FunnelIcon/>
       Filtrar
     </Button>
   )
   if (selectedSubscription) {
     dropdownButtons.push(
-      <Button fitContent={false} clickAction={handleAssignSubscription}>
+      <Button key={"subscriptions-assign"}
+              fitContent={false} clickAction={handleAssignSubscription}>
         <AddIcon/>
         Asignar
       </Button>
     )
     dropdownButtons.push(
-      <Button fitContent={false} clickAction={() => handleRefreshSubscription(selectedSubscription.uuid)}>
+      <Button key={"subscriptions-refresh"}
+              fitContent={false} clickAction={() => handleRefreshSubscription(selectedSubscription.uuid)}>
         <RefreshIcon/>
         Actualizar
       </Button>
@@ -156,7 +159,8 @@ const SubscriptionsPage: NextPage = () => {
   }
   if (selectedSubscription && selectedSubscription.followed) {
     dropdownButtons.push(
-      <Button fitContent={false} clickAction={() => handleUnfollowSubscription(selectedSubscription.uuid)}>
+      <Button key={"subscriptions-unfollow"}
+              fitContent={false} clickAction={() => handleUnfollowSubscription(selectedSubscription.uuid)}>
         <MinusIcon/>
         Dejar de seguir
       </Button>
@@ -164,7 +168,8 @@ const SubscriptionsPage: NextPage = () => {
   }
   if (selectedSubscription && !selectedSubscription.followed) {
     dropdownButtons.push(
-      <Button fitContent={false} clickAction={() => handleFollowSubscription(selectedSubscription.uuid)}>
+      <Button key={"subscriptions-follow"}
+        fitContent={false} clickAction={() => handleFollowSubscription(selectedSubscription.uuid)}>
         <AddIcon/>
         Seguir
       </Button>
