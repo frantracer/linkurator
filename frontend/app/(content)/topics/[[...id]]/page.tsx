@@ -85,6 +85,11 @@ const Home: NextPage = () => {
     setDropdownOpen(false);
   }
 
+  const handleEditTopic = () => {
+    openModal(EditTopicModalId);
+    setDropdownOpen(false);
+  }
+
   const handleFollowTopic = (topicId: string) => {
     followTopic(topicId).then(() => {
       refreshTopics()
@@ -127,7 +132,7 @@ const Home: NextPage = () => {
   )
   if (selectedTopic && selectedTopic.is_owner) {
     dropdownButtons.push(
-      <Button fitContent={false} clickAction={() => openModal(EditTopicModalId)}>
+      <Button fitContent={false} clickAction={handleEditTopic}>
         <PencilIcon/>
         Editar
       </Button>
