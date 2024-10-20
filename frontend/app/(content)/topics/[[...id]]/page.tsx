@@ -125,20 +125,20 @@ const Home: NextPage = () => {
 
   const dropdownButtons = []
   dropdownButtons.push(
-    <Button fitContent={false} clickAction={handleShowFilters}>
+    <Button key={"topics-show-filters"} fitContent={false} clickAction={handleShowFilters}>
       <FunnelIcon/>
       Filtrar
     </Button>
   )
   if (selectedTopic && selectedTopic.is_owner) {
     dropdownButtons.push(
-      <Button fitContent={false} clickAction={handleEditTopic}>
+      <Button key={"topics-edit-topic"} fitContent={false} clickAction={handleEditTopic}>
         <PencilIcon/>
         Editar
       </Button>
     )
     dropdownButtons.push(
-      <Button fitContent={false} clickAction={() => handleDeleteTopic(selectedTopic.uuid)}>
+      <Button key={"topics-delete-topic"} fitContent={false} clickAction={() => handleDeleteTopic(selectedTopic.uuid)}>
         <TrashIcon/>
         Borrar
       </Button>
@@ -146,7 +146,7 @@ const Home: NextPage = () => {
   }
   if (selectedTopic && selectedTopic.followed && !selectedTopic.is_owner) {
     dropdownButtons.push(
-      <Button fitContent={false} clickAction={() => handleUnfollowTopic(selectedTopic.uuid)}>
+      <Button key={"topics-unfollow-topic"} fitContent={false} clickAction={() => handleUnfollowTopic(selectedTopic.uuid)}>
         <MinusIcon/>
         Dejar de seguir
       </Button>
@@ -154,7 +154,7 @@ const Home: NextPage = () => {
   }
   if (selectedTopic && !selectedTopic.followed && !selectedTopic.is_owner) {
     dropdownButtons.push(
-      <Button fitContent={false} clickAction={() => handleFollowTopic(selectedTopic.uuid)}>
+      <Button key={"topics-follow-topic"} fitContent={false} clickAction={() => handleFollowTopic(selectedTopic.uuid)}>
         <AddIcon/>
         Seguir
       </Button>
