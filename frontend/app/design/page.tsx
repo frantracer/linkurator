@@ -20,7 +20,7 @@ import {
   BookmarkSquaredFilled,
   CheckCircleFilledIcon,
   CheckCircleIcon,
-  CheckIcon,
+  CheckIcon, CircleIcon,
   CrossIcon,
   DownloadIcon,
   ExclamationCircle,
@@ -172,6 +172,7 @@ const IconsSection = () => {
         <ArchiveBoxFilledIcon/>
         <UserIconFilled/>
         <InfoCircleIcon/>
+        <CircleIcon/>
       </div>
     </Section>
   );

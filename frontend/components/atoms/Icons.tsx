@@ -351,3 +351,12 @@ export const InfoCircleIcon = () => {
     </svg>
   )
 }
+
+export const CircleIcon = () => {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor"
+         className="w-6 h-6">
+      <path strokeLinecap="round" strokeLinejoin="round" d="M 21,12 A 9,9 0 1 1 3,12 9,9 0 0 1 21,12 Z"/>
+    </svg>
+  )
+}
