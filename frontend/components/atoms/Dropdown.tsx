@@ -1,4 +1,4 @@
-import React, {Children, useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 
 type DropdownProps = {
   button: React.ReactNode
@@ -35,14 +35,10 @@ const Dropdown = (
 
   return (
     <details onClick={handleOpen} open={dropdownOpen} className={"dropdown " + verticalPosition + " " + horizontalPosition}>
-      <summary className="btn btn-sm m-1 btn-primary border-0">{button}</summary>
-      <ul className="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
-        {
-          Children.map(children, (child, index) => {
-            return <li className="my-0.5" key={index}>{child}</li>
-          })
-        }
-      </ul>
+      <summary className="btn btn-sm btn-primary border-0">{button}</summary>
+      <div className="dropdown-content bg-base-100 rounded-box z-[1] p-2 shadow w-72 max-h-96 overflow-y-auto">
+        {children}
+      </div>
     </details>
   )
 }
