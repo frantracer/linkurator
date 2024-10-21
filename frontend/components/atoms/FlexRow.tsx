@@ -3,6 +3,7 @@ type Position = "start" | "center" | "end" | "between";
 type FlexRowProps = {
   position?: Position;
   wrap?: boolean;
+  hideOverflow?: boolean;
   children: React.ReactNode;
 };
 
@@ -10,6 +11,7 @@ const FlexRow = (
   {
     position = "center",
     wrap = false,
+    hideOverflow = true,
     children
   } : FlexRowProps
 ) => {
@@ -21,9 +23,10 @@ const FlexRow = (
   };
 
   const wrapClasses = wrap ? "flex-wrap" : "";
+  const overflowClasses = hideOverflow ? "overflow-hidden" : "";
 
   return (
-    <div className={`flex flex-row gap-2 items-center min-h-fit w-full overflow-hidden ${wrapClasses} ${positionClasses[position]}`}>
+    <div className={`flex flex-row gap-2 items-center min-h-fit w-full ${overflowClasses} ${wrapClasses} ${positionClasses[position]}`}>
       {children}
     </div>
   )
