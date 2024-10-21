@@ -59,6 +59,11 @@ const CuratorsPage: NextPage = () => {
     }
   }
 
+  const handleFilter = () => {
+    showLateralMenu(CURATOR_DETAILS_ID);
+    setDropdownOpen(false);
+  }
+
   const handleFollowCurator = (curatorId: string) => {
     followCurator(curatorId).then(() => {
       refreshCurators()
@@ -75,7 +80,7 @@ const CuratorsPage: NextPage = () => {
   if (isUserLogged && curator) {
     dropdownButtons.push(
       <Button key={"curators-filter"}
-        fitContent={false} clickAction={() => showLateralMenu(CURATOR_DETAILS_ID)}>
+        fitContent={false} clickAction={handleFilter}>
         <FunnelIcon/>
         {"Filtrar"}
       </Button>
