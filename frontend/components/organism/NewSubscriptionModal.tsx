@@ -65,15 +65,15 @@ const NewSubscriptionModal = (props: NewSubscritionModalProps) => {
       <MenuItem key={subscription.uuid} onClick={() => {
       }}>
         <FlexRow position={"start"} key={subscription.uuid}>
-          <FlexItem>
-            <ALink href={paths.SUBSCRIPTIONS + "/" + subscription.uuid}
-                   onClick={() => closeModal(NewSubscriptionModalId)}>
+          <ALink href={paths.SUBSCRIPTIONS + "/" + subscription.uuid}
+                 onClick={() => closeModal(NewSubscriptionModalId)}>
+            <FlexItem grow={true}>
               <FlexRow position={"start"}>
                 <Miniature src={subscription.thumbnail} alt={subscription.name}/>
                 <span>{subscription.name}</span>
               </FlexRow>
-            </ALink>
-          </FlexItem>
+            </FlexItem>
+          </ALink>
           <FlexItem grow={true}/>
           {subscription.followed &&
               <Button clickAction={() => handleUnfollow(subscription.uuid)}>
