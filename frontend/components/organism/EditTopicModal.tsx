@@ -16,6 +16,7 @@ import Menu from "../atoms/Menu";
 import Miniature from "../atoms/Miniature";
 import FlexItem from "../atoms/FlexItem";
 import {CheckCircleIcon, CircleIcon} from "../atoms/Icons";
+import Tag from "../atoms/Tag";
 
 export const EditTopicModalId = "edit-topic-modal";
 
@@ -69,13 +70,33 @@ const EditTopicModal = (props: EditTopicModalProps) => {
     </MenuItem>
   })
 
+  const subscriptionTags = subscriptionsToAdd
+    .sort((a, b) => a.name.localeCompare(b.name))
+    .map(subscription => {
+    return (
+      <Tag key={subscription.uuid}>
+        <Miniature src={subscription.thumbnail} alt={subscription.name}/>
+        {subscription.name}
+      </Tag>)
+  })
+
   return (
     <Modal id={EditTopicModalId}>
       <FlexColumn>
         <h1 className="font-bold text-xl w-full text-center">{"Editar categoría"}</h1>
         <InputText placeholder="Nombre de la categoría" value={newTopicName}
                    onChange={(value) => setNewTopicName(value)}/>
-        <Box title={"Subscripciones (" + subscriptionsToAdd.length + ")"}>
+        <Box title={"Subscripciones (" + subscriptionTags.length + ")"}>
+          <FlexRow wrap={true}>
+            {subscriptionTags.length === 0 &&
+                <p>{"No hay subscripciones"}</p>
+            }
+            {subscriptionTags.length > 0 &&
+              subscriptionTags
+            }
+          </FlexRow>
+        </Box>
+        <FlexRow hideOverflow={false} position={"between"}>
           <Dropdown open={dropdownOpen} onChange={(open) => setDropdownOpen(open)}
                     start={true} bottom={false}
                     button={<FlexRow><span>Selecciona varias subscripciones</span></FlexRow>}>
@@ -83,8 +104,6 @@ const EditTopicModal = (props: EditTopicModalProps) => {
               {subscriptionsMenuItems}
             </Menu>
           </Dropdown>
-        </Box>
-        <FlexRow position={"end"}>
           <Button clickAction={handleUpdateTopic}>
             <span>{"Editar"}</span>
           </Button>

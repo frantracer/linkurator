@@ -158,6 +158,17 @@ const NewTopicModal = (props: NewTopicModalProps) => {
       </FlexRow>
     </MenuItem>
   })
+
+  const subscriptionTags = subscriptionsToAdd
+    .sort((a, b) => a.name.localeCompare(b.name))
+    .map(subscription => {
+      return (
+        <Tag key={subscription.uuid}>
+          <Miniature src={subscription.thumbnail} alt={subscription.name}/>
+          {subscription.name}
+        </Tag>)
+    })
+
   return (
     <Modal id={NewTopicModalId}>
       <Tabs tabsText={tabsText} selectedTab={selectedTab} onTabSelected={setSelectedTab}/>
@@ -166,6 +177,16 @@ const NewTopicModal = (props: NewTopicModalProps) => {
               <InputText placeholder="Introduce el nombre de la nueva categoría" value={newTopicName}
                          onChange={(value) => setNewTopicName(value)}/>
               <Box title={"Subscripciones (" + subscriptionsToAdd.length + ")"}>
+                  <FlexRow wrap={true}>
+                    {subscriptionTags.length === 0 &&
+                        <span>{"No hay subscripciones"}</span>
+                    }
+                    {subscriptionTags.length > 0 &&
+                        subscriptionTags
+                    }
+                  </FlexRow>
+              </Box>
+              <FlexRow hideOverflow={false} position={"between"}>
                   <Dropdown open={dropdownOpen} onChange={(open) => setDropdownOpen(open)}
                             start={true} bottom={false}
                             button={<FlexRow><span>Selecciona varias subscripciones</span></FlexRow>}>
@@ -173,8 +194,6 @@ const NewTopicModal = (props: NewTopicModalProps) => {
                         {subscriptionsMenuItems}
                       </Menu>
                   </Dropdown>
-              </Box>
-              <FlexRow position={"end"}>
                   <Button clickAction={async () => {
                     createTopic(uuidv4(), newTopicName, subscriptionsToAdd.map(s => s.uuid)).then(
                       () => {
