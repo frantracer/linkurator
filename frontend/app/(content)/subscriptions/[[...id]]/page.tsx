@@ -22,7 +22,6 @@ import {
   OptionsIcon,
   RefreshIcon
 } from "../../../../components/atoms/Icons";
-import Avatar from "../../../../components/atoms/Avatar";
 import SubscriptionDetails, {SUBSCRIPTION_DETAILS_ID} from "../../../../components/organism/SubscriptionDetails";
 import {followSubscription, refreshSubscription, unfollowSubscription} from "../../../../services/subscriptionService";
 import AssignTopicModal, {AssignTopicModalId} from "../../../../components/organism/AssignTopicModal";
@@ -36,6 +35,7 @@ import FlexItem from "../../../../components/atoms/FlexItem";
 import Dropdown from "../../../../components/atoms/Dropdown";
 import {openModal} from "../../../../utilities/modalAction";
 import FlexColumn from "../../../../components/atoms/FlexColumn";
+import Miniature from "../../../../components/atoms/Miniature";
 
 const REFRESH_SUBSCRIPTIONS_INTERVAL = 30000;
 
@@ -59,7 +59,6 @@ const SubscriptionsPage: NextPage = () => {
 
   const subscriptionUrl = selectedSubscription ? selectedSubscription.url : "";
   const subscriptionName = selectedSubscription ? selectedSubscription.name : "";
-  const subscriptionThumbnail = selectedSubscription ? selectedSubscription.thumbnail : "";
 
   const isUserSubscription = !!(subscriptions.find(subscription => subscription.uuid === selectedSubscriptionId))
   const isUserLogged = !!(profile)
@@ -169,7 +168,7 @@ const SubscriptionsPage: NextPage = () => {
   if (selectedSubscription && !selectedSubscription.followed) {
     dropdownButtons.push(
       <Button key={"subscriptions-follow"}
-        fitContent={false} clickAction={() => handleFollowSubscription(selectedSubscription.uuid)}>
+              fitContent={false} clickAction={() => handleFollowSubscription(selectedSubscription.uuid)}>
         <AddIcon/>
         Seguir
       </Button>
@@ -192,13 +191,13 @@ const SubscriptionsPage: NextPage = () => {
         </Button>
         <FlexRow>
           <FlexItem grow={true}/>
-          {subscriptionThumbnail &&
-              <Avatar src={subscriptionThumbnail} alt={subscriptionName}/>
-          }
           <FlexRow>
             <FlexItem>
               <FlexColumn gap={0} position={"center"}>
                 <FlexRow>
+                  {selectedSubscription &&
+                      <Miniature src={selectedSubscription.thumbnail} alt={selectedSubscription.name}/>
+                  }
                   <h1 className="text-xl font-bold whitespace-nowrap truncate hover:cursor-pointer"
                       onClick={openSubscriptionUrl}>
                     {subscriptionName}
