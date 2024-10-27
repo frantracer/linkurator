@@ -32,7 +32,6 @@ import {LATERAL_NAVIGATION_MENU_ID} from "../../../../components/organism/Latera
 import useTopicSubscriptions from "../../../../hooks/useTopicSubscriptions";
 import {useTopic} from "../../../../hooks/useTopic";
 import Tag from "../../../../components/atoms/Tag";
-import Avatar from "../../../../components/atoms/Avatar";
 import {deleteTopic, followTopic, unfollowTopic} from "../../../../services/topicService";
 import {openModal} from "../../../../utilities/modalAction";
 import ALink from "../../../../components/atoms/ALink";
@@ -41,6 +40,7 @@ import {ErrorBanner} from "../../../../components/atoms/ErrorBanner";
 import FlexItem from "../../../../components/atoms/FlexItem";
 import Dropdown from "../../../../components/atoms/Dropdown";
 import FlexColumn from "../../../../components/atoms/FlexColumn";
+import Miniature from "../../../../components/atoms/Miniature";
 
 const REFRESH_TOPICS_INTERVAL = 30000;
 
@@ -146,7 +146,8 @@ const Home: NextPage = () => {
   }
   if (selectedTopic && selectedTopic.followed && !selectedTopic.is_owner) {
     dropdownButtons.push(
-      <Button key={"topics-unfollow-topic"} fitContent={false} clickAction={() => handleUnfollowTopic(selectedTopic.uuid)}>
+      <Button key={"topics-unfollow-topic"} fitContent={false}
+              clickAction={() => handleUnfollowTopic(selectedTopic.uuid)}>
         <MinusIcon/>
         Dejar de seguir
       </Button>
@@ -177,11 +178,6 @@ const Home: NextPage = () => {
         </Button>
         <FlexRow>
           <FlexItem grow={true}/>
-          {selectedTopic &&
-              <ALink href={paths.CURATORS + "/" + selectedTopic.curator.username}>
-                  <Avatar src={selectedTopic.curator.avatar_url} alt={selectedTopic.curator.username}/>
-              </ALink>
-          }
           <FlexRow>
             <FlexItem>
               <FlexColumn gap={0} position={"center"}>
@@ -190,25 +186,35 @@ const Home: NextPage = () => {
                     {topicName}
                   </h1>
                 </FlexRow>
-                {selectedTopic && selectedTopic.followed && !selectedTopic.is_owner &&
-                    <Tag>
-                      {"Siguiendo"}
-                        <div className="hover:cursor-pointer"
-                             onClick={() => handleUnfollowTopic(selectedTopic.uuid)}>
-                            <CrossIcon/>
-                        </div>
-                    </Tag>
-                }
-                {selectedTopic && !selectedTopic.followed && !selectedTopic.is_owner &&
-                    <Button primary={false} clickAction={() => handleFollowTopic(selectedTopic.uuid)}>
-                      {"Seguir"}
-                    </Button>
-                }
-                {selectedTopic && selectedTopic.is_owner &&
-                    <Tag>
-                      {"Mis categorías"}
-                    </Tag>
-                }
+                <FlexRow>
+                  {selectedTopic &&
+                      <ALink href={paths.CURATORS + "/" + selectedTopic.curator.username}>
+                          <Tag>
+                              <Miniature src={selectedTopic.curator.avatar_url} alt={selectedTopic.curator.username}/>
+                              <span>{selectedTopic.curator.username}</span>
+                          </Tag>
+                      </ALink>
+                  }
+                  {selectedTopic && selectedTopic.followed && !selectedTopic.is_owner &&
+                      <Tag>
+                        {"Siguiendo"}
+                          <div className="hover:cursor-pointer"
+                               onClick={() => handleUnfollowTopic(selectedTopic.uuid)}>
+                              <CrossIcon/>
+                          </div>
+                      </Tag>
+                  }
+                  {selectedTopic && !selectedTopic.followed && !selectedTopic.is_owner &&
+                      <Button primary={false} clickAction={() => handleFollowTopic(selectedTopic.uuid)}>
+                        {"Seguir"}
+                      </Button>
+                  }
+                  {selectedTopic && selectedTopic.is_owner &&
+                      <Tag>
+                        {"Mis categorías"}
+                      </Tag>
+                  }
+                </FlexRow>
               </FlexColumn>
             </FlexItem>
           </FlexRow>
