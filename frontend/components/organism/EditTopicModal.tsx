@@ -18,6 +18,8 @@ import FlexItem from "../atoms/FlexItem";
 import {CheckCircleIcon, CircleIcon} from "../atoms/Icons";
 import Tag from "../atoms/Tag";
 import SearchBar from "../molecules/SearchBar";
+import ALink from "../atoms/ALink";
+import {paths} from "../../configuration";
 
 export const EditTopicModalId = "edit-topic-modal";
 
@@ -78,10 +80,12 @@ const EditTopicModal = (props: EditTopicModalProps) => {
     .sort((a, b) => a.name.localeCompare(b.name))
     .map(subscription => {
       return (
-        <Tag key={subscription.uuid}>
-          <Miniature src={subscription.thumbnail} alt={subscription.name}/>
-          {subscription.name}
-        </Tag>)
+        <ALink key={subscription.uuid} href={paths.SUBSCRIPTIONS + "/" + subscription.uuid}>
+          <Tag>
+            <Miniature src={subscription.thumbnail} alt={subscription.name}/>
+            {subscription.name}
+          </Tag>
+        </ALink>)
     })
 
   return (
