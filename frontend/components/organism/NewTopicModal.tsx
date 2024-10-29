@@ -27,6 +27,7 @@ import Miniature from "../atoms/Miniature";
 import Collapse from "../atoms/Collapse";
 import {Topic} from "../../entities/Topic";
 import Dropdown from "../atoms/Dropdown";
+import ALink from "../atoms/ALink";
 
 const NEW_TOPIC_TAB = "Nueva categoría"
 const FOLLOW_TOPIC_TAB = "Seguir categoría"
@@ -167,10 +168,13 @@ const NewTopicModal = (props: NewTopicModalProps) => {
     .sort(subscriptionSorting)
     .map(subscription => {
       return (
-        <Tag key={subscription.uuid}>
-          <Miniature src={subscription.thumbnail} alt={subscription.name}/>
-          {subscription.name}
-        </Tag>)
+        <ALink key={subscription.uuid} href={paths.SUBSCRIPTIONS + "/" + subscription.uuid}
+               onClick={() => closeModal(NewTopicModalId)}>
+          <Tag>
+            <Miniature src={subscription.thumbnail} alt={subscription.name}/>
+            {subscription.name}
+          </Tag>
+        </ALink>)
     })
 
   return (
