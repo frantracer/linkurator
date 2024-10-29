@@ -91,14 +91,16 @@ const EditTopicModal = (props: EditTopicModalProps) => {
         <InputText placeholder="Nombre de la categoría" value={newTopicName}
                    onChange={(value) => setNewTopicName(value)}/>
         <Box title={"Subscripciones (" + subscriptionTags.length + ")"}>
-          <FlexRow wrap={true}>
-            {subscriptionTags.length === 0 &&
-                <p>{"No hay subscripciones"}</p>
-            }
-            {subscriptionTags.length > 0 &&
-              subscriptionTags
-            }
-          </FlexRow>
+          <div className={"h-60 overflow-y-auto"}>
+            <FlexRow wrap={true}>
+              {subscriptionTags.length === 0 &&
+                  <p>{"No hay subscripciones"}</p>
+              }
+              {subscriptionTags.length > 0 &&
+                subscriptionTags
+              }
+            </FlexRow>
+          </div>
         </Box>
         <FlexRow hideOverflow={false} position={"between"}>
           <Dropdown open={dropdownOpen} onChange={(open) => setDropdownOpen(open)}

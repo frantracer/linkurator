@@ -181,14 +181,16 @@ const NewTopicModal = (props: NewTopicModalProps) => {
               <InputText placeholder="Introduce el nombre de la nueva categoría" value={newTopicName}
                          onChange={(value) => setNewTopicName(value)}/>
               <Box title={"Subscripciones (" + subscriptionsToAdd.length + ")"}>
-                  <FlexRow wrap={true}>
-                    {subscriptionTags.length === 0 &&
-                        <span>{"No hay subscripciones"}</span>
-                    }
-                    {subscriptionTags.length > 0 &&
-                      subscriptionTags
-                    }
-                  </FlexRow>
+                  <div className={"h-60 overflow-y-auto"}>
+                      <FlexRow wrap={true}>
+                        {subscriptionTags.length === 0 &&
+                            <span>{"No hay subscripciones"}</span>
+                        }
+                        {subscriptionTags.length > 0 &&
+                          subscriptionTags
+                        }
+                      </FlexRow>
+                  </div>
               </Box>
               <FlexRow hideOverflow={false} position={"between"}>
                   <Dropdown open={dropdownOpen} onChange={(open) => setDropdownOpen(open)}
