@@ -187,7 +187,7 @@ const Home: NextPage = () => {
                   </h1>
                 </FlexRow>
                 <FlexRow>
-                  {selectedTopic &&
+                  {selectedTopic && !selectedTopic.is_owner &&
                       <ALink href={paths.CURATORS + "/" + selectedTopic.curator.username}>
                           <Tag>
                               <Miniature src={selectedTopic.curator.avatar_url} alt={selectedTopic.curator.username}/>
