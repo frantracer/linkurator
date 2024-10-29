@@ -2,7 +2,7 @@ import React, {useState} from "react";
 import {createTopic, followTopic, unfollowTopic} from "../../services/topicService";
 import {v4 as uuidv4} from 'uuid';
 import useSubscriptionsToAdd from "../../hooks/useSubscriptionsToAdd";
-import {Subscription} from "../../entities/Subscription";
+import {Subscription, subscriptionSorting} from "../../entities/Subscription";
 import Button from "../atoms/Button";
 import InputText from "../atoms/InputText";
 import Modal from "../atoms/Modal";
@@ -59,6 +59,7 @@ const NewTopicModal = (props: NewTopicModalProps) => {
   const tabsText = [NEW_TOPIC_TAB, FOLLOW_TOPIC_TAB];
   const [selectedTab, setSelectedTab] = useState(NEW_TOPIC_TAB);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [searchValue, setSearchValue] = useState("");
 
   const [topicSearch, setTopicSearch] = useState("");
   const debouncedTopicSearch = useDebounce(topicSearch, 500);
@@ -137,30 +138,33 @@ const NewTopicModal = (props: NewTopicModalProps) => {
     closeModal(NewTopicModalId);
   }
 
-  const subscriptionsMenuItems = props.subscriptions.map(subscription => {
-    const isSelected = subscriptionsToAdd.map(s => s.uuid).includes(subscription.uuid);
-    const handleClick = () => {
-      if (isSelected) {
-        removeSubscription(subscription);
-      } else {
-        addSubscription(subscription);
+  const subscriptionsMenuItems = props.subscriptions
+    .filter(subscription => subscription.name.toLowerCase().includes(searchValue.toLowerCase()))
+    .sort(subscriptionSorting)
+    .map(subscription => {
+      const isSelected = subscriptionsToAdd.map(s => s.uuid).includes(subscription.uuid);
+      const handleClick = () => {
+        if (isSelected) {
+          removeSubscription(subscription);
+        } else {
+          addSubscription(subscription);
+        }
       }
-    }
-    return <MenuItem key={subscription.uuid}
-                     selected={false}
-                     onClick={handleClick}>
-      <FlexRow position={"start"}>
-        <Miniature src={subscription.thumbnail} alt={subscription.name}/>
-        {subscription.name}
-        <FlexItem grow={true}/>
-        {isSelected && <FlexItem><CheckCircleIcon/></FlexItem>}
-        {!isSelected && <FlexItem><CircleIcon/></FlexItem>}
-      </FlexRow>
-    </MenuItem>
-  })
+      return <MenuItem key={subscription.uuid}
+                       selected={false}
+                       onClick={handleClick}>
+        <FlexRow position={"start"}>
+          <Miniature src={subscription.thumbnail} alt={subscription.name}/>
+          {subscription.name}
+          <FlexItem grow={true}/>
+          {isSelected && <FlexItem><CheckCircleIcon/></FlexItem>}
+          {!isSelected && <FlexItem><CircleIcon/></FlexItem>}
+        </FlexRow>
+      </MenuItem>
+    })
 
   const subscriptionTags = subscriptionsToAdd
-    .sort((a, b) => a.name.localeCompare(b.name))
+    .sort(subscriptionSorting)
     .map(subscription => {
       return (
         <Tag key={subscription.uuid}>
@@ -182,7 +186,7 @@ const NewTopicModal = (props: NewTopicModalProps) => {
                         <span>{"No hay subscripciones"}</span>
                     }
                     {subscriptionTags.length > 0 &&
-                        subscriptionTags
+                      subscriptionTags
                     }
                   </FlexRow>
               </Box>
@@ -190,9 +194,15 @@ const NewTopicModal = (props: NewTopicModalProps) => {
                   <Dropdown open={dropdownOpen} onChange={(open) => setDropdownOpen(open)}
                             start={true} bottom={false}
                             button={<FlexRow><span>Selecciona varias subscripciones</span></FlexRow>}>
-                      <Menu>
-                        {subscriptionsMenuItems}
-                      </Menu>
+                      <div className={"h-60"}>
+                          <Menu>
+                            {subscriptionsMenuItems.length === 0 &&
+                                <MenuItem>{"No hay subscripciones"}</MenuItem>
+                            }
+                            {subscriptionsMenuItems.length > 0 && subscriptionsMenuItems}
+                          </Menu>
+                      </div>
+                      <SearchBar value={searchValue} handleChange={(value) => setSearchValue(value)}/>
                   </Dropdown>
                   <Button clickAction={async () => {
                     createTopic(uuidv4(), newTopicName, subscriptionsToAdd.map(s => s.uuid)).then(
