@@ -17,6 +17,7 @@ import Miniature from "../atoms/Miniature";
 import FlexItem from "../atoms/FlexItem";
 import {CheckCircleIcon, CircleIcon} from "../atoms/Icons";
 import Tag from "../atoms/Tag";
+import SearchBar from "../molecules/SearchBar";
 
 export const EditTopicModalId = "edit-topic-modal";
 
@@ -30,6 +31,7 @@ type EditTopicModalProps = {
 
 const EditTopicModal = (props: EditTopicModalProps) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [searchValue, setSearchValue] = useState("");
   const [newTopicName, setNewTopicName] = useState(props.topic.name);
   const {
     subscriptionsToAdd,
@@ -48,37 +50,39 @@ const EditTopicModal = (props: EditTopicModalProps) => {
     )
   }
 
-  const subscriptionsMenuItems = props.subscriptions.map(subscription => {
-    const isSelected = subscriptionsToAdd.map(s => s.uuid).includes(subscription.uuid);
-    const handleClick = () => {
-      if (isSelected) {
-        removeSubscription(subscription);
-      } else {
-        addSubscription(subscription);
+  const subscriptionsMenuItems = props.subscriptions
+    .filter(subscription => subscription.name.toLowerCase().includes(searchValue.toLowerCase()))
+    .map(subscription => {
+      const isSelected = subscriptionsToAdd.map(s => s.uuid).includes(subscription.uuid);
+      const handleClick = () => {
+        if (isSelected) {
+          removeSubscription(subscription);
+        } else {
+          addSubscription(subscription);
+        }
       }
-    }
-    return <MenuItem key={subscription.uuid}
-                     selected={false}
-                     onClick={handleClick}>
-      <FlexRow position={"start"}>
-        <Miniature src={subscription.thumbnail} alt={subscription.name}/>
-        {subscription.name}
-        <FlexItem grow={true}/>
-        {isSelected && <FlexItem><CheckCircleIcon/></FlexItem>}
-        {!isSelected && <FlexItem><CircleIcon/></FlexItem>}
-      </FlexRow>
-    </MenuItem>
-  })
+      return <MenuItem key={subscription.uuid}
+                       selected={false}
+                       onClick={handleClick}>
+        <FlexRow position={"start"}>
+          <Miniature src={subscription.thumbnail} alt={subscription.name}/>
+          {subscription.name}
+          <FlexItem grow={true}/>
+          {isSelected && <FlexItem><CheckCircleIcon/></FlexItem>}
+          {!isSelected && <FlexItem><CircleIcon/></FlexItem>}
+        </FlexRow>
+      </MenuItem>
+    })
 
   const subscriptionTags = subscriptionsToAdd
     .sort((a, b) => a.name.localeCompare(b.name))
     .map(subscription => {
-    return (
-      <Tag key={subscription.uuid}>
-        <Miniature src={subscription.thumbnail} alt={subscription.name}/>
-        {subscription.name}
-      </Tag>)
-  })
+      return (
+        <Tag key={subscription.uuid}>
+          <Miniature src={subscription.thumbnail} alt={subscription.name}/>
+          {subscription.name}
+        </Tag>)
+    })
 
   return (
     <Modal id={EditTopicModalId}>
@@ -100,9 +104,15 @@ const EditTopicModal = (props: EditTopicModalProps) => {
           <Dropdown open={dropdownOpen} onChange={(open) => setDropdownOpen(open)}
                     start={true} bottom={false}
                     button={<FlexRow><span>Selecciona varias subscripciones</span></FlexRow>}>
-            <Menu>
-              {subscriptionsMenuItems}
-            </Menu>
+            <div className={"h-60"}>
+              <Menu>
+                {subscriptionsMenuItems.length === 0 &&
+                    <MenuItem>{"No hay subscripciones"}</MenuItem>
+                }
+                {subscriptionsMenuItems.length > 0 && subscriptionsMenuItems}
+              </Menu>
+            </div>
+            <SearchBar value={searchValue} handleChange={(value) => setSearchValue(value)}/>
           </Dropdown>
           <Button clickAction={handleUpdateTopic}>
             <span>{"Editar"}</span>

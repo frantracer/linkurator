@@ -1,5 +1,5 @@
 type MenuItemProps = {
-  onClick: () => void;
+  onClick?: () => void;
   selected?: boolean;
   children?: React.ReactNode;
 };
@@ -10,7 +10,9 @@ export const MenuItem = (props: MenuItemProps) => {
   const handleClick = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    props.onClick();
+    if (props.onClick) {
+      props.onClick();
+    }
   }
 
   return (

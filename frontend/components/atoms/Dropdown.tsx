@@ -29,6 +29,11 @@ const Dropdown = (
     setDropdownOpen(!dropdownOpen);
   }
 
+  const onClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+  }
+
   useEffect(() => {
     setDropdownOpen(open);
   }, [open]);
@@ -36,7 +41,7 @@ const Dropdown = (
   return (
     <details onClick={handleOpen} open={dropdownOpen} className={"dropdown " + verticalPosition + " " + horizontalPosition}>
       <summary className="btn btn-sm btn-primary border-0">{button}</summary>
-      <div className="dropdown-content bg-base-100 rounded-box z-[1] p-2 shadow w-72 max-h-96 overflow-y-auto">
+      <div onClick={onClick} className="dropdown-content bg-base-100 rounded-box z-[1] p-2 shadow w-72 max-h-96 overflow-y-auto">
         {children}
       </div>
     </details>
