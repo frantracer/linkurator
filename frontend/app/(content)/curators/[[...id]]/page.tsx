@@ -6,7 +6,15 @@ import useProfile from "../../../../hooks/useProfile";
 import {useParams} from "next/navigation";
 import TopTitle from "../../../../components/molecules/TopTitle";
 import Button from "../../../../components/atoms/Button";
-import {AddIcon, CrossIcon, FunnelIcon, MenuIcon, MinusIcon, OptionsIcon} from "../../../../components/atoms/Icons";
+import {
+  AddIcon,
+  CrossIcon,
+  FunnelIcon,
+  MenuIcon,
+  MinusIcon,
+  OptionsIcon,
+  ThumbsUpFilledIcon
+} from "../../../../components/atoms/Icons";
 import Avatar from "../../../../components/atoms/Avatar";
 import {showLateralMenu} from "../../../../utilities/lateralMenuAction";
 import {LATERAL_NAVIGATION_MENU_ID} from "../../../../components/organism/LateralNavigationMenu";
@@ -150,6 +158,11 @@ const CuratorsPage: NextPage = () => {
           {dropdownButtons}
         </Dropdown>
       </TopTitle>
+      <FlexRow>
+        <ThumbsUpFilledIcon/>
+        <h2 className={"text-xl"}>{"Recomendaciones de "}</h2>
+        <h2 className={"text-xl font-bold"}>{curatorName}</h2>
+      </FlexRow>
       <CuratorVideoCardGrid
         refreshItem={refreshCuratorItem}
         fetchMoreItems={fetchMoreItems}
