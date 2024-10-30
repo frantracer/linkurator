@@ -1,6 +1,6 @@
 import React, {useState} from "react";
 import {assignSubscriptionToTopic, createTopic, unassignSubscriptionToTopic} from "../../services/topicService";
-import {Topic} from "../../entities/Topic";
+import {Topic, topicSorting} from "../../entities/Topic";
 import {Subscription} from "../../entities/Subscription";
 import {v4 as uuidv4} from 'uuid';
 import Modal from "../atoms/Modal";
@@ -10,7 +10,6 @@ import Button from "../atoms/Button";
 import Box from "../atoms/Box";
 import FlexColumn from "../atoms/FlexColumn";
 import {CheckCircleIcon, CircleIcon} from "../atoms/Icons";
-import Divider from "../atoms/Divider";
 import {closeModal} from "../../utilities/modalAction";
 import {MenuItem} from "../atoms/MenuItem";
 import FlexItem from "../atoms/FlexItem";
@@ -59,6 +58,7 @@ const AssignTopicModal = (props: AssignTopicModalProps) => {
 
   const topicsMenuItems = props.topics
     .filter(topic => topic.is_owner)
+    .sort(topicSorting)
     .map(topic => {
       const isSelected = topic.subscriptions_ids.includes(props.subscription.uuid);
       const handleClick = () => {
@@ -97,22 +97,32 @@ const AssignTopicModal = (props: AssignTopicModalProps) => {
   return (
     <Modal id={AssignTopicModalId}>
       <FlexColumn>
-        <h1 className="font-bold text-xl w-full text-center">{"Añadir subscripciones"}</h1>
+        <h1 className="font-bold text-xl w-full text-center">{"Asignar subscripción"}</h1>
+        <FlexRow>
+          <InputText placeholder={"Nombre de la nueva categoría"}
+                     value={topicName} onChange={(value) => setTopicName(value)}/>
+          <Button clickAction={() => {
+            newTopicButtonAction(topicName);
+          }}>
+            {"Crear"}
+          </Button>
+        </FlexRow>
         <Box title={"Categorías (" + topicTags.length + ")"}>
-          <FlexRow wrap={true}>
-            {topicTags.length === 0 &&
-                <p>{"No hay categorías disponibles"}</p>
-            }
-            {topicTags.length > 0 &&
-              topicTags
-            }
-          </FlexRow>
+          <div className={"h-60 overflow-y-auto"}>
+            <FlexRow wrap={true}>
+              {topicTags.length === 0 &&
+                  <p><b>{props.subscription.name}</b> no está asignada a ninguna categoría</p>
+              }
+              {topicTags.length > 0 &&
+                topicTags
+              }
+            </FlexRow>
+          </div>
         </Box>
-
         <FlexRow hideOverflow={false} position={"between"}>
           <Dropdown open={dropdownOpen} onChange={(open) => setDropdownOpen(open)}
                     start={true} bottom={false}
-                    button={<FlexRow><span>Selecciona las categorías</span></FlexRow>}>
+                    button={<FlexRow><span>{"Selecciona categorías existentes"}</span></FlexRow>}>
             <Menu>
               {topicsMenuItems}
             </Menu>
@@ -121,17 +131,6 @@ const AssignTopicModal = (props: AssignTopicModalProps) => {
             closeModal(AssignTopicModalId);
           }}>
             <span>{"Aceptar"}</span>
-          </Button>
-        </FlexRow>
-        <Divider/>
-        <p>O crea una nueva categoría</p>
-        <FlexRow>
-          <InputText placeholder={"Nombre de la nueva categoría"}
-                     value={topicName} onChange={(value) => setTopicName(value)}/>
-          <Button clickAction={() => {
-            newTopicButtonAction(topicName);
-          }}>
-            {"Crear"}
           </Button>
         </FlexRow>
       </FlexColumn>
