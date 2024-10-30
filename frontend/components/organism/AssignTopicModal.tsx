@@ -17,6 +17,8 @@ import FlexItem from "../atoms/FlexItem";
 import Dropdown from "../atoms/Dropdown";
 import Menu from "../atoms/Menu";
 import Tag from "../atoms/Tag";
+import ALink from "../atoms/ALink";
+import {paths} from "../../configuration";
 
 export const AssignTopicModalId = "assign-topic-modal";
 
@@ -84,9 +86,11 @@ const AssignTopicModal = (props: AssignTopicModalProps) => {
     .filter(topic => topic.is_owner && topic.subscriptions_ids.includes(props.subscription.uuid))
     .map(topic => {
       return (
-        <Tag key={topic.uuid}>
-          <span className={"whitespace-nowrap truncate"}>{topic.name}</span>
-        </Tag>
+        <ALink href={paths.TOPICS + "/" + topic.uuid} key={topic.uuid}>
+          <Tag>
+            <span className={"whitespace-nowrap truncate"}>{topic.name}</span>
+          </Tag>
+        </ALink>
       )
     })
 
