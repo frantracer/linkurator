@@ -36,6 +36,7 @@ import Dropdown from "../../../../components/atoms/Dropdown";
 import {openModal} from "../../../../utilities/modalAction";
 import FlexColumn from "../../../../components/atoms/FlexColumn";
 import Miniature from "../../../../components/atoms/Miniature";
+import {useDebounce} from "../../../../hooks/useDebounce";
 
 const REFRESH_SUBSCRIPTIONS_INTERVAL = 30000;
 
@@ -49,6 +50,7 @@ const SubscriptionsPage: NextPage = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
   const {filters, setFilters, resetFilters} = useFilters();
+  const debouncedFilters = useDebounce(filters, 500);
   const {profile, profileIsLoading} = useProfile();
   const {subscriptions, refreshSubscriptions} = useSubscriptions(profile);
   const {topics, refreshTopics} = useTopics(profile, profileIsLoading);
@@ -74,7 +76,7 @@ const SubscriptionsPage: NextPage = () => {
     fetchMoreItems,
     isLoading,
     isFinished
-  } = useSubscriptionItems(selectedSubscription, filters);
+  } = useSubscriptionItems(selectedSubscription, debouncedFilters);
 
   const handleGridScroll = (event: React.UIEvent<HTMLElement>) => {
     const element = event.currentTarget
@@ -183,8 +185,7 @@ const SubscriptionsPage: NextPage = () => {
                            editable={editable}
                            showInteractions={isUserLogged}
                            setFilters={setFilters}
-                           resetFilters={resetFilters}
-                           refreshSubscription={() => refreshSubscription(selectedSubscriptionId!)}/>
+                           resetFilters={resetFilters}/>
       <TopTitle>
         <Button clickAction={() => showLateralMenu(LATERAL_NAVIGATION_MENU_ID)} showOnlyOnMobile={true}>
           <MenuIcon/>
@@ -247,7 +248,7 @@ const SubscriptionsPage: NextPage = () => {
         topics={topics}
         subscription={selectedSubscription}
         items={subscriptionsItems}
-        filters={filters}
+        filters={debouncedFilters}
         showInteractions={isUserLogged}
         isLoading={isLoading}
         isFinished={isFinished}

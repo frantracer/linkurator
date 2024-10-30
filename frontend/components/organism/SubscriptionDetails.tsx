@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React from "react";
 import {Subscription} from "../../entities/Subscription";
 import {Topic} from "../../entities/Topic";
 import Sidebar from "../atoms/Sidebar";
@@ -12,7 +12,6 @@ import {
   ArrowUturnLeft,
   CheckCircleFilledIcon,
   CheckCircleIcon,
-  CheckIcon,
   ThumbsDownFilledIcon,
   ThumbsUpFilledIcon
 } from "../atoms/Icons";
@@ -26,7 +25,6 @@ import Checkbox from "../atoms/Checkbox";
 import NumberInput from "../atoms/NumberInput";
 import Grid from "../atoms/Grid";
 import Select from "../atoms/Select";
-import {hideLateralMenu} from "../../utilities/lateralMenuAction";
 import FlexItem from "../atoms/FlexItem";
 
 export const SUBSCRIPTION_DETAILS_ID = "subscription-details";
@@ -39,17 +37,25 @@ type SubscriptionDetailsProps = {
   showInteractions: boolean,
   setFilters: (filters: Filters) => void;
   resetFilters: () => void;
-  refreshSubscription: () => void;
 };
 
-const SubscriptionDetails = (props: SubscriptionDetailsProps) => {
-  const [tempFilters, setTempFilters] = useState<Filters>(props.filters);
-  const [showCustomDuration, setShowCustomDuration] = useState<boolean>(false);
+const SubscriptionDetails = (
+  {
+    subscription,
+    topics,
+    filters,
+    editable,
+    showInteractions,
+    setFilters,
+    resetFilters,
+  }: SubscriptionDetailsProps
+) => {
+  const subscriptionId = subscription ? subscription.uuid : "";
+  const subscriptionName = subscription ? subscription.name : "";
+  const subscriptionThumbnail = subscription ? subscription.thumbnail : "";
+  const relatedTopics = topics.filter(topic => topic.subscriptions_ids.includes(subscriptionId))
 
-  const subscriptionId = props.subscription ? props.subscription.uuid : "";
-  const subscriptionName = props.subscription ? props.subscription.name : "";
-  const subscriptionThumbnail = props.subscription ? props.subscription.thumbnail : "";
-  const relatedTopics = props.topics.filter(topic => topic.subscriptions_ids.includes(subscriptionId))
+  const showCustomDuration = filters.durationGroup == "custom";
 
   const topicTags = relatedTopics.map(topic => (
     <Tag key={topic.uuid}>
@@ -59,49 +65,25 @@ const SubscriptionDetails = (props: SubscriptionDetailsProps) => {
     </Tag>
   ));
 
-  const resetFilters = () => {
-    props.resetFilters();
-    setTempFilters(props.filters)
-  }
-
   const handleDurationChange = (key: string) => {
     switch (key) {
       case "short":
-        setTempFilters({...tempFilters, durationGroup: "short"});
-        setShowCustomDuration(false);
+        setFilters({...filters, durationGroup: "short"});
         break;
       case "medium":
-        setTempFilters({...tempFilters, durationGroup: "medium"});
-        setShowCustomDuration(false);
+        setFilters({...filters, durationGroup: "medium"});
         break;
       case "long":
-        setTempFilters({...tempFilters, durationGroup: "long"});
-        setShowCustomDuration(false);
+        setFilters({...filters, durationGroup: "long"});
         break;
       case "all":
-        setTempFilters({...tempFilters, durationGroup: "all"});
-        setShowCustomDuration(false);
+        setFilters({...filters, durationGroup: "all"});
         break;
       case "custom":
-        setTempFilters({...tempFilters, minDuration: 0, maxDuration: 999999, durationGroup: "custom"});
-        setShowCustomDuration(true);
+        setFilters({...filters, minDuration: 0, maxDuration: 999999, durationGroup: "custom"});
         break;
     }
   }
-
-  const handleApplyFilters = () => {
-    props.setFilters(tempFilters)
-    hideLateralMenu(SUBSCRIPTION_DETAILS_ID)
-  }
-
-  useEffect(() => {
-    setTempFilters(props.filters)
-    if (props.filters.durationGroup == "custom") {
-      setShowCustomDuration(true);
-    } else {
-      setShowCustomDuration(false);
-    }
-  }, [props.filters]);
 
   return (
     <Sidebar>
@@ -110,85 +92,79 @@ const SubscriptionDetails = (props: SubscriptionDetailsProps) => {
         <span>{subscriptionName}</span>
       </FlexRow>
       <Divider/>
+      <FlexRow position={"between"}>
+        <FlexItem grow={true}>
+          <Button fitContent={false} clickAction={resetFilters}>
+            <ArrowUturnLeft/>
+            {"Restaurar filtros"}
+          </Button>
+        </FlexItem>
+      </FlexRow>
       <Box title={"Filtros"}>
         <FlexColumn>
-          <FlexRow position={"between"}>
-            <FlexItem grow={true}>
-              <Button fitContent={false} clickAction={resetFilters}>
-                <ArrowUturnLeft/>
-                {"Restaurar"}
-              </Button>
-            </FlexItem>
-            <FlexItem grow={true}>
-              <Button fitContent={false} clickAction={handleApplyFilters}>
-                <CheckIcon/>
-                {"Aplicar"}
-              </Button>
-            </FlexItem>
-          </FlexRow>
-          <SearchBar handleChange={(value) => setTempFilters({...tempFilters, textSearch: value})}
-                     value={tempFilters.textSearch}/>
+          <SearchBar handleChange={(value) => setFilters({...filters, textSearch: value})}
+                     value={filters.textSearch}/>
           <Box title={"Duración"}>
             <FlexColumn>
-              <Select selected={tempFilters.durationGroup} options={durationOptions} onChange={handleDurationChange}/>
+              <Select selected={filters.durationGroup} options={durationOptions} onChange={handleDurationChange}/>
               {showCustomDuration &&
                   <FlexColumn>
                       <FlexRow>
                           <p>{"Min"}</p>
                           <NumberInput placeholder={"Mínima"}
-                                       value={tempFilters.minDuration}
-                                       onChange={(value) => setTempFilters({...tempFilters, minDuration: value})}/>
+                                       value={filters.minDuration}
+                                       onChange={(value) => setFilters({...filters, minDuration: value})}/>
 
                       </FlexRow>
                       <FlexRow>
                           <p>{"Max"}</p>
                           <NumberInput placeholder={"Máxima"}
-                                       value={tempFilters.maxDuration}
-                                       onChange={(value) => setTempFilters({...tempFilters, maxDuration: value})}/>
+                                       value={filters.maxDuration}
+                                       onChange={(value) => setFilters({...filters, maxDuration: value})}/>
                       </FlexRow>
                   </FlexColumn>
               }
             </FlexColumn>
           </Box>
-          {props.showInteractions &&
+          {showInteractions &&
               <Box title={"Interacciones"}>
                   <FlexColumn>
                       <FlexRow position={"start"}>
-                          <Checkbox checked={tempFilters.displayWithoutInteraction}
-                                    onChange={(checked) => setTempFilters({
-                                      ...tempFilters,
+                          <Checkbox checked={filters.displayWithoutInteraction}
+                                    onChange={(checked) => setFilters({
+                                      ...filters,
                                       displayWithoutInteraction: checked
                                     })}/>
                           <CheckCircleIcon/>
                           <label>{"No visto"}</label>
                       </FlexRow>
                       <FlexRow position={"start"}>
-                          <Checkbox checked={tempFilters.displayViewed}
-                                    onChange={(checked) => setTempFilters({...tempFilters, displayViewed: checked})}/>
+                          <Checkbox checked={filters.displayViewed}
+                                    onChange={(checked) => setFilters({...filters, displayViewed: checked})}/>
                           <CheckCircleFilledIcon/>
                           <label>{"Visto"}</label>
                       </FlexRow>
                       <FlexRow position={"start"}>
-                          <Checkbox checked={tempFilters.displayRecommended}
-                                    onChange={(checked) => setTempFilters({
-                                      ...tempFilters,
+                          <Checkbox checked={filters.displayRecommended}
+                                    onChange={(checked) => setFilters({
+                                      ...filters,
                                       displayRecommended: checked
                                     })}/>
                           <ThumbsUpFilledIcon/>
                           <label>{"Recomendado"}</label>
                       </FlexRow>
                       <FlexRow position={"start"}>
-                          <Checkbox checked={tempFilters.displayDiscouraged}
-                                    onChange={(checked) => setTempFilters({
-                                      ...tempFilters,
+                          <Checkbox checked={filters.displayDiscouraged}
+                                    onChange={(checked) => setFilters({
+                                      ...filters,
                                       displayDiscouraged: checked
                                     })}/>
                           <ThumbsDownFilledIcon/>
                           <label>{"No recomendado"}</label>
                       </FlexRow>
                       <FlexRow position={"start"}>
-                          <Checkbox checked={tempFilters.displayHidden}
-                                    onChange={(checked) => setTempFilters({...tempFilters, displayHidden: checked})}/>
+                          <Checkbox checked={filters.displayHidden}
+                                    onChange={(checked) => setFilters({...filters, displayHidden: checked})}/>
                           <ArchiveBoxFilledIcon/>
                           <label>{"Archivado"}</label>
                       </FlexRow>
@@ -197,7 +173,7 @@ const SubscriptionDetails = (props: SubscriptionDetailsProps) => {
           }
         </FlexColumn>
       </Box>
-      {props.editable &&
+      {editable &&
           <Box title={"Categorías"}>
               <Grid>
                 {topicTags}
