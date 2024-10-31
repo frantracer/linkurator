@@ -52,6 +52,7 @@ const Home: NextPage = () => {
 
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const {filters, setFilters, resetFilters} = useFilters();
+  const [debouncedFilters, setDebouncedFilters] = useState(filters);
   const {profile, profileIsLoading} = useProfile();
   const {subscriptions, refreshSubscriptions} = useSubscriptions(profile);
   const {topics, topicsAreLoading, refreshTopics} = useTopics(profile, profileIsLoading);
@@ -64,7 +65,7 @@ const Home: NextPage = () => {
     refreshTopicItem,
     refreshTopicItems,
     fetchMoreItems
-  } = useTopicItems(selectedTopic ? selectedTopic.uuid : undefined, filters);
+  } = useTopicItems(selectedTopic ? selectedTopic.uuid : undefined, debouncedFilters);
 
   const topicName = selectedTopic ? selectedTopic.name : "";
   const isTopicBeingScanned = selectedTopic ? !isTopicScanned(selectedTopic, subscriptions) : false
@@ -123,6 +124,17 @@ const Home: NextPage = () => {
 
   }, [subscriptions, topicIdFromQuery, router, profileIsLoading, topics, refreshTopicItems, isTopicBeingScanned]);
 
+  useEffect(() => {
+    if (filters.textSearch === debouncedFilters.textSearch) {
+      setDebouncedFilters(filters)
+    } else {
+      const timer = setTimeout(() => {
+        setDebouncedFilters(filters)
+      }, 500)
+      return () => clearTimeout(timer)
+    }
+  }, [debouncedFilters.textSearch, filters]);
+
   const dropdownButtons = []
   dropdownButtons.push(
     <Button key={"topics-show-filters"} fitContent={false} clickAction={handleShowFilters}>
@@ -170,7 +182,6 @@ const Home: NextPage = () => {
                     showInteractions={isUserLogged}
                     setFilters={setFilters}
                     resetFilters={resetFilters}
-                    refreshTopics={refreshTopics}
       />
       <TopTitle>
         <Button clickAction={() => showLateralMenu(LATERAL_NAVIGATION_MENU_ID)} showOnlyOnMobile={true}>
@@ -240,7 +251,7 @@ const Home: NextPage = () => {
                               fetchMoreItems={fetchMoreItems}
                               refreshItem={refreshTopicItem}
                               subscriptions={topicSubscriptions}
-                              filters={filters}
+                              filters={debouncedFilters}
                               isLoading={isLoading}
                               topicIsFinished={isFinished}
                               handleScroll={handleGridScroll}
