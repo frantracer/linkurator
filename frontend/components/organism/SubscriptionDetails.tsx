@@ -1,11 +1,7 @@
 import React from "react";
 import {Subscription} from "../../entities/Subscription";
-import {Topic} from "../../entities/Topic";
 import Sidebar from "../atoms/Sidebar";
 import FlexRow from "../atoms/FlexRow";
-import Tag from "../atoms/Tag";
-import Link from "next/link";
-import {paths} from "../../configuration";
 import Divider from "../atoms/Divider";
 import {
   ArchiveBoxFilledIcon,
@@ -23,7 +19,6 @@ import FlexColumn from "../atoms/FlexColumn";
 import {durationOptions, Filters} from "../../entities/Filters";
 import Checkbox from "../atoms/Checkbox";
 import NumberInput from "../atoms/NumberInput";
-import Grid from "../atoms/Grid";
 import Select from "../atoms/Select";
 import FlexItem from "../atoms/FlexItem";
 
@@ -31,9 +26,7 @@ export const SUBSCRIPTION_DETAILS_ID = "subscription-details";
 
 type SubscriptionDetailsProps = {
   subscription: Subscription | null;
-  topics: Topic[],
   filters: Filters,
-  editable: boolean,
   showInteractions: boolean,
   setFilters: (filters: Filters) => void;
   resetFilters: () => void;
@@ -42,28 +35,16 @@ type SubscriptionDetailsProps = {
 const SubscriptionDetails = (
   {
     subscription,
-    topics,
     filters,
-    editable,
     showInteractions,
     setFilters,
     resetFilters,
   }: SubscriptionDetailsProps
 ) => {
-  const subscriptionId = subscription ? subscription.uuid : "";
   const subscriptionName = subscription ? subscription.name : "";
   const subscriptionThumbnail = subscription ? subscription.thumbnail : "";
-  const relatedTopics = topics.filter(topic => topic.subscriptions_ids.includes(subscriptionId))
 
   const showCustomDuration = filters.durationGroup == "custom";
-
-  const topicTags = relatedTopics.map(topic => (
-    <Tag key={topic.uuid}>
-      <Link href={paths.TOPICS + "/" + topic.uuid} scroll={false}>
-        {topic.name}
-      </Link>
-    </Tag>
-  ));
 
   const handleDurationChange = (key: string) => {
     switch (key) {
@@ -173,13 +154,6 @@ const SubscriptionDetails = (
           }
         </FlexColumn>
       </Box>
-      {editable &&
-          <Box title={"Categorías"}>
-              <Grid>
-                {topicTags}
-              </Grid>
-          </Box>
-      }
     </Sidebar>
   );
 };

@@ -62,9 +62,7 @@ const SubscriptionsPage: NextPage = () => {
   const subscriptionUrl = selectedSubscription ? selectedSubscription.url : "";
   const subscriptionName = selectedSubscription ? selectedSubscription.name : "";
 
-  const isUserSubscription = !!(subscriptions.find(subscription => subscription.uuid === selectedSubscriptionId))
   const isUserLogged = !!(profile)
-  const editable = isUserLogged && isUserSubscription
 
   const openSubscriptionUrl = () => {
     if (subscriptionUrl) window.open(subscriptionUrl, "_blank");
@@ -180,9 +178,7 @@ const SubscriptionsPage: NextPage = () => {
   return (
     <Drawer id={SUBSCRIPTION_DETAILS_ID} right={true} alwaysOpenOnDesktop={false}>
       <SubscriptionDetails subscription={selectedSubscription}
-                           topics={topics}
                            filters={filters}
-                           editable={editable}
                            showInteractions={isUserLogged}
                            setFilters={setFilters}
                            resetFilters={resetFilters}/>
