@@ -232,22 +232,24 @@ const NewTopicModal = (props: NewTopicModalProps) => {
                              handleChange={setTopicSearch}/>
               </FlexItem>
               <Box title={"Categorías"}>
-                  <FlexColumn>
-                    {debouncedTopicSearch === "" &&
-                        <span>{"Introduce una palabra para buscar categorías"}</span>
-                    }
-                    {topics.length === 0 && !topicsAreLoading && debouncedTopicSearch !== "" &&
-                        <ErrorBanner>{"No se encontró nada relacionado con " + debouncedTopicSearch}</ErrorBanner>
-                    }
-                    {topicsAreLoading && <span>{"Cargando..."}</span>}
-                    {topics.length > 0 &&
-                        <div className={"max-h-72 overflow-y-auto w-full"}>
-                            <Menu isFullHeight={true}>
-                              {CollapsableMenuItems}
-                            </Menu>
-                        </div>
-                    }
-                  </FlexColumn>
+                  <div className={"h-72 overflow-y-auto"}>
+                      <FlexColumn>
+                        {debouncedTopicSearch === "" &&
+                            <span>{"Introduce una palabra para buscar categorías"}</span>
+                        }
+                        {topics.length === 0 && !topicsAreLoading && debouncedTopicSearch !== "" &&
+                            <ErrorBanner>{"No se encontró nada relacionado con " + debouncedTopicSearch}</ErrorBanner>
+                        }
+                        {topicsAreLoading && <span>{"Cargando..."}</span>}
+                        {topics.length > 0 &&
+                            <div className={"max-h-72 overflow-y-auto w-full"}>
+                                <Menu isFullHeight={true}>
+                                  {CollapsableMenuItems}
+                                </Menu>
+                            </div>
+                        }
+                      </FlexColumn>
+                  </div>
               </Box>
           </FlexColumn>}
     </Modal>
