@@ -31,6 +31,7 @@ import {followCurator, unfollowCurator} from "../../../../services/curatorServic
 import Dropdown from "../../../../components/atoms/Dropdown";
 import FlexColumn from "../../../../components/atoms/FlexColumn";
 import Miniature from "../../../../components/atoms/Miniature";
+import {paths} from "../../../../configuration";
 
 
 const CuratorsPage: NextPage = () => {
@@ -154,8 +155,13 @@ const CuratorsPage: NextPage = () => {
                         </div>
                     </Tag>
                 }
-                {curator && !curator.followed &&
+                {curator && !curator.followed && isUserLogged &&
                     <Button primary={false} clickAction={() => handleFollowCurator(curator.id)}>
+                      {"Seguir"}
+                    </Button>
+                }
+                {curator && !curator.followed && !isUserLogged &&
+                    <Button primary={false} href={paths.LOGIN}>
                       {"Seguir"}
                     </Button>
                 }
