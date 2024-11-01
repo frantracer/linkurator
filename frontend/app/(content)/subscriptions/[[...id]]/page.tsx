@@ -36,7 +36,6 @@ import Dropdown from "../../../../components/atoms/Dropdown";
 import {openModal} from "../../../../utilities/modalAction";
 import FlexColumn from "../../../../components/atoms/FlexColumn";
 import Miniature from "../../../../components/atoms/Miniature";
-import {useDebounce} from "../../../../hooks/useDebounce";
 
 const REFRESH_SUBSCRIPTIONS_INTERVAL = 30000;
 
@@ -50,7 +49,7 @@ const SubscriptionsPage: NextPage = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
   const {filters, setFilters, resetFilters} = useFilters();
-  const debouncedFilters = useDebounce(filters, 500);
+  const [debouncedFilters, setDebouncedFilters] = useState(filters);
   const {profile, profileIsLoading} = useProfile();
   const {subscriptions, refreshSubscriptions} = useSubscriptions(profile);
   const {topics, refreshTopics} = useTopics(profile, profileIsLoading);
@@ -131,6 +130,17 @@ const SubscriptionsPage: NextPage = () => {
       }
     }
   }, [profileIsLoading, selectedSubscription, profile, subscriptions, router, refreshSubscriptions]);
+
+  useEffect(() => {
+    if (filters.textSearch === debouncedFilters.textSearch) {
+      setDebouncedFilters(filters)
+    } else {
+      const timer = setTimeout(() => {
+        setDebouncedFilters(filters)
+      }, 500)
+      return () => clearTimeout(timer)
+    }
+  }, [debouncedFilters.textSearch, filters]);
 
   const dropdownButtons = []
   dropdownButtons.push(
