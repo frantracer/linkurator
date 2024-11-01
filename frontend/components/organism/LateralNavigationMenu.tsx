@@ -153,10 +153,12 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
         }
         {!profile && !profileIsLoading &&
             <FlexColumn>
-                <p className={"text-center"}><b>{"Crea tus propias categorías"}</b></p>
-                <ALink href={"/login"}>
-                    <Button fitContent={false}>{"Regístrate"}</Button>
-                </ALink>
+                <FlexRow>
+                  <p className={"text-center"}>Sigue el contenido que elijas y crea tus propias categorías</p>
+                </FlexRow>
+                <Button href={paths.REGISTER} fitContent={false}>{"Regístrate"}</Button>
+                <Divider text={"O"}/>
+                <Button href={paths.LOGIN} fitContent={false}>{"Inicia sesión"}</Button>
             </FlexColumn>
         }
         {profile &&
