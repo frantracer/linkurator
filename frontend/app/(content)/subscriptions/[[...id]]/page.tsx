@@ -156,7 +156,7 @@ const SubscriptionsPage: NextPage = () => {
       Filtrar
     </Button>
   )
-  if (selectedSubscription) {
+  if (selectedSubscription && isUserLogged) {
     dropdownButtons.push(
       <Button key={"subscriptions-assign"}
               fitContent={false} clickAction={handleAssignSubscription}>
@@ -172,7 +172,7 @@ const SubscriptionsPage: NextPage = () => {
       </Button>
     )
   }
-  if (selectedSubscription && selectedSubscription.followed) {
+  if (selectedSubscription && selectedSubscription.followed && isUserLogged) {
     dropdownButtons.push(
       <Button key={"subscriptions-unfollow"}
               fitContent={false} clickAction={() => handleUnfollowSubscription(selectedSubscription.uuid)}>
@@ -181,7 +181,7 @@ const SubscriptionsPage: NextPage = () => {
       </Button>
     )
   }
-  if (selectedSubscription && !selectedSubscription.followed) {
+  if (selectedSubscription && !selectedSubscription.followed && isUserLogged) {
     dropdownButtons.push(
       <Button key={"subscriptions-follow"}
               fitContent={false} clickAction={() => handleFollowSubscription(selectedSubscription.uuid)}>
@@ -227,8 +227,13 @@ const SubscriptionsPage: NextPage = () => {
                         </div>
                     </Tag>
                 }
-                {selectedSubscription && !selectedSubscription.followed &&
+                {selectedSubscription && !selectedSubscription.followed && isUserLogged &&
                     <Button primary={false} clickAction={() => handleFollowSubscription(selectedSubscription.uuid)}>
+                      {"Seguir"}
+                    </Button>
+                }
+                {selectedSubscription && !selectedSubscription.followed && !isUserLogged &&
+                    <Button primary={false} href={paths.LOGIN}>
                       {"Seguir"}
                     </Button>
                 }
