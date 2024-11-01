@@ -12,6 +12,7 @@ import {durationOptions, Filters} from "../../entities/Filters";
 import NumberInput from "../atoms/NumberInput";
 import Select from "../atoms/Select";
 import FlexItem from "../atoms/FlexItem";
+import Avatar from "../atoms/Avatar";
 
 export const CURATOR_DETAILS_ID = "curator-details";
 
@@ -31,6 +32,7 @@ const CuratorDetails = (
   }: CuratorDetailsProps
 ) => {
   const curatorName = curator ? curator.username : "";
+  const curatorAvatar = curator ? curator.avatar_url : "";
 
   const handleDurationChange = (key: string) => {
     switch (key) {
@@ -57,7 +59,8 @@ const CuratorDetails = (
   return (
     <Sidebar>
       <FlexRow position={"center"}>
-        <div className="w-full whitespace-nowrap truncate text-center">{curatorName}</div>
+        <Avatar src={curatorAvatar} alt={curatorName}/>
+        <span>{curatorName}</span>
       </FlexRow>
       <Divider/>
       <FlexRow position={"between"}>
