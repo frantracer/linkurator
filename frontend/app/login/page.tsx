@@ -97,7 +97,7 @@ const Home: NextPage = () => {
             <div className={"h-4"}/>
 
             <ALink href={paths.REGISTER}>
-              {"¿No tienes cuenta? Regístrate"}
+              <span>¿No tienes cuenta? <b>Regístrate</b></span>
             </ALink>
           </FlexColumn>
         </div>
