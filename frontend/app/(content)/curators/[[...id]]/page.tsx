@@ -1,7 +1,7 @@
 'use client';
 
 import type {NextPage} from "next";
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import useProfile from "../../../../hooks/useProfile";
 import {useParams} from "next/navigation";
 import TopTitle from "../../../../components/molecules/TopTitle";
@@ -40,6 +40,7 @@ const CuratorsPage: NextPage = () => {
 
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const {filters, setFilters, resetFilters} = useFilters();
+  const [debouncedFilters, setDebouncedFilters] = useState(filters);
   const {profile, profileIsLoading} = useProfile();
   const {curators, refreshCurators} = useCurators(profile, profileIsLoading);
   const {curator} = useCurator(curatorName, curators);
@@ -53,7 +54,7 @@ const CuratorsPage: NextPage = () => {
     refreshCuratorItem,
     isLoading,
     isFinished
-  } = useCuratorItems(curatorId, filters);
+  } = useCuratorItems(curatorId, debouncedFilters);
 
   const curatorThumbnail = curator?.avatar_url;
 
@@ -88,7 +89,7 @@ const CuratorsPage: NextPage = () => {
   if (isUserLogged && curator) {
     dropdownButtons.push(
       <Button key={"curators-filter"}
-        fitContent={false} clickAction={handleFilter}>
+              fitContent={false} clickAction={handleFilter}>
         <FunnelIcon/>
         {"Filtrar"}
       </Button>
@@ -96,7 +97,7 @@ const CuratorsPage: NextPage = () => {
     if (curator.followed) {
       dropdownButtons.push(
         <Button key={"curators-unfollow"}
-          fitContent={false} clickAction={() => handleUnfollowCurator(curator.id)}>
+                fitContent={false} clickAction={() => handleUnfollowCurator(curator.id)}>
           <MinusIcon/>
           {"Dejar de seguir"}
         </Button>
@@ -104,7 +105,7 @@ const CuratorsPage: NextPage = () => {
     } else {
       dropdownButtons.push(
         <Button key={"curators-follow"}
-          fitContent={false} clickAction={() => handleFollowCurator(curator.id)}>
+                fitContent={false} clickAction={() => handleFollowCurator(curator.id)}>
           <AddIcon/>
           {"Seguir"}
         </Button>
@@ -112,10 +113,20 @@ const CuratorsPage: NextPage = () => {
     }
   }
 
+  useEffect(() => {
+    if (filters.textSearch === debouncedFilters.textSearch) {
+      setDebouncedFilters(filters)
+    } else {
+      const timer = setTimeout(() => {
+        setDebouncedFilters(filters)
+      }, 500)
+      return () => clearTimeout(timer)
+    }
+  }, [debouncedFilters.textSearch, filters]);
+
   return (
     <Drawer id={CURATOR_DETAILS_ID} right={true} alwaysOpenOnDesktop={false}>
-      <CuratorDetails curator={curator} filters={filters} setFilters={setFilters} resetFilters={resetFilters}
-                      refreshCurators={refreshCurators}/>
+      <CuratorDetails curator={curator} filters={filters} setFilters={setFilters} resetFilters={resetFilters}/>
       <TopTitle>
         <Button clickAction={() => showLateralMenu(LATERAL_NAVIGATION_MENU_ID)} showOnlyOnMobile={true}>
           <MenuIcon/>
