@@ -118,7 +118,7 @@ const Home: NextPage = () => {
             </Box>
 
             <ALink href={paths.LOGIN}>
-              {"¿Ya tienes una cuenta? Inicia sesión"}
+              <span>¿Ya tienes una cuenta? <b>Inicia sesión</b></span>
             </ALink>
 
             <Divider text={"O"}/>
