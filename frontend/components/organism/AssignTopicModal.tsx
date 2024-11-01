@@ -18,6 +18,7 @@ import Menu from "../atoms/Menu";
 import Tag from "../atoms/Tag";
 import ALink from "../atoms/ALink";
 import {paths} from "../../configuration";
+import SearchBar from "../molecules/SearchBar";
 
 export const AssignTopicModalId = "assign-topic-modal";
 
@@ -30,6 +31,7 @@ type AssignTopicModalProps = {
 const AssignTopicModal = (props: AssignTopicModalProps) => {
   const [topicName, setTopicName] = useState<string>("");
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [searchValue, setSearchValue] = useState("");
 
   function assignButtonAction(topicId: string) {
     assignSubscriptionToTopic(topicId, props.subscription.uuid)
@@ -57,7 +59,7 @@ const AssignTopicModal = (props: AssignTopicModalProps) => {
   }
 
   const topicsMenuItems = props.topics
-    .filter(topic => topic.is_owner)
+    .filter(topic => topic.is_owner && topic.name.toLowerCase().includes(searchValue.toLowerCase()))
     .sort(topicSorting)
     .map(topic => {
       const isSelected = topic.subscriptions_ids.includes(props.subscription.uuid);
@@ -123,9 +125,12 @@ const AssignTopicModal = (props: AssignTopicModalProps) => {
           <Dropdown open={dropdownOpen} onChange={(open) => setDropdownOpen(open)}
                     start={true} bottom={false}
                     button={<FlexRow><span>{"Selecciona categorías existentes"}</span></FlexRow>}>
-            <Menu>
-              {topicsMenuItems}
-            </Menu>
+            <div className={"h-60"}>
+              <Menu>
+                {topicsMenuItems}
+              </Menu>
+            </div>
+            <SearchBar value={searchValue} handleChange={(value) => setSearchValue(value)}/>
           </Dropdown>
           <Button clickAction={() => {
             closeModal(AssignTopicModalId);
