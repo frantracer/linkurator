@@ -121,15 +121,19 @@ const SubscriptionsPage: NextPage = () => {
       if (profile && subscriptions.length > 0 && selectedSubscription === undefined) {
         router.push(paths.SUBSCRIPTIONS + "/" + subscriptions[0].uuid)
       }
-
-      if (selectedSubscription?.isBeingScanned) {
-        const timer = setTimeout(() => {
-          refreshSubscriptions()
-        }, REFRESH_SUBSCRIPTIONS_INTERVAL)
-        return () => clearTimeout(timer)
-      }
     }
-  }, [profileIsLoading, selectedSubscription, profile, subscriptions, router, refreshSubscriptions]);
+  }, [profile, profileIsLoading, router, selectedSubscription, subscriptions]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (selectedSubscription && selectedSubscription.isBeingScanned) {
+        refreshSubscriptions();
+      } else {
+        clearInterval(interval);
+      }
+    }, REFRESH_SUBSCRIPTIONS_INTERVAL)
+    return () => clearInterval(interval)
+  }, [refreshSubscriptions, selectedSubscription]);
 
   useEffect(() => {
     if (filters.textSearch === debouncedFilters.textSearch) {
