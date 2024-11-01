@@ -42,7 +42,7 @@ import Dropdown from "../../../../components/atoms/Dropdown";
 import FlexColumn from "../../../../components/atoms/FlexColumn";
 import Miniature from "../../../../components/atoms/Miniature";
 
-const REFRESH_TOPICS_INTERVAL = 30000;
+const REFRESH_TOPICS_INTERVAL = 10000;
 
 const Home: NextPage = () => {
   const router = useRouter()
@@ -114,15 +114,14 @@ const Home: NextPage = () => {
     if (!topicIdFromQuery && topics.length > 0) {
       router.push(paths.TOPICS + "/" + topics[0].uuid)
     }
+  }, [router, topicIdFromQuery, topics]);
 
-    if (isTopicBeingScanned) {
-      const timer = setTimeout(() => {
-        refreshTopicItems()
-      }, REFRESH_TOPICS_INTERVAL)
-      return () => clearTimeout(timer)
-    }
-
-  }, [subscriptions, topicIdFromQuery, router, profileIsLoading, topics, refreshTopicItems, isTopicBeingScanned]);
+  useEffect(() => {
+    const interval = setInterval(() => {
+      refreshSubscriptions()
+    }, REFRESH_TOPICS_INTERVAL)
+    return () => clearInterval(interval)
+  }, [refreshSubscriptions]);
 
   useEffect(() => {
     if (filters.textSearch === debouncedFilters.textSearch) {
