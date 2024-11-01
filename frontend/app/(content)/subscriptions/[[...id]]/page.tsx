@@ -96,7 +96,9 @@ const SubscriptionsPage: NextPage = () => {
   }
 
   const handleRefreshSubscription = (subscriptionId: string) => {
-    refreshSubscription(subscriptionId)
+    refreshSubscription(subscriptionId).then(() => {
+      refreshSubscriptions();
+    });
     setDropdownOpen(false);
   }
 
