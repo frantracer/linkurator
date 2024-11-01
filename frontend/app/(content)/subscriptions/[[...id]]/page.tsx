@@ -19,7 +19,7 @@ import {
   FunnelIcon,
   MenuIcon,
   MinusIcon,
-  OptionsIcon,
+  OptionsIcon, PencilIcon,
   RefreshIcon
 } from "../../../../components/atoms/Icons";
 import SubscriptionDetails, {SUBSCRIPTION_DETAILS_ID} from "../../../../components/organism/SubscriptionDetails";
@@ -160,7 +160,7 @@ const SubscriptionsPage: NextPage = () => {
     dropdownButtons.push(
       <Button key={"subscriptions-assign"}
               fitContent={false} clickAction={handleAssignSubscription}>
-        <AddIcon/>
+        <PencilIcon/>
         Asignar
       </Button>
     )
