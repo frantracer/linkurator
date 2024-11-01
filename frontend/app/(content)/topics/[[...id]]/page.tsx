@@ -141,36 +141,40 @@ const Home: NextPage = () => {
       Filtrar
     </Button>
   )
-  if (selectedTopic && selectedTopic.is_owner) {
-    dropdownButtons.push(
-      <Button key={"topics-edit-topic"} fitContent={false} clickAction={handleEditTopic}>
-        <PencilIcon/>
-        Editar
-      </Button>
-    )
-    dropdownButtons.push(
-      <Button key={"topics-delete-topic"} fitContent={false} clickAction={() => handleDeleteTopic(selectedTopic.uuid)}>
-        <TrashIcon/>
-        Borrar
-      </Button>
-    )
-  }
-  if (selectedTopic && selectedTopic.followed && !selectedTopic.is_owner) {
-    dropdownButtons.push(
-      <Button key={"topics-unfollow-topic"} fitContent={false}
-              clickAction={() => handleUnfollowTopic(selectedTopic.uuid)}>
-        <MinusIcon/>
-        Dejar de seguir
-      </Button>
-    )
-  }
-  if (selectedTopic && !selectedTopic.followed && !selectedTopic.is_owner) {
-    dropdownButtons.push(
-      <Button key={"topics-follow-topic"} fitContent={false} clickAction={() => handleFollowTopic(selectedTopic.uuid)}>
-        <AddIcon/>
-        Seguir
-      </Button>
-    )
+  if (selectedTopic && isUserLogged) {
+    if (selectedTopic.is_owner) {
+      dropdownButtons.push(
+        <Button key={"topics-edit-topic"} fitContent={false} clickAction={handleEditTopic}>
+          <PencilIcon/>
+          Editar
+        </Button>
+      )
+      dropdownButtons.push(
+        <Button key={"topics-delete-topic"} fitContent={false}
+                clickAction={() => handleDeleteTopic(selectedTopic.uuid)}>
+          <TrashIcon/>
+          Borrar
+        </Button>
+      )
+    }
+    if (selectedTopic.followed && !selectedTopic.is_owner) {
+      dropdownButtons.push(
+        <Button key={"topics-unfollow-topic"} fitContent={false}
+                clickAction={() => handleUnfollowTopic(selectedTopic.uuid)}>
+          <MinusIcon/>
+          Dejar de seguir
+        </Button>
+      )
+    }
+    if (!selectedTopic.followed && !selectedTopic.is_owner) {
+      dropdownButtons.push(
+        <Button key={"topics-follow-topic"} fitContent={false}
+                clickAction={() => handleFollowTopic(selectedTopic.uuid)}>
+          <AddIcon/>
+          Seguir
+        </Button>
+      )
+    }
   }
 
   return (
@@ -214,8 +218,13 @@ const Home: NextPage = () => {
                           </div>
                       </Tag>
                   }
-                  {selectedTopic && !selectedTopic.followed && !selectedTopic.is_owner &&
+                  {selectedTopic && !selectedTopic.followed && !selectedTopic.is_owner && isUserLogged &&
                       <Button primary={false} clickAction={() => handleFollowTopic(selectedTopic.uuid)}>
+                        {"Seguir"}
+                      </Button>
+                  }
+                  {selectedTopic && !selectedTopic.followed && !selectedTopic.is_owner && !isUserLogged &&
+                      <Button primary={false} href={paths.LOGIN}>
                         {"Seguir"}
                       </Button>
                   }
