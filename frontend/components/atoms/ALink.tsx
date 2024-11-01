@@ -19,7 +19,7 @@ const ALink = (
   }
 
   return (
-    <Link className={"group w-fit h-fit flex"} href={href} onClick={handleClick}>
+    <Link className={"group w-fit h-fit"} href={href} onClick={handleClick}>
       {children}
     </Link>
   );
