@@ -15,7 +15,6 @@ import {
   OptionsIcon,
   ThumbsUpFilledIcon
 } from "../../../../components/atoms/Icons";
-import Avatar from "../../../../components/atoms/Avatar";
 import {showLateralMenu} from "../../../../utilities/lateralMenuAction";
 import {LATERAL_NAVIGATION_MENU_ID} from "../../../../components/organism/LateralNavigationMenu";
 import CuratorVideoCardGrid from "../../../../components/organism/CuratorVideoCardGrid";
@@ -31,6 +30,7 @@ import Tag from "../../../../components/atoms/Tag";
 import {followCurator, unfollowCurator} from "../../../../services/curatorService";
 import Dropdown from "../../../../components/atoms/Dropdown";
 import FlexColumn from "../../../../components/atoms/FlexColumn";
+import Miniature from "../../../../components/atoms/Miniature";
 
 
 const CuratorsPage: NextPage = () => {
@@ -56,7 +56,7 @@ const CuratorsPage: NextPage = () => {
     isFinished
   } = useCuratorItems(curatorId, debouncedFilters);
 
-  const curatorThumbnail = curator?.avatar_url;
+  const curatorThumbnail = curator ? curator.avatar_url : "";
 
   const handleGridScroll = (event: React.UIEvent<HTMLElement>) => {
     const element = event.currentTarget
@@ -133,13 +133,11 @@ const CuratorsPage: NextPage = () => {
         </Button>
         <FlexRow>
           <FlexItem grow={true}/>
-          {curatorThumbnail &&
-              <Avatar src={curatorThumbnail} alt={curatorName}/>
-          }
           <FlexRow>
             <FlexItem>
               <FlexColumn gap={0} position={"center"}>
                 <FlexRow>
+                  <Miniature src={curatorThumbnail} alt={curatorName}/>
                   <h1 className="text-xl font-bold whitespace-nowrap truncate">
                     {curatorName}
                   </h1>
