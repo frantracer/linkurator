@@ -54,33 +54,30 @@ const FolowCuratorModal = (props: FolowCuratorModalProps) => {
                      handleChange={setCuratorSearch}/>
         </FlexItem>
         <Box title={"Curador"}>
-          <div className={"h-72 overflow-y-auto"}>
-            <FlexColumn>
-              {debouncedCuratorSearch !== "" && curator === null && !curatorIsLoading &&
-                  <ErrorBanner>{"No se encontró el curador " + debouncedCuratorSearch}</ErrorBanner>
-              }
-              {curatorIsLoading && <span>{"Cargando..."}</span>}
-              {curator !== null &&
-                  <ALink href={paths.CURATORS + "/" + curator.username}
-                         onClick={() => closeModal(FollowCuratorModalId)}>
-                      <FlexRow>
-                          <Avatar src={curator.avatar_url} alt={curator.username}/>
-                          <span>{curator.username}</span>
-                      </FlexRow>
-                  </ALink>
-              }
-              {curator !== null && !curator.followed &&
-                  <Button fitContent={false} clickAction={() => handleFollowCurator(curator.id)}>{"Seguir"}</Button>
-              }
-              {curator !== null && curator.followed &&
-                  <Button fitContent={false}
-                          clickAction={() => handleUnfollowCurator(curator.id)}>{"Dejar de seguir"}</Button>
-              }
-              {debouncedCuratorSearch === "" &&
-                  <FlexRow position={"center"}>{"Busca un curador de contenido"}</FlexRow>
-              }
-            </FlexColumn>
-          </div>
+          <FlexColumn>
+            {debouncedCuratorSearch !== "" && curator === null && !curatorIsLoading &&
+                <ErrorBanner>{"No se encontró el curador " + debouncedCuratorSearch}</ErrorBanner>
+            }
+            {curatorIsLoading && <span>{"Cargando..."}</span>}
+            {curator !== null &&
+                <ALink href={paths.CURATORS + "/" + curator.username} onClick={() => closeModal(FollowCuratorModalId)}>
+                    <FlexRow>
+                        <Avatar src={curator.avatar_url} alt={curator.username}/>
+                        <span>{curator.username}</span>
+                    </FlexRow>
+                </ALink>
+            }
+            {curator !== null && !curator.followed &&
+                <Button fitContent={false} clickAction={() => handleFollowCurator(curator.id)}>{"Seguir"}</Button>
+            }
+            {curator !== null && curator.followed &&
+                <Button fitContent={false}
+                        clickAction={() => handleUnfollowCurator(curator.id)}>{"Dejar de seguir"}</Button>
+            }
+            {debouncedCuratorSearch === "" &&
+                <FlexRow position={"center"}>{"Busca un curador de contenido"}</FlexRow>
+            }
+          </FlexColumn>
         </Box>
       </FlexColumn>
     </Modal>
