@@ -101,18 +101,20 @@ const NewSubscriptionModal = (props: NewSubscritionModalProps) => {
                      handleChange={setSubscriptionSearch}/>
         </FlexItem>
         <Box title={"Subscripciones"}>
-          {debouncedSubscriptionSearch === "" &&
-              <FlexRow position={"center"}>{"Busca una subscripción por nombre o URL"}</FlexRow>
-          }
-          {subscriptionsAreLoading && <span>{"Cargando subscripciones..."}</span>}
-          {subItems.length > 0 &&
-              <Menu isFullHeight={true}>
-                {subItems}
-              </Menu>
-          }
-          {subItems.length === 0 && !subscriptionsAreLoading && debouncedSubscriptionSearch !== "" &&
-              <FlexRow position={"center"}>{"No se encontraron subscripciones"}</FlexRow>
-          }
+          <div className={"h-72 overflow-y-auto"}>
+            {debouncedSubscriptionSearch === "" &&
+                <FlexRow position={"center"}>{"Busca una subscripción por nombre o URL"}</FlexRow>
+            }
+            {subscriptionsAreLoading && <span>{"Cargando subscripciones..."}</span>}
+            {subItems.length > 0 &&
+                <Menu isFullHeight={true}>
+                  {subItems}
+                </Menu>
+            }
+            {subItems.length === 0 && !subscriptionsAreLoading && debouncedSubscriptionSearch !== "" &&
+                <FlexRow position={"center"}>{"No se encontraron subscripciones"}</FlexRow>
+            }
+          </div>
         </Box>
         {unfollowError && <ErrorBanner>{"No puedes cancelar una subscripción asignada a una categoría"}</ErrorBanner>}
       </FlexColumn>
