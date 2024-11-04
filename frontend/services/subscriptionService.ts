@@ -1,6 +1,6 @@
 import {configuration} from "../configuration";
 import axios from "axios";
-import {Subscription} from "../entities/Subscription";
+import {isBeingScanned, Subscription} from "../entities/Subscription";
 import {SubscriptionItem} from "../entities/SubscriptionItem";
 import {replaceBaseUrl} from "../utilities/replaceBaseUrl";
 import {ITEMS_PER_PAGE} from "../utilities/constants";
@@ -27,6 +27,15 @@ const mapJsonItemToSubscriptionItem = (json: Record<string, any>): SubscriptionI
     thumbnail: json.thumbnail,
     published_at: new Date(json.published_at),
     subscription_uuid: json.subscription_uuid,
+    subscription: {
+      uuid: json.subscription.uuid,
+      name: json.subscription.name,
+      url: json.subscription.url,
+      thumbnail: json.subscription.thumbnail,
+      topicUuid: json.subscription.topic_uuid,
+      followed: json.subscription.followed,
+      isBeingScanned: isBeingScanned(json.subscription.scanned_at),
+    },
     recommended: json.recommended,
     discouraged: json.discouraged,
     viewed: json.viewed,
@@ -54,7 +63,7 @@ const mapJsonToSubscriptionResponse = (json: Record<string, any>): SubscriptionR
         thumbnail: element.thumbnail,
         topicUuid: element.topic_uuid,
         followed: element.followed,
-        isBeingScanned: Date.parse(element.scanned_at) < 946684800000, // It was scanned before 2000-01-01
+        isBeingScanned: isBeingScanned(element.scanned_at),
       };
     }),
   };

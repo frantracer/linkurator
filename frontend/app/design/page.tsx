@@ -20,7 +20,8 @@ import {
   BookmarkSquaredFilled,
   CheckCircleFilledIcon,
   CheckCircleIcon,
-  CheckIcon, CircleIcon,
+  CheckIcon,
+  CircleIcon,
   CrossIcon,
   DownloadIcon,
   ExclamationCircle,
@@ -234,21 +235,20 @@ const CardSection = () => {
     thumbnail: "/logo_v1_medium.png",
     published_at: new Date(),
     subscription_uuid: "87484eb4-65cf-4821-b818-2d7e8bbf7488",
+    subscription: {
+      uuid: "87484eb4-65cf-4821-b818-2d7e8bbf7488",
+      name: "Subscription",
+      url: "https://www.linkurator.com",
+      thumbnail: "/logo_v1_medium.png",
+      isBeingScanned: false,
+      followed: true,
+      topicUuid: "98fbbe67-af08-4954-8249-15ea99e95611"
+    },
     recommended: false,
     discouraged: false,
     viewed: false,
     hidden: false,
     duration: 0
-  }
-
-  const subscription = {
-    uuid: "87484eb4-65cf-4821-b818-2d7e8bbf7488",
-    name: "Subscription",
-    url: "https://www.linkurator.com",
-    thumbnail: "/logo_v1_medium.png",
-    isBeingScanned: false,
-    followed: true,
-    topicUuid: "98fbbe67-af08-4954-8249-15ea99e95611"
   }
 
   return (
@@ -257,9 +257,9 @@ const CardSection = () => {
       <div className="flex flex-col md:flex-row gap-12 m-auto p-4 w-full
       border-base-100 border-solid border-2 rounded justify-center items-center">
         <ItemCardSkeleton/>
-        <VideoCard item={item} subscription={subscription} onChange={undefined} onChangeSwapButton={async () => {
+        <VideoCard item={item} onChange={undefined} onChangeSwapButton={async () => {
         }}/>
-        <VideoCard item={item} subscription={subscription} withInteractions={false}/>
+        <VideoCard item={item} withInteractions={false}/>
       </div>
     </Section>
   );

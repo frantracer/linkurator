@@ -1,3 +1,5 @@
+import {Subscription} from "./Subscription";
+
 export type SubscriptionItem = {
   uuid: string;
   name: string;
@@ -5,6 +7,7 @@ export type SubscriptionItem = {
   thumbnail: string
   published_at: Date;
   subscription_uuid: string;
+  subscription: Subscription;
   recommended: boolean;
   discouraged: boolean;
   viewed: boolean;

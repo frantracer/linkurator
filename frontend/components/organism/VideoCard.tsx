@@ -1,4 +1,3 @@
-import {Subscription} from "../../entities/Subscription";
 import {SubscriptionItem} from "../../entities/SubscriptionItem";
 import {readableAgoUnits} from "../../utilities/dateFormatter";
 import {InteractionType, interactWithItem, removeInteractionWithItem,} from "../../services/interactionService";
@@ -21,7 +20,7 @@ import Miniature from "../atoms/Miniature";
 
 type VideoCardProps = {
   item: SubscriptionItem;
-  subscription?: Subscription;
+  withSubscription?: boolean;
   withInteractions?: boolean;
   onChange?: () => void;
   onChangeSwapButton?: (itemUuid: string, interactionType: InteractionType, checked: boolean) => Promise<void>;
@@ -53,7 +52,7 @@ async function defaultOnChangeSwapButton(itemUuid: string, interactionType: Inte
 const VideoCard = (
   {
     item,
-    subscription,
+    withSubscription = true,
     withInteractions = true,
     onChange = undefined,
     onChangeSwapButton = defaultOnChangeSwapButton
@@ -84,11 +83,12 @@ const VideoCard = (
           <h2 className="card-title cursor-pointer" onClick={() => window.open(item.url, "_blank")}>
             {item.name}
           </h2>
-          {subscription &&
+          {withSubscription &&
               <div className="flex gap-x-2 items-center cursor-pointer">
-                  <Miniature src={subscription.thumbnail} alt={subscription.name}/>
-                  <Link href={paths.SUBSCRIPTIONS + "/" + subscription.uuid}>{subscription.name}</Link>
-              </div>}
+                  <Miniature src={item.subscription.thumbnail} alt={item.subscription.name}/>
+                  <Link href={paths.SUBSCRIPTIONS + "/" + item.subscription.uuid}>{item.subscription.name}</Link>
+              </div>
+          }
           <div className="flex flex-column">
             <p>{readableAgoUnits(item.published_at)}</p>
             {withInteractions &&

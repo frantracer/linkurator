@@ -26,7 +26,6 @@ const CuratorVideoCardGrid = (props: CuratorVideoCardGridProps) => {
       <div className="m-4" key={item.uuid}>
         <VideoCard
           item={item}
-          subscription={undefined}
           withInteractions={props.showInteractions}
           onChange={() => props.refreshItem(item.uuid)}
         />

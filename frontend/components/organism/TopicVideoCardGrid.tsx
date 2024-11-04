@@ -34,7 +34,6 @@ const TopicVideoCardGrid = (props: TopicVideoCardGridProps) => {
           <div className="m-4" key={item.uuid}>
             <VideoCard
               item={item}
-              subscription={props.subscriptions.find((s) => s.uuid == item.subscription_uuid)}
               onChange={() => props.refreshItem(item.uuid)}
               withInteractions={props.displayInteractions}
             />

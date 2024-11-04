@@ -35,7 +35,7 @@ const SubscriptionVideoCardGrid = (props: SubscriptionVideoCardGridProps) => {
           <div className="m-4" key={item.uuid}>
             <VideoCard
               item={item}
-              subscription={undefined}
+              withSubscription={false}
               withInteractions={props.showInteractions}
               onChange={() => props.refreshItem(item.uuid)}
             />

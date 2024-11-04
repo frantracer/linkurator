@@ -5,6 +5,7 @@ import {SubscriptionItem} from "../entities/SubscriptionItem";
 import {replaceBaseUrl} from "../utilities/replaceBaseUrl";
 import {ITEMS_PER_PAGE} from "../utilities/constants";
 import {InteractionFilter} from "./common";
+import {isBeingScanned} from "../entities/Subscription";
 
 export type TopicResponse = {
   elements: Topic[];
@@ -237,6 +238,15 @@ const mapJsonToTopicItemsResponse = (json: Record<string, any>): TopicItemsRespo
         thumbnail: element.thumbnail,
         published_at: new Date(element.published_at),
         subscription_uuid: element.subscription_uuid,
+        subscription: {
+          uuid: element.subscription.uuid,
+          name: element.subscription.name,
+          url: element.subscription.url,
+          thumbnail: element.subscription.thumbnail,
+          topicUuid: element.subscription.topic_uuid,
+          followed: element.subscription.followed,
+          isBeingScanned: isBeingScanned(element.subscription.scanned_at),
+        },
         recommended: element.recommended,
         discouraged: element.discouraged,
         viewed: element.viewed,

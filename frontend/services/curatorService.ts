@@ -4,6 +4,7 @@ import {configuration} from "../configuration";
 import {Topic} from "../entities/Topic";
 import {SubscriptionItem} from "../entities/SubscriptionItem";
 import {replaceBaseUrl} from "../utilities/replaceBaseUrl";
+import {isBeingScanned} from "../entities/Subscription";
 
 export type CuratorItemsResponse = {
   elements: SubscriptionItem[];
@@ -142,6 +143,15 @@ const mapJsonToCuratorItemsResponse = (json: Record<string, any>): CuratorItemsR
         thumbnail: element.thumbnail,
         published_at: new Date(element.published_at),
         subscription_uuid: element.subscription_uuid,
+        subscription: {
+          uuid: element.subscription.uuid,
+          name: element.subscription.name,
+          url: element.subscription.url,
+          thumbnail: element.subscription.thumbnail,
+          topicUuid: element.subscription.topic_uuid,
+          followed: element.subscription.followed,
+          isBeingScanned: isBeingScanned(element.subscription.scanned_at),
+        },
         recommended: element.recommended,
         discouraged: element.discouraged,
         viewed: element.viewed,
