@@ -107,6 +107,7 @@ const Home: NextPage = () => {
     deleteTopic(topicId)
       .then(() => {
         refreshTopics()
+        router.push(paths.TOPICS)
       })
   }
 
