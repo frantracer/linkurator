@@ -119,10 +119,15 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
       <Sidebar>
         <FlexRow position={"between"}>
           <FlexItem grow={true}>
-              <FlexRow position={"start"}>
+            <FlexColumn gap={1}>
+              <ALink href={paths.HOME}>
+                <FlexRow position={"start"}>
                   <LogoImage/>
                   <LogoTitle/>
-              </FlexRow>
+                </FlexRow>
+              </ALink>
+              <ALink href={"https://x.com/frantracer"}><span>Un proyecto de <b>{"@frantracer"}</b></span></ALink>
+            </FlexColumn>
           </FlexItem>
           <FlexItem>
             {profile &&
@@ -154,7 +159,7 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
         {!profile && !profileIsLoading &&
             <FlexColumn>
                 <FlexRow>
-                  <p className={"text-center"}>Sigue el contenido que elijas y crea tus propias categorías</p>
+                    <p className={"text-center"}>Sigue el contenido que elijas y crea tus propias categorías</p>
                 </FlexRow>
                 <Button href={paths.REGISTER} fitContent={false}>{"Regístrate"}</Button>
                 <Divider text={"O"}/>
