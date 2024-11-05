@@ -106,7 +106,12 @@ const Home: NextPage = () => {
     })
   }
 
-  const handleDeleteTopic = (topicId: string) => {
+  const handleDeleteTopic = () => {
+    openModal(DeleteTopicConfirmationModalId)
+    setDropdownOpen(false);
+  }
+
+  const deleteTopicAction = (topicId: string) => {
     deleteTopic(topicId)
       .then(() => {
         refreshTopics()
@@ -155,7 +160,7 @@ const Home: NextPage = () => {
       )
       dropdownButtons.push(
         <Button key={"topics-delete-topic"} fitContent={false}
-                clickAction={() => openModal(DeleteTopicConfirmationModalId)}>
+                clickAction={handleDeleteTopic}>
           <TrashIcon/>
           Borrar
         </Button>
@@ -280,7 +285,7 @@ const Home: NextPage = () => {
           />
       }
       {selectedTopic &&
-        <DeleteTopicConfirmationModal onDeleteTopic={() => handleDeleteTopic(selectedTopic.uuid)}/>
+        <DeleteTopicConfirmationModal onDeleteTopic={() => deleteTopicAction(selectedTopic.uuid)}/>
       }
     </Drawer>
   );
