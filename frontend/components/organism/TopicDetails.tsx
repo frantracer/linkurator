@@ -1,5 +1,5 @@
 import React from "react";
-import {Subscription} from "../../entities/Subscription";
+import {Subscription, subscriptionSorting} from "../../entities/Subscription";
 import {Topic} from "../../entities/Topic";
 import Sidebar from "../atoms/Sidebar";
 import FlexRow from "../atoms/FlexRow";
@@ -52,7 +52,9 @@ const TopicDetails = (
     .filter(sub => topic?.subscriptions_ids.includes(sub.uuid))
     .sort((a, b) => a.name.length > b.name.length ? 1 : -1)
 
-  const subsTags = relatedSubs.map(subscription => (
+  const subsTags = relatedSubs
+    .sort(subscriptionSorting)
+    .map(subscription => (
     <FlexRow key={subscription.uuid} position={"start"}>
       <Checkbox checked={!filters.excludedSubscriptions.includes(subscription.uuid)}
                 onChange={(checked) => setFilters({
