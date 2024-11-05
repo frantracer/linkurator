@@ -41,6 +41,9 @@ import FlexItem from "../../../../components/atoms/FlexItem";
 import Dropdown from "../../../../components/atoms/Dropdown";
 import FlexColumn from "../../../../components/atoms/FlexColumn";
 import Miniature from "../../../../components/atoms/Miniature";
+import DeleteTopicConfirmationModal, {
+  DeleteTopicConfirmationModalId
+} from "../../../../components/organism/DeleteTopicConfirmationModal";
 
 const REFRESH_TOPICS_INTERVAL = 10000;
 
@@ -152,7 +155,7 @@ const Home: NextPage = () => {
       )
       dropdownButtons.push(
         <Button key={"topics-delete-topic"} fitContent={false}
-                clickAction={() => handleDeleteTopic(selectedTopic.uuid)}>
+                clickAction={() => openModal(DeleteTopicConfirmationModalId)}>
           <TrashIcon/>
           Borrar
         </Button>
@@ -275,6 +278,9 @@ const Home: NextPage = () => {
                           refreshTopicItems={refreshTopicItems}
                           refreshSubscriptions={refreshSubscriptions}
           />
+      }
+      {selectedTopic &&
+        <DeleteTopicConfirmationModal onDeleteTopic={() => handleDeleteTopic(selectedTopic.uuid)}/>
       }
     </Drawer>
   );
