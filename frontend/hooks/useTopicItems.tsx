@@ -33,7 +33,7 @@ const useTopicItems = (topicId: OptionalTopicId, filters: Filters): UseTopicItem
       if (pageParam === undefined) {
         const filterDuration = getFilterDuration(filters);
         return await getTopicItems(topicId, filterDuration.min, filterDuration.max, filters.textSearch,
-          mapFiltersToInteractionParams(filters));
+          mapFiltersToInteractionParams(filters), filters.excludedSubscriptions);
       }
       return await getTopicItemsFromUrl(pageParam);
     },

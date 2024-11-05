@@ -116,7 +116,8 @@ export async function getTopicItems(
   minDuration: number,
   maxDuration: number,
   searchText: string = "",
-  interactionsToInclude: InteractionFilter[] = []
+  interactionsToInclude: InteractionFilter[] = [],
+  excludedSubscriptions: string[] = []
 ): Promise<TopicItemsResponse> {
   let items: SubscriptionItem[] = []
   let nextPage = undefined;
@@ -125,8 +126,9 @@ export async function getTopicItems(
     const interactionsParam = interactionsToInclude.length > 0 ? "&include_interactions=" + interactionsToInclude.join(",") : "";
     const minDurationParam = "&min_duration=" + minDuration;
     const maxDurationParam = "&max_duration=" + maxDuration;
+    const excludedSubscriptionsParam = excludedSubscriptions.length > 0 ? "&excluded_subscriptions=" + excludedSubscriptions.join(",") : "";
     const url = configuration.TOPICS_URL + uuid + "/items?page_size=" + ITEMS_PER_PAGE + searchParam +
-      interactionsParam + minDurationParam + maxDurationParam;
+      interactionsParam + minDurationParam + maxDurationParam + excludedSubscriptionsParam;
     const {data, status} = await axios.get(url, {withCredentials: true});
     if (status === 200) {
       const response = mapJsonToTopicItemsResponse(data);

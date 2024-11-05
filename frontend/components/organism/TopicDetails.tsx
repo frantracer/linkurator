@@ -53,12 +53,21 @@ const TopicDetails = (
     .sort((a, b) => a.name.length > b.name.length ? 1 : -1)
 
   const subsTags = relatedSubs.map(subscription => (
-    <ALink key={subscription.uuid} href={paths.SUBSCRIPTIONS + "/" + subscription.uuid}>
-      <Tag>
-        <Miniature src={subscription.thumbnail} alt={subscription.name}/>
-        {subscription.name}
-      </Tag>
-    </ALink>
+    <FlexRow key={subscription.uuid} position={"start"}>
+      <Checkbox checked={!filters.excludedSubscriptions.includes(subscription.uuid)}
+                onChange={(checked) => setFilters({
+                  ...filters,
+                  excludedSubscriptions: checked ?
+                    filters.excludedSubscriptions.filter(uuid => uuid !== subscription.uuid) :
+                    filters.excludedSubscriptions.concat(subscription.uuid)
+                })}/>
+      <ALink href={paths.SUBSCRIPTIONS + "/" + subscription.uuid}>
+        <Tag>
+          <Miniature src={subscription.thumbnail} alt={subscription.name}/>
+          <span className={"text-wrap"}>{subscription.name}</span>
+        </Tag>
+      </ALink>
+    </FlexRow>
   ));
 
   const showCustomDuration = filters.durationGroup == "custom";

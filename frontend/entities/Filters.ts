@@ -12,6 +12,7 @@ export type Filters = {
   durationGroup: DurationGroup;
   minDuration: number;
   maxDuration: number;
+  excludedSubscriptions: string[];
 }
 
 export function getFilterDuration(filters: Filters): { min: number, max: number } {

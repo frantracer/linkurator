@@ -17,6 +17,7 @@ const defaultFilters: Filters = {
   durationGroup: "medium",
   minDuration: 0,
   maxDuration: 999999,
+  excludedSubscriptions: [],
 }
 
 const useFilters = (): UseFilters => {
