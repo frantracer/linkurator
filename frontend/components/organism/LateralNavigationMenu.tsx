@@ -126,7 +126,11 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
                   <LogoTitle/>
                 </FlexRow>
               </ALink>
-              <ALink href={"https://x.com/frantracer"}><span>Un proyecto de <b>{"@frantracer"}</b></span></ALink>
+              <FlexRow position={"center"}>
+                <ALink href={"https://x.com/frantracer"}>
+                  <span className={"text-xs"}>Un proyecto de <b>{"@frantracer"}</b></span>
+                </ALink>
+              </FlexRow>
             </FlexColumn>
           </FlexItem>
           <FlexItem>
