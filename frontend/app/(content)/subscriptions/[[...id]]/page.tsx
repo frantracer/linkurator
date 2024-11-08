@@ -19,7 +19,8 @@ import {
   FunnelIcon,
   MenuIcon,
   MinusIcon,
-  OptionsIcon, PencilIcon,
+  OptionsIcon,
+  PencilIcon,
   RefreshIcon
 } from "../../../../components/atoms/Icons";
 import SubscriptionDetails, {SUBSCRIPTION_DETAILS_ID} from "../../../../components/organism/SubscriptionDetails";
@@ -91,8 +92,13 @@ const SubscriptionsPage: NextPage = () => {
   }
 
   const handleAssignSubscription = () => {
-    openModal(AssignTopicModalId);
-    setDropdownOpen(false);
+    if (selectedSubscription && !selectedSubscription.followed) {
+      setError("Dale a Seguir antes de asignar la subscripción");
+    } else {
+      openModal(AssignTopicModalId);
+      setDropdownOpen(false);
+      setError(null);
+    }
   }
 
   const handleRefreshSubscription = (subscriptionId: string) => {
@@ -112,8 +118,9 @@ const SubscriptionsPage: NextPage = () => {
     unfollowSubscription(subscriptionId).then((resultOk) => {
       if (resultOk) {
         refreshSubscriptions();
+        setError(null);
       } else {
-        setError("No puedes cancelar una suscripción asociada a una categoría");
+        setError("No puedes dejar de seguir una subscripción asociada a una categoría");
       }
     })
   }
@@ -247,12 +254,14 @@ const SubscriptionsPage: NextPage = () => {
         </Dropdown>
       </TopTitle>
       {error &&
-          <ErrorBanner>
-              <span>{error}</span>
-              <div className={"hover:cursor-pointer"} onClick={() => setError(null)}>
-                  <CrossIcon/>
-              </div>
-          </ErrorBanner>
+          <FlexRow position={"center"}>
+              <ErrorBanner>
+                  <span>{error}</span>
+                  <div className={"hover:cursor-pointer"} onClick={() => setError(null)}>
+                      <CrossIcon/>
+                  </div>
+              </ErrorBanner>
+          </FlexRow>
       }
       {isSubscriptionError &&
           <div className="flex items-center justify-center h-screen">
