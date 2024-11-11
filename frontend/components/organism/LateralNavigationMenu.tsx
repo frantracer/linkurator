@@ -118,7 +118,7 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
     <Drawer id={LATERAL_NAVIGATION_MENU_ID}>
       <Sidebar>
         <FlexRow position={"between"}>
-          <FlexItem grow={true}>
+          <FlexRow>
             <FlexColumn gap={1}>
               <ALink href={paths.HOME}>
                 <FlexRow position={"start"}>
@@ -132,7 +132,7 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
                 </ALink>
               </FlexRow>
             </FlexColumn>
-          </FlexItem>
+          </FlexRow>
           <FlexItem>
             {profile &&
                 <ALink href={paths.PROFILE} onClick={() => {
@@ -161,14 +161,16 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
             </FlexRow>
         }
         {!profile && !profileIsLoading &&
-            <FlexColumn>
-                <FlexRow>
-                    <p className={"text-center"}>Sigue el contenido que elijas y crea tus propias categorías</p>
-                </FlexRow>
-                <Button href={paths.REGISTER} fitContent={false}>{"Regístrate"}</Button>
-                <Divider text={"O"}/>
-                <Button href={paths.LOGIN} fitContent={false}>{"Inicia sesión"}</Button>
-            </FlexColumn>
+            <FlexRow>
+                <FlexColumn>
+                    <FlexRow>
+                        <p className={"text-center"}>Sigue el contenido que elijas y crea tus propias categorías</p>
+                    </FlexRow>
+                    <Button href={paths.REGISTER} fitContent={false}>{"Regístrate"}</Button>
+                    <Divider text={"O"}/>
+                    <Button href={paths.LOGIN} fitContent={false}>{"Inicia sesión"}</Button>
+                </FlexColumn>
+            </FlexRow>
         }
         {profile &&
             <Menu isFullHeight={false}>
