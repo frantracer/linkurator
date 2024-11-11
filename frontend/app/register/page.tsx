@@ -18,6 +18,7 @@ import LinkuratorHeader from "../../components/organism/LinkuratorHeader";
 const Home: NextPage = () => {
   const router = useRouter();
 
+  const [showForm, setShowForm] = useState(false);
   const [errors, setErrors] = useState<string[]>([]);
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -77,55 +78,67 @@ const Home: NextPage = () => {
 
           <FlexColumn>
             <h2 className="text-3xl font-bold py-5">{"Nueva cuenta"}</h2>
-            <Box>
-              <FlexColumn>
-                <span className={"font-bold"}>{"Nombre"}</span>
-                <InputText placeholder={"Introduce tu nombre"} value={firstName}
-                           onChange={(value) => setFirstName(value)}/>
-                <span className={"font-bold"}>{"Apellidos"}</span>
-                <InputText placeholder={"Introduce tus apellidos"} value={lastName}
-                           onChange={(value) => setLastName(value)}/>
-                <span className={"font-bold"}>{"Email"}</span>
-                <InputText placeholder={"Introduce tu email"} value={email}
-                           onChange={(value) => setEmail(value)}/>
-                <span className={"font-bold"}>{"Nombre de usuario"}</span>
-                <InputText placeholder={"Introduce tu nombre de usuario"} value={username}
-                           onChange={(value) => setUsername(value)}/>
-                <span className={"font-bold"}>{"Contraseña"}</span>
-                <InputText placeholder={"Introduce tu contraseña"} value={password} inputType={InputType.PASSWORD}
-                           onChange={(value) => setPassword(value)}/>
-                <span className={"font-bold"}>{"Repite la contraseña"}</span>
-                <InputText placeholder={"Repite tu contraseña"} value={passwordRepeat} inputType={InputType.PASSWORD}
-                           onChange={(value) => setPasswordRepeat(value)}/>
-                <p>
-                  {"Al registrarte aceptas: "}
-                  <ALink href={configuration.TERMS_OF_SERVICE_URL}><b>{"Términos del servicio"}</b></ALink> {" y "}
-                  <ALink href={configuration.PRIVACY_POLICY_URL}><b>{"Política de privacidad"}</b></ALink>
-                </p>
-                <Button fitContent={false} clickAction={handleRegister}>
-                  {"Regístrate"}
+
+            <Button href={configuration.REGISTER_URL} fitContent={false}>
+              <GoogleIcon/>Regístrate con Google
+            </Button>
+
+            <Divider text={"O"}/>
+
+            {!showForm &&
+                <Button fitContent={false} clickAction={() => setShowForm(!showForm)}>
+                  {"Regístrate con email"}
                 </Button>
-                {errors.length > 0 &&
-                    <ErrorBanner>
-                        <FlexColumn>
-                          {errors.map((error) => {
-                            return <span key={error}>{"- " + error}</span>
-                          })}
-                        </FlexColumn>
-                    </ErrorBanner>
-                }
-              </FlexColumn>
-            </Box>
+            }
+            {showForm &&
+                <Box>
+                    <FlexColumn>
+                        <span className={"font-bold"}>{"Nombre"}</span>
+                        <InputText placeholder={"Introduce tu nombre"} value={firstName}
+                                   onChange={(value) => setFirstName(value)}/>
+                        <span className={"font-bold"}>{"Apellidos"}</span>
+                        <InputText placeholder={"Introduce tus apellidos"} value={lastName}
+                                   onChange={(value) => setLastName(value)}/>
+                        <span className={"font-bold"}>{"Email"}</span>
+                        <InputText placeholder={"Introduce tu email"} value={email}
+                                   onChange={(value) => setEmail(value)}/>
+                        <span className={"font-bold"}>{"Nombre de usuario"}</span>
+                        <InputText placeholder={"Introduce tu nombre de usuario"} value={username}
+                                   onChange={(value) => setUsername(value)}/>
+                        <span className={"font-bold"}>{"Contraseña"}</span>
+                        <InputText placeholder={"Introduce tu contraseña"} value={password}
+                                   inputType={InputType.PASSWORD}
+                                   onChange={(value) => setPassword(value)}/>
+                        <span className={"font-bold"}>{"Repite la contraseña"}</span>
+                        <InputText placeholder={"Repite tu contraseña"} value={passwordRepeat}
+                                   inputType={InputType.PASSWORD}
+                                   onChange={(value) => setPasswordRepeat(value)}/>
+                        <Button fitContent={false} clickAction={handleRegister}>
+                          {"Regístrate"}
+                        </Button>
+
+                      {errors.length > 0 &&
+                          <ErrorBanner>
+                              <FlexColumn>
+                                {errors.map((error) => {
+                                  return <span key={error}>{"- " + error}</span>
+                                })}
+                              </FlexColumn>
+                          </ErrorBanner>
+                      }
+                    </FlexColumn>
+                </Box>
+            }
+
+            <p>
+              {"Al registrarte aceptas: "}
+              <ALink href={configuration.TERMS_OF_SERVICE_URL}><b>{"Términos del servicio"}</b></ALink> {" y "}
+              <ALink href={configuration.PRIVACY_POLICY_URL}><b>{"Política de privacidad"}</b></ALink>
+            </p>
 
             <ALink href={paths.LOGIN}>
               <span>¿Ya tienes una cuenta? <b>Inicia sesión</b></span>
             </ALink>
-
-            <Divider text={"O"}/>
-
-            <Button href={configuration.REGISTER_URL} fitContent={false}>
-              <GoogleIcon/>Regístrate con Google (Beta)
-            </Button>
           </FlexColumn>
         </div>
       </div>

@@ -61,6 +61,10 @@ const Home: NextPage = () => {
 
           <FlexColumn>
             <h2 className="text-3xl font-bold py-5">{"Inicia sesión"}</h2>
+            <Button href={configuration.LOGIN_URL} fitContent={false}><GoogleIcon/>Accede con Google</Button>
+
+            <Divider text={"O"}/>
+
             <Box>
               <FlexColumn>
                 <span className={"font-bold"}>{"Email"}</span>
@@ -89,10 +93,6 @@ const Home: NextPage = () => {
             <ALink href={paths.FORGOT_PASSWORD}>
               {"¿Has olvidado tu contraseña?"}
             </ALink>
-
-            <Divider text={"O"}/>
-
-            <Button href={configuration.LOGIN_URL} fitContent={false}><GoogleIcon/>Accede con Google</Button>
 
             <div className={"h-4"}/>
 
