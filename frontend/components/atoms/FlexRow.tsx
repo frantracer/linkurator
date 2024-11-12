@@ -11,7 +11,7 @@ const FlexRow = (
   {
     position = "center",
     wrap = false,
-    hideOverflow = true,
+    hideOverflow = false,
     children
   } : FlexRowProps
 ) => {
@@ -26,7 +26,7 @@ const FlexRow = (
   const overflowClasses = hideOverflow ? "overflow-hidden" : "";
 
   return (
-    <div className={`flex flex-row gap-2 items-center min-h-fit w-full ${overflowClasses} ${wrapClasses} ${positionClasses[position]}`}>
+    <div className={`flex flex-row gap-2 items-center h-fit w-full ${overflowClasses} ${wrapClasses} ${positionClasses[position]}`}>
       {children}
     </div>
   )
