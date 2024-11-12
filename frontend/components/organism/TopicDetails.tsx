@@ -104,7 +104,7 @@ const TopicDetails = (
         <FlexItem grow={true}>
           <Button fitContent={false} clickAction={resetFilters}>
             <ArrowUturnLeft/>
-            {"Restaurar"}
+            {"Restaurar filtros"}
           </Button>
         </FlexItem>
       </FlexRow>
