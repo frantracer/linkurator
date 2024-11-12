@@ -126,11 +126,13 @@ const Home: NextPage = () => {
   }, [router, topicIdFromQuery, topics]);
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      refreshSubscriptions()
-    }, REFRESH_TOPICS_INTERVAL)
-    return () => clearInterval(interval)
-  }, [refreshSubscriptions]);
+    if (isTopicBeingScanned) {
+      const interval = setInterval(() => {
+        refreshSubscriptions()
+      }, REFRESH_TOPICS_INTERVAL)
+      return () => clearInterval(interval)
+    }
+  }, [isTopicBeingScanned, refreshSubscriptions]);
 
   useEffect(() => {
     if (filters.textSearch === debouncedFilters.textSearch) {
