@@ -214,7 +214,7 @@ const SubscriptionsPage: NextPage = () => {
           <FlexRow>
             <FlexItem>
               <FlexColumn gap={0} position={"center"}>
-                <FlexRow>
+                <FlexRow hideOverflow={true}>
                   {selectedSubscription &&
                       <Miniature src={selectedSubscription.thumbnail} alt={selectedSubscription.name}/>
                   }

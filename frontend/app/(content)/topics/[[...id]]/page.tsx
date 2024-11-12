@@ -206,7 +206,7 @@ const Home: NextPage = () => {
           <FlexRow>
             <FlexItem>
               <FlexColumn gap={0} position={"center"}>
-                <FlexRow>
+                <FlexRow hideOverflow={true}>
                   <h1 className="text-xl font-bold whitespace-nowrap truncate">
                     {topicName}
                   </h1>

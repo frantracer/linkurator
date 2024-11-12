@@ -139,7 +139,7 @@ const CuratorsPage: NextPage = () => {
           <FlexRow>
             <FlexItem>
               <FlexColumn gap={0} position={"center"}>
-                <FlexRow>
+                <FlexRow hideOverflow={true}>
                   <Miniature src={curatorThumbnail} alt={curatorName}/>
                   <h1 className="text-xl font-bold whitespace-nowrap truncate">
                     {curatorName}
