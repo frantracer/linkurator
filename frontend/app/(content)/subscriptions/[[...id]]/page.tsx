@@ -38,7 +38,7 @@ import {openModal} from "../../../../utilities/modalAction";
 import FlexColumn from "../../../../components/atoms/FlexColumn";
 import Miniature from "../../../../components/atoms/Miniature";
 
-const REFRESH_SUBSCRIPTIONS_INTERVAL = 30000;
+const REFRESH_SUBSCRIPTIONS_INTERVAL = 10000;
 
 const SubscriptionsPage: NextPage = () => {
   const router = useRouter()
