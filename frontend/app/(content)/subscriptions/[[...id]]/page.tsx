@@ -209,12 +209,12 @@ const SubscriptionsPage: NextPage = () => {
         <Button clickAction={() => showLateralMenu(LATERAL_NAVIGATION_MENU_ID)} showOnlyOnMobile={true}>
           <MenuIcon/>
         </Button>
-        <FlexRow>
+        <FlexRow hideOverflow={true}>
           <FlexItem grow={true}/>
           <FlexRow>
             <FlexItem>
               <FlexColumn gap={0} position={"center"}>
-                <FlexRow hideOverflow={true}>
+                <FlexRow>
                   {selectedSubscription &&
                       <Miniature src={selectedSubscription.thumbnail} alt={selectedSubscription.name}/>
                   }

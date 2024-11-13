@@ -201,12 +201,12 @@ const Home: NextPage = () => {
         <Button clickAction={() => showLateralMenu(LATERAL_NAVIGATION_MENU_ID)} showOnlyOnMobile={true}>
           <MenuIcon/>
         </Button>
-        <FlexRow>
+        <FlexRow hideOverflow={true}>
           <FlexItem grow={true}/>
           <FlexRow>
             <FlexItem>
               <FlexColumn gap={0} position={"center"}>
-                <FlexRow hideOverflow={true}>
+                <FlexRow>
                   <h1 className="text-xl font-bold whitespace-nowrap truncate">
                     {topicName}
                   </h1>
