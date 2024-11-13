@@ -46,7 +46,7 @@ const Home: NextPage = () => {
             <FlexColumn>
               <Divider/>
               <p>{"¿Tienes cuenta?"}</p>
-              <Button href={paths.LOGIN} primary={false} fitContent={false}>Inicia sesión</Button>
+              <Button href={paths.LOGIN} fitContent={false}>Inicia sesión</Button>
               <p>{"¿Todavía no tienes cuenta?"}</p>
               <Button href={paths.REGISTER} fitContent={false}>Regístrate</Button>
             </FlexColumn>
