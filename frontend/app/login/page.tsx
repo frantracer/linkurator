@@ -26,7 +26,7 @@ const RegisterErrorBanner = () => {
 
   return (
     <ErrorBanner>
-      {"Se requiere una cuenta y dar permisos para acceder a tu cuenta de youtube"}
+      {"Debes registrarte para acceder"}
     </ErrorBanner>
   );
 }
