@@ -1,4 +1,5 @@
 import {InfoCircleIcon} from "./Icons";
+import FlexRow from "./FlexRow";
 
 type InfoBannerProps = {
   children: React.ReactNode;
@@ -7,8 +8,10 @@ type InfoBannerProps = {
 export const InfoBanner = ({children}: InfoBannerProps) => {
   return (
     <div role="alert" className="alert alert-info w-fit p-2 m-1">
-      <InfoCircleIcon/>
-      {children}
+      <FlexRow>
+        <InfoCircleIcon/>
+        {children}
+      </FlexRow>
     </div>
   );
 }
