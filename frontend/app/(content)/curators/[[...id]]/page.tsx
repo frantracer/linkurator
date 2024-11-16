@@ -177,8 +177,7 @@ const CuratorsPage: NextPage = () => {
       </TopTitle>
       <FlexRow>
         <ThumbsUpFilledIcon/>
-        <h2 className={"text-xl"}>{"Recomendaciones de "}</h2>
-        <h2 className={"text-xl font-bold"}>{curatorName}</h2>
+        <h2 className={"text-xl text-balance"}>Recomendaciones</h2>
       </FlexRow>
       <CuratorVideoCardGrid
         refreshItem={refreshCuratorItem}
