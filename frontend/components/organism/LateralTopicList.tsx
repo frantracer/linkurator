@@ -5,13 +5,10 @@ import {paths} from "../../configuration";
 import {useRouter} from "next/navigation";
 import {scrollToDrawerTop} from "../../utilities/scrollToDrawerTop";
 import Menu from "../atoms/Menu";
-import Tag from "../atoms/Tag";
 import FlexRow from "../atoms/FlexRow";
-import FlexItem from "../atoms/FlexItem";
 import Miniature from "../atoms/Miniature";
 import {InfoBanner} from "../atoms/InfoBanner";
-
-export const LATERAL_TOPIC_MENU_ID = 'lateral-topic-menu';
+import FlexItem from "../atoms/FlexItem";
 
 type LateralTopicListProps = {
   topics: Topic[];
@@ -41,17 +38,12 @@ const LateralTopicList = (props: LateralTopicListProps) => {
         onClick={() => handleClick(topic.uuid)}
         selected={topic.uuid === props.selectedTopic?.uuid}
       >
-        <FlexRow>
-          {!topic.is_owner &&
-              <FlexItem>
-                  <Miniature src={topic.curator.avatar_url} alt={topic.curator.username}/>
-              </FlexItem>
-          }
-          <span className={"truncate"}>{topic.name}</span>
+        <FlexRow position={"start"}>
+          <span className={"text-wrap"}>{topic.name}</span>
           <FlexItem grow={true}/>
-          <FlexItem>
-            <Tag>{topic.subscriptions_ids.length}</Tag>
-          </FlexItem>
+          {!topic.is_owner &&
+              <Miniature src={topic.curator.avatar_url} alt={topic.curator.username}/>
+          }
         </FlexRow>
       </MenuItem>
     ))
