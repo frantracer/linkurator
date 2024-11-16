@@ -1,4 +1,5 @@
 import {ExclamationCircle} from "./Icons";
+import FlexRow from "./FlexRow";
 
 type ErrorBannerProps = {
   children: React.ReactNode;
@@ -7,8 +8,10 @@ type ErrorBannerProps = {
 export const ErrorBanner = ({children}: ErrorBannerProps) => {
   return (
     <div role="alert" className="alert alert-error w-fit p-2 m-1">
-      <ExclamationCircle/>
-      {children}
+      <FlexRow>
+        <ExclamationCircle/>
+        {children}
+      </FlexRow>
     </div>
   );
 }
