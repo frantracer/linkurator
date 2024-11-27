@@ -17,6 +17,7 @@ import {
 } from "../atoms/Icons";
 import ItemCardSkeleton from "./ItemCardSkeleton";
 import Miniature from "../atoms/Miniature";
+import {providerIconUrl} from "../../entities/Subscription";
 
 type VideoCardProps = {
   item: SubscriptionItem;
@@ -86,6 +87,7 @@ const VideoCard = (
           {withSubscription &&
               <div className="flex gap-x-2 items-center cursor-pointer">
                   <Miniature src={item.subscription.thumbnail} alt={item.subscription.name}/>
+                  <Miniature src={providerIconUrl(item.subscription.provider)} alt={item.subscription.provider}/>
                   <Link href={paths.SUBSCRIPTIONS + "/" + item.subscription.uuid}>{item.subscription.name}</Link>
               </div>
           }

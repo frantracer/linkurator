@@ -37,6 +37,7 @@ import Dropdown from "../../../../components/atoms/Dropdown";
 import {openModal} from "../../../../utilities/modalAction";
 import FlexColumn from "../../../../components/atoms/FlexColumn";
 import Miniature from "../../../../components/atoms/Miniature";
+import {providerIconUrl, providerPrettyName} from "../../../../entities/Subscription";
 
 const REFRESH_SUBSCRIPTIONS_INTERVAL = 10000;
 
@@ -223,27 +224,37 @@ const SubscriptionsPage: NextPage = () => {
                     {subscriptionName}
                   </h1>
                 </FlexRow>
-                {selectedSubscription && selectedSubscription.followed &&
-                    <Tag>
+                <FlexRow>
+                  {selectedSubscription &&
+                      <Tag>
+                          <Miniature src={providerIconUrl(selectedSubscription.provider)}
+                                     alt={selectedSubscription.provider}/>
+                        {providerPrettyName(selectedSubscription.provider)}
+                      </Tag>
+                  }
+                  {selectedSubscription && selectedSubscription.followed &&
+                      <Tag>
                         <span>
                           {"Siguiendo"}
                         </span>
-                        <div className="hover:cursor-pointer"
-                             onClick={() => handleUnfollowSubscription(selectedSubscription.uuid)}>
-                            <CrossIcon/>
-                        </div>
-                    </Tag>
-                }
-                {selectedSubscription && !selectedSubscription.followed && isUserLogged &&
-                    <Button primary={false} clickAction={() => handleFollowSubscription(selectedSubscription.uuid)}>
-                      {"Seguir"}
-                    </Button>
-                }
-                {selectedSubscription && !selectedSubscription.followed && !isUserLogged &&
-                    <Button primary={false} href={paths.LOGIN}>
-                      {"Seguir"}
-                    </Button>
-                }
+                          <div className="hover:cursor-pointer"
+                               onClick={() => handleUnfollowSubscription(selectedSubscription.uuid)}>
+                              <CrossIcon/>
+                          </div>
+                      </Tag>
+                  }
+                  {selectedSubscription && !selectedSubscription.followed && isUserLogged &&
+                      <Button primary={false}
+                              clickAction={() => handleFollowSubscription(selectedSubscription.uuid)}>
+                        {"Seguir"}
+                      </Button>
+                  }
+                  {selectedSubscription && !selectedSubscription.followed && !isUserLogged &&
+                      <Button primary={false} href={paths.LOGIN}>
+                        {"Seguir"}
+                      </Button>
+                  }
+                </FlexRow>
               </FlexColumn>
             </FlexItem>
           </FlexRow>

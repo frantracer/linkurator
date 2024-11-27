@@ -65,6 +65,7 @@ import {Tabs} from "../../components/atoms/Tabs";
 import Dropdown from "../../components/atoms/Dropdown";
 import FlexColumn from "../../components/atoms/FlexColumn";
 import FlexRow from "../../components/atoms/FlexRow";
+import {SubscriptionProvider} from "../../entities/Subscription";
 
 const SIDE_BAR_NAME = "main-menu";
 const ICONS_REF = "icons";
@@ -240,6 +241,7 @@ const CardSection = () => {
       name: "Subscription",
       url: "https://www.linkurator.com",
       thumbnail: "/logo_v1_medium.png",
+      provider: 'youtube' as SubscriptionProvider,
       isBeingScanned: false,
       followed: true,
       topicUuid: "98fbbe67-af08-4954-8249-15ea99e95611"

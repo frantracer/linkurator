@@ -246,6 +246,7 @@ const mapJsonToTopicItemsResponse = (json: Record<string, any>): TopicItemsRespo
           url: element.subscription.url,
           thumbnail: element.subscription.thumbnail,
           topicUuid: element.subscription.topic_uuid,
+          provider: element.subscription.provider,
           followed: element.subscription.followed,
           isBeingScanned: isBeingScanned(element.subscription.scanned_at),
         },

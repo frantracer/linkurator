@@ -1,5 +1,5 @@
 import {MenuItem} from "../atoms/MenuItem";
-import {Subscription} from "../../entities/Subscription";
+import {providerIconUrl, Subscription, subscriptionFiltering, subscriptionSorting} from "../../entities/Subscription";
 import {useRouter} from "next/navigation";
 import {paths} from "../../configuration";
 import {scrollToDrawerTop} from "../../utilities/scrollToDrawerTop";
@@ -9,8 +9,7 @@ import {Topic} from "../../entities/Topic";
 import Miniature from "../atoms/Miniature";
 import {InfoBanner} from "../atoms/InfoBanner";
 import FlexRow from "../atoms/FlexRow";
-
-export const LATERAL_SUBSCRIPTION_MENU_ID = 'lateral-subscription-menu';
+import Collapse from "../atoms/Collapse";
 
 type LateralItemListProps = {
   subscriptions: Subscription[];
@@ -31,10 +30,17 @@ const LateralSubscriptionList = (props: LateralItemListProps) => {
     }
   }
 
-  const items = props.subscriptions
-    .filter((subscription) => {
-      return subscription.name.toLowerCase().includes(props.searchValue.toLowerCase());
-    })
+  const youtubeSubs = props.subscriptions
+    .filter((subscription) => subscription.provider === "youtube")
+    .filter((subscription) => subscriptionFiltering(subscription, props.searchValue))
+    .sort(subscriptionSorting)
+
+  const spotifySubs = props.subscriptions
+    .filter((subscription) => subscription.provider === "spotify")
+    .filter((subscription) => subscriptionFiltering(subscription, props.searchValue))
+    .sort(subscriptionSorting)
+
+  const youtubeItems = youtubeSubs
     .map((subscription) => (
       <MenuItem
         key={subscription.uuid}
@@ -43,7 +49,21 @@ const LateralSubscriptionList = (props: LateralItemListProps) => {
       >
         <FlexRow>
           <Miniature src={subscription.thumbnail} alt={subscription.name}/>
-          <div className="whitespace-nowrap overflow-auto truncate w-full">{subscription.name}</div>
+          <div className="whitespace-nowrap overflow-auto text-wrap w-full">{subscription.name}</div>
+        </FlexRow>
+      </MenuItem>
+    ))
+
+  const spotifyItems = spotifySubs
+    .map((subscription) => (
+      <MenuItem
+        key={subscription.uuid}
+        onClick={() => handleClick(subscription.uuid)}
+        selected={subscription.uuid === props.selectedSubscription?.uuid}
+      >
+        <FlexRow>
+          <Miniature src={subscription.thumbnail} alt={subscription.name}/>
+          <div className="whitespace-nowrap overflow-auto text-wrap w-full">{subscription.name}</div>
         </FlexRow>
       </MenuItem>
     ))
@@ -54,9 +74,27 @@ const LateralSubscriptionList = (props: LateralItemListProps) => {
     </InfoBanner>
   )
 
+  const youtubeTitle = (
+    <FlexRow position={"start"}>
+      <Miniature src={providerIconUrl("youtube")} alt={"youtube logo"}/>
+      <span>Youtube</span>
+    </FlexRow>)
+
+  const spotifyTitle = (
+    <FlexRow position={"start"}>
+      <Miniature src={providerIconUrl("spotify")} alt={"spotify logo"}/>
+      <span>Spotify</span>
+    </FlexRow>)
+
   return (
     <Menu>
-      {items.length > 0 ? items : noItems}
+      {youtubeItems.length > 0 &&
+          <Collapse isOpen={true} title={youtubeTitle} content={youtubeItems}/>
+      }
+      {spotifyItems.length > 0 &&
+          <Collapse isOpen={true} title={spotifyTitle} content={spotifyItems}/>
+      }
+      {youtubeItems.length === 0 && spotifyItems.length === 0 && noItems}
     </Menu>
   )
 }

@@ -17,6 +17,7 @@ import {followSubscription, unfollowSubscription} from "../../services/subscript
 import {ErrorBanner} from "../atoms/ErrorBanner";
 import {closeModal} from "../../utilities/modalAction";
 import FlexItem from "../atoms/FlexItem";
+import {providerIconUrl} from "../../entities/Subscription";
 
 export const NewSubscriptionModalId = "new-subscription-modal";
 
@@ -69,7 +70,8 @@ const NewSubscriptionModal = (props: NewSubscritionModalProps) => {
                  onClick={() => closeModal(NewSubscriptionModalId)}>
             <FlexItem grow={true}>
               <FlexRow position={"start"}>
-                <Miniature src={subscription.thumbnail} alt={subscription.name}/>
+                <Miniature src={subscription.thumbnail} alt={subscription.name}
+                           badgeImage={providerIconUrl(subscription.provider)}/>
                 <span>{subscription.name}</span>
               </FlexRow>
             </FlexItem>

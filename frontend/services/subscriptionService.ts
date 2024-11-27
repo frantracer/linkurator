@@ -32,6 +32,7 @@ const mapJsonItemToSubscriptionItem = (json: Record<string, any>): SubscriptionI
       name: json.subscription.name,
       url: json.subscription.url,
       thumbnail: json.subscription.thumbnail,
+      provider: json.subscription.provider,
       topicUuid: json.subscription.topic_uuid,
       followed: json.subscription.followed,
       isBeingScanned: isBeingScanned(json.subscription.scanned_at),
@@ -61,6 +62,7 @@ const mapJsonToSubscriptionResponse = (json: Record<string, any>): SubscriptionR
         name: element.name,
         url: element.url,
         thumbnail: element.thumbnail,
+        provider: element.provider,
         topicUuid: element.topic_uuid,
         followed: element.followed,
         isBeingScanned: isBeingScanned(element.scanned_at),
@@ -104,6 +106,7 @@ export async function getSubscription(uuid: string): Promise<Subscription | unde
         name: response.data.name,
         url: response.data.url,
         topicUuid: response.data.topic_uuid,
+        provider: response.data.provider,
         followed: response.data.followed,
         thumbnail: response.data.thumbnail,
         isBeingScanned: Date.parse(response.data.scanned_at) < 946684800000, // It was scanned before 2000-01-01
