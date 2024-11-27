@@ -86,8 +86,8 @@ const VideoCard = (
           </h2>
           {withSubscription &&
               <div className="flex gap-x-2 items-center cursor-pointer">
-                  <Miniature src={item.subscription.thumbnail} alt={item.subscription.name}/>
                   <Miniature src={providerIconUrl(item.subscription.provider)} alt={item.subscription.provider}/>
+                  <Miniature src={item.subscription.thumbnail} alt={item.subscription.name}/>
                   <Link href={paths.SUBSCRIPTIONS + "/" + item.subscription.uuid}>{item.subscription.name}</Link>
               </div>
           }
