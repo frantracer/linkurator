@@ -148,6 +148,7 @@ const mapJsonToCuratorItemsResponse = (json: Record<string, any>): CuratorItemsR
           name: element.subscription.name,
           url: element.subscription.url,
           thumbnail: element.subscription.thumbnail,
+          provider: element.subscription.provider,
           topicUuid: element.subscription.topic_uuid,
           followed: element.subscription.followed,
           isBeingScanned: isBeingScanned(element.subscription.scanned_at),
