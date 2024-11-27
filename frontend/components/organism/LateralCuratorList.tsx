@@ -1,6 +1,6 @@
 import {MenuItem} from "../atoms/MenuItem";
 import React from "react";
-import {Curator} from "../../entities/Curators";
+import {Curator, curatorSorting} from "../../entities/Curators";
 import {paths} from "../../configuration";
 import {useRouter} from "next/navigation";
 import {scrollToDrawerTop} from "../../utilities/scrollToDrawerTop";
@@ -31,6 +31,7 @@ const LateralCuratorList = (props: LateralCuratorListProps) => {
     .filter((curator) => {
       return curator.username.toLowerCase().includes(props.searchValue.toLowerCase());
     })
+    .sort(curatorSorting)
     .map((curator) => (
       <MenuItem
         key={curator.id}
