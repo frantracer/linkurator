@@ -18,6 +18,7 @@ import {
 import ItemCardSkeleton from "./ItemCardSkeleton";
 import Miniature from "../atoms/Miniature";
 import {providerIconUrl} from "../../entities/Subscription";
+import {useState} from "react";
 
 type VideoCardProps = {
   item: SubscriptionItem;
@@ -59,8 +60,19 @@ const VideoCard = (
     onChangeSwapButton = defaultOnChangeSwapButton
   }: VideoCardProps) => {
   const {ref, inView} = useInView({threshold: 0});
+  const [isValidThumbnail, setIsValidThumbnail] = useState(true);
 
-  if (!inView) {
+  const handleLoad = (event: React.SyntheticEvent<HTMLImageElement, Event>): void => {
+    const {naturalWidth, naturalHeight} = event.currentTarget;
+    // 120x90 is the default size of the thumbnail when the video for YouTube is not available
+    if (item.subscription.provider === "youtube" && naturalWidth === 120 && naturalHeight === 90) {
+      setIsValidThumbnail(false);
+    }
+  };
+
+  if (!isValidThumbnail) {
+    return (<></>)
+  } else if (!inView) {
     return (
       <div ref={ref}>
         <ItemCardSkeleton/>
@@ -73,7 +85,9 @@ const VideoCard = (
           <img className="h-full"
                src={item.thumbnail}
                alt={item.name}
-               onClick={() => window.open(item.url, "_blank")}/>
+               onClick={() => window.open(item.url, "_blank")}
+               onLoad={handleLoad}
+          />
           {item.duration != undefined &&
               <span className="absolute top-0 right-0 m-1 p-1 bg-black bg-opacity-90 rounded">
                 <p className="text-white">{convert_seconds_to_hh_mm_ss(item.duration)}</p>
