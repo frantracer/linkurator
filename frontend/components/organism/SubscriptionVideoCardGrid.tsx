@@ -8,6 +8,7 @@ import {ITEMS_PER_PAGE} from "../../utilities/constants";
 import FlexRow from "../atoms/FlexRow";
 import {Spinner} from "../atoms/Spinner";
 import {InfoBanner} from "../atoms/InfoBanner";
+import useSet from "../../hooks/useSet";
 
 type SubscriptionVideoCardGridProps = {
   refreshItem: (itemId: string) => void,
@@ -23,14 +24,14 @@ type SubscriptionVideoCardGridProps = {
 }
 
 const SubscriptionVideoCardGrid = (props: SubscriptionVideoCardGridProps) => {
-
+  const {set: invalidCards, add: addInvalidCard} = useSet<string>();
   const cards = [];
   let content = <div></div>
 
   if (props.subscription) {
     for (let i = 0; i < props.items.length; i++) {
       const item = props.items[i];
-      if (isItemShown(item, props.filters)) {
+      if (isItemShown(item, props.filters) && !invalidCards.has(item.uuid)) {
         cards.push(
           <div className="m-4" key={item.uuid}>
             <VideoCard
@@ -38,6 +39,7 @@ const SubscriptionVideoCardGrid = (props: SubscriptionVideoCardGridProps) => {
               withSubscription={false}
               withInteractions={props.showInteractions}
               onChange={() => props.refreshItem(item.uuid)}
+              addInvalidCard={addInvalidCard}
             />
           </div>
         );

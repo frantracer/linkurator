@@ -18,10 +18,10 @@ import {
 import ItemCardSkeleton from "./ItemCardSkeleton";
 import Miniature from "../atoms/Miniature";
 import {providerIconUrl} from "../../entities/Subscription";
-import {useState} from "react";
 
 type VideoCardProps = {
   item: SubscriptionItem;
+  addInvalidCard?: (uuid: string) => void;
   withSubscription?: boolean;
   withInteractions?: boolean;
   onChange?: () => void;
@@ -54,25 +54,24 @@ async function defaultOnChangeSwapButton(itemUuid: string, interactionType: Inte
 const VideoCard = (
   {
     item,
+    addInvalidCard = undefined,
     withSubscription = true,
     withInteractions = true,
     onChange = undefined,
     onChangeSwapButton = defaultOnChangeSwapButton
   }: VideoCardProps) => {
   const {ref, inView} = useInView({threshold: 0});
-  const [isValidThumbnail, setIsValidThumbnail] = useState(true);
 
   const handleLoad = (event: React.SyntheticEvent<HTMLImageElement, Event>): void => {
     const {naturalWidth, naturalHeight} = event.currentTarget;
     // 120x90 is the default size of the thumbnail when the video for YouTube is not available
-    if (item.subscription.provider === "youtube" && naturalWidth === 120 && naturalHeight === 90) {
-      setIsValidThumbnail(false);
+    if (addInvalidCard && item.subscription.provider === "youtube" &&
+      naturalWidth === 120 && naturalHeight === 90) {
+      addInvalidCard(item.uuid);
     }
   };
 
-  if (!isValidThumbnail) {
-    return (<></>)
-  } else if (!inView) {
+  if (!inView) {
     return (
       <div ref={ref}>
         <ItemCardSkeleton/>

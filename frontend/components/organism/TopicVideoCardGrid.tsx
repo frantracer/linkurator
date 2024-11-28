@@ -8,6 +8,7 @@ import {ITEMS_PER_PAGE} from "../../utilities/constants";
 import FlexRow from "../atoms/FlexRow";
 import {Spinner} from "../atoms/Spinner";
 import {InfoBanner} from "../atoms/InfoBanner";
+import useSet from "../../hooks/useSet";
 
 type TopicVideoCardGridProps = {
   fetchMoreItems: () => void,
@@ -24,18 +25,20 @@ type TopicVideoCardGridProps = {
 }
 
 const TopicVideoCardGrid = (props: TopicVideoCardGridProps) => {
+  const {set: invalidCards, add: addInvalidCard} = useSet<string>();
   const cards = [];
 
   if (props.topic) {
     for (let i = 0; i < props.items.length; i++) {
       const item = props.items[i];
-      if (isItemShown(item, props.filters)) {
+      if (isItemShown(item, props.filters) && !invalidCards.has(item.uuid)) {
         cards.push(
           <div className="m-4" key={item.uuid}>
             <VideoCard
               item={item}
               onChange={() => props.refreshItem(item.uuid)}
               withInteractions={props.displayInteractions}
+              addInvalidCard={addInvalidCard}
             />
           </div>
         );

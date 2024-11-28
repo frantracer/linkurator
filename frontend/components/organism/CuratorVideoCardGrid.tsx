@@ -5,6 +5,7 @@ import {ITEMS_PER_PAGE} from "../../utilities/constants";
 import FlexRow from "../atoms/FlexRow";
 import {Spinner} from "../atoms/Spinner";
 import {InfoBanner} from "../atoms/InfoBanner";
+import useSet from "../../hooks/useSet";
 
 type CuratorVideoCardGridProps = {
   refreshItem: (itemId: string) => void,
@@ -17,20 +18,23 @@ type CuratorVideoCardGridProps = {
 }
 
 const CuratorVideoCardGrid = (props: CuratorVideoCardGridProps) => {
-
+  const {set: invalidCards, add: addInvalidCard} = useSet<string>();
   const cards = [];
 
   for (let i = 0; i < props.items.length; i++) {
     const item = props.items[i];
-    cards.push(
-      <div className="m-4" key={item.uuid}>
-        <VideoCard
-          item={item}
-          withInteractions={props.showInteractions}
-          onChange={() => props.refreshItem(item.uuid)}
-        />
-      </div>
-    );
+    if (!invalidCards.has(item.uuid)) {
+      cards.push(
+        <div className="m-4" key={item.uuid}>
+          <VideoCard
+            item={item}
+            withInteractions={props.showInteractions}
+            onChange={() => props.refreshItem(item.uuid)}
+            addInvalidCard={addInvalidCard}
+          />
+        </div>
+      );
+    }
   }
 
   if (!props.isFinished && !props.isLoading && cards.length < ITEMS_PER_PAGE) {
