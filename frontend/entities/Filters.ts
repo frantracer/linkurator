@@ -18,9 +18,9 @@ export type Filters = {
 export function getFilterDuration(filters: Filters): { min: number, max: number } {
   switch (filters.durationGroup) {
     case "short":
-      return {min: 0, max: 62};
+      return {min: 0, max: 119};
     case "medium":
-      return {min: 63, max: 3599};
+      return {min: 120, max: 3599};
     case "long":
       return {min: 3600, max: 999999};
     case "all":
