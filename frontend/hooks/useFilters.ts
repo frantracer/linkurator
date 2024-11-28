@@ -14,8 +14,8 @@ const defaultFilters: Filters = {
   displayDiscouraged: false,
   displayRecommended: false,
   displayWithoutInteraction: true,
-  durationGroup: "all",
-  minDuration: 0,
+  durationGroup: "custom",
+  minDuration: 61,
   maxDuration: 999999,
   excludedSubscriptions: [],
 }
