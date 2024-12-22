@@ -199,7 +199,7 @@ const NewTopicModal = (props: NewTopicModalProps) => {
               <FlexRow hideOverflow={false} position={"between"}>
                   <Dropdown open={dropdownOpen} onChange={(open) => setDropdownOpen(open)}
                             start={true} bottom={false}
-                            button={<FlexRow><span>Selecciona varias subscripciones</span></FlexRow>}>
+                            button={<FlexRow><span>Agregar o quitar subscripciones</span></FlexRow>}>
                       <div className={"h-60"}>
                           <Menu>
                             {subscriptionsMenuItems.length === 0 &&
