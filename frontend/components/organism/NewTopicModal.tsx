@@ -1,33 +1,33 @@
-import React, {useState} from "react";
-import {createTopic, followTopic, unfollowTopic} from "../../services/topicService";
-import {v4 as uuidv4} from 'uuid';
-import useSubscriptionsToAdd from "../../hooks/useSubscriptionsToAdd";
-import {Subscription, subscriptionSorting} from "../../entities/Subscription";
-import Button from "../atoms/Button";
-import InputText from "../atoms/InputText";
-import Modal from "../atoms/Modal";
-import {closeModal} from "../../utilities/modalAction";
-import {AddIcon, CheckCircleIcon, CircleIcon, MinusIcon} from "../atoms/Icons";
-import Box from "../atoms/Box";
-import FlexRow from "../atoms/FlexRow";
-import FlexColumn from "../atoms/FlexColumn";
-import {Tabs} from "../atoms/Tabs";
-import SearchBar from "../molecules/SearchBar";
-import Tag from "../atoms/Tag";
-import Menu from "../atoms/Menu";
-import {MenuItem} from "../atoms/MenuItem";
-import {ErrorBanner} from "../atoms/ErrorBanner";
-import {useDebounce} from "../../hooks/useDebounce";
-import {useRouter} from "next/navigation";
-import {paths} from "../../configuration";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { v4 as uuidv4 } from 'uuid';
+import { paths } from "../../configuration";
+import { Subscription, subscriptionSorting } from "../../entities/Subscription";
+import { Topic } from "../../entities/Topic";
+import { useDebounce } from "../../hooks/useDebounce";
 import useFindTopics from "../../hooks/useFindTopics";
 import useProfile from "../../hooks/useProfile";
-import FlexItem from "../atoms/FlexItem";
-import Miniature from "../atoms/Miniature";
-import Collapse from "../atoms/Collapse";
-import {Topic} from "../../entities/Topic";
-import Dropdown from "../atoms/Dropdown";
+import useSubscriptionsToAdd from "../../hooks/useSubscriptionsToAdd";
+import { createTopic, followTopic, unfollowTopic } from "../../services/topicService";
+import { closeModal } from "../../utilities/modalAction";
 import ALink from "../atoms/ALink";
+import Box from "../atoms/Box";
+import Button from "../atoms/Button";
+import Collapse from "../atoms/Collapse";
+import Dropdown from "../atoms/Dropdown";
+import { ErrorBanner } from "../atoms/ErrorBanner";
+import FlexColumn from "../atoms/FlexColumn";
+import FlexItem from "../atoms/FlexItem";
+import FlexRow from "../atoms/FlexRow";
+import { AddIcon, CheckCircleIcon, CircleIcon, MinusIcon } from "../atoms/Icons";
+import InputText from "../atoms/InputText";
+import Menu from "../atoms/Menu";
+import { MenuItem } from "../atoms/MenuItem";
+import Miniature from "../atoms/Miniature";
+import Modal from "../atoms/Modal";
+import { Tabs } from "../atoms/Tabs";
+import Tag from "../atoms/Tag";
+import SearchBar from "../molecules/SearchBar";
 
 const NEW_TOPIC_TAB = "Nueva categoría"
 const FOLLOW_TOPIC_TAB = "Seguir categoría"
@@ -59,7 +59,6 @@ const NewTopicModal = (props: NewTopicModalProps) => {
 
   const tabsText = [NEW_TOPIC_TAB, FOLLOW_TOPIC_TAB];
   const [selectedTab, setSelectedTab] = useState(NEW_TOPIC_TAB);
-  const [dropdownOpen, setDropdownOpen] = useState(false);
   const [searchValue, setSearchValue] = useState("");
 
   const [topicSearch, setTopicSearch] = useState("");
@@ -197,8 +196,7 @@ const NewTopicModal = (props: NewTopicModalProps) => {
                   </div>
               </Box>
               <FlexRow hideOverflow={false} position={"between"}>
-                  <Dropdown open={dropdownOpen} onChange={(open) => setDropdownOpen(open)}
-                            start={true} bottom={false}
+                  <Dropdown start={true} bottom={false}
                             button={<FlexRow><span>Agregar o quitar subscripciones</span></FlexRow>}>
                       <div className={"h-60"}>
                           <Menu>

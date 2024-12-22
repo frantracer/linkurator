@@ -39,7 +39,6 @@ const CuratorsPage: NextPage = () => {
 
   const curatorName: string = pathParams.id ? (Array.isArray(pathParams.id) ? pathParams.id[0] : pathParams.id) : "";
 
-  const [dropdownOpen, setDropdownOpen] = useState(false);
   const {filters, setFilters, resetFilters} = useFilters();
   const [debouncedFilters, setDebouncedFilters] = useState(filters);
   const {profile, profileIsLoading} = useProfile();
@@ -71,7 +70,6 @@ const CuratorsPage: NextPage = () => {
 
   const handleFilter = () => {
     showLateralMenu(CURATOR_DETAILS_ID);
-    setDropdownOpen(false);
   }
 
   const handleFollowCurator = (curatorId: string) => {
@@ -170,8 +168,7 @@ const CuratorsPage: NextPage = () => {
           </FlexRow>
           <FlexItem grow={true}/>
         </FlexRow>
-        <Dropdown start={false} bottom={true} button={<OptionsIcon/>} open={dropdownOpen}
-                  onChange={(open) => setDropdownOpen(open)}>
+        <Dropdown start={false} bottom={true} button={<OptionsIcon/>}>
           {dropdownButtons}
         </Dropdown>
       </TopTitle>

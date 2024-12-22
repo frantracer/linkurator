@@ -1,25 +1,25 @@
-import React, {useState} from "react";
-import {updateTopic} from "../../services/topicService";
+import { useState } from "react";
+import { paths } from "../../configuration";
+import { Subscription } from "../../entities/Subscription";
+import { Topic } from "../../entities/Topic";
 import useSubscriptionsToAdd from "../../hooks/useSubscriptionsToAdd";
-import {Subscription} from "../../entities/Subscription";
-import Button from "../atoms/Button";
-import InputText from "../atoms/InputText";
-import Modal from "../atoms/Modal";
-import {closeModal} from "../../utilities/modalAction";
+import { updateTopic } from "../../services/topicService";
+import { closeModal } from "../../utilities/modalAction";
+import ALink from "../atoms/ALink";
 import Box from "../atoms/Box";
-import FlexRow from "../atoms/FlexRow";
-import FlexColumn from "../atoms/FlexColumn";
-import {Topic} from "../../entities/Topic";
+import Button from "../atoms/Button";
 import Dropdown from "../atoms/Dropdown";
-import {MenuItem} from "../atoms/MenuItem";
-import Menu from "../atoms/Menu";
-import Miniature from "../atoms/Miniature";
+import FlexColumn from "../atoms/FlexColumn";
 import FlexItem from "../atoms/FlexItem";
-import {CheckCircleIcon, CircleIcon} from "../atoms/Icons";
+import FlexRow from "../atoms/FlexRow";
+import { CheckCircleIcon, CircleIcon } from "../atoms/Icons";
+import InputText from "../atoms/InputText";
+import Menu from "../atoms/Menu";
+import { MenuItem } from "../atoms/MenuItem";
+import Miniature from "../atoms/Miniature";
+import Modal from "../atoms/Modal";
 import Tag from "../atoms/Tag";
 import SearchBar from "../molecules/SearchBar";
-import ALink from "../atoms/ALink";
-import {paths} from "../../configuration";
 
 export const EditTopicModalId = "edit-topic-modal";
 
@@ -32,7 +32,6 @@ type EditTopicModalProps = {
 }
 
 const EditTopicModal = (props: EditTopicModalProps) => {
-  const [dropdownOpen, setDropdownOpen] = useState(false);
   const [searchValue, setSearchValue] = useState("");
   const [newTopicName, setNewTopicName] = useState(props.topic.name);
   const {
@@ -107,8 +106,7 @@ const EditTopicModal = (props: EditTopicModalProps) => {
           </div>
         </Box>
         <FlexRow hideOverflow={false} position={"between"}>
-          <Dropdown open={dropdownOpen} onChange={(open) => setDropdownOpen(open)}
-                    start={true} bottom={false}
+          <Dropdown start={true} bottom={false}
                     button={<FlexRow><span>Agregar o quitar subscripciones</span></FlexRow>}>
             <div className={"h-60"}>
               <Menu>

@@ -1,23 +1,23 @@
-import React, {useState} from "react";
-import {assignSubscriptionToTopic, createTopic, unassignSubscriptionToTopic} from "../../services/topicService";
-import {Topic, topicSorting} from "../../entities/Topic";
-import {Subscription} from "../../entities/Subscription";
-import {v4 as uuidv4} from 'uuid';
-import Modal from "../atoms/Modal";
-import InputText from "../atoms/InputText";
-import FlexRow from "../atoms/FlexRow";
-import Button from "../atoms/Button";
-import Box from "../atoms/Box";
-import FlexColumn from "../atoms/FlexColumn";
-import {CheckCircleIcon, CircleIcon} from "../atoms/Icons";
-import {closeModal} from "../../utilities/modalAction";
-import {MenuItem} from "../atoms/MenuItem";
-import FlexItem from "../atoms/FlexItem";
-import Dropdown from "../atoms/Dropdown";
-import Menu from "../atoms/Menu";
-import Tag from "../atoms/Tag";
+import { useState } from "react";
+import { v4 as uuidv4 } from 'uuid';
+import { paths } from "../../configuration";
+import { Subscription } from "../../entities/Subscription";
+import { Topic, topicSorting } from "../../entities/Topic";
+import { assignSubscriptionToTopic, createTopic, unassignSubscriptionToTopic } from "../../services/topicService";
+import { closeModal } from "../../utilities/modalAction";
 import ALink from "../atoms/ALink";
-import {paths} from "../../configuration";
+import Box from "../atoms/Box";
+import Button from "../atoms/Button";
+import Dropdown from "../atoms/Dropdown";
+import FlexColumn from "../atoms/FlexColumn";
+import FlexItem from "../atoms/FlexItem";
+import FlexRow from "../atoms/FlexRow";
+import { CheckCircleIcon, CircleIcon } from "../atoms/Icons";
+import InputText from "../atoms/InputText";
+import Menu from "../atoms/Menu";
+import { MenuItem } from "../atoms/MenuItem";
+import Modal from "../atoms/Modal";
+import Tag from "../atoms/Tag";
 import SearchBar from "../molecules/SearchBar";
 
 export const AssignTopicModalId = "assign-topic-modal";
@@ -30,7 +30,6 @@ type AssignTopicModalProps = {
 
 const AssignTopicModal = (props: AssignTopicModalProps) => {
   const [topicName, setTopicName] = useState<string>("");
-  const [dropdownOpen, setDropdownOpen] = useState(false);
   const [searchValue, setSearchValue] = useState("");
 
   function assignButtonAction(topicId: string) {
@@ -122,8 +121,7 @@ const AssignTopicModal = (props: AssignTopicModalProps) => {
           </div>
         </Box>
         <FlexRow hideOverflow={false} position={"between"}>
-          <Dropdown open={dropdownOpen} onChange={(open) => setDropdownOpen(open)}
-                    start={true} bottom={false}
+          <Dropdown start={true} bottom={false}
                     button={<FlexRow><span>{"Selecciona categorías existentes"}</span></FlexRow>}>
             <div className={"h-60"}>
               <Menu>

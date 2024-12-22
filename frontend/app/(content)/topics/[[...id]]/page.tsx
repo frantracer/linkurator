@@ -53,7 +53,6 @@ const Home: NextPage = () => {
 
   const topicIdFromQuery: string | undefined = pathParams.id ? (Array.isArray(pathParams.id) ? pathParams.id[0] : pathParams.id) : undefined;
 
-  const [dropdownOpen, setDropdownOpen] = useState(false);
   const {filters, setFilters, resetFilters} = useFilters();
   const [debouncedFilters, setDebouncedFilters] = useState(filters);
   const {profile, profileIsLoading} = useProfile();
@@ -86,12 +85,10 @@ const Home: NextPage = () => {
 
   const handleShowFilters = () => {
     showLateralMenu(TOPIC_DETAILS_ID);
-    setDropdownOpen(false);
   }
 
   const handleEditTopic = () => {
     openModal(EditTopicModalId);
-    setDropdownOpen(false);
   }
 
   const handleFollowTopic = (topicId: string) => {
@@ -108,7 +105,6 @@ const Home: NextPage = () => {
 
   const handleDeleteTopic = () => {
     openModal(DeleteTopicConfirmationModalId)
-    setDropdownOpen(false);
   }
 
   const deleteTopicAction = (topicId: string) => {
@@ -250,7 +246,7 @@ const Home: NextPage = () => {
           </FlexRow>
           <FlexItem grow={true}/>
         </FlexRow>
-        <Dropdown open={dropdownOpen} onChange={setDropdownOpen} button={<OptionsIcon/>} start={false} bottom={true}>
+        <Dropdown button={<OptionsIcon/>} start={false} bottom={true}>
           {dropdownButtons}
         </Dropdown>
       </TopTitle>

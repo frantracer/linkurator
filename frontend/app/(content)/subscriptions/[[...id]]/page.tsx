@@ -48,7 +48,6 @@ const SubscriptionsPage: NextPage = () => {
   const selectedSubscriptionId: string | undefined = pathParams.id ? (Array.isArray(pathParams.id) ? pathParams.id[0] : pathParams.id) : undefined;
 
   const [error, setError] = useState<string | null>(null);
-  const [dropdownOpen, setDropdownOpen] = useState(false);
 
   const {filters, setFilters, resetFilters} = useFilters();
   const [debouncedFilters, setDebouncedFilters] = useState(filters);
@@ -89,7 +88,6 @@ const SubscriptionsPage: NextPage = () => {
 
   const handleShowFilters = () => {
     showLateralMenu(SUBSCRIPTION_DETAILS_ID);
-    setDropdownOpen(false);
   }
 
   const handleAssignSubscription = () => {
@@ -97,7 +95,6 @@ const SubscriptionsPage: NextPage = () => {
       setError("Dale a Seguir antes de asignar la subscripción");
     } else {
       openModal(AssignTopicModalId);
-      setDropdownOpen(false);
       setError(null);
     }
   }
@@ -106,7 +103,6 @@ const SubscriptionsPage: NextPage = () => {
     refreshSubscription(subscriptionId).then(() => {
       refreshSubscriptions();
     });
-    setDropdownOpen(false);
   }
 
   const handleFollowSubscription = (subscriptionId: string) => {
@@ -260,7 +256,7 @@ const SubscriptionsPage: NextPage = () => {
           </FlexRow>
           <FlexItem grow={true}/>
         </FlexRow>
-        <Dropdown open={dropdownOpen} onChange={setDropdownOpen} button={<OptionsIcon/>} start={false} bottom={true}>
+        <Dropdown button={<OptionsIcon/>} start={false} bottom={true}>
           {dropdownButtons}
         </Dropdown>
       </TopTitle>
