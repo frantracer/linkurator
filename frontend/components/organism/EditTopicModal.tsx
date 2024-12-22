@@ -37,7 +37,8 @@ const EditTopicModal = (props: EditTopicModalProps) => {
   const {
     subscriptionsToAdd,
     addSubscription,
-    removeSubscription
+    removeSubscription,
+    resetSubscriptions
   } = useSubscriptionsToAdd(props.subscriptions, props.topic)
 
   const handleUpdateTopic = () => {
@@ -49,6 +50,13 @@ const EditTopicModal = (props: EditTopicModalProps) => {
         closeModal(EditTopicModalId);
       }
     )
+  }
+
+  const handleCancel = () => {
+    setNewTopicName(props.topic.name);
+    setSearchValue("");
+    resetSubscriptions();
+    closeModal(EditTopicModalId);
   }
 
   const subscriptionsMenuItems = props.subscriptions
@@ -88,7 +96,7 @@ const EditTopicModal = (props: EditTopicModalProps) => {
     })
 
   return (
-    <Modal id={EditTopicModalId}>
+    <Modal id={EditTopicModalId} onClose={handleCancel}>
       <FlexColumn>
         <h1 className="font-bold text-xl w-full text-center">{"Editar categoría"}</h1>
         <InputText placeholder="Nombre de la categoría" value={newTopicName}

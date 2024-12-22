@@ -8,6 +8,7 @@ function useSubscriptionsToAdd(subscriptions: Subscription[], topic: Topic | und
     addSubscription: (subscription: Subscription) => void,
     removeSubscription: (subscription: Subscription) => void,
     clearSubscriptions: () => void,
+    resetSubscriptions: () => void,
     setSubscriptions: (subscriptions: Subscription[]) => void
   } {
   const filteredSubscriptions: Subscription[] = []
@@ -38,6 +39,9 @@ function useSubscriptionsToAdd(subscriptions: Subscription[], topic: Topic | und
   const clearSubscriptions = () => {
     setSubscriptionsToAdd([]);
   }
+  const resetSubscriptions = () => {
+    setSubscriptionsToAdd(filteredSubscriptions);
+  }
   const setSubscriptions = (subscriptions: Subscription[]) => {
     setSubscriptionsToAdd(subscriptions)
   }
@@ -47,6 +51,7 @@ function useSubscriptionsToAdd(subscriptions: Subscription[], topic: Topic | und
     addSubscription: addSubscription,
     removeSubscription: removeSubscription,
     clearSubscriptions: clearSubscriptions,
+    resetSubscriptions: resetSubscriptions,
     setSubscriptions: setSubscriptions
   };
 }
