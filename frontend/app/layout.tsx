@@ -6,8 +6,13 @@ import {Metadata} from "next";
 
 export const metadata: Metadata = {
   title: 'Linkurator',
-  description: 'Linkurator es un agregador de contenidos donde agrupar tus fuentes favoritos en categorías ' +
-    'y un buscador de contenido para encontrar lo que necesitas.',
+  description: 'Linkurator es un agregador de contenidos audiovisuales (como YouTube o Spotify) que te permite organizar tus suscripciones en categorías'
+  + 'También puedes compartir tus categorías y recomendar contenidos. De esta forma puedes convertirte en un curador de contenido y compartir tus gustos con el mundo.',
+  icons: {
+    icon: '/favicon.ico',
+    apple: '/apple-icon.png',
+    shortcut: '/icon.png',
+  },
 }
 
 export default function RootLayout(
@@ -17,7 +22,10 @@ export default function RootLayout(
     children: React.ReactNode
   }) {
   return (
-    <html lang="en">
+    <html lang="es">
+      <head>
+        <meta name="apple-mobile-web-app-title" content="Linkurator" />
+      </head>
     <body>
     <ReactQueryProvider>
       {children}
