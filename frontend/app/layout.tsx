@@ -24,6 +24,7 @@ export default function RootLayout(
   return (
     <html lang="es">
       <head>
+        <link rel="manifest" href="/manifest.json" />
         <meta name="apple-mobile-web-app-title" content="Linkurator" />
       </head>
     <body>
