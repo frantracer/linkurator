@@ -122,7 +122,7 @@ const AssignTopicModal = (props: AssignTopicModalProps) => {
         </Box>
         <FlexRow hideOverflow={false} position={"between"}>
           <Dropdown start={true} bottom={false}
-                    button={<FlexRow><span>{"Selecciona categorías existentes"}</span></FlexRow>}>
+                    button={<FlexRow><span>{"Asignar o desasignar categoría"}</span></FlexRow>}>
             <div className={"h-60"}>
               <Menu>
                 {topicsMenuItems}
