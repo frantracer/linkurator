@@ -135,6 +135,14 @@ const NewTopicModal = (props: NewTopicModalProps) => {
 
   const handleClickCuratorTopic = (topicId: string) => {
     router.push(paths.TOPICS + "/" + topicId);
+    handleClose();
+  }
+
+  const handleClose = () => {
+    setNewTopicName("");
+    setSearchValue("");
+    setTopicSearch("");
+    clearSubscriptions();
     closeModal(NewTopicModalId);
   }
 
@@ -168,7 +176,7 @@ const NewTopicModal = (props: NewTopicModalProps) => {
     .map(subscription => {
       return (
         <ALink key={subscription.uuid} href={paths.SUBSCRIPTIONS + "/" + subscription.uuid}
-               onClick={() => closeModal(NewTopicModalId)}>
+               onClick={handleClose}>
           <Tag>
             <Miniature src={subscription.thumbnail} alt={subscription.name}/>
             {subscription.name}
@@ -177,7 +185,7 @@ const NewTopicModal = (props: NewTopicModalProps) => {
     })
 
   return (
-    <Modal id={NewTopicModalId}>
+    <Modal id={NewTopicModalId} onClose={handleClose}>
       <Tabs tabsText={tabsText} selectedTab={selectedTab} onTabSelected={setSelectedTab}/>
       {selectedTab === NEW_TOPIC_TAB &&
           <FlexColumn>
@@ -211,10 +219,8 @@ const NewTopicModal = (props: NewTopicModalProps) => {
                   <Button clickAction={async () => {
                     createTopic(uuidv4(), newTopicName, subscriptionsToAdd.map(s => s.uuid)).then(
                       () => {
-                        setNewTopicName("");
+                        handleClose();
                         props.refreshTopics();
-                        clearSubscriptions();
-                        closeModal(NewTopicModalId);
                       }
                     )
                   }}>
