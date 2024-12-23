@@ -45,8 +45,13 @@ const FolowCuratorModal = (props: FolowCuratorModalProps) => {
     });
   }
 
+  const handleClose = () => {
+    setCuratorSearch("");
+    closeModal(FollowCuratorModalId);
+  }
+
   return (
-    <Modal id={FollowCuratorModalId}>
+    <Modal id={FollowCuratorModalId} onClose={handleClose}>
       <FlexColumn>
         <h1 className="font-bold text-xl w-full text-center">{"Seguir curador"}</h1>
         <FlexItem grow={true}>
@@ -60,7 +65,7 @@ const FolowCuratorModal = (props: FolowCuratorModalProps) => {
             }
             {curatorIsLoading && <span>{"Cargando..."}</span>}
             {curator !== null &&
-                <ALink href={paths.CURATORS + "/" + curator.username} onClick={() => closeModal(FollowCuratorModalId)}>
+                <ALink href={paths.CURATORS + "/" + curator.username} onClick={handleClose}>
                     <FlexRow>
                         <Avatar src={curator.avatar_url} alt={curator.username}/>
                         <span>{curator.username}</span>
