@@ -27,14 +27,14 @@ const Home: NextPage = () => {
       <div className="hero-content text-center">
         <div className="max-w-md">
           <LinkuratorHeader/>
-          <h2 className="text-3xl font-bold py-5">{"Aquí tú decides el contenido que quieres ver"}</h2>
-          <p className="py-2">{"Crea categorías para agrupar tus creadores de contenido favoritos"}</p>
-          <p className="py-2">{"Filtra el contenido por título o duración"}</p>
-          <p className="py-2">{"¡Haz click en estos ejemplos!"}</p>
+          <h2 className="text-3xl font-bold py-5">{"Conviértete en el curador de contenido que tu comunidad necesita"}</h2>
+          <p className="py-2">{"Clasifica y comparte contenidos de YouTube y Spotify en categorías personalizables"}</p>
+          <p className="py-2">{"Encuentra el contenido de interés filtrando por duración o palabras clave"}</p>
+          <p className="py-2">{"Si quieres saber más, ¡haz click en estos ejemplos!"}</p>
           <div className="w-full">
             <FlexRow>
               <FlexItem grow={true}>
-                <Button href={configuration.EXAMPLE_PROGRAMMING_TOPIC_URL} fitContent={false}>💻️ Programación</Button>
+                <Button href={configuration.EXAMPLE_GEOPOLITICS_TOPIC_URL} fitContent={false}>🌍 Geopolítica</Button>
               </FlexItem>
               <FlexItem grow={true}>
                 <Button href={configuration.EXAMPLE_VIDEO_GAMES_NEWS_TOPIC_URL} fitContent={false}>🕹️️ Noticias Videojuegos</Button>
