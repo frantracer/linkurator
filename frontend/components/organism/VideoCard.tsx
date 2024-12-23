@@ -71,6 +71,16 @@ const VideoCard = (
     }
   };
 
+  const handleOpenItem = (itemUrl: string) => {
+    console.log(navigator.userAgent);
+    const isIOS = /iPad|iPhone/.test(navigator.userAgent);
+    if (isIOS) {
+      window.location.href = itemUrl;
+    } else {
+      window.open(itemUrl, "_blank");
+    }
+  };
+
   if (!inView) {
     return (
       <div ref={ref}>
@@ -84,7 +94,7 @@ const VideoCard = (
           <img className="h-full"
                src={item.thumbnail}
                alt={item.name}
-               onClick={() => window.open(item.url, "_blank")}
+               onClick={() => handleOpenItem(item.url)}
                onLoad={handleLoad}
           />
           {item.duration != undefined &&
@@ -94,7 +104,7 @@ const VideoCard = (
           }
         </figure>
         <div className="card-body">
-          <h2 className="card-title cursor-pointer" onClick={() => window.open(item.url, "_blank")}>
+          <h2 className="card-title cursor-pointer" onClick={() => handleOpenItem(item.url)}>
             {item.name}
           </h2>
           {withSubscription &&

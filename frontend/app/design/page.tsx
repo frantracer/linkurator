@@ -232,14 +232,14 @@ const CardSection = () => {
   const item = {
     uuid: "f857e617-c1e7-4c0d-9982-cb8a2b51de1c",
     name: "Name",
-    url: "https://www.linkurator.com",
+    url: "https://www.youtube.com/watch?v=FdjkBWJz5eU",
     thumbnail: "/logo_v1_medium.png",
     published_at: new Date(),
     subscription_uuid: "87484eb4-65cf-4821-b818-2d7e8bbf7488",
     subscription: {
       uuid: "87484eb4-65cf-4821-b818-2d7e8bbf7488",
       name: "Subscription",
-      url: "https://www.linkurator.com",
+      url: "https://www.youtube.com/@Linkurator",
       thumbnail: "/logo_v1_medium.png",
       provider: 'youtube' as SubscriptionProvider,
       isBeingScanned: false,
