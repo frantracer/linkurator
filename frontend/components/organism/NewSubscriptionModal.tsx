@@ -144,7 +144,7 @@ const NewSubscriptionModal = (props: NewSubscritionModalProps) => {
             <InfoBanner>
               <FlexColumn>
                 <p><b>Aviso</b>: Nuestra app está siendo validada por YouTube. Puede aparecer un aviso al pulsar el botón, pero todo es completamente seguro. ¡Gracias por tu confianza!</p>
-                <p><b>{"Configuración Avanzada > Ir a Linkurator Sync"}</b></p>
+                <p><b>{"Configuración Avanzada > Ir a linkurator.com"}</b></p>
               </FlexColumn>
             </InfoBanner>
             <FlexRow position={"end"}>
