@@ -152,6 +152,12 @@ const SubscriptionsPage: NextPage = () => {
     }
   }, [debouncedFilters.textSearch, filters]);
 
+  useEffect(() => {
+    if (!selectedSubscriptionId && subscriptions.length > 0) {
+      router.push(paths.SUBSCRIPTIONS + "/" + subscriptions[0].uuid)
+    }
+  }, [router, selectedSubscriptionId, subscriptions]);
+
   const dropdownButtons = []
   dropdownButtons.push(
     <Button key={"subscriptions-show-filters"}
