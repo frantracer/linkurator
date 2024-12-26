@@ -36,7 +36,7 @@ const InputText = (
 
   return (
     <input
-      className={"input input-sm input-bordered input-primary bg-base-200 w-full " + padding}
+      className={"input input-sm input-bordered input-primary w-full " + padding}
       type={inputType?.toString()}
       placeholder={placeholder}
       value={searchValue}

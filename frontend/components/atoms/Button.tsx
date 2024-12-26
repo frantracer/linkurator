@@ -1,5 +1,6 @@
 import React from "react";
 import Link from "next/link";
+import classNames from "classnames";
 
 type ButtonProps = {
   clickAction?: () => void
@@ -27,22 +28,18 @@ const Button = (
     children
   }: ButtonProps
 ) => {
-  let className = "btn btn-sm rounded px-1";
-  if (primary) {
-    className += " btn-primary";
-  } else {
-    className += " btn-secondary";
-  }
-  if (fitContent) {
-    className += " w-fit";
-  } else {
-    className += " w-full";
-  }
-  if (showOnlyOnMobile) {
-    className += " lg:hidden";
-  }
+  const className = classNames(
+    "btn btn-sm rounded px-1 btn-primary",
+    {
+      "btn-outline": !primary,
+      "w-fit": fitContent,
+      "w-full": !fitContent,
+      "lg:hidden": showOnlyOnMobile,
+      "opacity-50 cursor-not-allowed": disabled
+    }
+  );
+
   if (disabled) {
-    className += " opacity-50 cursor-not-allowed";
     clickAction = noAction;
     relatedModalId = undefined;
   }

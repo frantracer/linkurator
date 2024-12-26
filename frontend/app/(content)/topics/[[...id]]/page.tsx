@@ -209,20 +209,20 @@ const Home: NextPage = () => {
                 </FlexRow>
                 <FlexRow>
                   {selectedTopic && !selectedTopic.is_owner &&
-                      <ALink href={paths.CURATORS + "/" + selectedTopic.curator.username}>
-                          <Tag>
-                              <Miniature src={selectedTopic.curator.avatar_url} alt={selectedTopic.curator.username}/>
-                              <span>{selectedTopic.curator.username}</span>
-                          </Tag>
-                      </ALink>
+                      <Button primary={false} href={paths.CURATORS + "/" + selectedTopic.curator.username}>
+                            <Miniature src={selectedTopic.curator.avatar_url} alt={selectedTopic.curator.username}/>
+                            <span>{selectedTopic.curator.username}</span>
+                      </Button>
                   }
                   {selectedTopic && selectedTopic.followed && !selectedTopic.is_owner &&
                       <Tag>
-                        {"Siguiendo"}
-                          <div className="hover:cursor-pointer"
-                               onClick={() => handleUnfollowTopic(selectedTopic.uuid)}>
-                              <CrossIcon/>
-                          </div>
+                        <span>
+                          {"Siguiendo"}
+                        </span>
+                        <div className="hover:cursor-pointer"
+                              onClick={() => handleUnfollowTopic(selectedTopic.uuid)}>
+                            <CrossIcon/>
+                        </div>
                       </Tag>
                   }
                   {selectedTopic && !selectedTopic.followed && !selectedTopic.is_owner && isUserLogged &&

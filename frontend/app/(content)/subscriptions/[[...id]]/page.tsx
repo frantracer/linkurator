@@ -221,18 +221,17 @@ const SubscriptionsPage: NextPage = () => {
                   {selectedSubscription &&
                       <Miniature src={selectedSubscription.thumbnail} alt={selectedSubscription.name}/>
                   }
-                  <h1 className="text-xl font-bold whitespace-nowrap truncate hover:cursor-pointer"
-                      onClick={openSubscriptionUrl}>
+                  <h1 className="text-xl font-bold whitespace-nowrap truncate">
                     {subscriptionName}
                   </h1>
                 </FlexRow>
                 <FlexRow>
                   {selectedSubscription &&
-                      <Tag>
+                      <Button primary={false} clickAction={openSubscriptionUrl}>
                           <Miniature src={providerIconUrl(selectedSubscription.provider)}
                                      alt={selectedSubscription.provider}/>
                         {providerPrettyName(selectedSubscription.provider)}
-                      </Tag>
+                      </Button>
                   }
                   {selectedSubscription && selectedSubscription.followed &&
                       <Tag>
