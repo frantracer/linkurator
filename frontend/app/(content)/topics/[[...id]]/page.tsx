@@ -34,7 +34,6 @@ import {useTopic} from "../../../../hooks/useTopic";
 import Tag from "../../../../components/atoms/Tag";
 import {deleteTopic, followTopic, unfollowTopic} from "../../../../services/topicService";
 import {openModal} from "../../../../utilities/modalAction";
-import ALink from "../../../../components/atoms/ALink";
 import FlexRow from "../../../../components/atoms/FlexRow";
 import {ErrorBanner} from "../../../../components/atoms/ErrorBanner";
 import FlexItem from "../../../../components/atoms/FlexItem";
