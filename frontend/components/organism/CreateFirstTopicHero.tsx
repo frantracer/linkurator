@@ -14,17 +14,17 @@ const CreateFirstTopicHero = () => {
         <div className="max-w-md">
           <FlexColumn position={"center"}>
             <p className="text-5xl font-bold">¡Encuentra el contenido!</p>
-            <p className="py-2">Sigue las subscripciones que desees categorizar o en las que buscar</p>
+            <p className="py-2">Sincroniza tus subscripciones o búscalas en YouTube/Spotify</p>
             <Button clickAction={() => openModal(NewSubscriptionModalId)}>
               <AddIcon/>
-              <span>Seguir subscripción</span>
+              <span>Sincronizar o buscar subscripciones</span>
             </Button>
             <Divider text={"Y"}/>
             <p className="text-5xl font-bold">¡Crea tu primera categoría!</p>
-            <p className="py-2">Elige algunas de tus subscripciones y agrúpalas en una categoría</p>
+            <p className="py-2">Agrupa tus subscripciones en una categoría o busca una categoría existente</p>
             <Button clickAction={() => openModal(NewTopicModalId)}>
               <AddIcon/>
-              <span>Nueva categoría</span>
+              <span>Crear o buscar categorías</span>
             </Button>
           </FlexColumn>
         </div>
