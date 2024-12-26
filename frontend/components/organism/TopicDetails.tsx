@@ -95,7 +95,7 @@ const TopicDetails = (
   }
 
   return (
-    <Sidebar>
+    <Sidebar left={false}>
       <FlexRow position={"center"}>
         <div className="w-full whitespace-nowrap truncate text-center">{topicName}</div>
       </FlexRow>

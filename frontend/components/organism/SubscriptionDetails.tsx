@@ -67,7 +67,7 @@ const SubscriptionDetails = (
   }
 
   return (
-    <Sidebar>
+    <Sidebar left={false}>
       <FlexRow position={"center"}>
         <Avatar src={subscriptionThumbnail} alt={subscriptionName}/>
         <span>{subscriptionName}</span>

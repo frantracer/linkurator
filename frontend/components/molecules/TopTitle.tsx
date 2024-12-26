@@ -10,7 +10,7 @@ const TopTitle = (
   }: TopTitleProps
 ) => {
   return (
-    <div className="sticky top-0 z-10 bg-primary text-primary-content flex flex-row w-full p-1 items-center min-h-16">
+    <div className="sticky top-0 z-10 bg-transparent text-primary-content flex flex-row w-full p-1 items-center min-h-16 border-b-2 border-neutral">
       {children}
     </div>
   );

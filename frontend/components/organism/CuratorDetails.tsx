@@ -57,7 +57,7 @@ const CuratorDetails = (
   const showCustomDuration = filters.durationGroup == "custom";
 
   return (
-    <Sidebar>
+    <Sidebar left={false}>
       <FlexRow position={"center"}>
         <Avatar src={curatorAvatar} alt={curatorName}/>
         <span>{curatorName}</span>
