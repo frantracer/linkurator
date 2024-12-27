@@ -66,7 +66,7 @@ const TopicDetails = (
       <ALink href={paths.SUBSCRIPTIONS + "/" + subscription.uuid}>
         <Tag>
           <Miniature src={subscription.thumbnail} alt={subscription.name}/>
-          <span className={"text-wrap"}>{subscription.name}</span>
+          {subscription.name}
         </Tag>
       </ALink>
     </FlexRow>

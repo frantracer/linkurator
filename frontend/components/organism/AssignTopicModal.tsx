@@ -89,7 +89,7 @@ const AssignTopicModal = (props: AssignTopicModalProps) => {
       return (
         <ALink href={paths.TOPICS + "/" + topic.uuid} key={topic.uuid}>
           <Tag>
-            <span className={"whitespace-nowrap truncate"}>{topic.name}</span>
+            {topic.name}
           </Tag>
         </ALink>
       )
