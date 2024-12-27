@@ -40,6 +40,7 @@ import Miniature from "../../../../components/atoms/Miniature";
 import {providerIconUrl, providerPrettyName} from "../../../../entities/Subscription";
 import { MenuItem } from "../../../../components/atoms/MenuItem";
 import Menu from "../../../../components/atoms/Menu";
+import { InfoBanner } from "../../../../components/atoms/InfoBanner";
 
 const REFRESH_SUBSCRIPTIONS_INTERVAL = 10000;
 
@@ -50,6 +51,7 @@ const SubscriptionsPage: NextPage = () => {
   const selectedSubscriptionId: string | undefined = pathParams.id ? (Array.isArray(pathParams.id) ? pathParams.id[0] : pathParams.id) : undefined;
 
   const [error, setError] = useState<string | null>(null);
+  const [showRefreshedMessage, setShowRefreshedMessage] = useState<boolean>(false);
 
   const {filters, setFilters, resetFilters} = useFilters();
   const [debouncedFilters, setDebouncedFilters] = useState(filters);
@@ -102,8 +104,10 @@ const SubscriptionsPage: NextPage = () => {
   }
 
   const handleRefreshSubscription = (subscriptionId: string) => {
+    setShowRefreshedMessage(false);
     refreshSubscription(subscriptionId).then(() => {
       refreshSubscriptions();
+      setShowRefreshedMessage(true);
     });
   }
 
@@ -203,7 +207,7 @@ const SubscriptionsPage: NextPage = () => {
     dropdownButtons.push(
       <MenuItem key={"subscriptions-follow"} onClick={() => handleFollowSubscription(selectedSubscription.uuid)}>
         <FlexRow position="center">
-        <AddIcon/>
+          <AddIcon/>
           {"Seguir"}
         </FlexRow>
       </MenuItem>
@@ -284,6 +288,16 @@ const SubscriptionsPage: NextPage = () => {
                       <CrossIcon/>
                   </div>
               </ErrorBanner>
+          </FlexRow>
+      }
+      {showRefreshedMessage &&
+          <FlexRow position={"center"}>
+            <InfoBanner>
+              <span>{"Subscripción actualizada"}</span>
+              <div className={"hover:cursor-pointer"} onClick={() => setShowRefreshedMessage(false)}>
+                <CrossIcon/>
+              </div>
+            </InfoBanner>
           </FlexRow>
       }
       {isSubscriptionError &&
