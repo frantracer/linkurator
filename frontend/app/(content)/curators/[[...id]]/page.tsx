@@ -32,6 +32,8 @@ import Dropdown from "../../../../components/atoms/Dropdown";
 import FlexColumn from "../../../../components/atoms/FlexColumn";
 import Miniature from "../../../../components/atoms/Miniature";
 import {paths} from "../../../../configuration";
+import { MenuItem } from "../../../../components/atoms/MenuItem";
+import Menu from "../../../../components/atoms/Menu";
 
 
 const CuratorsPage: NextPage = () => {
@@ -87,28 +89,31 @@ const CuratorsPage: NextPage = () => {
   const dropdownButtons = []
   if (curator) {
     dropdownButtons.push(
-      <Button key={"curators-filter"}
-              fitContent={false} clickAction={handleFilter}>
-        <FunnelIcon/>
-        {"Filtrar"}
-      </Button>
+      <MenuItem key={"curators-filter"} onClick={handleFilter}>
+        <FlexRow position="center">
+          <FunnelIcon/>
+          {"Filtrar"}
+        </FlexRow>
+      </MenuItem>
     )
     if (isUserLogged) {
       if (curator.followed) {
         dropdownButtons.push(
-          <Button key={"curators-unfollow"}
-                  fitContent={false} clickAction={() => handleUnfollowCurator(curator.id)}>
-            <MinusIcon/>
-            {"Dejar de seguir"}
-          </Button>
+          <MenuItem key={"curators-unfollow"} onClick={() => handleUnfollowCurator(curator.id)}>
+            <FlexRow position="center">
+              <MinusIcon/>
+              {"Dejar de seguir"}
+            </FlexRow>
+          </MenuItem>
         )
       } else {
         dropdownButtons.push(
-          <Button key={"curators-follow"}
-                  fitContent={false} clickAction={() => handleFollowCurator(curator.id)}>
-            <AddIcon/>
-            {"Seguir"}
-          </Button>
+          <MenuItem key={"curators-follow"} onClick={() => handleFollowCurator(curator.id)}>
+            <FlexRow position="center">
+              <AddIcon/>
+              {"Seguir"}
+            </FlexRow>
+          </MenuItem>
         )
       }
     }
@@ -169,7 +174,9 @@ const CuratorsPage: NextPage = () => {
           <FlexItem grow={true}/>
         </FlexRow>
         <Dropdown start={false} bottom={true} button={<OptionsIcon/>}>
-          {dropdownButtons}
+          <Menu>
+            {dropdownButtons}
+          </Menu>
         </Dropdown>
       </TopTitle>
       <FlexRow>

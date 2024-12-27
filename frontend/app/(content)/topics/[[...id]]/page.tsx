@@ -43,6 +43,8 @@ import Miniature from "../../../../components/atoms/Miniature";
 import DeleteTopicConfirmationModal, {
   DeleteTopicConfirmationModalId
 } from "../../../../components/organism/DeleteTopicConfirmationModal";
+import { MenuItem } from "../../../../components/atoms/MenuItem";
+import Menu from "../../../../components/atoms/Menu";
 
 const REFRESH_TOPICS_INTERVAL = 10000;
 
@@ -142,43 +144,50 @@ const Home: NextPage = () => {
 
   const dropdownButtons = []
   dropdownButtons.push(
-    <Button key={"topics-show-filters"} fitContent={false} clickAction={handleShowFilters}>
-      <FunnelIcon/>
-      Filtrar
-    </Button>
+    <MenuItem key={"topics-show-filters"} onClick={handleShowFilters}>
+      <FlexRow position="center">
+        <FunnelIcon/>
+        Filtrar
+      </FlexRow>
+    </MenuItem>
   )
   if (selectedTopic && isUserLogged) {
     if (selectedTopic.is_owner) {
       dropdownButtons.push(
-        <Button key={"topics-edit-topic"} fitContent={false} clickAction={handleEditTopic}>
-          <PencilIcon/>
-          Editar
-        </Button>
+        <MenuItem key={"topics-edit-topic"} onClick={handleEditTopic}>
+          <FlexRow position="center">
+            <PencilIcon/>
+            Editar
+          </FlexRow>
+        </MenuItem>
       )
       dropdownButtons.push(
-        <Button key={"topics-delete-topic"} fitContent={false}
-                clickAction={handleDeleteTopic}>
-          <TrashIcon/>
-          Borrar
-        </Button>
+        <MenuItem key={"topics-delete-topic"} onClick={handleDeleteTopic}>
+          <FlexRow position="center">
+            <TrashIcon/>
+            Borrar
+          </FlexRow>
+        </MenuItem>
       )
     }
     if (selectedTopic.followed && !selectedTopic.is_owner) {
       dropdownButtons.push(
-        <Button key={"topics-unfollow-topic"} fitContent={false}
-                clickAction={() => handleUnfollowTopic(selectedTopic.uuid)}>
-          <MinusIcon/>
-          Dejar de seguir
-        </Button>
+        <MenuItem key={"topics-unfollow-topic"} onClick={() => handleUnfollowTopic(selectedTopic.uuid)}>
+          <FlexRow position="center">
+            <MinusIcon/>
+            Dejar de seguir
+          </FlexRow>
+        </MenuItem>
       )
     }
     if (!selectedTopic.followed && !selectedTopic.is_owner) {
       dropdownButtons.push(
-        <Button key={"topics-follow-topic"} fitContent={false}
-                clickAction={() => handleFollowTopic(selectedTopic.uuid)}>
-          <AddIcon/>
-          Seguir
-        </Button>
+        <MenuItem key={"topics-follow-topic"} onClick={() => handleFollowTopic(selectedTopic.uuid)}>
+          <FlexRow position="center">
+            <AddIcon/>
+            Seguir
+          </FlexRow>
+        </MenuItem>
       )
     }
   }
@@ -246,7 +255,9 @@ const Home: NextPage = () => {
           <FlexItem grow={true}/>
         </FlexRow>
         <Dropdown button={<OptionsIcon/>} start={false} bottom={true}>
-          {dropdownButtons}
+          <Menu>
+            {dropdownButtons}
+          </Menu>
         </Dropdown>
       </TopTitle>
       {topicIsError && !topicIsLoading &&

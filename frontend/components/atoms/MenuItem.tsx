@@ -10,6 +10,7 @@ export const MenuItem = (props: MenuItemProps) => {
   const handleClick = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
+    (e.currentTarget as HTMLButtonElement).blur();
     if (props.onClick) {
       props.onClick();
     }

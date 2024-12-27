@@ -38,6 +38,8 @@ import {openModal} from "../../../../utilities/modalAction";
 import FlexColumn from "../../../../components/atoms/FlexColumn";
 import Miniature from "../../../../components/atoms/Miniature";
 import {providerIconUrl, providerPrettyName} from "../../../../entities/Subscription";
+import { MenuItem } from "../../../../components/atoms/MenuItem";
+import Menu from "../../../../components/atoms/Menu";
 
 const REFRESH_SUBSCRIPTIONS_INTERVAL = 10000;
 
@@ -160,44 +162,51 @@ const SubscriptionsPage: NextPage = () => {
 
   const dropdownButtons = []
   dropdownButtons.push(
-    <Button key={"subscriptions-show-filters"}
-            fitContent={false} clickAction={handleShowFilters}>
-      <FunnelIcon/>
-      Filtrar
-    </Button>
+    <MenuItem key={"subscriptions-show-filters"} onClick={handleShowFilters}>
+      <FlexRow position="center">
+        <FunnelIcon/>
+        {"Filtrar"}
+      </FlexRow>
+    </MenuItem>
   )
   if (selectedSubscription && isUserLogged) {
     dropdownButtons.push(
-      <Button key={"subscriptions-assign"}
-              fitContent={false} clickAction={handleAssignSubscription}>
-        <PencilIcon/>
-        Asignar
-      </Button>
+      <MenuItem key={"subscriptions-assign"} onClick={handleAssignSubscription}>
+        <FlexRow position="center">
+          <PencilIcon/>
+          {"Asignar"}
+        </FlexRow>
+      </MenuItem>
     )
     dropdownButtons.push(
-      <Button key={"subscriptions-refresh"}
-              fitContent={false} clickAction={() => handleRefreshSubscription(selectedSubscription.uuid)}>
-        <RefreshIcon/>
-        Actualizar
-      </Button>
+      <MenuItem key={"subscriptions-refresh"} onClick={() => {
+        handleRefreshSubscription(selectedSubscription.uuid)
+      }}>
+        <FlexRow position="center">
+          <RefreshIcon/>
+          {"Actualizar"}
+        </FlexRow>
+      </MenuItem>
     )
   }
   if (selectedSubscription && selectedSubscription.followed && isUserLogged) {
     dropdownButtons.push(
-      <Button key={"subscriptions-unfollow"}
-              fitContent={false} clickAction={() => handleUnfollowSubscription(selectedSubscription.uuid)}>
-        <MinusIcon/>
-        Dejar de seguir
-      </Button>
+      <MenuItem key={"subscriptions-unfollow"} onClick={() => handleUnfollowSubscription(selectedSubscription.uuid)}>
+        <FlexRow position="center">
+          <MinusIcon/>
+          {"Dejar de seguir"}
+        </FlexRow>
+      </MenuItem>
     )
   }
   if (selectedSubscription && !selectedSubscription.followed && isUserLogged) {
     dropdownButtons.push(
-      <Button key={"subscriptions-follow"}
-              fitContent={false} clickAction={() => handleFollowSubscription(selectedSubscription.uuid)}>
+      <MenuItem key={"subscriptions-follow"} onClick={() => handleFollowSubscription(selectedSubscription.uuid)}>
+        <FlexRow position="center">
         <AddIcon/>
-        Seguir
-      </Button>
+          {"Seguir"}
+        </FlexRow>
+      </MenuItem>
     )
   }
 
@@ -262,7 +271,9 @@ const SubscriptionsPage: NextPage = () => {
           <FlexItem grow={true}/>
         </FlexRow>
         <Dropdown button={<OptionsIcon/>} start={false} bottom={true}>
-          {dropdownButtons}
+          <Menu>
+            {dropdownButtons}
+          </Menu>
         </Dropdown>
       </TopTitle>
       {error &&
