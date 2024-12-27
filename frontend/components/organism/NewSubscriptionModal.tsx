@@ -112,6 +112,7 @@ const NewSubscriptionModal = (props: NewSubscritionModalProps) => {
 
   return (
     <Modal id={NewSubscriptionModalId}>
+      <h1 className="font-bold text-xl w-full text-center">{"Subscripciones"}</h1>
       <Tabs tabsText={tabsText} selectedTab={selectedTab} onTabSelected={setSelectedTab} />
       {selectedTab === NEW_SUBSCRIPTION_TAB &&
         <FlexColumn>

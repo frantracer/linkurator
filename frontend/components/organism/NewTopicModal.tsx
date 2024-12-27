@@ -29,8 +29,8 @@ import { Tabs } from "../atoms/Tabs";
 import Tag from "../atoms/Tag";
 import SearchBar from "../molecules/SearchBar";
 
-const NEW_TOPIC_TAB = "Nueva categoría"
-const FOLLOW_TOPIC_TAB = "Seguir categoría"
+const NEW_TOPIC_TAB = "Nueva"
+const FOLLOW_TOPIC_TAB = "Seguir"
 
 export const NewTopicModalId = "new-topic-modal";
 
@@ -185,6 +185,7 @@ const NewTopicModal = (props: NewTopicModalProps) => {
 
   return (
     <Modal id={NewTopicModalId} onClose={handleClose}>
+      <h1 className="font-bold text-xl w-full text-center">{"Categorías"}</h1>
       <Tabs tabsText={tabsText} selectedTab={selectedTab} onTabSelected={setSelectedTab}/>
       {selectedTab === NEW_TOPIC_TAB &&
           <FlexColumn>
