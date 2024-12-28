@@ -245,7 +245,7 @@ const Home: NextPage = () => {
                   }
                   {selectedTopic && selectedTopic.is_owner &&
                       <Tag>
-                        <span className="text-nowrap">{"Mis categorías"}</span>
+                        <span className="whitespace-nowrap text-nowrap">{"Mis categorías"}</span>
                       </Tag>
                   }
                 </FlexRow>
