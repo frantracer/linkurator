@@ -3,14 +3,14 @@ import {CrossIcon, MagnifyingGlassIcon} from "../atoms/Icons";
 import {useEffect, useState} from "react";
 
 type SearchBarProps = {
-  placeholder?: string;
+  placeholder: string;
   handleChange?: (value: string) => void;
   value?: string;
 };
 
 const SearchBar = (
   {
-    placeholder = "Buscar...",
+    placeholder,
     handleChange = undefined,
     value = ""
   }: SearchBarProps

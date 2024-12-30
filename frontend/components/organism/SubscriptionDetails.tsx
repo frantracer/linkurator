@@ -21,6 +21,7 @@ import Checkbox from "../atoms/Checkbox";
 import NumberInput from "../atoms/NumberInput";
 import Select from "../atoms/Select";
 import FlexItem from "../atoms/FlexItem";
+import { useTranslations } from "next-intl";
 
 export const SUBSCRIPTION_DETAILS_ID = "subscription-details";
 
@@ -41,6 +42,7 @@ const SubscriptionDetails = (
     resetFilters,
   }: SubscriptionDetailsProps
 ) => {
+  const t = useTranslations("common");
   const subscriptionName = subscription ? subscription.name : "";
   const subscriptionThumbnail = subscription ? subscription.thumbnail : "";
 
@@ -77,29 +79,30 @@ const SubscriptionDetails = (
         <FlexItem grow={true}>
           <Button fitContent={false} clickAction={resetFilters}>
             <ArrowUturnLeft/>
-            {"Restaurar filtros"}
+            {t("reset_filters")}
           </Button>
         </FlexItem>
       </FlexRow>
-      <Box title={"Filtros"}>
+      <Box title={t("filters")}>
         <FlexColumn>
           <SearchBar handleChange={(value) => setFilters({...filters, textSearch: value})}
-                     value={filters.textSearch}/>
-          <Box title={"Duración"}>
+                     value={filters.textSearch}
+                     placeholder={t("search_placeholder")}/>
+          <Box title={t("duration")}>
             <FlexColumn>
               <Select selected={filters.durationGroup} options={durationOptions} onChange={handleDurationChange}/>
               {showCustomDuration &&
                   <FlexColumn>
                       <FlexRow>
-                          <p>{"Min"}</p>
-                          <NumberInput placeholder={"Mínima"}
+                          <p>{t("min")}</p>
+                          <NumberInput placeholder={t("min_placeholder")}
                                        value={filters.minDuration}
                                        onChange={(value) => setFilters({...filters, minDuration: value})}/>
 
                       </FlexRow>
                       <FlexRow>
-                          <p>{"Max"}</p>
-                          <NumberInput placeholder={"Máxima"}
+                          <p>{t("max")}</p>
+                          <NumberInput placeholder={t("max_placeholder")}
                                        value={filters.maxDuration}
                                        onChange={(value) => setFilters({...filters, maxDuration: value})}/>
                       </FlexRow>
@@ -108,7 +111,7 @@ const SubscriptionDetails = (
             </FlexColumn>
           </Box>
           {showInteractions &&
-              <Box title={"Interacciones"}>
+              <Box title={t("interactions")}>
                   <FlexColumn>
                       <FlexRow position={"start"}>
                           <Checkbox checked={filters.displayWithoutInteraction}
@@ -117,13 +120,13 @@ const SubscriptionDetails = (
                                       displayWithoutInteraction: checked
                                     })}/>
                           <CheckCircleIcon/>
-                          <label>{"No visto"}</label>
+                          <label>{t("not_viewed")}</label>
                       </FlexRow>
                       <FlexRow position={"start"}>
                           <Checkbox checked={filters.displayViewed}
                                     onChange={(checked) => setFilters({...filters, displayViewed: checked})}/>
                           <CheckCircleFilledIcon/>
-                          <label>{"Visto"}</label>
+                          <label>{t("viewed")}</label>
                       </FlexRow>
                       <FlexRow position={"start"}>
                           <Checkbox checked={filters.displayRecommended}
@@ -132,7 +135,7 @@ const SubscriptionDetails = (
                                       displayRecommended: checked
                                     })}/>
                           <ThumbsUpFilledIcon/>
-                          <label>{"Recomendado"}</label>
+                          <label>{t("recommended")}</label>
                       </FlexRow>
                       <FlexRow position={"start"}>
                           <Checkbox checked={filters.displayDiscouraged}
@@ -141,13 +144,13 @@ const SubscriptionDetails = (
                                       displayDiscouraged: checked
                                     })}/>
                           <ThumbsDownFilledIcon/>
-                          <label>{"No recomendado"}</label>
+                          <label>{t("not_recommended")}</label>
                       </FlexRow>
                       <FlexRow position={"start"}>
                           <Checkbox checked={filters.displayHidden}
                                     onChange={(checked) => setFilters({...filters, displayHidden: checked})}/>
                           <ArchiveBoxFilledIcon/>
-                          <label>{"Archivado"}</label>
+                          <label>{t("archived")}</label>
                       </FlexRow>
                   </FlexColumn>
               </Box>

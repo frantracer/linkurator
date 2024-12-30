@@ -13,11 +13,13 @@ import {paths} from "../../../../configuration";
 import {ErrorBanner} from "../../../../components/atoms/ErrorBanner";
 import Button from "../../../../components/atoms/Button";
 import FlexItem from "../../../../components/atoms/FlexItem";
+import {useTranslations} from "next-intl";
 
 const ValidateEmail: NextPage = () => {
   const router = useRouter();
   const pathParams = useParams<{ id: string[] | string }>();
   const requestId = pathParams.id ? (Array.isArray(pathParams.id) ? pathParams.id[0] : pathParams.id) : undefined;
+  const t = useTranslations("common");
 
   const [validated, setValidated] = useState<boolean | null>(null);
 
@@ -46,34 +48,34 @@ const ValidateEmail: NextPage = () => {
           <LinkuratorHeader/>
 
           <FlexColumn>
-            <h2 className="text-2xl font-bold py-5">{`Valida tu email`}</h2>
+            <h2 className="text-2xl font-bold py-5">{t("valid_email")}</h2>
             {validated === null &&
                 <FlexRow>
                     <Spinner/>
-                    <p>Comprobando...</p>
+                    <p>{t("checking")}</p>
                 </FlexRow>
             }
             {validated === true &&
                 <>
                     <InfoBanner>
-                        <p>Email validado correctamente. </p>
+                        <p>{t("email_validated")}</p>
                     </InfoBanner>
-                    <Button clickAction={goToLogin}>Inicia sesión</Button>
+                    <Button clickAction={goToLogin}>{t("log_in")}</Button>
                 </>
             }
             {validated === false &&
                 <>
                     <ErrorBanner>
                         <FlexColumn>
-                            <p>El tiempo de validación ha expirado o tu email ya ha sido validado</p>
+                            <p>{t("validation_expired")}</p>
                         </FlexColumn>
                     </ErrorBanner>
                     <FlexRow>
                         <FlexItem grow={true}>
-                            <Button fitContent={false} primary={false} clickAction={goToLogin}>Inicia sesión</Button>
+                            <Button fitContent={false} primary={false} clickAction={goToLogin}>{t("log_in")}</Button>
                         </FlexItem>
                         <FlexItem grow={true}>
-                            <Button fitContent={false} clickAction={goToRegister}>Regístrate</Button>
+                            <Button fitContent={false} clickAction={goToRegister}>{t("sign_up")}</Button>
                         </FlexItem>
                     </FlexRow>
                 </>

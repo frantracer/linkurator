@@ -34,9 +34,10 @@ import Miniature from "../../../../components/atoms/Miniature";
 import {paths} from "../../../../configuration";
 import { MenuItem } from "../../../../components/atoms/MenuItem";
 import Menu from "../../../../components/atoms/Menu";
-
+import {useTranslations} from 'next-intl';
 
 const CuratorsPage: NextPage = () => {
+  const t = useTranslations("common");
   const pathParams = useParams<{ id: string[] | string }>();
 
   const curatorName: string = pathParams.id ? (Array.isArray(pathParams.id) ? pathParams.id[0] : pathParams.id) : "";
@@ -92,7 +93,7 @@ const CuratorsPage: NextPage = () => {
       <MenuItem key={"curators-filter"} onClick={handleFilter}>
         <FlexRow position="center">
           <FunnelIcon/>
-          {"Filtrar"}
+          {t("filter")}
         </FlexRow>
       </MenuItem>
     )
@@ -102,7 +103,7 @@ const CuratorsPage: NextPage = () => {
           <MenuItem key={"curators-unfollow"} onClick={() => handleUnfollowCurator(curator.id)}>
             <FlexRow position="center">
               <MinusIcon/>
-              {"Dejar de seguir"}
+              {t("unfollow")}
             </FlexRow>
           </MenuItem>
         )
@@ -111,7 +112,7 @@ const CuratorsPage: NextPage = () => {
           <MenuItem key={"curators-follow"} onClick={() => handleFollowCurator(curator.id)}>
             <FlexRow position="center">
               <AddIcon/>
-              {"Seguir"}
+              {t("follow")}
             </FlexRow>
           </MenuItem>
         )
@@ -151,7 +152,7 @@ const CuratorsPage: NextPage = () => {
                 {curator && curator.followed &&
                     <Tag>
                       <span>
-                      {"Siguiendo"}
+                      {t("following")}
                       </span>
                         <div className="hover:cursor-pointer" onClick={() => handleUnfollowCurator(curator.id)}>
                             <CrossIcon/>
@@ -160,12 +161,12 @@ const CuratorsPage: NextPage = () => {
                 }
                 {curator && !curator.followed && isUserLogged &&
                     <Button primary={false} clickAction={() => handleFollowCurator(curator.id)}>
-                      {"Seguir"}
+                      {t("follow")}
                     </Button>
                 }
                 {curator && !curator.followed && !isUserLogged &&
                     <Button primary={false} href={paths.LOGIN}>
-                      {"Seguir"}
+                      {t("follow")}
                     </Button>
                 }
               </FlexColumn>
@@ -181,7 +182,7 @@ const CuratorsPage: NextPage = () => {
       </TopTitle>
       <FlexRow>
         <ThumbsUpFilledIcon/>
-        <h2 className={"text-xl text-balance"}>Recomendaciones</h2>
+        <h2 className={"text-xl text-balance"}>{t("recommendations")}</h2>
       </FlexRow>
       <CuratorVideoCardGrid
         refreshItem={refreshCuratorItem}

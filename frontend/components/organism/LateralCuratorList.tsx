@@ -8,6 +8,7 @@ import Menu from "../atoms/Menu";
 import FlexRow from "../atoms/FlexRow";
 import Miniature from "../atoms/Miniature";
 import {InfoBanner} from "../atoms/InfoBanner";
+import {useTranslations} from "next-intl";
 
 type LateralCuratorListProps = {
   searchValue: string;
@@ -17,6 +18,7 @@ type LateralCuratorListProps = {
 }
 
 const LateralCuratorList = (props: LateralCuratorListProps) => {
+  const t = useTranslations("common");
   const router = useRouter()
   const handleClick = (curatorId: string) => {
     const curator = props.curators.find((curator) => curator.id === curatorId);
@@ -47,7 +49,7 @@ const LateralCuratorList = (props: LateralCuratorListProps) => {
 
   const noItems = (
     <InfoBanner>
-      <span className={"text-sm"}>No se encontraron curadores</span>
+      <span className={"text-sm"}>{t("no_curators_found")}</span>
     </InfoBanner>
   )
 
@@ -57,6 +59,5 @@ const LateralCuratorList = (props: LateralCuratorListProps) => {
     </Menu>
   )
 }
-
 
 export default LateralCuratorList;

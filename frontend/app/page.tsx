@@ -11,8 +11,11 @@ import Divider from "../components/atoms/Divider";
 import FlexRow from "../components/atoms/FlexRow";
 import LinkuratorHeader from "../components/organism/LinkuratorHeader";
 import FlexItem from "../components/atoms/FlexItem";
+import LanguageSelector from "../components/molecules/LanguageSelector";
+import { useTranslations } from "next-intl";
 
 const Home: NextPage = () => {
+  const t = useTranslations("common");
   const router = useRouter();
   const {profile, profileIsLoading} = useProfile();
 
@@ -26,18 +29,21 @@ const Home: NextPage = () => {
     <main className="hero min-h-screen bg-base-200">
       <div className="hero-content text-center">
         <div className="max-w-md">
+          <FlexRow position="end">
+            <LanguageSelector/>
+          </FlexRow>
           <LinkuratorHeader/>
-          <h2 className="text-3xl font-bold py-5">{"Conviértete en el curador de contenido que tu comunidad necesita"}</h2>
-          <p className="py-2">{"Clasifica y comparte contenidos de YouTube y Spotify en categorías personalizables"}</p>
-          <p className="py-2">{"Encuentra el contenido de interés filtrando por duración o palabras clave"}</p>
-          <p className="py-2">{"Si quieres saber más, ¡haz click en estos ejemplos!"}</p>
+          <h2 className="text-3xl font-bold py-5">{t("hero_title")}</h2>
+          <p className="py-2">{t("hero_subtitle_1")}</p>
+          <p className="py-2">{t("hero_subtitle_2")}</p>
+          <p className="py-2">{t("hero_subtitle_3")}</p>
           <div className="w-full">
             <FlexRow>
               <FlexItem grow={true}>
-                <Button href={configuration.EXAMPLE_GEOPOLITICS_TOPIC_URL} fitContent={false}>🌍 Geopolítica</Button>
+                <Button href={configuration.EXAMPLE_GEOPOLITICS_TOPIC_URL} fitContent={false}>{t("geopolitics_topic")}</Button>
               </FlexItem>
               <FlexItem grow={true}>
-                <Button href={configuration.EXAMPLE_VIDEO_GAMES_NEWS_TOPIC_URL} fitContent={false}>🕹️️ Noticias Videojuegos</Button>
+                <Button href={configuration.EXAMPLE_VIDEO_GAMES_NEWS_TOPIC_URL} fitContent={false}>{t("video_games_news_topic")}</Button>
               </FlexItem>
             </FlexRow>
           </div>
@@ -45,10 +51,10 @@ const Home: NextPage = () => {
           <div className="m-8">
             <FlexColumn>
               <Divider/>
-              <p>{"¿Tienes cuenta?"}</p>
-              <Button href={paths.LOGIN} fitContent={false}>Inicia sesión</Button>
-              <p>{"¿Todavía no tienes cuenta?"}</p>
-              <Button href={paths.REGISTER} fitContent={false}>Regístrate</Button>
+              <p>{t("have_account")}</p>
+              <Button href={paths.LOGIN} fitContent={false}>{t("log_in")}</Button>
+              <p>{t("do_not_have_account")}</p>
+              <Button href={paths.REGISTER} fitContent={false}>{t("sign_up")}</Button>
             </FlexColumn>
           </div>
         </div>

@@ -41,10 +41,12 @@ import {providerIconUrl, providerPrettyName} from "../../../../entities/Subscrip
 import { MenuItem } from "../../../../components/atoms/MenuItem";
 import Menu from "../../../../components/atoms/Menu";
 import { InfoBanner } from "../../../../components/atoms/InfoBanner";
+import { useTranslations } from 'next-intl';
 
 const REFRESH_SUBSCRIPTIONS_INTERVAL = 10000;
 
 const SubscriptionsPage: NextPage = () => {
+  const t = useTranslations("common");
   const router = useRouter()
   const pathParams = useParams<{ id: string[] | string }>();
 
@@ -96,7 +98,7 @@ const SubscriptionsPage: NextPage = () => {
 
   const handleAssignSubscription = () => {
     if (selectedSubscription && !selectedSubscription.followed) {
-      setError("Dale a Seguir antes de asignar la subscripción");
+      setError(t("follow_before_assign"));
     } else {
       openModal(AssignTopicModalId);
       setError(null);
@@ -123,7 +125,7 @@ const SubscriptionsPage: NextPage = () => {
         refreshSubscriptions();
         setError(null);
       } else {
-        setError("No puedes dejar de seguir una subscripción asociada a una categoría");
+        setError(t("cannot_unfollow"));
       }
     })
   }
@@ -169,7 +171,7 @@ const SubscriptionsPage: NextPage = () => {
     <MenuItem key={"subscriptions-show-filters"} onClick={handleShowFilters}>
       <FlexRow position="center">
         <FunnelIcon/>
-        {"Filtrar"}
+        {t("filter")}
       </FlexRow>
     </MenuItem>
   )
@@ -178,7 +180,7 @@ const SubscriptionsPage: NextPage = () => {
       <MenuItem key={"subscriptions-assign"} onClick={handleAssignSubscription}>
         <FlexRow position="center">
           <PencilIcon/>
-          {"Asignar"}
+          {t("assign")}
         </FlexRow>
       </MenuItem>
     )
@@ -188,7 +190,7 @@ const SubscriptionsPage: NextPage = () => {
       }}>
         <FlexRow position="center">
           <RefreshIcon/>
-          {"Actualizar"}
+          {t("refresh")}
         </FlexRow>
       </MenuItem>
     )
@@ -198,7 +200,7 @@ const SubscriptionsPage: NextPage = () => {
       <MenuItem key={"subscriptions-unfollow"} onClick={() => handleUnfollowSubscription(selectedSubscription.uuid)}>
         <FlexRow position="center">
           <MinusIcon/>
-          {"Dejar de seguir"}
+          {t("unfollow")}
         </FlexRow>
       </MenuItem>
     )
@@ -208,7 +210,7 @@ const SubscriptionsPage: NextPage = () => {
       <MenuItem key={"subscriptions-follow"} onClick={() => handleFollowSubscription(selectedSubscription.uuid)}>
         <FlexRow position="center">
           <AddIcon/>
-          {"Seguir"}
+          {t("follow")}
         </FlexRow>
       </MenuItem>
     )
@@ -249,7 +251,7 @@ const SubscriptionsPage: NextPage = () => {
                   {selectedSubscription && selectedSubscription.followed &&
                       <Tag>
                         <span>
-                          {"Siguiendo"}
+                          {t("following")}
                         </span>
                           <div className="hover:cursor-pointer"
                                onClick={() => handleUnfollowSubscription(selectedSubscription.uuid)}>
@@ -260,12 +262,12 @@ const SubscriptionsPage: NextPage = () => {
                   {selectedSubscription && !selectedSubscription.followed && isUserLogged &&
                       <Button primary={false}
                               clickAction={() => handleFollowSubscription(selectedSubscription.uuid)}>
-                        {"Seguir"}
+                        {t("follow")}
                       </Button>
                   }
                   {selectedSubscription && !selectedSubscription.followed && !isUserLogged &&
                       <Button primary={false} href={paths.LOGIN}>
-                        {"Seguir"}
+                        {t("follow")}
                       </Button>
                   }
                 </FlexRow>
@@ -293,7 +295,7 @@ const SubscriptionsPage: NextPage = () => {
       {showRefreshedMessage &&
           <FlexRow position={"center"}>
             <InfoBanner>
-              <span>{"Subscripción actualizada"}</span>
+              <span>{t("subscription_updated")}</span>
               <div className={"hover:cursor-pointer"} onClick={() => setShowRefreshedMessage(false)}>
                 <CrossIcon/>
               </div>
@@ -302,7 +304,7 @@ const SubscriptionsPage: NextPage = () => {
       }
       {isSubscriptionError &&
           <div className="flex items-center justify-center h-screen">
-              <span>{"La subscripción no existe"}</span>
+              <span>{t("subscription_not_exist")}</span>
           </div>
       }
       <SubscriptionVideoCardGrid

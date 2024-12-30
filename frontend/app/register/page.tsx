@@ -14,8 +14,10 @@ import InputText, {InputType} from "../../components/atoms/InputText";
 import {ErrorBanner} from "../../components/atoms/ErrorBanner";
 import {register} from "../../services/profileService";
 import LinkuratorHeader from "../../components/organism/LinkuratorHeader";
+import { useTranslations } from "next-intl";
 
 const Home: NextPage = () => {
+  const t = useTranslations("common");
   const router = useRouter();
 
   const [showForm, setShowForm] = useState(false);
@@ -31,31 +33,31 @@ const Home: NextPage = () => {
     const newErrors: string[] = [];
 
     if (password !== passwordRepeat) {
-      newErrors.push("Las contraseñas no coinciden");
+      newErrors.push(t("passwords_do_not_match"));
     }
 
     if (password.length < 8) {
-      newErrors.push("La contraseña debe tener al menos 8 caracteres");
+      newErrors.push(t("password_min_length"));
     }
 
     if (username.length < 4) {
-      newErrors.push("El nombre de usuario debe tener al menos 4 caracteres");
+      newErrors.push(t("username_min_length"));
     }
 
     if (username.length > 16) {
-      newErrors.push("El nombre de usuario debe tener como máximo 16 caracteres");
+      newErrors.push(t("username_max_length"));
     }
 
     if (firstName.length === 0) {
-      newErrors.push("El nombre no puede estar vacío");
+      newErrors.push(t("name_required"));
     }
 
     if (lastName.length === 0) {
-      newErrors.push("Los apellidos no pueden estar vacíos");
+      newErrors.push(t("last_name_required"));
     }
 
     if (email.length === 0) {
-      newErrors.push("El email no puede estar vacío");
+      newErrors.push(t("email_required"));
     }
 
     if (newErrors.length > 0) {
@@ -66,7 +68,7 @@ const Home: NextPage = () => {
     register(firstName, lastName, username, email, password).then(() => {
       router.push(paths.REGISTER_EMAIL_SENT);
     }).catch(() => {
-      setErrors(["Ha ocurrido un error al registrarte"]);
+      setErrors([t("registration_error")]);
     })
   }
 
@@ -77,44 +79,44 @@ const Home: NextPage = () => {
           <LinkuratorHeader/>
 
           <FlexColumn>
-            <h2 className="text-3xl font-bold py-5">{"Nueva cuenta"}</h2>
+            <h2 className="text-3xl font-bold py-5">{t("new_account")}</h2>
 
             <Button href={configuration.REGISTER_URL} fitContent={false}>
-              <GoogleIcon/>Regístrate con Google
+              <GoogleIcon/>{t("register_with_google")}
             </Button>
 
-            <Divider text={"O"}/>
+            <Divider text={t("or")}/>
 
             {!showForm &&
                 <Button fitContent={false} clickAction={() => setShowForm(!showForm)}>
-                  {"Regístrate con email"}
+                  {t("register_with_email")}
                 </Button>
             }
             {showForm &&
                 <Box>
                     <FlexColumn>
-                        <span className={"font-bold"}>{"Nombre"}</span>
-                        <InputText placeholder={"Introduce tu nombre"} value={firstName}
+                        <span className={"font-bold"}>{t("name")}</span>
+                        <InputText placeholder={t("enter_name")} value={firstName}
                                    onChange={(value) => setFirstName(value)}/>
-                        <span className={"font-bold"}>{"Apellidos"}</span>
-                        <InputText placeholder={"Introduce tus apellidos"} value={lastName}
+                        <span className={"font-bold"}>{t("last_name")}</span>
+                        <InputText placeholder={t("enter_last_name")} value={lastName}
                                    onChange={(value) => setLastName(value)}/>
-                        <span className={"font-bold"}>{"Email"}</span>
-                        <InputText placeholder={"Introduce tu email"} value={email}
+                        <span className={"font-bold"}>{t("email")}</span>
+                        <InputText placeholder={t("enter_email")} value={email}
                                    onChange={(value) => setEmail(value)}/>
-                        <span className={"font-bold"}>{"Nombre de usuario"}</span>
-                        <InputText placeholder={"Introduce tu nombre de usuario"} value={username}
+                        <span className={"font-bold"}>{t("username")}</span>
+                        <InputText placeholder={t("enter_username")} value={username}
                                    onChange={(value) => setUsername(value)}/>
-                        <span className={"font-bold"}>{"Contraseña"}</span>
-                        <InputText placeholder={"Introduce tu contraseña"} value={password}
+                        <span className={"font-bold"}>{t("password")}</span>
+                        <InputText placeholder={t("enter_password")} value={password}
                                    inputType={InputType.PASSWORD}
                                    onChange={(value) => setPassword(value)}/>
-                        <span className={"font-bold"}>{"Repite la contraseña"}</span>
-                        <InputText placeholder={"Repite tu contraseña"} value={passwordRepeat}
+                        <span className={"font-bold"}>{t("repeat_password")}</span>
+                        <InputText placeholder={t("enter_repeat_password")} value={passwordRepeat}
                                    inputType={InputType.PASSWORD}
                                    onChange={(value) => setPasswordRepeat(value)}/>
                         <Button fitContent={false} clickAction={handleRegister}>
-                          {"Regístrate"}
+                          {t("register")}
                         </Button>
 
                       {errors.length > 0 &&
@@ -131,13 +133,13 @@ const Home: NextPage = () => {
             }
 
             <p>
-              {"Al registrarte aceptas: "}
-              <ALink href={configuration.TERMS_OF_SERVICE_URL}><b>{"Términos del servicio"}</b></ALink> {" y "}
-              <ALink href={configuration.PRIVACY_POLICY_URL}><b>{"Política de privacidad"}</b></ALink>
+              {t("accept_terms")}
+              <ALink href={configuration.TERMS_OF_SERVICE_URL}><b>{t("terms_of_service")}</b></ALink> {t("and")}
+              <ALink href={configuration.PRIVACY_POLICY_URL}><b>{t("privacy_policy")}</b></ALink>
             </p>
 
             <ALink href={paths.LOGIN}>
-              <span>¿Ya tienes una cuenta? <b>Inicia sesión</b></span>
+              <span>{t("already_have_account")}</span>
             </ALink>
           </FlexColumn>
         </div>

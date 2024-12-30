@@ -19,6 +19,7 @@ import { MenuItem } from "../atoms/MenuItem";
 import Modal from "../atoms/Modal";
 import Tag from "../atoms/Tag";
 import SearchBar from "../molecules/SearchBar";
+import { useTranslations } from 'next-intl';
 
 export const AssignTopicModalId = "assign-topic-modal";
 
@@ -29,6 +30,7 @@ type AssignTopicModalProps = {
 }
 
 const AssignTopicModal = (props: AssignTopicModalProps) => {
+  const t = useTranslations("common");
   const [topicName, setTopicName] = useState<string>("");
   const [searchValue, setSearchValue] = useState("");
 
@@ -98,21 +100,21 @@ const AssignTopicModal = (props: AssignTopicModalProps) => {
   return (
     <Modal id={AssignTopicModalId}>
       <FlexColumn>
-        <h1 className="font-bold text-xl w-full text-center">{"Asignar subscripción"}</h1>
+        <h1 className="font-bold text-xl w-full text-center">{t("assign_subscription")}</h1>
         <FlexRow>
-          <InputText placeholder={"Nombre de la nueva categoría"}
+          <InputText placeholder={t("new_topic_name")}
                      value={topicName} onChange={(value) => setTopicName(value)}/>
           <Button clickAction={() => {
             newTopicButtonAction(topicName);
           }}>
-            {"Crear"}
+            {t("create")}
           </Button>
         </FlexRow>
-        <Box title={"Categorías (" + topicTags.length + ")"}>
+        <Box title={t("topics") + " (" + topicTags.length + ")"}>
           <div className={"h-60 overflow-y-auto"}>
             <FlexRow wrap={true}>
               {topicTags.length === 0 &&
-                  <p><b>{props.subscription.name}</b> no está asignada a ninguna categoría</p>
+                  <p><b>{props.subscription.name}</b> {t("not_assigned_to_any_topic")}</p>
               }
               {topicTags.length > 0 &&
                 topicTags
@@ -122,18 +124,18 @@ const AssignTopicModal = (props: AssignTopicModalProps) => {
         </Box>
         <FlexRow hideOverflow={false} position={"between"}>
           <Dropdown start={true} bottom={false}
-                    button={<FlexRow><span>{"Asignar o desasignar categoría"}</span></FlexRow>}>
+                    button={<FlexRow><span>{t("assign_or_unassign_topic")}</span></FlexRow>}>
             <div className={"h-60"}>
               <Menu>
                 {topicsMenuItems}
               </Menu>
             </div>
-            <SearchBar value={searchValue} handleChange={(value) => setSearchValue(value)}/>
+            <SearchBar value={searchValue} placeholder={t("search_placeholder")} handleChange={(value) => setSearchValue(value)}/>
           </Dropdown>
           <Button clickAction={() => {
             closeModal(AssignTopicModalId);
           }}>
-            <span>{"Aceptar"}</span>
+            <span>{t("accept")}</span>
           </Button>
         </FlexRow>
       </FlexColumn>

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { paths } from "../../configuration";
 import { Subscription } from "../../entities/Subscription";
 import { Topic } from "../../entities/Topic";
@@ -32,6 +33,7 @@ type EditTopicModalProps = {
 }
 
 const EditTopicModal = (props: EditTopicModalProps) => {
+  const t = useTranslations("common");
   const [searchValue, setSearchValue] = useState("");
   const [newTopicName, setNewTopicName] = useState(props.topic.name);
   const {
@@ -98,14 +100,14 @@ const EditTopicModal = (props: EditTopicModalProps) => {
   return (
     <Modal id={EditTopicModalId} onClose={handleCancel}>
       <FlexColumn>
-        <h1 className="font-bold text-xl w-full text-center">{"Editar categoría"}</h1>
-        <InputText placeholder="Nombre de la categoría" value={newTopicName}
+        <h1 className="font-bold text-xl w-full text-center">{t("edit")}</h1>
+        <InputText placeholder={t("new_topic_name")} value={newTopicName}
                    onChange={(value) => setNewTopicName(value)}/>
-        <Box title={"Subscripciones (" + subscriptionTags.length + ")"}>
+        <Box title={t("subscriptions") + " (" + subscriptionTags.length + ")"}>
           <div className={"h-60 overflow-y-auto"}>
             <FlexRow wrap={true}>
               {subscriptionTags.length === 0 &&
-                  <p>{"No hay subscripciones"}</p>
+                  <p>{t("no_subscriptions")}</p>
               }
               {subscriptionTags.length > 0 &&
                 subscriptionTags
@@ -115,19 +117,20 @@ const EditTopicModal = (props: EditTopicModalProps) => {
         </Box>
         <FlexRow hideOverflow={false} position={"between"}>
           <Dropdown start={true} bottom={false}
-                    button={<FlexRow><span>Agregar o quitar subscripciones</span></FlexRow>}>
+                    button={<FlexRow><span>{t("add_or_remove_subscriptions")}</span></FlexRow>}>
             <div className={"h-60"}>
               <Menu>
                 {subscriptionsMenuItems.length === 0 &&
-                    <MenuItem>{"No hay subscripciones"}</MenuItem>
+                    <MenuItem>{t("no_subscriptions")}</MenuItem>
                 }
                 {subscriptionsMenuItems.length > 0 && subscriptionsMenuItems}
               </Menu>
             </div>
-            <SearchBar value={searchValue} handleChange={(value) => setSearchValue(value)}/>
+            <SearchBar value={searchValue} placeholder={t("search_placeholder")} 
+            handleChange={(value) => setSearchValue(value)}/>
           </Dropdown>
           <Button clickAction={handleUpdateTopic}>
-            <span>{"Editar"}</span>
+            <span>{t("edit")}</span>
           </Button>
         </FlexRow>
       </FlexColumn>

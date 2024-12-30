@@ -9,6 +9,7 @@ import FlexRow from "../atoms/FlexRow";
 import Miniature from "../atoms/Miniature";
 import {InfoBanner} from "../atoms/InfoBanner";
 import FlexItem from "../atoms/FlexItem";
+import {useTranslations} from "next-intl"; // Add this line
 
 type LateralTopicListProps = {
   topics: Topic[];
@@ -18,6 +19,7 @@ type LateralTopicListProps = {
 }
 
 const LateralTopicList = (props: LateralTopicListProps) => {
+  const t = useTranslations("common"); // Add this line
   const router = useRouter()
   const handleClick = (topicId: string) => {
     const topic = props.topics.find((topic) => topic.uuid === topicId);
@@ -50,7 +52,7 @@ const LateralTopicList = (props: LateralTopicListProps) => {
 
   const noItems = (
     <InfoBanner>
-      <span className={"text-sm"}>No se encontraron categorías</span>
+      <span className={"text-sm"}>{t("no_topics_found")}</span>
     </InfoBanner>
   )
 
@@ -60,6 +62,5 @@ const LateralTopicList = (props: LateralTopicListProps) => {
     </Menu>
   )
 }
-
 
 export default LateralTopicList;

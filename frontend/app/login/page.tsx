@@ -15,8 +15,11 @@ import InputText, {InputType} from "../../components/atoms/InputText";
 import {login} from "../../services/profileService";
 import {ErrorBanner} from "../../components/atoms/ErrorBanner";
 import LinkuratorHeader from "../../components/organism/LinkuratorHeader";
+import {useTranslations} from 'next-intl';
 
 const RegisterErrorBanner = () => {
+  const t = useTranslations("common");
+
   const searchParams = useSearchParams();
   const loginError = searchParams.get('error');
 
@@ -26,12 +29,13 @@ const RegisterErrorBanner = () => {
 
   return (
     <ErrorBanner>
-      {"Debes registrarte para acceder"}
+      {t("you_must_sign_up")}
     </ErrorBanner>
   );
 }
 
 const Home: NextPage = () => {
+  const t = useTranslations("common");
   const router = useRouter();
   const {profile, profileIsLoading} = useProfile();
 
@@ -49,7 +53,7 @@ const Home: NextPage = () => {
     login(email, password).then(() => {
       router.push(paths.TOPICS);
     }).catch(() => {
-      setLoginError("Email o contraseña incorrectos");
+      setLoginError(t("incorrect_email_or_password"));
     });
   }
 
@@ -58,23 +62,22 @@ const Home: NextPage = () => {
       <div className="hero-content">
         <div className="max-w-md">
           <LinkuratorHeader/>
-
           <FlexColumn>
-            <h2 className="text-3xl font-bold py-5">{"Inicia sesión"}</h2>
-            <Button href={configuration.LOGIN_URL} fitContent={false}><GoogleIcon/>Accede con Google</Button>
+            <h2 className="text-3xl font-bold py-5">{t("log_in")}</h2>
+            <Button href={configuration.LOGIN_URL} fitContent={false}><GoogleIcon/>{t("log_in_with_google")}</Button>
 
-            <Divider text={"O"}/>
+            <Divider text={t("or")}/>
 
             <Box>
               <FlexColumn>
-                <span className={"font-bold"}>{"Email"}</span>
-                <InputText placeholder={"Introduce tu email"} value={email}
+                <span className={"font-bold"}>{t("email")}</span>
+                <InputText placeholder={t("insert_email")} value={email}
                            onChange={(value) => setEmail(value)}/>
-                <span className={"font-bold"}>{"Contraseña"}</span>
-                <InputText placeholder={"Introduce tu contraseña"} value={password} inputType={InputType.PASSWORD}
+                <span className={"font-bold"}>{t("password")}</span>
+                <InputText placeholder={t("enter_password")} value={password} inputType={InputType.PASSWORD}
                            onChange={(value) => setPassword(value)}/>
                 <Button fitContent={false} clickAction={handleLogin}>
-                  {"Inicia sesión"}
+                  {t("log_in")}
                 </Button>
                 {loginError &&
                     <ErrorBanner>
@@ -91,13 +94,13 @@ const Home: NextPage = () => {
             </Suspense>
 
             <ALink href={paths.FORGOT_PASSWORD}>
-              {"¿Has olvidado tu contraseña?"}
+              {t("forgot_password")}
             </ALink>
 
             <div className={"h-4"}/>
 
             <ALink href={paths.REGISTER}>
-              <span>¿No tienes cuenta? <b>Regístrate</b></span>
+              <span>{t("no_account_sign_up")} <b>{t("sign_up")}</b></span>
             </ALink>
           </FlexColumn>
         </div>

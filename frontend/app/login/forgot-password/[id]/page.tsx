@@ -12,8 +12,10 @@ import Button from "../../../../components/atoms/Button";
 import {InfoBanner} from "../../../../components/atoms/InfoBanner";
 import {ErrorBanner} from "../../../../components/atoms/ErrorBanner";
 import {paths} from "../../../../configuration";
+import {useTranslations} from "next-intl";
 
 const ChangePassword: NextPage = () => {
+  const t = useTranslations("common");
   const router = useRouter();
   const pathParams = useParams<{ id: string[] | string }>();
   const requestId = pathParams.id ? (Array.isArray(pathParams.id) ? pathParams.id[0] : pathParams.id) : undefined;
@@ -47,35 +49,35 @@ const ChangePassword: NextPage = () => {
           <LinkuratorHeader/>
 
           <FlexColumn>
-            <h2 className="text-3xl font-bold py-5">{"Restablece tu contraseña"}</h2>
+            <h2 className="text-3xl font-bold py-5">{t("reset_password")}</h2>
             <Box>
               <FlexColumn>
-                <span className={"font-bold"}>{"Nueva contraseña"}</span>
-                <InputText placeholder={"Introduce tu contraseña"} value={newPassword}
+                <span className={"font-bold"}>{t("new_password")}</span>
+                <InputText placeholder={t("enter_new_password")} value={newPassword}
                            inputType={InputType.PASSWORD}
                            onChange={(value) => setNewPassword(value)}/>
-                <span className={"font-bold"}>{"Repite la contraseña"}</span>
-                <InputText placeholder={"Introduce tu contraseña"} value={repeatNewPassword}
+                <span className={"font-bold"}>{t("repeat_password")}</span>
+                <InputText placeholder={t("enter_new_password")} value={repeatNewPassword}
                            inputType={InputType.PASSWORD}
                            onChange={(value) => setRepeatNewPassword(value)}/>
                 <Button fitContent={false} clickAction={handleChangePassword}>
-                  {"Restablecer contraseña"}
+                  {t("reset_password")}
                 </Button>
               </FlexColumn>
             </Box>
             {passwordChanged === true &&
                 <FlexColumn>
                     <InfoBanner>
-                        <p>{"Se ha cambiado la contraseña satisfactoriamente"}</p>
+                        <p>{t("password_changed_success")}</p>
                     </InfoBanner>
                     <Button fitContent={false} clickAction={goToLogin}>
-                      {"Iniciar sesión"}
+                      {t("log_in")}
                     </Button>
                 </FlexColumn>
             }
             {passwordChanged === false &&
                 <ErrorBanner>
-                    <p>{"No se ha podido cambiar la contraseña"}</p>
+                    <p>{t("password_changed_failure")}</p>
                 </ErrorBanner>
             }
           </FlexColumn>

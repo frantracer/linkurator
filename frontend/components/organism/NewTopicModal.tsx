@@ -28,9 +28,7 @@ import Modal from "../atoms/Modal";
 import { Tabs } from "../atoms/Tabs";
 import Tag from "../atoms/Tag";
 import SearchBar from "../molecules/SearchBar";
-
-const NEW_TOPIC_TAB = "Nueva"
-const FOLLOW_TOPIC_TAB = "Seguir"
+import { useTranslations } from 'next-intl';
 
 export const NewTopicModalId = "new-topic-modal";
 
@@ -54,6 +52,10 @@ type NewTopicModalProps = {
 
 const NewTopicModal = (props: NewTopicModalProps) => {
   const router = useRouter();
+  const t = useTranslations("common");
+
+  const NEW_TOPIC_TAB = t("new_topic_tab");
+  const FOLLOW_TOPIC_TAB = t("follow_topic_tab");
 
   const {profile} = useProfile()
 
@@ -94,13 +96,13 @@ const NewTopicModal = (props: NewTopicModalProps) => {
           {!topic.followed &&
               <Button clickAction={() => handleFollowTopic(topic.uuid)} disabled={topic.is_owner}>
                   <AddIcon/>
-                  <span>{"Seguir"}</span>
+                  <span>{t("follow")}</span>
               </Button>
           }
           {topic.followed &&
               <Button clickAction={() => handleUnfollowTopic(topic.uuid)} disabled={topic.is_owner}>
                   <MinusIcon/>
-                  <span>{"Dejar de seguir"}</span>
+                  <span>{t("unfollow")}</span>
               </Button>
           }
         </FlexRow>
@@ -185,17 +187,17 @@ const NewTopicModal = (props: NewTopicModalProps) => {
 
   return (
     <Modal id={NewTopicModalId} onClose={handleClose}>
-      <h1 className="font-bold text-xl w-full text-center">{"Categorías"}</h1>
+      <h1 className="font-bold text-xl w-full text-center">{t("topics")}</h1>
       <Tabs tabsText={tabsText} selectedTab={selectedTab} onTabSelected={setSelectedTab}/>
       {selectedTab === NEW_TOPIC_TAB &&
           <FlexColumn>
-              <InputText placeholder="Introduce el nombre de la nueva categoría" value={newTopicName}
+              <InputText placeholder={t("enter_new_topic_name")} value={newTopicName}
                          onChange={(value) => setNewTopicName(value)}/>
-              <Box title={"Subscripciones (" + subscriptionsToAdd.length + ")"}>
+              <Box title={t("subscriptions") + " (" + subscriptionsToAdd.length + ")"}>
                   <div className={"h-60 overflow-y-auto"}>
                       <FlexRow wrap={true}>
                         {subscriptionTags.length === 0 &&
-                            <span>{"No hay subscripciones"}</span>
+                            <span>{t("no_subscriptions")}</span>
                         }
                         {subscriptionTags.length > 0 &&
                           subscriptionTags
@@ -205,16 +207,16 @@ const NewTopicModal = (props: NewTopicModalProps) => {
               </Box>
               <FlexRow hideOverflow={false} position={"between"}>
                   <Dropdown start={true} bottom={false}
-                            button={<FlexRow><span>Agregar o quitar subscripciones</span></FlexRow>}>
+                            button={<FlexRow><span>{t("add_or_remove_subscriptions")}</span></FlexRow>}>
                       <div className={"h-60"}>
                           <Menu>
                             {subscriptionsMenuItems.length === 0 &&
-                                <MenuItem>{"No hay subscripciones"}</MenuItem>
+                                <MenuItem>{t("no_subscriptions")}</MenuItem>
                             }
                             {subscriptionsMenuItems.length > 0 && subscriptionsMenuItems}
                           </Menu>
                       </div>
-                      <SearchBar value={searchValue} handleChange={(value) => setSearchValue(value)}/>
+                      <SearchBar value={searchValue} placeholder={t("search_placeholder")} handleChange={(value) => setSearchValue(value)}/>
                   </Dropdown>
                   <Button clickAction={async () => {
                     createTopic(uuidv4(), newTopicName, subscriptionsToAdd.map(s => s.uuid)).then(
@@ -224,7 +226,7 @@ const NewTopicModal = (props: NewTopicModalProps) => {
                       }
                     )
                   }}>
-                      <span>{"Crear"}</span>
+                      <span>{t("create")}</span>
                   </Button>
               </FlexRow>
           </FlexColumn>
@@ -232,19 +234,19 @@ const NewTopicModal = (props: NewTopicModalProps) => {
       {selectedTab === FOLLOW_TOPIC_TAB &&
           <FlexColumn>
               <FlexItem grow={true}>
-                  <SearchBar placeholder="Introduce una palabra para buscar categorías" value={topicSearch}
+                  <SearchBar placeholder={t("search_topic_placeholder")} value={topicSearch}
                              handleChange={setTopicSearch}/>
               </FlexItem>
-              <Box title={"Categorías"}>
+              <Box title={t("topics")}>
                   <div className={"h-72 overflow-y-auto"}>
                       <FlexColumn>
                         {debouncedTopicSearch === "" &&
-                            <span>{"Introduce una palabra para buscar categorías"}</span>
+                            <span>{t("search_topic_prompt")}</span>
                         }
                         {topics.length === 0 && !topicsAreLoading && debouncedTopicSearch !== "" &&
-                            <ErrorBanner>{"No se encontró nada relacionado con " + debouncedTopicSearch}</ErrorBanner>
+                            <ErrorBanner>{t("no_topics_found") + ": " + debouncedTopicSearch}</ErrorBanner>
                         }
-                        {topicsAreLoading && <span>{"Cargando..."}</span>}
+                        {topicsAreLoading && <span>{t("loading")}</span>}
                         {topics.length > 0 &&
                             <div className={"max-h-72 overflow-y-auto w-full"}>
                                 <Menu isFullHeight={true}>

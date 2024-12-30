@@ -31,6 +31,7 @@ import FlexItem from "../atoms/FlexItem";
 import {SUBSCRIPTION_DETAILS_ID} from "./SubscriptionDetails";
 import {TOPIC_DETAILS_ID} from "./TopicDetails";
 import {CURATOR_DETAILS_ID} from "./CuratorDetails";
+import {useTranslations} from "next-intl";
 
 export const LATERAL_NAVIGATION_MENU_ID = 'lateral-navigation-menu';
 
@@ -56,6 +57,7 @@ const mapStringToPage = (page: string): CurrentPage => {
 }
 
 export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) => {
+  const t = useTranslations("common");
   const pathname = usePathname()
   const pathnameArray = pathname.split('/').filter((path) => path !== '');
   const initialPage: CurrentPage = mapStringToPage(pathnameArray[0]);
@@ -128,7 +130,7 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
               </ALink>
               <FlexRow position={"center"}>
                 <ALink href={"https://x.com/frantracer"}>
-                  <span className={"text-xs"}>Un proyecto de <b>{"@frantracer"}</b></span>
+                  <span className={"text-xs"}>{t("project_by")} <b>{"@frantracer"}</b></span>
                 </ALink>
               </FlexRow>
             </FlexColumn>
@@ -148,13 +150,13 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
         {profile &&
             <FlexRow>
                 <FlexItem grow={true}>
-                    <SearchBar value={searchValue} handleChange={setSearchValue}/>
+                    <SearchBar value={searchValue} placeholder={t("search_placeholder")} handleChange={setSearchValue}/>
                 </FlexItem>
                 <FlexItem shrink={false}>
                     <Button fitContent={true} clickAction={() => openFilters(currentPage)}>
                         <FlexRow>
                             <FunnelIcon/>
-                            <span>Filtrar</span>
+                            <span>{t("filter")}</span>
                         </FlexRow>
                     </Button>
                 </FlexItem>
@@ -164,11 +166,11 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
             <FlexRow>
                 <FlexColumn>
                     <FlexRow>
-                        <p className={"text-center"}>Sigue el contenido que elijas y crea tus propias categorías</p>
+                        <p className={"text-center"}>{t("follow_and_create")}</p>
                     </FlexRow>
-                    <Button href={paths.REGISTER} fitContent={false}>{"Regístrate"}</Button>
-                    <Divider text={"O"}/>
-                    <Button href={paths.LOGIN} fitContent={false}>{"Inicia sesión"}</Button>
+                    <Button href={paths.REGISTER} fitContent={false}>{t("sign_up")}</Button>
+                    <Divider text={t("or")}/>
+                    <Button href={paths.LOGIN} fitContent={false}>{t("log_in")}</Button>
                 </FlexColumn>
             </FlexRow>
         }
@@ -182,7 +184,7 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
                             <RectangleGroup/>
                         </FlexItem>
                         <FlexItem grow={true}>
-                          {"Categorías"}
+                          {t("topics")}
                         </FlexItem>
                         <FlexItem grow={false}>
                             <Button fitContent={true} clickAction={openNewTopicModal}>
@@ -199,7 +201,7 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
                             <BookmarkSquaredFilled/>
                         </FlexItem>
                         <FlexItem grow={true}>
-                          {"Subscripciones"}
+                          {t("subscriptions")}
                         </FlexItem>
                         <FlexItem grow={false}>
                             <Button clickAction={openNewSubscriptionModal}>
@@ -216,7 +218,7 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
                             <UserIconFilled/>
                         </FlexItem>
                         <FlexItem grow={true}>
-                          {"Curadores"}
+                          {t("curators")}
                         </FlexItem>
                         <FlexItem grow={false}>
                             <Button fitContent={true} clickAction={openFollowCuratorModal}>

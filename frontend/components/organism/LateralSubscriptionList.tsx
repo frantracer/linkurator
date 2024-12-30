@@ -10,6 +10,7 @@ import Miniature from "../atoms/Miniature";
 import {InfoBanner} from "../atoms/InfoBanner";
 import FlexRow from "../atoms/FlexRow";
 import Collapse from "../atoms/Collapse";
+import {useTranslations} from "next-intl";
 
 type LateralItemListProps = {
   subscriptions: Subscription[];
@@ -20,6 +21,7 @@ type LateralItemListProps = {
 }
 
 const LateralSubscriptionList = (props: LateralItemListProps) => {
+  const t = useTranslations("common");
   const router = useRouter()
   const handleClick = (subscriptionId: string) => {
     const subscription = props.subscriptions.find((subscription) => subscription.uuid === subscriptionId);
@@ -70,7 +72,7 @@ const LateralSubscriptionList = (props: LateralItemListProps) => {
 
   const noItems = (
     <InfoBanner>
-      <span className={"text-sm"}>No se encontraron subscripciones</span>
+      <span className={"text-sm"}>{t("no_subscriptions_found")}</span>
     </InfoBanner>
   )
 

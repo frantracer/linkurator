@@ -9,6 +9,7 @@ import FlexRow from "../atoms/FlexRow";
 import {Spinner} from "../atoms/Spinner";
 import {InfoBanner} from "../atoms/InfoBanner";
 import useSet from "../../hooks/useSet";
+import {useTranslations} from "next-intl";
 
 type SubscriptionVideoCardGridProps = {
   refreshItem: (itemId: string) => void,
@@ -25,6 +26,7 @@ type SubscriptionVideoCardGridProps = {
 
 const SubscriptionVideoCardGrid = (props: SubscriptionVideoCardGridProps) => {
   const {set: invalidCards, add: addInvalidCard} = useSet<string>();
+  const t = useTranslations("common");
   const cards = [];
   let content = <div></div>
 
@@ -62,19 +64,19 @@ const SubscriptionVideoCardGrid = (props: SubscriptionVideoCardGridProps) => {
             <div className="flex items-center justify-center h-screen">
                 <FlexRow position={"center"}>
                     <Spinner/>
-                    <span>Descargando contenido de {props.subscription.name}...</span>
+                    <span>{t("downloading_content", {title: props.subscription.name})}</span>
                 </FlexRow>
             </div>
         }
         {!props.subscription.isBeingScanned && props.isLoading &&
             <FlexRow position={"center"}>
                 <Spinner/>
-                <span>{"Cargando..."}</span>
+                <span>{t("loading")}</span>
             </FlexRow>
         }
         {!props.subscription.isBeingScanned && props.isFinished && !props.isLoading &&
             <FlexRow position={"center"}>
-                <InfoBanner>{"No hay más contenido que mostrar"}</InfoBanner>
+                <InfoBanner>{t("no_more_content_to_show")}</InfoBanner>
             </FlexRow>
         }
       </main>

@@ -21,10 +21,7 @@ import { providerIconUrl } from "../../entities/Subscription";
 import { Tabs } from "../atoms/Tabs";
 import { InfoBanner } from "../atoms/InfoBanner";
 import { useRouter } from "next/navigation";
-
-
-const NEW_SUBSCRIPTION_TAB = "Seguir"
-const SYNC_SUBSCRIPTION_TAB = "Sincronizar"
+import { useTranslations } from "next-intl";
 
 export const NewSubscriptionModalId = "new-subscription-modal";
 
@@ -33,6 +30,11 @@ type NewSubscritionModalProps = {
 }
 
 const NewSubscriptionModal = (props: NewSubscritionModalProps) => {
+  const t = useTranslations("common");
+
+  const NEW_SUBSCRIPTION_TAB = t("follow");
+  const SYNC_SUBSCRIPTION_TAB = t("sync");
+
   const router = useRouter();
 
   const tabsText = [NEW_SUBSCRIPTION_TAB, SYNC_SUBSCRIPTION_TAB];
@@ -96,13 +98,13 @@ const NewSubscriptionModal = (props: NewSubscritionModalProps) => {
           {subscription.followed &&
             <Button clickAction={() => handleUnfollow(subscription.uuid)}>
               <MinusIcon />
-              {"Dejar de seguir"}
+              {t("unfollow")}
             </Button>
           }
           {!subscription.followed &&
             <Button clickAction={() => handleFollow(subscription.uuid)}>
               <AddIcon />
-              {"Seguir"}
+              {t("follow")}
             </Button>
           }
         </FlexRow>
@@ -112,44 +114,44 @@ const NewSubscriptionModal = (props: NewSubscritionModalProps) => {
 
   return (
     <Modal id={NewSubscriptionModalId}>
-      <h1 className="font-bold text-xl w-full text-center">{"Subscripciones"}</h1>
+      <h1 className="font-bold text-xl w-full text-center">{t("subscriptions")}</h1>
       <Tabs tabsText={tabsText} selectedTab={selectedTab} onTabSelected={setSelectedTab} />
       {selectedTab === NEW_SUBSCRIPTION_TAB &&
         <FlexColumn>
           <FlexItem grow={true}>
-            <SearchBar placeholder="Busca una subscripción por nombre o URL" value={subscriptionSearch}
+            <SearchBar placeholder={t("search_subscription")} value={subscriptionSearch}
               handleChange={setSubscriptionSearch} />
           </FlexItem>
-          <Box title={"Subscripciones"}>
+          <Box title={t("subscriptions")}>
             <div className={"h-72 overflow-y-auto"}>
               {debouncedSubscriptionSearch === "" &&
-                <FlexRow position={"center"}>{"Busca una subscripción por nombre o URL"}</FlexRow>
+                <FlexRow position={"center"}>{t("search_subscription")}</FlexRow>
               }
-              {subscriptionsAreLoading && <span>{"Cargando subscripciones..."}</span>}
+              {subscriptionsAreLoading && <span>{t("loading_subscriptions")}</span>}
               {subItems.length > 0 &&
                 <Menu isFullHeight={true}>
                   {subItems}
                 </Menu>
               }
               {subItems.length === 0 && !subscriptionsAreLoading && debouncedSubscriptionSearch !== "" &&
-                <FlexRow position={"center"}>{"No se encontraron subscripciones"}</FlexRow>
+                <FlexRow position={"center"}>{t("no_subscriptions_found")}</FlexRow>
               }
             </div>
           </Box>
-          {unfollowError && <ErrorBanner>{"No puedes cancelar una subscripción asignada a una categoría"}</ErrorBanner>}
+          {unfollowError && <ErrorBanner>{t("cannot_unfollow")}</ErrorBanner>}
         </FlexColumn>
       }
       {selectedTab === SYNC_SUBSCRIPTION_TAB &&
         <FlexColumn>
-          <Box title={"Sincronizar YouTube"}>
+          <Box title={t("sync_youtube")}>
             <InfoBanner>
               <FlexColumn>
-                <p><b>Aviso</b>: Nuestra app está siendo validada por YouTube. Puede aparecer un aviso al pulsar el botón, pero todo es completamente seguro. ¡Gracias por tu confianza!</p>
-                <p><b>{"Configuración Avanzada > Ir a linkurator.com"}</b></p>
+                <p><b>{t("notice")}</b>: {t("youtube_validation_notice")}</p>
+                <p><b>{t("advanced_settings")}</b></p>
               </FlexColumn>
             </InfoBanner>
             <FlexRow position={"end"}>
-              <Button clickAction={handleYoutubeSync}>{"(Beta) Sincronizar Canales de YouTube"}</Button>
+              <Button clickAction={handleYoutubeSync}>{t("sync_youtube_channels")}</Button>
             </FlexRow>
           </Box>
         </FlexColumn>

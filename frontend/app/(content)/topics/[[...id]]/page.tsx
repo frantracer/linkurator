@@ -45,10 +45,12 @@ import DeleteTopicConfirmationModal, {
 } from "../../../../components/organism/DeleteTopicConfirmationModal";
 import { MenuItem } from "../../../../components/atoms/MenuItem";
 import Menu from "../../../../components/atoms/Menu";
+import { useTranslations } from "next-intl";
 
 const REFRESH_TOPICS_INTERVAL = 10000;
 
 const Home: NextPage = () => {
+  const t = useTranslations("common");
   const router = useRouter()
   const pathParams = useParams<{ id: string[] | string }>();
 
@@ -147,7 +149,7 @@ const Home: NextPage = () => {
     <MenuItem key={"topics-show-filters"} onClick={handleShowFilters}>
       <FlexRow position="center">
         <FunnelIcon/>
-        Filtrar
+        {t("filter")}
       </FlexRow>
     </MenuItem>
   )
@@ -157,7 +159,7 @@ const Home: NextPage = () => {
         <MenuItem key={"topics-edit-topic"} onClick={handleEditTopic}>
           <FlexRow position="center">
             <PencilIcon/>
-            Editar
+            {t("edit")}
           </FlexRow>
         </MenuItem>
       )
@@ -165,7 +167,7 @@ const Home: NextPage = () => {
         <MenuItem key={"topics-delete-topic"} onClick={handleDeleteTopic}>
           <FlexRow position="center">
             <TrashIcon/>
-            Borrar
+            {t("delete")}
           </FlexRow>
         </MenuItem>
       )
@@ -175,7 +177,7 @@ const Home: NextPage = () => {
         <MenuItem key={"topics-unfollow-topic"} onClick={() => handleUnfollowTopic(selectedTopic.uuid)}>
           <FlexRow position="center">
             <MinusIcon/>
-            Dejar de seguir
+            {t("unfollow")}
           </FlexRow>
         </MenuItem>
       )
@@ -185,7 +187,7 @@ const Home: NextPage = () => {
         <MenuItem key={"topics-follow-topic"} onClick={() => handleFollowTopic(selectedTopic.uuid)}>
           <FlexRow position="center">
             <AddIcon/>
-            Seguir
+            {t("follow")}
           </FlexRow>
         </MenuItem>
       )
@@ -225,7 +227,7 @@ const Home: NextPage = () => {
                   {selectedTopic && selectedTopic.followed && !selectedTopic.is_owner &&
                       <Tag>
                         <span>
-                          {"Siguiendo"}
+                          {t("following")}
                         </span>
                         <div className="hover:cursor-pointer"
                               onClick={() => handleUnfollowTopic(selectedTopic.uuid)}>
@@ -235,17 +237,17 @@ const Home: NextPage = () => {
                   }
                   {selectedTopic && !selectedTopic.followed && !selectedTopic.is_owner && isUserLogged &&
                       <Button primary={false} clickAction={() => handleFollowTopic(selectedTopic.uuid)}>
-                        {"Seguir"}
+                        {t("follow")}
                       </Button>
                   }
                   {selectedTopic && !selectedTopic.followed && !selectedTopic.is_owner && !isUserLogged &&
                       <Button primary={false} href={paths.LOGIN}>
-                        {"Seguir"}
+                        {t("follow")}
                       </Button>
                   }
                   {selectedTopic && selectedTopic.is_owner &&
                       <Tag>
-                        <span className="whitespace-nowrap text-nowrap">{"Mis categorías"}</span>
+                        <span className="whitespace-nowrap text-nowrap">{t("my_topics")}</span>
                       </Tag>
                   }
                 </FlexRow>
@@ -263,7 +265,7 @@ const Home: NextPage = () => {
       {topicIsError && !topicIsLoading &&
           <FlexRow position={"center"}>
               <ErrorBanner>
-                  <span>Categoría no encontrada</span>
+                  <span>{t("topic_not_found")}</span>
               </ErrorBanner>
           </FlexRow>
       }

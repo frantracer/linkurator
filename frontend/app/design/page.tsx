@@ -221,7 +221,7 @@ const InputsSection = () => {
       border-base-100 border-solid border-2 rounded justify-items-center items-center">
         <div className="grid grid-cols-1 gap-4 w-1/2">
           <InputText/>
-          <SearchBar/>
+          <SearchBar placeholder="Buscar..."/>
         </div>
       </div>
     </Section>

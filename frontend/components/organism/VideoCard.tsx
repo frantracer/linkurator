@@ -18,6 +18,7 @@ import {
 import ItemCardSkeleton from "./ItemCardSkeleton";
 import Miniature from "../atoms/Miniature";
 import {providerIconUrl} from "../../entities/Subscription";
+import {useTranslations} from "next-intl";
 
 type VideoCardProps = {
   item: SubscriptionItem;
@@ -61,6 +62,12 @@ const VideoCard = (
     onChangeSwapButton = defaultOnChangeSwapButton
   }: VideoCardProps) => {
   const {ref, inView} = useInView({threshold: 0});
+  const t = useTranslations("common");
+
+  const convertPublishedToAgoText = (date: Date) => {
+    const ago = readableAgoUnits(date);
+    return t("ago_label", {value: ago.value, unit: ago.unit});
+  }
 
   const handleLoad = (event: React.SyntheticEvent<HTMLImageElement, Event>): void => {
     const {naturalWidth, naturalHeight} = event.currentTarget;
@@ -115,7 +122,7 @@ const VideoCard = (
               </div>
           }
           <div className="flex flex-column">
-            <p>{readableAgoUnits(item.published_at)}</p>
+            <p>{convertPublishedToAgoText(item.published_at)}</p>
             {withInteractions &&
                 <div className="card-actions justify-end">
                     <SwapButton

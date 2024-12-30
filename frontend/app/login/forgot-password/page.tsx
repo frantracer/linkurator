@@ -9,10 +9,12 @@ import Button from "../../../components/atoms/Button";
 import LinkuratorHeader from "../../../components/organism/LinkuratorHeader";
 import {forgotPassword} from "../../../services/profileService";
 import {InfoBanner} from "../../../components/atoms/InfoBanner";
+import {useTranslations} from "next-intl";
 
 const ForgotPassword: NextPage = () => {
   const [email, setEmail] = useState("");
   const [emailSent, setEmailSent] = useState(false);
+  const t = useTranslations("common");
 
   const handleForgotPassword = () => {
     forgotPassword(email).then(() => {
@@ -27,20 +29,20 @@ const ForgotPassword: NextPage = () => {
           <LinkuratorHeader/>
 
           <FlexColumn>
-            <h2 className="text-3xl font-bold py-5">{"Restablece tu contraseña"}</h2>
+            <h2 className="text-3xl font-bold py-5">{t("reset_password")}</h2>
             <Box>
               <FlexColumn>
-                <span className={"font-bold"}>{"Email"}</span>
-                <InputText placeholder={"Introduce tu email"} value={email}
+                <span className={"font-bold"}>{t("email")}</span>
+                <InputText placeholder={t("enter_email")} value={email}
                            onChange={(value) => setEmail(value)}/>
                 <Button fitContent={false} clickAction={handleForgotPassword}>
-                  {"Restablecer contraseña"}
+                  {t("reset_password_button")}
                 </Button>
               </FlexColumn>
             </Box>
             {emailSent &&
                 <InfoBanner>
-                    <p>{"Se ha enviado un email para restablecer la contraseña"}</p>
+                    <p>{t("email_sent")}</p>
                 </InfoBanner>
             }
           </FlexColumn>

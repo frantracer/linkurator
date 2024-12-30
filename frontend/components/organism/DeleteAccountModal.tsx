@@ -5,6 +5,7 @@ import Button from "../atoms/Button";
 import {closeModal} from "../../utilities/modalAction";
 import InputText from "../atoms/InputText";
 import {useState} from "react";
+import { useTranslations } from "next-intl";
 
 export const DeleteAccountModalId = "delete-account-modal";
 
@@ -14,6 +15,7 @@ type DeleteAccountModalProps = {
 }
 
 const DeleteAccountModal = (props: DeleteAccountModalProps) => {
+  const t = useTranslations("common");
   const [inputValue, setInputValue] = useState("");
 
   const buttonDisabled = inputValue !== props.userEmail;
@@ -21,19 +23,19 @@ const DeleteAccountModal = (props: DeleteAccountModalProps) => {
   return (
     <Modal id={DeleteAccountModalId}>
       <FlexColumn>
-        <h1 className="font-bold text-xl w-full text-center">Borrar tu cuenta</h1>
-        <p className="text-center">Todos tus datos serán borrados</p>
-        <p className="text-center">Escribe tu email si quieres continuar</p>
+        <h1 className="font-bold text-xl w-full text-center">{t("delete_account_title")}</h1>
+        <p className="text-center">{t("delete_account_warning")}</p>
+        <p className="text-center">{t("delete_account_instruction")}</p>
         <InputText placeholder="Email" value={inputValue} onChange={(value) => setInputValue(value)}/>
         <FlexRow position={"end"}>
           <Button clickAction={() => closeModal(DeleteAccountModalId)}>
-            <span>Cancelar</span>
+            <span>{t("cancel")}</span>
           </Button>
           <Button disabled={buttonDisabled} clickAction={async () => {
             props.onDeleteAccount();
             closeModal(DeleteAccountModalId);
           }}>
-            <span>Borrar</span>
+            <span>{t("delete")}</span>
           </Button>
         </FlexRow>
       </FlexColumn>

@@ -23,11 +23,14 @@ import {ErrorBanner} from "../../../components/atoms/ErrorBanner";
 import {InfoBanner} from "../../../components/atoms/InfoBanner";
 import {useDebounce} from "../../../hooks/useDebounce";
 import FlexItem from "../../../components/atoms/FlexItem";
+import LanguageSelector from "../../../components/molecules/LanguageSelector";
+import {useTranslations} from "next-intl";
 
 const NOTIFICATION_TIMEOUT = 3000;
 const INPUT_DEBOUNCE_TIMEOUT = 500;
 
 const ProfilePage: NextPage = () => {
+  const t = useTranslations("common");
   const router = useRouter();
   const {profile, profileIsLoading, refreshProfile} = useProfile();
 
@@ -133,7 +136,7 @@ const ProfilePage: NextPage = () => {
           </FlexItem>
           <FlexItem grow={true}>
             <h1 className="text-2xl font-bold text-center">
-              {"Mi perfil"}
+              {t("my_profile")}
             </h1>
           </FlexItem>
         </FlexRow>
@@ -145,71 +148,75 @@ const ProfilePage: NextPage = () => {
             <FlexItem grow={true}>
               <div className={"m-8 min-w-80"}>
                 <FlexColumn>
-                  <Box title={"Foto de perfil"}>
+                  <Box title={t("profile_picture")}>
                     <Avatar src={avatarUrl} alt={username ? username : ""}/>
                   </Box>
-                  <Box title={"Datos personales"}>
+                  <Box title={t("personal_data")}>
                     <FlexColumn>
-                      <span className={"font-bold"}>Nombre</span>
+                      <span className={"font-bold"}>{t("first_name")}</span>
                       <InputText value={firstName === null ? "" : firstName} onChange={(value) => {
                         setFirstName(value)
                       }}/>
                       {changeFirstNameOk === false &&
                           <ErrorBanner>
-                            {"Error cambiando el nombre"}
+                            {t("error_changing_first_name")}
                           </ErrorBanner>
                       }
                       {changeFirstNameOk === true &&
                           <InfoBanner>
-                            {"Nombre cambiado correctamente"}
+                            {t("first_name_changed_successfully")}
                           </InfoBanner>
                       }
-                      <span className={"font-bold"}>Apellidos</span>
+                      <span className={"font-bold"}>{t("last_name")}</span>
                       <InputText value={lastName === null ? "" : lastName} onChange={(value) => {
                         setLastName(value)
                       }}/>
                       {changeLastNameOk === false &&
                           <ErrorBanner>
-                            {"Error cambiando los apellidos"}
+                            {t("error_changing_last_name")}
                           </ErrorBanner>
                       }
                       {changeLastNameOk === true &&
                           <InfoBanner>
-                            {"Apellidos cambiados correctamente"}
+                            {t("last_name_changed_successfully")}
                           </InfoBanner>
                       }
 
-                      <span className={"font-bold"}>Usuario</span>
+                      <span className={"font-bold"}>{t("username")}</span>
                       <InputText value={username === null ? "" : username} onChange={(value) => {
                         setUsername(value)
                       }}/>
                       {changeUsernameOk === false &&
                           <ErrorBanner>
-                            {"Error cambiando el usuario"}
+                            {t("error_changing_username")}
                           </ErrorBanner>
                       }
                       {changeUsernameOk === true &&
                           <InfoBanner>
-                            {"Usuario cambiado correctamente"}
+                            {t("username_changed_successfully")}
                           </InfoBanner>
                       }
 
-                      <span className={"font-bold"}>Email</span>
+                      <span className={"font-bold"}>{t("email")}</span>
                       <InputText value={email} disabled={true}/>
                     </FlexColumn>
                   </Box>
                   <Divider/>
-                  <Box title={"Sesión"}>
+                  <Box title={t("session")}>
                     <Button fitContent={true} clickAction={() => {
                       window.open(configuration.LOGOUT_URL, '_self')
                     }}>
-                      <span>{"Cerrar sesión"}</span>
+                      <span>{t("logout")}</span>
                     </Button>
                   </Box>
                   <Divider/>
-                  <Box title={"Privacidad"}>
+                  <Box title={t("language")}>
+                    <LanguageSelector/>
+                  </Box>
+                  <Divider/>
+                  <Box title={t("privacy")}>
                     <Button fitContent={true} clickAction={() => openModal(DeleteAccountModalId)}>
-                      <span>{"Borrar cuenta"}</span>
+                      <span>{t("delete_account")}</span>
                     </Button>
                   </Box>
                 </FlexColumn>

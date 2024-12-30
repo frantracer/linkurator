@@ -6,6 +6,7 @@ import FlexRow from "../atoms/FlexRow";
 import {Spinner} from "../atoms/Spinner";
 import {InfoBanner} from "../atoms/InfoBanner";
 import useSet from "../../hooks/useSet";
+import {useTranslations} from "next-intl";
 
 type CuratorVideoCardGridProps = {
   refreshItem: (itemId: string) => void,
@@ -20,6 +21,7 @@ type CuratorVideoCardGridProps = {
 const CuratorVideoCardGrid = (props: CuratorVideoCardGridProps) => {
   const {set: invalidCards, add: addInvalidCard} = useSet<string>();
   const cards = [];
+  const t = useTranslations("common");
 
   for (let i = 0; i < props.items.length; i++) {
     const item = props.items[i];
@@ -50,12 +52,12 @@ const CuratorVideoCardGrid = (props: CuratorVideoCardGridProps) => {
       {props.isLoading &&
           <FlexRow position={"center"}>
               <Spinner/>
-              <span>{"Cargando..."}</span>
+              <span>{t("loading")}</span>
           </FlexRow>
       }
       {props.isFinished && !props.isLoading &&
           <FlexRow position={"center"}>
-              <InfoBanner>{"No hay más contenido que mostrar"}</InfoBanner>
+              <InfoBanner>{t("no_more_content")}</InfoBanner>
           </FlexRow>
       }
     </main>
