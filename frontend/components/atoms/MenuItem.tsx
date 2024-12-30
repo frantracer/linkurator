@@ -1,16 +1,20 @@
 type MenuItemProps = {
   onClick?: () => void;
+  hideMenuOnClick?: boolean;
   selected?: boolean;
   children?: React.ReactNode;
 };
 
 export const MenuItem = (props: MenuItemProps) => {
   const background = props.selected ? "bg-base-100" : "bg-transparent";
+  const hideMenuOnClick = props.hideMenuOnClick ?? false;
 
   const handleClick = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    (e.currentTarget as HTMLButtonElement).blur();
+    if (hideMenuOnClick) {
+      (e.currentTarget as HTMLButtonElement).blur();
+    }
     if (props.onClick) {
       props.onClick();
     }

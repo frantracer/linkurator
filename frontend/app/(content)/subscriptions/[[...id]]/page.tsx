@@ -168,7 +168,7 @@ const SubscriptionsPage: NextPage = () => {
 
   const dropdownButtons = []
   dropdownButtons.push(
-    <MenuItem key={"subscriptions-show-filters"} onClick={handleShowFilters}>
+    <MenuItem key={"subscriptions-show-filters"} onClick={handleShowFilters} hideMenuOnClick={true}>
       <FlexRow position="center">
         <FunnelIcon/>
         {t("filter")}
@@ -177,7 +177,7 @@ const SubscriptionsPage: NextPage = () => {
   )
   if (selectedSubscription && isUserLogged) {
     dropdownButtons.push(
-      <MenuItem key={"subscriptions-assign"} onClick={handleAssignSubscription}>
+      <MenuItem key={"subscriptions-assign"} onClick={handleAssignSubscription} hideMenuOnClick={true}>
         <FlexRow position="center">
           <PencilIcon/>
           {t("assign")}
@@ -187,7 +187,7 @@ const SubscriptionsPage: NextPage = () => {
     dropdownButtons.push(
       <MenuItem key={"subscriptions-refresh"} onClick={() => {
         handleRefreshSubscription(selectedSubscription.uuid)
-      }}>
+      }} hideMenuOnClick={true}>
         <FlexRow position="center">
           <RefreshIcon/>
           {t("refresh")}
@@ -197,7 +197,7 @@ const SubscriptionsPage: NextPage = () => {
   }
   if (selectedSubscription && selectedSubscription.followed && isUserLogged) {
     dropdownButtons.push(
-      <MenuItem key={"subscriptions-unfollow"} onClick={() => handleUnfollowSubscription(selectedSubscription.uuid)}>
+      <MenuItem key={"subscriptions-unfollow"} onClick={() => handleUnfollowSubscription(selectedSubscription.uuid)} hideMenuOnClick={true}>
         <FlexRow position="center">
           <MinusIcon/>
           {t("unfollow")}
@@ -207,7 +207,7 @@ const SubscriptionsPage: NextPage = () => {
   }
   if (selectedSubscription && !selectedSubscription.followed && isUserLogged) {
     dropdownButtons.push(
-      <MenuItem key={"subscriptions-follow"} onClick={() => handleFollowSubscription(selectedSubscription.uuid)}>
+      <MenuItem key={"subscriptions-follow"} onClick={() => handleFollowSubscription(selectedSubscription.uuid)} hideMenuOnClick={true}>
         <FlexRow position="center">
           <AddIcon/>
           {t("follow")}

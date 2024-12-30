@@ -90,7 +90,7 @@ const CuratorsPage: NextPage = () => {
   const dropdownButtons = []
   if (curator) {
     dropdownButtons.push(
-      <MenuItem key={"curators-filter"} onClick={handleFilter}>
+      <MenuItem key={"curators-filter"} onClick={handleFilter} hideMenuOnClick={true}>
         <FlexRow position="center">
           <FunnelIcon/>
           {t("filter")}
@@ -100,7 +100,7 @@ const CuratorsPage: NextPage = () => {
     if (isUserLogged) {
       if (curator.followed) {
         dropdownButtons.push(
-          <MenuItem key={"curators-unfollow"} onClick={() => handleUnfollowCurator(curator.id)}>
+          <MenuItem key={"curators-unfollow"} onClick={() => handleUnfollowCurator(curator.id)} hideMenuOnClick={true}>
             <FlexRow position="center">
               <MinusIcon/>
               {t("unfollow")}
@@ -109,7 +109,7 @@ const CuratorsPage: NextPage = () => {
         )
       } else {
         dropdownButtons.push(
-          <MenuItem key={"curators-follow"} onClick={() => handleFollowCurator(curator.id)}>
+          <MenuItem key={"curators-follow"} onClick={() => handleFollowCurator(curator.id)} hideMenuOnClick={true}>
             <FlexRow position="center">
               <AddIcon/>
               {t("follow")}
