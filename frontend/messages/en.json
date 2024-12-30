@@ -154,5 +154,71 @@
         "ago_label": "{value} {unit} ago",
         "search_placeholder": "Search...",
         "curators": "Curators"
+    },
+    "legal": {
+        "tos_title": "Terms of Service",
+        "tos_date": "Last updated: January 1, 2021",
+        "tos_intro": "Welcome to Linkurator, a digital platform dedicated to collecting and presenting content from various sources in one place for easy access and consumption. These terms and conditions govern the use of our website and associated services.",
+        "tos_subtitle_1": "Acceptance of Terms",
+        "tos_part_1_1": "By using our service, you agree to be legally bound by these terms and conditions. If you do not agree with any of these terms, please do not use our service.",
+        "tos_part_1_2": "These conditions are subject to change, so the user is required to review the terms of use periodically.",
+        "tos_subtitle_2": "Description of Service",
+        "tos_part_2_1": "Linkurator offers an aggregation service that collects content from various public sources providing links. We are not responsible for the original content nor do we control external sources.",
+        "tos_subtitle_3": "Acceptable Use",
+        "tos_part_3_1": "Users are expected to use Linkurator responsibly and legally. It is strictly prohibited to use the service for any illegal, deceptive, malicious, or discriminatory purpose.",
+        "tos_part_3_2": "Access and use of Linkurator is intended solely for individuals. Accessing and using the service through any type of automation, including but not limited to the use of bots, spiders, or scrapers, is strictly prohibited. Any attempt to access or collect information from Linkurator using such automated means will result in immediate and permanent prohibition of access to the service, which may include banning the associated IP address or account without prior notice.",
+        "tos_part_3_3": "We reserve the right to take additional legal action if deemed necessary to prevent or compensate for any violation.",
+        "tos_subtitle_4": "Intellectual Property",
+        "tos_part_4_1": "The original content belongs to its respective owners and is protected by copyright laws and international treaties. Using our service does not grant you ownership of any content you access.",
+        "privacy_policy_title": "Privacy Policy",
+        "privacy_policy_date": "Last updated: May 6, 2024",
+        "privacy_policy_intro": "At Linkurator (\"we\", \"our\"), respecting your privacy is our priority. This Privacy Policy explains how we collect, use, protect, and, in certain circumstances, share your personal information. This policy applies only to information collected through our application and not to information collected offline.",
+        "privacy_policy_info_collect_title": "Information We Collect",
+        "privacy_policy_info_collect_intro": "The personal information we collect from our users (\"you\") includes:",
+        "privacy_policy_info_collect_list": {
+            "name": "Name",
+            "last_name": "Last name",
+            "email": "Email",
+            "youtube_account": "Associated YouTube account",
+            "youtube_subscriptions": "Subscriptions from your YouTube account"
+        },
+        "privacy_policy_info_collect_usage": "In addition to your personal information, we collect application usage data",
+        "privacy_policy_info_usage_title": "Use of Information",
+        "privacy_policy_info_usage_intro": "We use the information we collect about you to:",
+        "privacy_policy_info_usage_list": {
+            "provide": "Provide, operate, and maintain our application",
+            "improve": "Improve, personalize, and expand our application",
+            "analyze": "Understand and analyze how you use our application",
+            "develop": "Develop new products, services, features, and functionalities",
+            "communicate": "Communicate with you to provide updates and other information related to the application",
+            "email": "Send you emails"
+        },
+        "privacy_policy_protection_title": "Protection of Your Information",
+        "privacy_policy_protection_intro": "We are committed to protecting your personal information. We implement a variety of security measures to maintain the security of your personal information. However, please note that no security measure is infallible.",
+        "privacy_policy_protection_note": "We do not sell, trade, or otherwise transfer your personally identifiable information to third parties, except to comply with a legal obligation.",
+        "privacy_policy_gdpr_title": "GDPR Compliance",
+        "privacy_policy_gdpr_intro": "At Linkurator, we are committed to data protection and compliance with the European Union's General Data Protection Regulation (GDPR). This section provides additional information relevant to users in the European Union.",
+        "privacy_policy_gdpr_legal_basis": "The processing of your personal information is based on the following legal bases:",
+        "privacy_policy_gdpr_legal_basis_list": {
+            "consent": "Consent: We ask for your consent to process your personal information for specific purposes, and you have the right to withdraw your consent at any time.",
+            "contract": "Contract: Processing is necessary for the performance of a contract to which you are a party, or to take steps at your request before entering into a contract.",
+            "legal_obligations": "Legal obligations: Processing is necessary to comply with our legal obligations.",
+            "legitimate_interests": "Legitimate interests: We process your information for our legitimate interests, such as improving our services, communicating with you, or ensuring the security of our application, provided that such interests are not overridden by your rights and freedoms."
+        },
+        "privacy_policy_gdpr_rights_title": "Your Rights under the GDPR",
+        "privacy_policy_gdpr_rights_intro": "Under the GDPR, you have several rights regarding your personal information, including:",
+        "privacy_policy_gdpr_rights_list": {
+            "access": "Right of access: You can request access to your personal information that we process.",
+            "rectification": "Right of rectification: You can request that we correct any incorrect or incomplete information.",
+            "erasure": "Right of erasure: You can request the deletion of your personal information.",
+            "restriction": "Right to restrict processing: You can request that we limit the processing of your personal information.",
+            "data_portability": "Right to data portability: You can request to receive your personal information in a structured, commonly used, and machine-readable format.",
+            "objection": "Right to object: You can object to the processing of your personal information for reasons related to your particular situation."
+        },
+        "privacy_policy_gdpr_rights_note": "To exercise any of these rights, you can use the application or contact us using the contact information provided in this policy. If you have a complaint about how we handle your personal information, you also have the right to file a complaint with a data protection authority.",
+        "privacy_policy_changes_title": "Changes to this Privacy Policy",
+        "privacy_policy_changes_intro": "We reserve the right to modify this Privacy Policy at any time. Changes will take effect immediately upon posting in our application. We recommend that you periodically review this Privacy Policy to stay informed of any changes.",
+        "privacy_policy_contact_title": "Contact",
+        "privacy_policy_contact_intro": "If you have any questions or comments about this Privacy Policy, please contact us at admin@linkurator.com."
     }
 }

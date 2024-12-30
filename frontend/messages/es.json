@@ -154,5 +154,71 @@
         "ago_label": "hace {value} {unit}",
         "search_placeholder": "Buscar...",
         "curators": "Curadores"
+    },
+    "legal": {
+        "tos_title": "Términos del servicio",
+        "tos_date": "Última actualización: 1 de enero de 2021",
+        "tos_intro": "Bienvenidos a Linkurator, una plataforma digital dedicada a recopilar y presentar contenidos de diversas fuentes en un solo lugar para su fácil acceso y consumo. Estos términos y condiciones rigen el uso de nuestro sitio web y servicios asociados.",
+        "tos_subtitle_1": "Aceptación de los Términos",
+        "tos_part_1_1": "Al utilizar nuestro servicio, usted acepta estar legalmente obligado por estos términos y condiciones. Si no está de acuerdo con alguno de estos términos, por favor no utilice nuestro servicio.",
+        "tos_part_1_2": "Estas condiciones están sujetas a cambios, por lo que el usuario está obligado a revisar las condiciones de uso periódicamente.",
+        "tos_subtitle_2": "Descripción del servicio",
+        "tos_part_2_1": "Linkurator ofrece un servicio de agregación que recopila contenidos de diversas fuentes públicas proporcionando enlaces. No somos responsables del contenido original ni controlamos las fuentes externas.",
+        "tos_subtitle_3": "Uso Aceptable",
+        "tos_part_3_1": "Se espera que los usuarios utilicen Linkurator de manera responsable y legal. Queda estrictamente prohibido utilizar el servicio para cualquier propósito ilegal, engañoso, malintencionado o discriminatorio.",
+        "tos_part_3_2": "El acceso y uso de Linkurator está destinado únicamente para personas físicas. Se prohíbe estrictamente el acceso y uso del servicio a través de cualquier tipo de automatización, incluyendo, pero no limitado a, el uso de bots, arañas, o scrapers. Cualquier intento de acceder o recolectar información de Linkurator mediante el uso de tales medios automáticos resultará en la prohibición inmediata y permanente del acceso al servicio, pudiendo incluir el baneo de la dirección IP o la cuenta asociada sin previo aviso.",
+        "tos_part_3_3": "Nos reservamos el derecho de tomar acciones legales adicionales si se considera necesario para prevenir o compensar cualquier violación.",
+        "tos_subtitle_4": "Propiedad Intelectual",
+        "tos_part_4_1": "El contenido original pertenece a sus respectivos propietarios y está protegido por leyes de derechos de autor y tratados internacionales. El uso de nuestro servicio no le otorga propiedad sobre ningún contenido que acceda.",
+        "privacy_policy_title": "Política de Privacidad",
+        "privacy_policy_date": "Última actualización: 06/05/2024",
+        "privacy_policy_intro": "En Linkurator (\"nosotros\", \"nuestro/a\"), el respeto a su privacidad es nuestra prioridad. Esta Política de Privacidad explica cómo recopilamos, usamos, protegemos y, en ciertas circunstancias, compartimos su información personal. Esta política aplica únicamente a la información recopilada a través de nuestra aplicación y no a la información recopilada offline.",
+        "privacy_policy_info_collect_title": "Información que Recopilamos",
+        "privacy_policy_info_collect_intro": "La información personal que recopilamos de nuestros usuarios (\"usted\") es:",
+        "privacy_policy_info_collect_list": {
+            "name": "Nombre",
+            "last_name": "Apellidos",
+            "email": "Correo electrónico",
+            "youtube_account": "Cuenta asociada de Youtube",
+            "youtube_subscriptions": "Subscripciones de su cuenta de Youtube"
+        },
+        "privacy_policy_info_collect_usage": "Además de su información personal, recopilamos datos de uso de la aplicación",
+        "privacy_policy_info_usage_title": "Uso de la Información",
+        "privacy_policy_info_usage_intro": "Usamos la información que recopilamos sobre usted para:",
+        "privacy_policy_info_usage_list": {
+            "provide": "Brindar, operar y mantener nuestra aplicación",
+            "improve": "Mejorar, personalizar y expandir nuestra aplicación",
+            "analyze": "Entender y analizar cómo utiliza nuestra aplicación",
+            "develop": "Desarrollar nuevos productos, servicios, características y funcionalidades",
+            "communicate": "Comunicarnos con usted para proporcionarle actualizaciones y otra información relacionada con la aplicación",
+            "email": "Enviarle correos electrónicos"
+        },
+        "privacy_policy_protection_title": "Protección de su Información",
+        "privacy_policy_protection_intro": "Nos comprometemos a proteger su información personal. Implementamos una variedad de medidas de seguridad para mantener la seguridad de su información personal. Sin embargo, tenga en cuenta que ninguna medida de seguridad es infalible.",
+        "privacy_policy_protection_note": "No vendemos, comerciamos, o de otra manera transferimos a terceros su información personal identificable, excepto para cumplir con una obligación legal.",
+        "privacy_policy_gdpr_title": "Cumplimiento con el GDPR",
+        "privacy_policy_gdpr_intro": "En Linkurator, estamos comprometidos con la protección de datos y con el cumplimiento del Reglamento General de Protección de Datos (GDPR) de la Unión Europea. Esta sección proporciona información adicional relevante para los usuarios en la Unión Europea.",
+        "privacy_policy_gdpr_legal_basis": "El procesamiento de su información personal se basa en las siguientes bases legales:",
+        "privacy_policy_gdpr_legal_basis_list": {
+            "consent": "Consentimiento: Le pedimos su consentimiento para procesar su información personal para propósitos específicos y tiene el derecho de retirar su consentimiento en cualquier momento.",
+            "contract": "Contrato: El procesamiento es necesario para la ejecución de un contrato en el que usted es parte, o para tomar medidas a solicitud suya antes de celebrar un contrato.",
+            "legal_obligations": "Obligaciones legales: El procesamiento es necesario para cumplir con nuestras obligaciones legales.",
+            "legitimate_interests": "Intereses legítimos: Procesamos su información para nuestros intereses legítimos, como mejorar nuestros servicios, comunicarnos con usted o garantizar la seguridad de nuestra aplicación, siempre que dichos intereses no sean superados por sus derechos y libertades."
+        },
+        "privacy_policy_gdpr_rights_title": "Sus Derechos bajo el GDPR",
+        "privacy_policy_gdpr_rights_intro": "Bajo el GDPR, usted tiene varios derechos con respecto a su información personal, incluyendo:",
+        "privacy_policy_gdpr_rights_list": {
+            "access": "Derecho de acceso: Puede solicitar acceso a su información personal que procesamos.",
+            "rectification": "Derecho de rectificación: Puede solicitar que corrijamos cualquier información incorrecta o incompleta.",
+            "erasure": "Derecho de supresión: Puede solicitar la eliminación de su información personal.",
+            "restriction": "Derecho a restringir el procesamiento: Puede solicitar que limitemos el procesamiento de su información personal.",
+            "data_portability": "Derecho a la portabilidad de los datos: Puede solicitar recibir su información personal en un formato estructurado, de uso común y legible por máquina.",
+            "objection": "Derecho de oposición: Puede oponerse al procesamiento de su información personal por motivos relacionados con su situación particular."
+        },
+        "privacy_policy_gdpr_rights_note": "Para ejercer cualquiera de estos derechos, puede usar la aplicación o contáctenos utilizando la información de contacto proporcionada en esta política. Si tiene una queja sobre cómo manejamos su información personal, también tiene el derecho de presentar una queja ante una autoridad de protección de datos.",
+        "privacy_policy_changes_title": "Cambios a esta Política de Privacidad",
+        "privacy_policy_changes_intro": "Nos reservamos el derecho de modificar esta Política de Privacidad en cualquier momento. Los cambios entrarán en vigor inmediatamente después de su publicación en nuestra aplicación. Le recomendamos revisar periódicamente esta Política de Privacidad para estar informado de cualquier cambio.",
+        "privacy_policy_contact_title": "Contacto",
+        "privacy_policy_contact_intro": "Si tiene preguntas o comentarios sobre esta Política de Privacidad, por favor contáctenos en admin@linkurator.com."
     }
 }
