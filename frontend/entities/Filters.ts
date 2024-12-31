@@ -45,10 +45,10 @@ export function isItemShown(item: SubscriptionItem, filters: Filters) {
   );
 }
 
-export const durationOptions = [
-  {key: "short", label: "Corta"},
-  {key: "medium", label: "Intermedia"},
-  {key: "long", label: "Larga"},
-  {key: "all", label: "Cualquiera"},
-  {key: "custom", label: "Personalizada (minutos)"}
+export const durationOptions: { key: DurationGroup, label: string }[] = [
+  {key: "short", label: "short_duration"},
+  {key: "medium", label: "medium_duration"},
+  {key: "long", label: "long_duration"},
+  {key: "all", label: "any_duration"},
+  {key: "custom", label: "custom_duration"}
 ]

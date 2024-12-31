@@ -76,6 +76,13 @@ const TopicDetails = (
 
   const showCustomDuration = filters.durationGroup == "custom";
 
+  const translatedDurationOptions = durationOptions.map(option => {
+    return {
+      key: option.key,
+      label: t(option.label)
+    }
+  });
+
   const handleDurationChange = (key: string) => {
     switch (key) {
       case "short":
@@ -117,7 +124,7 @@ const TopicDetails = (
                      placeholder={t("search_placeholder")}/>
           <Box title={t("duration")}>
             <FlexColumn>
-              <Select selected={filters.durationGroup} options={durationOptions} onChange={handleDurationChange}/>
+              <Select selected={filters.durationGroup} options={translatedDurationOptions} onChange={handleDurationChange}/>
               {showCustomDuration &&
                   <FlexColumn>
                       <FlexRow>

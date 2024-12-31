@@ -153,7 +153,12 @@
         "no_more_content_to_show": "No more content to show",
         "ago_label": "{value} {unit} ago",
         "search_placeholder": "Search...",
-        "curators": "Curators"
+        "curators": "Curators",
+        "short_duration": "Short",
+        "medium_duration": "Medium",
+        "long_duration": "Long",
+        "any_duration": "Any",
+        "custom_duration": "Custom (minutes)"
     },
     "legal": {
         "tos_title": "Terms of Service",
