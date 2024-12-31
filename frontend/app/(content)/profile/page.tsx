@@ -201,6 +201,9 @@ const ProfilePage: NextPage = () => {
                       <InputText value={email} disabled={true}/>
                     </FlexColumn>
                   </Box>
+                  <Box title={t("language")}>
+                    <LanguageSelector/>
+                  </Box>
                   <Divider/>
                   <Box title={t("session")}>
                     <Button fitContent={true} clickAction={() => {
@@ -208,10 +211,6 @@ const ProfilePage: NextPage = () => {
                     }}>
                       <span>{t("logout")}</span>
                     </Button>
-                  </Box>
-                  <Divider/>
-                  <Box title={t("language")}>
-                    <LanguageSelector/>
                   </Box>
                   <Divider/>
                   <Box title={t("privacy")}>
