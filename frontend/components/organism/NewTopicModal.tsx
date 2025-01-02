@@ -219,10 +219,12 @@ const NewTopicModal = (props: NewTopicModalProps) => {
                       <SearchBar value={searchValue} placeholder={t("search_placeholder")} handleChange={(value) => setSearchValue(value)}/>
                   </Dropdown>
                   <Button clickAction={async () => {
-                    createTopic(uuidv4(), newTopicName, subscriptionsToAdd.map(s => s.uuid)).then(
+                    const newTopicUuid = uuidv4();
+                    createTopic(newTopicUuid, newTopicName, subscriptionsToAdd.map(s => s.uuid)).then(
                       () => {
                         handleClose();
                         props.refreshTopics();
+                        router.push(paths.TOPICS + "/" + newTopicUuid);
                       }
                     )
                   }}>
