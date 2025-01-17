@@ -8,8 +8,7 @@ import { getMessages } from 'next-intl/server';
 
 export const metadata: Metadata = {
   title: 'Linkurator',
-  description: 'Linkurator es un agregador de contenidos audiovisuales (como YouTube o Spotify) que te permite organizar tus suscripciones en categorías'
-    + 'También puedes compartir tus categorías y recomendar contenidos. De esta forma puedes convertirte en un curador de contenido y compartir tus gustos con el mundo.',
+  description: 'Linkurator es un agregador de contenidos audiovisuales que organiza tus suscripciones en categorías. Comparte categorías, recomienda contenidos y conviértete en un curador para compartir tus gustos con el mundo',
   icons: {
     icon: '/favicon.ico',
     apple: '/apple-icon.png',
