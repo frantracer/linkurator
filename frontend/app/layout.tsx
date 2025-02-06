@@ -5,6 +5,7 @@ import ReactQueryProvider from "../providers/ReactQueryProvider";
 import { Metadata } from "next";
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages } from 'next-intl/server';
+import { Analytics } from '@vercel/analytics/next';
 
 export const metadata: Metadata = {
   title: 'Linkurator',
@@ -36,6 +37,7 @@ export default async function RootLayout(
             {children}
           </ReactQueryProvider>
         </NextIntlClientProvider>
+        <Analytics />
       </body>
     </html>
   )
