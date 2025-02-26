@@ -66,7 +66,7 @@ const VideoCard = (
 
   const convertPublishedToAgoText = (date: Date) => {
     const ago = readableAgoUnits(date);
-    return t("ago_label", {value: ago.value, unit: ago.unit});
+    return t("ago_label", {value: ago.value, unit: t(ago.unit)});
   }
 
   const handleLoad = (event: React.SyntheticEvent<HTMLImageElement, Event>): void => {
