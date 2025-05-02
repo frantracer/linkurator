@@ -26,10 +26,11 @@ export default async function RootLayout(
   const messages = await getMessages();
 
   return (
-    <html lang="es">
+    <html lang="es" className={"scroll-smooth"}>
       <head>
         <link rel="manifest" href="/manifest.json" />
         <meta name="apple-mobile-web-app-title" content="Linkurator" />
+        <title>Linkurator</title>
       </head>
       <body>
         <NextIntlClientProvider messages={messages}>

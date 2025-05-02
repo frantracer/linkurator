@@ -4,7 +4,7 @@ Linkurator is a web application that helps you categorize your YouTube subscript
 
 You can then view the latest videos from all the channels in a category in one place.
 
-![linkurator_main_page.png](linkurator_main_page.png)
+![linkurator_main_page.png](public/linkurator_main_page.png)
 
 # Development
 

@@ -32,7 +32,7 @@ const ThemeToogleButton: React.FC = () => {
   );
 
   return (
-    <label className="flex cursor-pointer gap-2 m-auto">
+    <label className="flex cursor-pointer gap-2">
       <MoonIcon/>
       <ToggleButton label={"Toggle"} value={theme === Theme.LIGHT} onChange={handleToggle}/>
       <SunIcon/>
