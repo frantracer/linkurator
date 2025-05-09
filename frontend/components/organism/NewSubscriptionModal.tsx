@@ -1,27 +1,27 @@
-import React, { useEffect, useState } from "react";
+import React, {useEffect, useState} from "react";
 import Modal from "../atoms/Modal";
 import Box from "../atoms/Box";
 import FlexColumn from "../atoms/FlexColumn";
 import SearchBar from "../molecules/SearchBar";
-import { useDebounce } from "../../hooks/useDebounce";
+import {useDebounce} from "../../hooks/useDebounce";
 import useFindSubscriptions from "../../hooks/useFindSubscriptions";
 import FlexRow from "../atoms/FlexRow";
 import ALink from "../atoms/ALink";
-import { configuration, paths } from "../../configuration";
+import {configuration, paths} from "../../configuration";
 import Miniature from "../atoms/Miniature";
-import { MenuItem } from "../atoms/MenuItem";
+import {MenuItem} from "../atoms/MenuItem";
 import Menu from "../atoms/Menu";
 import Button from "../atoms/Button";
-import { AddIcon, MinusIcon } from "../atoms/Icons";
-import { followSubscription, unfollowSubscription } from "../../services/subscriptionService";
-import { ErrorBanner } from "../atoms/ErrorBanner";
-import { closeModal } from "../../utilities/modalAction";
+import {AddIcon, MinusIcon} from "../atoms/Icons";
+import {followSubscription, unfollowSubscription} from "../../services/subscriptionService";
+import {ErrorBanner} from "../atoms/ErrorBanner";
+import {closeModal} from "../../utilities/modalAction";
 import FlexItem from "../atoms/FlexItem";
-import { providerIconUrl } from "../../entities/Subscription";
-import { Tabs } from "../atoms/Tabs";
-import { InfoBanner } from "../atoms/InfoBanner";
-import { useRouter } from "next/navigation";
-import { useTranslations } from "next-intl";
+import {providerIconUrl} from "../../entities/Subscription";
+import {Tabs} from "../atoms/Tabs";
+import {useRouter} from "next/navigation";
+import {useTranslations} from "next-intl";
+import Card from "../molecules/Card";
 
 export const NewSubscriptionModalId = "new-subscription-modal";
 
@@ -85,27 +85,27 @@ const NewSubscriptionModal = (props: NewSubscritionModalProps) => {
       }}>
         <FlexRow position={"start"} key={subscription.uuid}>
           <ALink href={paths.SUBSCRIPTIONS + "/" + subscription.uuid}
-            onClick={() => closeModal(NewSubscriptionModalId)}>
+                 onClick={() => closeModal(NewSubscriptionModalId)}>
             <FlexItem grow={true}>
               <FlexRow position={"start"}>
                 <Miniature src={subscription.thumbnail} alt={subscription.name}
-                  badgeImage={providerIconUrl(subscription.provider)} />
+                           badgeImage={providerIconUrl(subscription.provider)}/>
                 <span>{subscription.name}</span>
               </FlexRow>
             </FlexItem>
           </ALink>
-          <FlexItem grow={true} />
+          <FlexItem grow={true}/>
           {subscription.followed &&
-            <Button clickAction={() => handleUnfollow(subscription.uuid)}>
-              <MinusIcon />
-              {t("unfollow")}
-            </Button>
+              <Button clickAction={() => handleUnfollow(subscription.uuid)}>
+                  <MinusIcon/>
+                {t("unfollow")}
+              </Button>
           }
           {!subscription.followed &&
-            <Button clickAction={() => handleFollow(subscription.uuid)}>
-              <AddIcon />
-              {t("follow")}
-            </Button>
+              <Button clickAction={() => handleFollow(subscription.uuid)}>
+                  <AddIcon/>
+                {t("follow")}
+              </Button>
           }
         </FlexRow>
       </MenuItem>
@@ -115,46 +115,61 @@ const NewSubscriptionModal = (props: NewSubscritionModalProps) => {
   return (
     <Modal id={NewSubscriptionModalId}>
       <h1 className="font-bold text-xl w-full text-center">{t("subscriptions")}</h1>
-      <Tabs tabsText={tabsText} selectedTab={selectedTab} onTabSelected={setSelectedTab} />
+      <Tabs tabsText={tabsText} selectedTab={selectedTab} onTabSelected={setSelectedTab}/>
       {selectedTab === NEW_SUBSCRIPTION_TAB &&
-        <FlexColumn>
-          <FlexItem grow={true}>
-            <SearchBar placeholder={t("search_subscription")} value={subscriptionSearch}
-              handleChange={setSubscriptionSearch} />
-          </FlexItem>
-          <Box title={t("subscriptions")}>
-            <div className={"h-72 overflow-y-auto"}>
-              {debouncedSubscriptionSearch === "" &&
-                <FlexRow position={"center"}>{t("search_subscription")}</FlexRow>
-              }
-              {subscriptionsAreLoading && <span>{t("loading_subscriptions")}</span>}
-              {subItems.length > 0 &&
-                <Menu isFullHeight={true}>
-                  {subItems}
-                </Menu>
-              }
-              {subItems.length === 0 && !subscriptionsAreLoading && debouncedSubscriptionSearch !== "" &&
-                <FlexRow position={"center"}>{t("no_subscriptions_found")}</FlexRow>
-              }
-            </div>
-          </Box>
-          {unfollowError && <ErrorBanner>{t("cannot_unfollow")}</ErrorBanner>}
-        </FlexColumn>
+          <FlexColumn>
+              <FlexItem grow={true}>
+                  <SearchBar placeholder={t("search_subscription")} value={subscriptionSearch}
+                             handleChange={setSubscriptionSearch}/>
+              </FlexItem>
+              <Box title={t("subscriptions")}>
+                  <div className={"h-72 overflow-y-auto"}>
+                    {debouncedSubscriptionSearch === "" &&
+                        <FlexRow position={"center"}>{t("search_subscription")}</FlexRow>
+                    }
+                    {subscriptionsAreLoading && <span>{t("loading_subscriptions")}</span>}
+                    {subItems.length > 0 &&
+                        <Menu isFullHeight={true}>
+                          {subItems}
+                        </Menu>
+                    }
+                    {subItems.length === 0 && !subscriptionsAreLoading && debouncedSubscriptionSearch !== "" &&
+                        <FlexRow position={"center"}>{t("no_subscriptions_found")}</FlexRow>
+                    }
+                  </div>
+              </Box>
+            {unfollowError && <ErrorBanner>{t("cannot_unfollow")}</ErrorBanner>}
+          </FlexColumn>
       }
       {selectedTab === SYNC_SUBSCRIPTION_TAB &&
-        <FlexColumn>
-          <Box title={t("sync_youtube")}>
-            <InfoBanner>
-              <FlexColumn>
-                <p><b>{t("notice")}</b>: {t("youtube_validation_notice")}</p>
-                <p><b>{t("advanced_settings")}</b></p>
-              </FlexColumn>
-            </InfoBanner>
-            <FlexRow position={"end"}>
-              <Button clickAction={handleYoutubeSync}>{t("sync_youtube_channels")}</Button>
-            </FlexRow>
-          </Box>
-        </FlexColumn>
+          <FlexColumn>
+              <Box title={t("sync")}>
+                  <div className={"h-80 overflow-y-auto"}>
+                      <FlexColumn position={"center"}>
+                          <Card title={<FlexRow position={"center"}>
+                            <Miniature src={providerIconUrl("youtube")} alt={"youtube logo"}/>
+                            <span>{"YouTube"}</span>
+                          </FlexRow>}>
+                              <FlexRow position={"center"}>
+                                  <Button clickAction={handleYoutubeSync}>
+                                    {t("sync")}
+                                  </Button>
+                              </FlexRow>
+                          </Card>
+                          <Card title={<FlexRow position={"center"}>
+                            <Miniature src={providerIconUrl("spotify")} alt={"spotify logo"}/>
+                            <span>{"Spotify"}</span>
+                          </FlexRow>}>
+                              <FlexRow position={"center"}>
+                                  <Button disabled={true}>
+                                      <span>{t("soon")}</span>
+                                  </Button>
+                              </FlexRow>
+                          </Card>
+                      </FlexColumn>
+                  </div>
+              </Box>
+          </FlexColumn>
       }
     </Modal>
   )
