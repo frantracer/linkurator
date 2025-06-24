@@ -11,7 +11,6 @@ import {InfoBanner} from "../atoms/InfoBanner";
 import {useTranslations} from "next-intl";
 
 type LateralCuratorListProps = {
-  searchValue: string;
   curators: Curator[];
   selectedCurator: Curator | undefined;
   closeMenu: () => void;
@@ -30,9 +29,6 @@ const LateralCuratorList = (props: LateralCuratorListProps) => {
   }
 
   const items = props.curators
-    .filter((curator) => {
-      return curator.username.toLowerCase().includes(props.searchValue.toLowerCase());
-    })
     .sort(curatorSorting)
     .map((curator) => (
       <MenuItem

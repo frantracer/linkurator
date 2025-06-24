@@ -13,7 +13,7 @@ import {AddIcon, BookmarkSquaredFilled, FunnelIcon, RectangleGroup, UserIconFill
 import SearchBar from "../molecules/SearchBar";
 import LateralSubscriptionList from "./LateralSubscriptionList";
 import LateralTopicList from "./LateralTopicList";
-import {openModal} from "../../utilities/modalAction";
+import {closeModal, openModal} from "../../utilities/modalAction";
 import NewTopicModal, {NewTopicModalId} from "./NewTopicModal";
 import Button from "../atoms/Button";
 import Avatar from "../atoms/Avatar";
@@ -32,6 +32,7 @@ import {SUBSCRIPTION_DETAILS_ID} from "./SubscriptionDetails";
 import {TOPIC_DETAILS_ID} from "./TopicDetails";
 import {CURATOR_DETAILS_ID} from "./CuratorDetails";
 import {useTranslations} from "next-intl";
+import SearchModal, { SearchModalId } from "./SearchModal";
 
 export const LATERAL_NAVIGATION_MENU_ID = 'lateral-navigation-menu';
 
@@ -66,7 +67,6 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
   const pathParamsArray = Array.isArray(pathParams.id) ? pathParams.id : [pathParams.id];
   const selectedId: string | undefined = pathParamsArray.length > 0 ? pathParamsArray[0] : undefined;
 
-  const [searchValue, setSearchValue] = useState<string>('');
   const {profile, profileIsLoading} = useProfile();
   const {subscriptions, refreshSubscriptions} = useSubscriptions(profile);
   const {curators, refreshCurators} = useCurators(profile, profileIsLoading);
@@ -98,6 +98,11 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
 
   const openFollowCuratorModal = () => {
     openModal(FollowCuratorModalId);
+    closeMenu();
+  }
+
+  const openSearchModal = () => {
+    openModal(SearchModalId);
     closeMenu();
   }
 
@@ -150,7 +155,7 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
         {profile &&
             <FlexRow>
                 <FlexItem grow={true}>
-                    <SearchBar value={searchValue} placeholder={t("search_placeholder")} handleChange={setSearchValue}/>
+                    <SearchBar placeholder={t("search_placeholder")} handleClick={openSearchModal}/>
                 </FlexItem>
                 <FlexItem shrink={false}>
                     <Button fitContent={true} clickAction={() => openFilters(currentPage)}>
@@ -232,7 +237,6 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
         {profile && <Divider/>}
         {profile && currentTab === 'subscriptions' &&
             <LateralSubscriptionList
-                searchValue={searchValue}
                 subscriptions={subscriptions}
                 topics={topics}
                 selectedSubscription={selectedSubscription}
@@ -241,14 +245,12 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
         }
         {profile && currentTab === 'topics' &&
             <LateralTopicList
-                searchValue={searchValue}
                 topics={topics}
                 closeMenu={closeMenu}
                 selectedTopic={selectedTopic}/>
         }
         {profile && currentTab === 'curators' &&
             <LateralCuratorList
-                searchValue={searchValue}
                 curators={curators}
                 closeMenu={closeMenu}
                 selectedCurator={selectedCurator}
@@ -258,6 +260,7 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
       <NewTopicModal refreshTopics={refreshTopics} subscriptions={subscriptions}/>
       <NewSubscriptionModal refreshSubscriptions={refreshSubscriptions}/>
       <FolowCuratorModal refreshCurators={refreshCurators} curators={curators}/>
+      <SearchModal onClose={() => closeModal(SearchModalId)}/>
       {
         children
       }

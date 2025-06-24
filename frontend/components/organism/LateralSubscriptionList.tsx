@@ -1,5 +1,5 @@
 import {MenuItem} from "../atoms/MenuItem";
-import {providerIconUrl, Subscription, subscriptionFiltering, subscriptionSorting} from "../../entities/Subscription";
+import {providerIconUrl, Subscription, subscriptionSorting} from "../../entities/Subscription";
 import {useRouter} from "next/navigation";
 import {paths} from "../../configuration";
 import {scrollToDrawerTop} from "../../utilities/scrollToDrawerTop";
@@ -16,7 +16,6 @@ type LateralItemListProps = {
   subscriptions: Subscription[];
   topics: Topic[];
   selectedSubscription: Subscription | undefined;
-  searchValue: string;
   closeMenu: () => void;
 }
 
@@ -34,12 +33,10 @@ const LateralSubscriptionList = (props: LateralItemListProps) => {
 
   const youtubeSubs = props.subscriptions
     .filter((subscription) => subscription.provider === "youtube")
-    .filter((subscription) => subscriptionFiltering(subscription, props.searchValue))
     .sort(subscriptionSorting)
 
   const spotifySubs = props.subscriptions
     .filter((subscription) => subscription.provider === "spotify")
-    .filter((subscription) => subscriptionFiltering(subscription, props.searchValue))
     .sort(subscriptionSorting)
 
   const youtubeItems = youtubeSubs

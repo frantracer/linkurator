@@ -5,14 +5,18 @@ import {useEffect, useState} from "react";
 type SearchBarProps = {
   placeholder: string;
   handleChange?: (value: string) => void;
+  handleClick?: () => void;
   value?: string;
+  autofocus?: boolean;
 };
 
 const SearchBar = (
   {
     placeholder,
     handleChange = undefined,
-    value = ""
+    handleClick = undefined,
+    value = "",
+    autofocus = false
   }: SearchBarProps
 ) => {
   const [searchValue, setSearchValue] = useState(value);
@@ -29,11 +33,11 @@ const SearchBar = (
   }
 
   return (
-    <div className="relative flex flex-column">
+    <div className="relative flex flex-column w-full">
       <div className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 bg-transparent">
         <MagnifyingGlassIcon/>
       </div>
-      <InputText placeholder={placeholder} onChange={setValue} withLeftPadding={true} value={searchValue}/>
+      <InputText placeholder={placeholder} onClick={handleClick} onChange={setValue} withLeftPadding={true} value={searchValue} autofocus={autofocus}/>
       {searchValue !== "" &&
           <div
               className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 cursor-pointer bg-base-200 hover:bg-secondary rounded-full"

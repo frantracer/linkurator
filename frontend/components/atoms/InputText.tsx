@@ -9,9 +9,11 @@ type InputTextProps = {
   placeholder?: string;
   withLeftPadding?: boolean;
   onChange?: (value: string) => void;
+  onClick?: () => void;
   value?: string;
   disabled?: boolean;
   inputType?: InputType;
+  autofocus?: boolean;
 };
 
 const InputText = (
@@ -19,9 +21,11 @@ const InputText = (
     placeholder = "Input",
     withLeftPadding = false,
     onChange = undefined,
+    onClick = undefined,
     value = "",
     disabled = false,
-    inputType = InputType.TEXT
+    inputType = InputType.TEXT,
+    autofocus = false,
   }: InputTextProps) => {
   const [searchValue, setSearchValue] = useState(value);
 
@@ -41,12 +45,14 @@ const InputText = (
       placeholder={placeholder}
       value={searchValue}
       disabled={disabled}
+      autoFocus={autofocus}
       onChange={(e) => {
         setSearchValue(e.target.value);
         if (onChange) {
           onChange(e.target.value);
         }
       }}
+      onClick={onClick}
     />
   );
 }

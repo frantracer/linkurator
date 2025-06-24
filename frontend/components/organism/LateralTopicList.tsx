@@ -14,7 +14,6 @@ import {useTranslations} from "next-intl"; // Add this line
 type LateralTopicListProps = {
   topics: Topic[];
   selectedTopic: Topic | undefined;
-  searchValue: string;
   closeMenu: () => void;
 }
 
@@ -31,9 +30,6 @@ const LateralTopicList = (props: LateralTopicListProps) => {
   }
 
   const items = props.topics
-    .filter((topic) => {
-      return topic.name.toLowerCase().includes(props.searchValue.toLowerCase());
-    })
     .map((topic) => (
       <MenuItem
         key={topic.uuid}
