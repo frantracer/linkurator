@@ -76,13 +76,17 @@ const LateralSubscriptionList = (props: LateralItemListProps) => {
   const youtubeTitle = (
     <FlexRow position={"start"}>
       <Miniature src={providerIconUrl("youtube")} alt={"youtube logo"}/>
-      <span>Youtube</span>
+      <span className="text-sm font-semibold text-base-content/70 tracking-wide">
+        {"YouTube"} ({youtubeItems.length})
+      </span>
     </FlexRow>)
 
   const spotifyTitle = (
     <FlexRow position={"start"}>
       <Miniature src={providerIconUrl("spotify")} alt={"spotify logo"}/>
-      <span>Spotify</span>
+      <span className="text-sm font-semibold text-base-content/70 tracking-wide">
+        {"Spotify"} ({spotifyItems.length})
+      </span>
     </FlexRow>)
 
   return (
