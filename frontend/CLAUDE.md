@@ -62,3 +62,7 @@ Linkurator is a Next.js web application that helps users categorize their YouTub
 - The app has example topic URLs hardcoded in configuration for demos
 - Uses MSW (Mock Service Worker) for testing (public/mockServiceWorker.js)
 - Deploys to Vercel on main branch pushes
+
+## Backend API References
+
+- Backend schema is available in http://localhost:9000/openapi.json
