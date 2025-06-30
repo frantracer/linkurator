@@ -17,6 +17,8 @@ import {
   MinusIcon,
   OptionsIcon,
   PencilIcon,
+  StarIcon,
+  StarFilledIcon,
   TrashIcon
 } from "../../../../../components/atoms/Icons";
 import Menu from "../../../../../components/atoms/Menu";
@@ -43,6 +45,7 @@ import useTopicItems from "../../../../../hooks/useTopicItems";
 import { useTopics } from "../../../../../hooks/useTopics";
 import useTopicSubscriptions from "../../../../../hooks/useTopicSubscriptions";
 import { deleteTopic, followTopic, unfollowTopic } from "../../../../../services/topicService";
+import { useFavoriteTopics } from "../../../../../hooks/useFavoriteTopics";
 import { showLateralMenu } from "../../../../../utilities/lateralMenuAction";
 import { openModal } from "../../../../../utilities/modalAction";
 
@@ -57,7 +60,8 @@ const TopicPageComponent = ({ topicId }: { topicId: string }) => {
   const { profile, profileIsLoading } = useProfile();
   const { subscriptions, refreshSubscriptions } = useSubscriptions(profile);
   const { topics, topicsAreLoading, refreshTopics } = useTopics(profile, profileIsLoading);
-  const { topic: selectedTopic, topicIsLoading, topicIsError } = useTopic(topicId, topics, topicsAreLoading)
+  const { topic: selectedTopic, topicIsLoading, topicIsError } = useTopic(topicId, topics, topicsAreLoading);
+  const { toggleFavorite } = useFavoriteTopics();
   const { topicSubscriptions } = useTopicSubscriptions(selectedTopic, subscriptions)
   const {
     topicItems,
@@ -104,6 +108,12 @@ const TopicPageComponent = ({ topicId }: { topicId: string }) => {
 
   const handleDeleteTopic = () => {
     openModal(DeleteTopicConfirmationModalId)
+  }
+
+  const handleFavoriteTopic = (topicId: string) => {
+    if (selectedTopic) {
+      toggleFavorite(topicId, selectedTopic.is_favorite);
+    }
   }
 
   const deleteTopicAction = (topicId: string) => {
@@ -184,6 +194,27 @@ const TopicPageComponent = ({ topicId }: { topicId: string }) => {
           <FlexRow position="center">
             <AddIcon />
             {t("follow")}
+          </FlexRow>
+        </MenuItem>
+      )
+    }
+    
+    // Add favorite/unfavorite option for all topics (owner and followed)
+    if (selectedTopic.is_favorite) {
+      dropdownButtons.push(
+        <MenuItem key={"topics-unfavorite-topic"} onClick={() => handleFavoriteTopic(selectedTopic.uuid)} hideMenuOnClick={true}>
+          <FlexRow position="center">
+            <StarFilledIcon />
+            {t("remove_from_favorites")}
+          </FlexRow>
+        </MenuItem>
+      )
+    } else {
+      dropdownButtons.push(
+        <MenuItem key={"topics-favorite-topic"} onClick={() => handleFavoriteTopic(selectedTopic.uuid)} hideMenuOnClick={true}>
+          <FlexRow position="center">
+            <StarIcon />
+            {t("add_to_favorites")}
           </FlexRow>
         </MenuItem>
       )

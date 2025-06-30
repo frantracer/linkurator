@@ -6,6 +6,7 @@ export type Topic = {
   subscriptions_ids: string[];
   is_owner: boolean;
   followed: boolean;
+  is_favorite: boolean;
   curator: {
     id: string;
     username: string;

@@ -46,6 +46,7 @@ export async function getTopic(uuid: string): Promise<Topic | null> {
       subscriptions_ids: data.subscriptions_ids,
       is_owner: data.is_owner,
       followed: data.followed,
+      is_favorite: data.is_favorite,
       curator: {
         id: data.curator.id,
         username: data.curator.username,
@@ -195,6 +196,25 @@ export async function unfollowTopic(uuid: string): Promise<void> {
   }
 }
 
+export async function favoriteTopic(uuid: string): Promise<void> {
+  const {data, status} = await axios.post(
+    configuration.TOPICS_URL + uuid + "/favorite",
+    {},
+    {withCredentials: true});
+  if (status !== 201) {
+    throw ("Error favoriting topic " + data);
+  }
+}
+
+export async function unfavoriteTopic(uuid: string): Promise<void> {
+  const {data, status} = await axios.delete(
+    configuration.TOPICS_URL + uuid + "/favorite",
+    {withCredentials: true});
+  if (status !== 204) {
+    throw ("Error unfavoriting topic " + data);
+  }
+}
+
 const mapJsonToTopicResponse = (json: Record<string, any>): TopicResponse => {
   let nextPage: URL | undefined = undefined;
   if (json.next_page) {
@@ -209,6 +229,7 @@ const mapJsonToTopicResponse = (json: Record<string, any>): TopicResponse => {
         subscriptions_ids: element.subscriptions_ids,
         is_owner: element.is_owner,
         followed: element.followed,
+        is_favorite: element.is_favorite,
         curator: {
           id: element.curator.id,
           username: element.curator.username,
