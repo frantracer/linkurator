@@ -6,7 +6,7 @@ import FlexRow from "../atoms/FlexRow";
 import FlexColumn from "../atoms/FlexColumn";
 import SearchBar from "../molecules/SearchBar";
 import Avatar from "../atoms/Avatar";
-import {useCurator} from "../../hooks/useCurator";
+import {useSearchCurators} from "../../hooks/useSearchCurators";
 import {ErrorBanner} from "../atoms/ErrorBanner";
 import {useDebounce} from "../../hooks/useDebounce";
 import {paths} from "../../configuration";
@@ -30,19 +30,24 @@ const FolowCuratorModal = (props: FolowCuratorModalProps) => {
   const debouncedCuratorSearch = useDebounce(curatorSearch, 500);
 
   const {
-    curator,
-    curatorIsLoading
-  } = useCurator(debouncedCuratorSearch, props.curators);
+    curators: searchedCurators,
+    curatorsAreLoading: isLoading,
+    refreshCurators: refreshSearchedCurators
+  } = useSearchCurators(debouncedCuratorSearch);
+
+  const displayCurators = debouncedCuratorSearch === "" ? [] : searchedCurators;
 
   const handleFollowCurator = (curatorId: string) => {
     followCurator(curatorId).then(() => {
       props.refreshCurators();
+      refreshSearchedCurators();
     });
   }
 
   const handleUnfollowCurator = (curatorId: string) => {
     unfollowCurator(curatorId).then(() => {
       props.refreshCurators();
+      refreshSearchedCurators();
     });
   }
 
@@ -59,31 +64,36 @@ const FolowCuratorModal = (props: FolowCuratorModalProps) => {
           <SearchBar placeholder={t("search_curator")} value={curatorSearch}
                      handleChange={setCuratorSearch}/>
         </FlexItem>
-        <Box title={t("curator")}>
-          <FlexColumn>
-            {debouncedCuratorSearch !== "" && curator === null && !curatorIsLoading &&
-                <ErrorBanner>{t("curator_not_found", { curator: debouncedCuratorSearch })}</ErrorBanner>
-            }
-            {curatorIsLoading && <span>{t("loading")}</span>}
-            {curator !== null &&
-                <ALink href={paths.CURATORS + "/" + curator.username} onClick={handleClose}>
-                    <FlexRow>
+        <Box title={`${t("curators")} (${displayCurators.length})`}>
+          <div className="h-80 overflow-y-auto overflow-x-hidden">
+            <FlexColumn>
+              {debouncedCuratorSearch !== "" && displayCurators.length === 0 && !isLoading &&
+                  <ErrorBanner>{t("curator_not_found", { curator: debouncedCuratorSearch })}</ErrorBanner>
+              }
+              {isLoading && <span>{t("loading")}</span>}
+              {displayCurators.map((curator) => (
+                  <FlexRow key={curator.id}>
+                    <ALink href={paths.CURATORS + "/" + curator.username} onClick={handleClose}>
+                      <FlexRow>
                         <Avatar src={curator.avatar_url} alt={curator.username}/>
                         <span>{curator.username}</span>
-                    </FlexRow>
-                </ALink>
-            }
-            {curator !== null && !curator.followed &&
-                <Button fitContent={false} clickAction={() => handleFollowCurator(curator.id)}>{t("follow")}</Button>
-            }
-            {curator !== null && curator.followed &&
-                <Button fitContent={false}
-                        clickAction={() => handleUnfollowCurator(curator.id)}>{t("unfollow")}</Button>
-            }
-            {debouncedCuratorSearch === "" &&
-                <FlexRow position={"center"}>{t("search_curator_prompt")}</FlexRow>
-            }
-          </FlexColumn>
+                      </FlexRow>
+                    </ALink>
+                    <FlexItem grow={true}></FlexItem>
+                    {!curator.followed &&
+                        <Button fitContent={true} clickAction={() => handleFollowCurator(curator.id)}>{t("follow")}</Button>
+                    }
+                    {curator.followed &&
+                        <Button fitContent={true}
+                                clickAction={() => handleUnfollowCurator(curator.id)}>{t("unfollow")}</Button>
+                    }
+                  </FlexRow>
+              ))}
+              {debouncedCuratorSearch === "" &&
+                  <FlexRow position={"center"}>{t("search_curator_prompt")}</FlexRow>
+              }
+            </FlexColumn>
+          </div>
         </Box>
       </FlexColumn>
     </Modal>

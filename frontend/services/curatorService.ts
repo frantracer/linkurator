@@ -47,6 +47,23 @@ export async function getCurators(): Promise<Curator[]> {
   }
 }
 
+export async function searchCurators(username: string): Promise<Curator[]> {
+  if (!username.trim()) {
+    return [];
+  }
+
+  const {
+    data,
+    status
+  } = await axios.get<Curator[]>(`${configuration.CURATORS_URL}?username=${encodeURIComponent(username)}&mine=false`, {withCredentials: true});
+  if (status === 200) {
+    return data
+  } else {
+    console.error("Error searching curators", data);
+    return [];
+  }
+}
+
 export async function followCurator(curatorId: string): Promise<void> {
   const {
     status
