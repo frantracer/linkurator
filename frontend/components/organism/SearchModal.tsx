@@ -37,14 +37,14 @@ const SearchModal: React.FC<SearchModalProps> = ({ onClose }) => {
   const [searchValue, setSearchValue] = useState('');
   const debouncedSearch = useDebounce(searchValue, 300);
 
-  const filteredTopics = debouncedSearch === '' 
-    ? (topics || []) 
+  const filteredTopics = debouncedSearch === ''
+    ? (topics || [])
     : (topics || []).filter((t: any) => t.name.toLowerCase().includes(debouncedSearch.toLowerCase()));
-  const filteredSubscriptions = debouncedSearch === '' 
-    ? (subscriptions || []) 
+  const filteredSubscriptions = debouncedSearch === ''
+    ? (subscriptions || [])
     : (subscriptions || []).filter((s: any) => s.name.toLowerCase().includes(debouncedSearch.toLowerCase()));
-  const filteredCurators = debouncedSearch === '' 
-    ? (curators || []) 
+  const filteredCurators = debouncedSearch === ''
+    ? (curators || [])
     : (curators || []).filter((c: any) => c.username.toLowerCase().includes(debouncedSearch.toLowerCase()));
 
   const handleNavigate = (path: string) => {
@@ -101,9 +101,9 @@ const SearchModal: React.FC<SearchModalProps> = ({ onClose }) => {
                   {filteredSubscriptions.map((sub: Subscription) => (
                     <MenuItem key={sub.uuid} onClick={() => handleNavigate(`${paths.SUBSCRIPTIONS}/${sub.uuid}`)}>
                       <FlexRow position="start">
-                        <Miniature 
-                          src={sub.thumbnail} 
-                          alt={sub.name} 
+                        <Miniature
+                          src={sub.thumbnail}
+                          alt={sub.name}
                           badgeImage={providerIconUrl(sub.provider)}
                         />
                         <span>{sub.name}</span>
@@ -120,7 +120,7 @@ const SearchModal: React.FC<SearchModalProps> = ({ onClose }) => {
               <div className={"max-h-60 overflow-y-auto"}>
                 <Menu>
                   {filteredCurators.map((curator: Curator) => (
-                    <MenuItem key={curator.id} onClick={() => handleNavigate(`${paths.CURATORS}/${curator.id}`)}>
+                    <MenuItem key={curator.id} onClick={() => handleNavigate(`${paths.CURATORS}/${curator.username}`)}>
                       <FlexRow position="start">
                         <Miniature src={curator.avatar_url} alt={curator.username} />
                         <span>{curator.username}</span>
