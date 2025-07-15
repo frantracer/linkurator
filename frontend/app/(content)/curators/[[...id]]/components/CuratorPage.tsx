@@ -192,25 +192,27 @@ const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
       </TopTitle>
 
       {/* Mobile tabs */}
-      <div className="md:hidden m">
+      <div className="md:hidden overflow-hidden">
         <Tabs tabsText={[t("recommendations"), t("topics")]}
               selectedTab={activeTab}
               onTabSelected={(tab) => setActiveTab(tab)}/>
 
         {activeTab === t('recommendations') && (
-          <CuratorVideoCardGrid
-            refreshItem={refreshCuratorItem}
-            fetchMoreItems={fetchMoreItems}
-            items={curatorItems}
-            showInteractions={isUserLogged}
-            isLoading={isLoading}
-            isFinished={isFinished}
-            handleScroll={handleGridScroll}
-          />
+          <div className="p-2 flex w-full h-full overflow-x-hidden overflow-y-auto">
+            <CuratorVideoCardGrid
+              refreshItem={refreshCuratorItem}
+              fetchMoreItems={fetchMoreItems}
+              items={curatorItems}
+              showInteractions={isUserLogged}
+              isLoading={isLoading}
+              isFinished={isFinished}
+              handleScroll={handleGridScroll}
+            />
+          </div>
         )}
 
         {activeTab === t('topics') && (
-          <div className="m-4">
+          <div className="p-2 flex w-full h-full overflow-x-hidden overflow-y-auto">
             <CuratorTopicsList topics={topics} isLoading={topicsIsLoading} refreshTopics={refreshAllTopics}/>
           </div>
         )}
