@@ -126,7 +126,7 @@ const ProfilePage: NextPage = () => {
   }, [profileIsLoading, router, profile]);
 
   return (
-    <main className="min-h-screen w-full bg-base-100">
+    <main className="flex flex-col min-h-screen w-full bg-base-100">
       <TopTitle>
         <FlexRow position={'center'}>
           <FlexItem>
@@ -141,90 +141,92 @@ const ProfilePage: NextPage = () => {
           </FlexItem>
         </FlexRow>
       </TopTitle>
-      <FlexRow position={"center"}>
-        <FlexItem grow={true}>
-          <FlexRow>
-            <FlexItem grow={true}/>
-            <FlexItem grow={true}>
-              <div className={"m-8 min-w-80"}>
-                <FlexColumn>
-                  <Box title={t("profile_picture")}>
-                    <Avatar src={avatarUrl} alt={username ? username : ""}/>
-                  </Box>
-                  <Box title={t("personal_data")}>
-                    <FlexColumn>
-                      <span className={"font-bold"}>{t("first_name")}</span>
-                      <InputText value={firstName === null ? "" : firstName} onChange={(value) => {
-                        setFirstName(value)
-                      }}/>
-                      {changeFirstNameOk === false &&
-                          <ErrorBanner>
-                            {t("error_changing_first_name")}
-                          </ErrorBanner>
-                      }
-                      {changeFirstNameOk === true &&
-                          <InfoBanner>
-                            {t("first_name_changed_successfully")}
-                          </InfoBanner>
-                      }
-                      <span className={"font-bold"}>{t("last_name")}</span>
-                      <InputText value={lastName === null ? "" : lastName} onChange={(value) => {
-                        setLastName(value)
-                      }}/>
-                      {changeLastNameOk === false &&
-                          <ErrorBanner>
-                            {t("error_changing_last_name")}
-                          </ErrorBanner>
-                      }
-                      {changeLastNameOk === true &&
-                          <InfoBanner>
-                            {t("last_name_changed_successfully")}
-                          </InfoBanner>
-                      }
+      <div className="h-full overflow-y-auto">
+        <FlexRow position={"center"}>
+          <FlexItem grow={true}>
+            <FlexRow>
+              <FlexItem grow={true}/>
+              <FlexItem grow={true}>
+                <div className={"px-2 py-4 min-w-80"}>
+                  <FlexColumn>
+                    <Box title={t("profile_picture")}>
+                      <Avatar src={avatarUrl} alt={username ? username : ""}/>
+                    </Box>
+                    <Box title={t("personal_data")}>
+                      <FlexColumn>
+                        <span className={"font-bold"}>{t("first_name")}</span>
+                        <InputText value={firstName === null ? "" : firstName} onChange={(value) => {
+                          setFirstName(value)
+                        }}/>
+                        {changeFirstNameOk === false &&
+                            <ErrorBanner>
+                              {t("error_changing_first_name")}
+                            </ErrorBanner>
+                        }
+                        {changeFirstNameOk === true &&
+                            <InfoBanner>
+                              {t("first_name_changed_successfully")}
+                            </InfoBanner>
+                        }
+                        <span className={"font-bold"}>{t("last_name")}</span>
+                        <InputText value={lastName === null ? "" : lastName} onChange={(value) => {
+                          setLastName(value)
+                        }}/>
+                        {changeLastNameOk === false &&
+                            <ErrorBanner>
+                              {t("error_changing_last_name")}
+                            </ErrorBanner>
+                        }
+                        {changeLastNameOk === true &&
+                            <InfoBanner>
+                              {t("last_name_changed_successfully")}
+                            </InfoBanner>
+                        }
 
-                      <span className={"font-bold"}>{t("username")}</span>
-                      <InputText value={username === null ? "" : username} onChange={(value) => {
-                        setUsername(value)
-                      }}/>
-                      {changeUsernameOk === false &&
-                          <ErrorBanner>
-                            {t("error_changing_username")}
-                          </ErrorBanner>
-                      }
-                      {changeUsernameOk === true &&
-                          <InfoBanner>
-                            {t("username_changed_successfully")}
-                          </InfoBanner>
-                      }
+                        <span className={"font-bold"}>{t("username")}</span>
+                        <InputText value={username === null ? "" : username} onChange={(value) => {
+                          setUsername(value)
+                        }}/>
+                        {changeUsernameOk === false &&
+                            <ErrorBanner>
+                              {t("error_changing_username")}
+                            </ErrorBanner>
+                        }
+                        {changeUsernameOk === true &&
+                            <InfoBanner>
+                              {t("username_changed_successfully")}
+                            </InfoBanner>
+                        }
 
-                      <span className={"font-bold"}>{t("email")}</span>
-                      <InputText value={email} disabled={true}/>
-                    </FlexColumn>
-                  </Box>
-                  <Box title={t("language")}>
-                    <LanguageSelector/>
-                  </Box>
-                  <Divider/>
-                  <Box title={t("session")}>
-                    <Button fitContent={true} clickAction={() => {
-                      window.open(configuration.LOGOUT_URL, '_self')
-                    }}>
-                      <span>{t("logout")}</span>
-                    </Button>
-                  </Box>
-                  <Divider/>
-                  <Box title={t("privacy")}>
-                    <Button fitContent={true} clickAction={() => openModal(DeleteAccountModalId)}>
-                      <span>{t("delete_account")}</span>
-                    </Button>
-                  </Box>
-                </FlexColumn>
-              </div>
-            </FlexItem>
-            <FlexItem grow={true}/>
-          </FlexRow>
-        </FlexItem>
-      </FlexRow>
+                        <span className={"font-bold"}>{t("email")}</span>
+                        <InputText value={email} disabled={true}/>
+                      </FlexColumn>
+                    </Box>
+                    <Box title={t("language")}>
+                      <LanguageSelector/>
+                    </Box>
+                    <Divider/>
+                    <Box title={t("session")}>
+                      <Button fitContent={true} clickAction={() => {
+                        window.open(configuration.LOGOUT_URL, '_self')
+                      }}>
+                        <span>{t("logout")}</span>
+                      </Button>
+                    </Box>
+                    <Divider/>
+                    <Box title={t("privacy")}>
+                      <Button fitContent={true} clickAction={() => openModal(DeleteAccountModalId)}>
+                        <span>{t("delete_account")}</span>
+                      </Button>
+                    </Box>
+                  </FlexColumn>
+                </div>
+              </FlexItem>
+              <FlexItem grow={true}/>
+            </FlexRow>
+          </FlexItem>
+        </FlexRow>
+      </div>
       <DeleteAccountModal userEmail={email} onDeleteAccount={() => {
         deleteProfile().then(() => {
           router.push(configuration.LOGOUT_URL);
