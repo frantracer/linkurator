@@ -5,7 +5,7 @@ import {paths} from "../../configuration";
 import FlexRow from "../atoms/FlexRow";
 import FlexColumn from "../atoms/FlexColumn";
 import {InfoBanner} from "../atoms/InfoBanner";
-import {CrossIcon, RectangleGroup} from "../atoms/Icons";
+import {CrossIcon} from "../atoms/Icons";
 import Button from "../atoms/Button";
 import {followTopic, unfollowTopic} from "../../services/topicService";
 import {MenuItem} from "../atoms/MenuItem";
@@ -51,10 +51,6 @@ const CuratorTopicsList = ({topics, isLoading, refreshTopics}: CuratorTopicsList
   if (topics.length === 0) {
     return (
       <FlexColumn gap={4}>
-        <FlexRow>
-          <RectangleGroup/>
-          <h2 className="text-xl text-balance">{t("topics")}</h2>
-        </FlexRow>
         <InfoBanner>
           <span className="text-sm">{t("no_topics_found")}</span>
         </InfoBanner>
