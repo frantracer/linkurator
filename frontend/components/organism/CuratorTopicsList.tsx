@@ -50,7 +50,7 @@ const CuratorTopicsList = ({topics, isLoading, refreshTopics}: CuratorTopicsList
 
   if (topics.length === 0) {
     return (
-      <FlexColumn gap={4}>
+      <FlexColumn position={"center"} gap={4}>
         <InfoBanner>
           <span className="text-sm">{t("no_topics_found")}</span>
         </InfoBanner>
