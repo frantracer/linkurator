@@ -198,7 +198,7 @@ const TopicPageComponent = ({ topicId }: { topicId: string }) => {
         </MenuItem>
       )
     }
-    
+
     // Add favorite/unfavorite option for all topics (owner and followed)
     if (selectedTopic.is_favorite) {
       dropdownButtons.push(

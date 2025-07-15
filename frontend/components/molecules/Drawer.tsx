@@ -64,7 +64,7 @@ const Drawer = (
   return (
     <div className={`drawer w-full h-full ${sideContentClass} ${alwaysOpenClass}`}>
       <input id={id} type="checkbox" className="drawer-toggle"/>
-      <div className="drawer-content flex flex-col z-10 w-full h-full overflow-auto"
+      <div className="drawer-content flex flex-col z-10 w-full h-full overflow-y-hidden overflow-x-auto"
            onTouchStart={handleTouchStart}
            onTouchEndCapture={handleTouchEnd}>
         {mainContent}

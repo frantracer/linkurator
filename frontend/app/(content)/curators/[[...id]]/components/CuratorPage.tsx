@@ -1,7 +1,7 @@
 'use client';
 
-import { useTranslations } from 'next-intl';
-import React, { useEffect, useState } from "react";
+import {useTranslations} from 'next-intl';
+import React, {useEffect, useState} from "react";
 import Button from "../../../../../components/atoms/Button";
 import Dropdown from "../../../../../components/atoms/Dropdown";
 import FlexColumn from "../../../../../components/atoms/FlexColumn";
@@ -14,32 +14,39 @@ import {
   MenuIcon,
   MinusIcon,
   OptionsIcon,
+  RectangleGroup,
   ThumbsUpFilledIcon
 } from "../../../../../components/atoms/Icons";
 import Menu from "../../../../../components/atoms/Menu";
-import { MenuItem } from "../../../../../components/atoms/MenuItem";
+import {MenuItem} from "../../../../../components/atoms/MenuItem";
 import Miniature from "../../../../../components/atoms/Miniature";
 import Tag from "../../../../../components/atoms/Tag";
 import Drawer from "../../../../../components/molecules/Drawer";
 import TopTitle from "../../../../../components/molecules/TopTitle";
-import CuratorDetails, { CURATOR_DETAILS_ID } from "../../../../../components/organism/CuratorDetails";
+import CuratorDetails, {CURATOR_DETAILS_ID} from "../../../../../components/organism/CuratorDetails";
 import CuratorVideoCardGrid from "../../../../../components/organism/CuratorVideoCardGrid";
-import { LATERAL_NAVIGATION_MENU_ID } from "../../../../../components/organism/LateralNavigationMenu";
-import { paths } from "../../../../../configuration";
-import { useCurator } from "../../../../../hooks/useCurator";
+import {LATERAL_NAVIGATION_MENU_ID} from "../../../../../components/organism/LateralNavigationMenu";
+import {paths} from "../../../../../configuration";
+import {useCurator} from "../../../../../hooks/useCurator";
 import useCuratorItems from "../../../../../hooks/useCuratorItems";
-import { useCurators } from "../../../../../hooks/useCurators";
+import {useCurators} from "../../../../../hooks/useCurators";
+import {useCuratorTopics} from "../../../../../hooks/useCuratorTopics";
 import useFilters from "../../../../../hooks/useFilters";
 import useProfile from "../../../../../hooks/useProfile";
-import { followCurator, unfollowCurator } from "../../../../../services/curatorService";
-import { showLateralMenu } from "../../../../../utilities/lateralMenuAction";
+import {followCurator, unfollowCurator} from "../../../../../services/curatorService";
+import {showLateralMenu} from "../../../../../utilities/lateralMenuAction";
+import CuratorTopicsList from "../../../../../components/organism/CuratorTopicsList";
+import {Tabs} from "../../../../../components/atoms/Tabs";
+import {useTopics} from "../../../../../hooks/useTopics";
 
-const CuratorPageComponent = ({ curatorName }: { curatorName: string }) => {
+const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
   const t = useTranslations("common");
 
   const {filters, setFilters, resetFilters} = useFilters();
   const [debouncedFilters, setDebouncedFilters] = useState(filters);
+  const [activeTab, setActiveTab] = useState<string>(t('recommendations'));
   const {profile, profileIsLoading} = useProfile();
+  const {refreshTopics: refreshUserTopics} = useTopics(profile, profileIsLoading);
   const {curators, refreshCurators} = useCurators(profile, profileIsLoading);
   const {curator} = useCurator(curatorName, curators);
 
@@ -53,6 +60,14 @@ const CuratorPageComponent = ({ curatorName }: { curatorName: string }) => {
     isLoading,
     isFinished
   } = useCuratorItems(curatorId, debouncedFilters);
+
+  const {topics, topicsIsLoading, refetchTopics} = useCuratorTopics(curatorId);
+
+  const refreshAllTopics = () => {
+    refetchTopics().then(() => {
+      refreshUserTopics();
+    })
+  }
 
   const curatorThumbnail = curator ? curator.avatar_url : "";
 
@@ -175,19 +190,64 @@ const CuratorPageComponent = ({ curatorName }: { curatorName: string }) => {
           </Menu>
         </Dropdown>
       </TopTitle>
-      <FlexRow>
-        <ThumbsUpFilledIcon/>
-        <h2 className={"text-xl text-balance"}>{t("recommendations")}</h2>
-      </FlexRow>
-      <CuratorVideoCardGrid
-        refreshItem={refreshCuratorItem}
-        fetchMoreItems={fetchMoreItems}
-        items={curatorItems}
-        showInteractions={isUserLogged}
-        isLoading={isLoading}
-        isFinished={isFinished}
-        handleScroll={handleGridScroll}
-      />
+
+      {/* Mobile tabs */}
+      <div className="md:hidden m">
+        <Tabs tabsText={[t("recommendations"), t("topics")]}
+              selectedTab={activeTab}
+              onTabSelected={(tab) => setActiveTab(tab)}/>
+
+        {activeTab === t('recommendations') && (
+          <CuratorVideoCardGrid
+            refreshItem={refreshCuratorItem}
+            fetchMoreItems={fetchMoreItems}
+            items={curatorItems}
+            showInteractions={isUserLogged}
+            isLoading={isLoading}
+            isFinished={isFinished}
+            handleScroll={handleGridScroll}
+          />
+        )}
+
+        {activeTab === t('topics') && (
+          <div className="m-4">
+            <CuratorTopicsList topics={topics} isLoading={topicsIsLoading} refreshTopics={refreshAllTopics}/>
+          </div>
+        )}
+      </div>
+
+      {/* Desktop two-column layout */}
+      <div className="hidden flex-col md:grid md:grid-cols-3 h-full overflow-auto">
+        <div className="col-span-2 border-r border-neutral h-full overflow-y-auto">
+          <FlexColumn gap={4}>
+            <FlexRow>
+              <ThumbsUpFilledIcon/>
+              <h2 className={"text-xl text-balance"}>{t("recommendations")}</h2>
+            </FlexRow>
+            <CuratorVideoCardGrid
+              refreshItem={refreshCuratorItem}
+              fetchMoreItems={fetchMoreItems}
+              items={curatorItems}
+              showInteractions={isUserLogged}
+              isLoading={isLoading}
+              isFinished={isFinished}
+              handleScroll={handleGridScroll}
+            />
+          </FlexColumn>
+        </div>
+
+        <div className="col-span-1 flex w-full h-full overflow-x-hidden overflow-y-auto">
+          <div className="w-full items-center mx-4">
+            <FlexColumn gap={4}>
+              <FlexRow>
+                <RectangleGroup/>
+                <h2 className="text-xl text-balance">{t("topics")}</h2>
+              </FlexRow>
+              <CuratorTopicsList topics={topics} isLoading={topicsIsLoading} refreshTopics={refreshAllTopics}/>
+            </FlexColumn>
+          </div>
+        </div>
+      </div>
     </Drawer>
   );
 };
