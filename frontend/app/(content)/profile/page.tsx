@@ -126,7 +126,7 @@ const ProfilePage: NextPage = () => {
   }, [profileIsLoading, router, profile]);
 
   return (
-    <main className="flex flex-col min-h-screen w-full bg-base-100">
+    <main className="flex flex-col bg-base-100">
       <TopTitle>
         <FlexRow position={'center'}>
           <FlexItem grow={true}>

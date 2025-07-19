@@ -43,18 +43,18 @@ import {openModal} from "../../../../../utilities/modalAction";
 
 const REFRESH_SUBSCRIPTIONS_INTERVAL = 10000;
 
-const SubscriptionPageComponent = ({ subscriptionId }: { subscriptionId: string }) => {
+const SubscriptionPageComponent = ({subscriptionId}: { subscriptionId: string }) => {
   const t = useTranslations("common");
   const router = useRouter()
 
   const [error, setError] = useState<string | null>(null);
   const [showRefreshedMessage, setShowRefreshedMessage] = useState<boolean>(false);
 
-  const { filters, setFilters, resetFilters } = useFilters();
+  const {filters, setFilters, resetFilters} = useFilters();
   const [debouncedFilters, setDebouncedFilters] = useState(filters);
-  const { profile, profileIsLoading } = useProfile();
-  const { subscriptions, refreshSubscriptions } = useSubscriptions(profile);
-  const { topics, refreshTopics } = useTopics(profile, profileIsLoading);
+  const {profile, profileIsLoading} = useProfile();
+  const {subscriptions, refreshSubscriptions} = useSubscriptions(profile);
+  const {topics, refreshTopics} = useTopics(profile, profileIsLoading);
   const {
     subscription: selectedSubscription,
     isSubscriptionError
@@ -165,7 +165,7 @@ const SubscriptionPageComponent = ({ subscriptionId }: { subscriptionId: string 
   dropdownButtons.push(
     <MenuItem key={"subscriptions-show-filters"} onClick={handleShowFilters} hideMenuOnClick={true}>
       <FlexRow position="center">
-        <FunnelIcon />
+        <FunnelIcon/>
         {t("filter")}
       </FlexRow>
     </MenuItem>
@@ -174,7 +174,7 @@ const SubscriptionPageComponent = ({ subscriptionId }: { subscriptionId: string 
     dropdownButtons.push(
       <MenuItem key={"subscriptions-assign"} onClick={handleAssignSubscription} hideMenuOnClick={true}>
         <FlexRow position="center">
-          <PencilIcon />
+          <PencilIcon/>
           {t("assign")}
         </FlexRow>
       </MenuItem>
@@ -184,7 +184,7 @@ const SubscriptionPageComponent = ({ subscriptionId }: { subscriptionId: string 
         handleRefreshSubscription(selectedSubscription.uuid)
       }} hideMenuOnClick={true}>
         <FlexRow position="center">
-          <RefreshIcon />
+          <RefreshIcon/>
           {t("refresh")}
         </FlexRow>
       </MenuItem>
@@ -192,9 +192,10 @@ const SubscriptionPageComponent = ({ subscriptionId }: { subscriptionId: string 
   }
   if (selectedSubscription && selectedSubscription.followed && isUserLogged) {
     dropdownButtons.push(
-      <MenuItem key={"subscriptions-unfollow"} onClick={() => handleUnfollowSubscription(selectedSubscription.uuid)} hideMenuOnClick={true}>
+      <MenuItem key={"subscriptions-unfollow"} onClick={() => handleUnfollowSubscription(selectedSubscription.uuid)}
+                hideMenuOnClick={true}>
         <FlexRow position="center">
-          <MinusIcon />
+          <MinusIcon/>
           {t("unfollow")}
         </FlexRow>
       </MenuItem>
@@ -202,9 +203,10 @@ const SubscriptionPageComponent = ({ subscriptionId }: { subscriptionId: string 
   }
   if (selectedSubscription && !selectedSubscription.followed && isUserLogged) {
     dropdownButtons.push(
-      <MenuItem key={"subscriptions-follow"} onClick={() => handleFollowSubscription(selectedSubscription.uuid)} hideMenuOnClick={true}>
+      <MenuItem key={"subscriptions-follow"} onClick={() => handleFollowSubscription(selectedSubscription.uuid)}
+                hideMenuOnClick={true}>
         <FlexRow position="center">
-          <AddIcon />
+          <AddIcon/>
           {t("follow")}
         </FlexRow>
       </MenuItem>
@@ -214,19 +216,19 @@ const SubscriptionPageComponent = ({ subscriptionId }: { subscriptionId: string 
   return (
     <Drawer id={SUBSCRIPTION_DETAILS_ID} right={true} alwaysOpenOnDesktop={false}>
       <SubscriptionDetails subscription={selectedSubscription}
-        filters={filters}
-        showInteractions={isUserLogged}
-        setFilters={setFilters}
-        resetFilters={resetFilters} />
+                           filters={filters}
+                           showInteractions={isUserLogged}
+                           setFilters={setFilters}
+                           resetFilters={resetFilters}/>
       <TopTitle>
         <FlexRow hideOverflow={true}>
-          <FlexItem grow={true} />
+          <FlexItem grow={true}/>
           <FlexRow>
             <FlexItem>
               <FlexColumn gap={0} position={"center"}>
                 <FlexRow>
                   {selectedSubscription &&
-                    <Miniature src={selectedSubscription.thumbnail} alt={selectedSubscription.name} />
+                      <Miniature src={selectedSubscription.thumbnail} alt={selectedSubscription.name}/>
                   }
                   <h1 className="text-xl font-bold whitespace-nowrap truncate">
                     {subscriptionName}
@@ -234,65 +236,65 @@ const SubscriptionPageComponent = ({ subscriptionId }: { subscriptionId: string 
                 </FlexRow>
                 <FlexRow>
                   {selectedSubscription &&
-                    <Button primary={false} clickAction={openSubscriptionUrl}>
-                      <Miniature src={providerIconUrl(selectedSubscription.provider)}
-                        alt={selectedSubscription.provider} />
-                      {providerPrettyName(selectedSubscription.provider)}
-                    </Button>
+                      <Button primary={false} clickAction={openSubscriptionUrl}>
+                          <Miniature src={providerIconUrl(selectedSubscription.provider)}
+                                     alt={selectedSubscription.provider}/>
+                        {providerPrettyName(selectedSubscription.provider)}
+                      </Button>
                   }
                   {selectedSubscription && selectedSubscription.followed &&
-                    <Tag>
+                      <Tag>
                       <span>
                         {t("following")}
                       </span>
-                      <div className="hover:cursor-pointer"
-                        onClick={() => handleUnfollowSubscription(selectedSubscription.uuid)}>
-                        <CrossIcon />
-                      </div>
-                    </Tag>
+                          <div className="hover:cursor-pointer"
+                               onClick={() => handleUnfollowSubscription(selectedSubscription.uuid)}>
+                              <CrossIcon/>
+                          </div>
+                      </Tag>
                   }
                   {selectedSubscription && !selectedSubscription.followed && isUserLogged &&
-                    <Button primary={false}
-                      clickAction={() => handleFollowSubscription(selectedSubscription.uuid)}>
-                      {t("follow")}
-                    </Button>
+                      <Button primary={false}
+                              clickAction={() => handleFollowSubscription(selectedSubscription.uuid)}>
+                        {t("follow")}
+                      </Button>
                   }
                   {selectedSubscription && !selectedSubscription.followed && !isUserLogged &&
-                    <Button primary={false} href={paths.LOGIN}>
-                      {t("follow")}
-                    </Button>
+                      <Button primary={false} href={paths.LOGIN}>
+                        {t("follow")}
+                      </Button>
                   }
                 </FlexRow>
               </FlexColumn>
             </FlexItem>
           </FlexRow>
-          <FlexItem grow={true} />
+          <FlexItem grow={true}/>
         </FlexRow>
       </TopTitle>
       {error &&
-        <FlexRow position={"center"}>
-          <ErrorBanner>
-            <span>{error}</span>
-            <div className={"hover:cursor-pointer"} onClick={() => setError(null)}>
-              <CrossIcon />
-            </div>
-          </ErrorBanner>
-        </FlexRow>
+          <FlexRow position={"center"}>
+              <ErrorBanner>
+                  <span>{error}</span>
+                  <div className={"hover:cursor-pointer"} onClick={() => setError(null)}>
+                      <CrossIcon/>
+                  </div>
+              </ErrorBanner>
+          </FlexRow>
       }
       {showRefreshedMessage &&
-        <FlexRow position={"center"}>
-          <InfoBanner>
-            <span>{t("subscription_updated")}</span>
-            <div className={"hover:cursor-pointer"} onClick={() => setShowRefreshedMessage(false)}>
-              <CrossIcon />
-            </div>
-          </InfoBanner>
-        </FlexRow>
+          <FlexRow position={"center"}>
+              <InfoBanner>
+                  <span>{t("subscription_updated")}</span>
+                  <div className={"hover:cursor-pointer"} onClick={() => setShowRefreshedMessage(false)}>
+                      <CrossIcon/>
+                  </div>
+              </InfoBanner>
+          </FlexRow>
       }
       {isSubscriptionError &&
-        <div className="flex items-center justify-center h-screen">
-          <span>{t("subscription_not_exist")}</span>
-        </div>
+          <div className="flex items-center justify-center h-screen">
+              <span>{t("subscription_not_exist")}</span>
+          </div>
       }
       <SubscriptionVideoCardGrid
         refreshItem={refreshSubscriptionItem}
@@ -307,9 +309,9 @@ const SubscriptionPageComponent = ({ subscriptionId }: { subscriptionId: string 
         handleScroll={handleGridScroll}
       />
       {selectedSubscription &&
-        <AssignTopicModal topics={topics}
-          subscription={selectedSubscription}
-          refreshTopics={refreshTopics} />
+          <AssignTopicModal topics={topics}
+                            subscription={selectedSubscription}
+                            refreshTopics={refreshTopics}/>
       }
     </Drawer>
   );

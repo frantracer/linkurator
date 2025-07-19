@@ -179,7 +179,7 @@ const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
       </TopTitle>
 
       {/* Mobile tabs */}
-      <div className="md:hidden overflow-hidden">
+      <div className="flex flex-col md:hidden overflow-y-hidden">
         <Tabs tabsText={[t("recommendations"), t("topics")]}
               selectedTab={activeTab}
               onTabSelected={(tab) => setActiveTab(tab)}/>
