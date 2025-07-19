@@ -1,5 +1,4 @@
 import React from "react";
-import {className} from "postcss-selector-parser";
 import classNames from "classnames";
 
 type DropdownProps = {
