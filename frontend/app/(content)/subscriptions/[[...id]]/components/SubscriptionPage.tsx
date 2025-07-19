@@ -1,11 +1,10 @@
 'use client';
 
-import { useTranslations } from 'next-intl';
-import { useRouter } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import {useTranslations} from 'next-intl';
+import {useRouter} from "next/navigation";
+import React, {useEffect, useState} from "react";
 import Button from "../../../../../components/atoms/Button";
-import Dropdown from "../../../../../components/atoms/Dropdown";
-import { ErrorBanner } from "../../../../../components/atoms/ErrorBanner";
+import {ErrorBanner} from "../../../../../components/atoms/ErrorBanner";
 import FlexColumn from "../../../../../components/atoms/FlexColumn";
 import FlexItem from "../../../../../components/atoms/FlexItem";
 import FlexRow from "../../../../../components/atoms/FlexRow";
@@ -13,34 +12,34 @@ import {
   AddIcon,
   CrossIcon,
   FunnelIcon,
-  MenuIcon,
   MinusIcon,
-  OptionsIcon,
   PencilIcon,
   RefreshIcon
 } from "../../../../../components/atoms/Icons";
-import { InfoBanner } from "../../../../../components/atoms/InfoBanner";
-import Menu from "../../../../../components/atoms/Menu";
-import { MenuItem } from "../../../../../components/atoms/MenuItem";
+import {InfoBanner} from "../../../../../components/atoms/InfoBanner";
+import {MenuItem} from "../../../../../components/atoms/MenuItem";
 import Miniature from "../../../../../components/atoms/Miniature";
 import Tag from "../../../../../components/atoms/Tag";
 import Drawer from "../../../../../components/molecules/Drawer";
 import TopTitle from "../../../../../components/molecules/TopTitle";
-import AssignTopicModal, { AssignTopicModalId } from "../../../../../components/organism/AssignTopicModal";
-import { LATERAL_NAVIGATION_MENU_ID } from "../../../../../components/organism/LateralNavigationMenu";
-import SubscriptionDetails, { SUBSCRIPTION_DETAILS_ID } from "../../../../../components/organism/SubscriptionDetails";
+import AssignTopicModal, {AssignTopicModalId} from "../../../../../components/organism/AssignTopicModal";
+import SubscriptionDetails, {SUBSCRIPTION_DETAILS_ID} from "../../../../../components/organism/SubscriptionDetails";
 import SubscriptionVideoCardGrid from "../../../../../components/organism/SubscriptionVideoCardGrid";
-import { paths } from "../../../../../configuration";
-import { providerIconUrl, providerPrettyName } from "../../../../../entities/Subscription";
+import {paths} from "../../../../../configuration";
+import {providerIconUrl, providerPrettyName} from "../../../../../entities/Subscription";
 import useFilters from "../../../../../hooks/useFilters";
 import useProfile from "../../../../../hooks/useProfile";
 import useSubscription from "../../../../../hooks/useSubscription";
 import useSubscriptionItems from "../../../../../hooks/useSubscriptionItems";
 import useSubscriptions from "../../../../../hooks/useSubscriptions";
-import { useTopics } from "../../../../../hooks/useTopics";
-import { followSubscription, refreshSubscription, unfollowSubscription } from "../../../../../services/subscriptionService";
-import { showLateralMenu } from "../../../../../utilities/lateralMenuAction";
-import { openModal } from "../../../../../utilities/modalAction";
+import {useTopics} from "../../../../../hooks/useTopics";
+import {
+  followSubscription,
+  refreshSubscription,
+  unfollowSubscription
+} from "../../../../../services/subscriptionService";
+import {showLateralMenu} from "../../../../../utilities/lateralMenuAction";
+import {openModal} from "../../../../../utilities/modalAction";
 
 const REFRESH_SUBSCRIPTIONS_INTERVAL = 10000;
 
@@ -220,9 +219,6 @@ const SubscriptionPageComponent = ({ subscriptionId }: { subscriptionId: string 
         setFilters={setFilters}
         resetFilters={resetFilters} />
       <TopTitle>
-        <Button clickAction={() => showLateralMenu(LATERAL_NAVIGATION_MENU_ID)} showOnlyOnMobile={true}>
-          <MenuIcon />
-        </Button>
         <FlexRow hideOverflow={true}>
           <FlexItem grow={true} />
           <FlexRow>
@@ -272,11 +268,6 @@ const SubscriptionPageComponent = ({ subscriptionId }: { subscriptionId: string 
           </FlexRow>
           <FlexItem grow={true} />
         </FlexRow>
-        <Dropdown button={<OptionsIcon />} start={false} bottom={true}>
-          <Menu>
-            {dropdownButtons}
-          </Menu>
-        </Dropdown>
       </TopTitle>
       {error &&
         <FlexRow position={"center"}>

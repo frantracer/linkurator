@@ -129,11 +129,6 @@ const ProfilePage: NextPage = () => {
     <main className="flex flex-col min-h-screen w-full bg-base-100">
       <TopTitle>
         <FlexRow position={'center'}>
-          <FlexItem>
-            <Button clickAction={() => showLateralMenu(LATERAL_NAVIGATION_MENU_ID)} showOnlyOnMobile={true}>
-              <MenuIcon/>
-            </Button>
-          </FlexItem>
           <FlexItem grow={true}>
             <h1 className="text-2xl font-bold text-center">
               {t("my_profile")}

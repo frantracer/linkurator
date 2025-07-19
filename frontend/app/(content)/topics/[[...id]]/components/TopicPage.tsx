@@ -1,11 +1,10 @@
 'use client';
 
-import { useTranslations } from "next-intl";
-import { useRouter } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import {useTranslations} from "next-intl";
+import {useRouter} from "next/navigation";
+import React, {useEffect, useState} from "react";
 import Button from "../../../../../components/atoms/Button";
-import Dropdown from "../../../../../components/atoms/Dropdown";
-import { ErrorBanner } from "../../../../../components/atoms/ErrorBanner";
+import {ErrorBanner} from "../../../../../components/atoms/ErrorBanner";
 import FlexColumn from "../../../../../components/atoms/FlexColumn";
 import FlexItem from "../../../../../components/atoms/FlexItem";
 import FlexRow from "../../../../../components/atoms/FlexRow";
@@ -13,16 +12,13 @@ import {
   AddIcon,
   CrossIcon,
   FunnelIcon,
-  MenuIcon,
   MinusIcon,
-  OptionsIcon,
   PencilIcon,
-  StarIcon,
   StarFilledIcon,
+  StarIcon,
   TrashIcon
 } from "../../../../../components/atoms/Icons";
-import Menu from "../../../../../components/atoms/Menu";
-import { MenuItem } from "../../../../../components/atoms/MenuItem";
+import {MenuItem} from "../../../../../components/atoms/MenuItem";
 import Miniature from "../../../../../components/atoms/Miniature";
 import Tag from "../../../../../components/atoms/Tag";
 import Drawer from "../../../../../components/molecules/Drawer";
@@ -31,23 +27,22 @@ import CreateFirstTopicHero from "../../../../../components/organism/CreateFirst
 import DeleteTopicConfirmationModal, {
   DeleteTopicConfirmationModalId
 } from "../../../../../components/organism/DeleteTopicConfirmationModal";
-import EditTopicModal, { EditTopicModalId } from "../../../../../components/organism/EditTopicModal";
-import { LATERAL_NAVIGATION_MENU_ID } from "../../../../../components/organism/LateralNavigationMenu";
-import TopicDetails, { TOPIC_DETAILS_ID } from "../../../../../components/organism/TopicDetails";
+import EditTopicModal, {EditTopicModalId} from "../../../../../components/organism/EditTopicModal";
+import TopicDetails, {TOPIC_DETAILS_ID} from "../../../../../components/organism/TopicDetails";
 import TopicVideoCardGrid from "../../../../../components/organism/TopicVideoCardGrid";
-import { paths } from "../../../../../configuration";
-import { isTopicScanned } from "../../../../../entities/Topic";
+import {paths} from "../../../../../configuration";
+import {isTopicScanned} from "../../../../../entities/Topic";
 import useFilters from "../../../../../hooks/useFilters";
 import useProfile from "../../../../../hooks/useProfile";
 import useSubscriptions from "../../../../../hooks/useSubscriptions";
-import { useTopic } from "../../../../../hooks/useTopic";
+import {useTopic} from "../../../../../hooks/useTopic";
 import useTopicItems from "../../../../../hooks/useTopicItems";
-import { useTopics } from "../../../../../hooks/useTopics";
+import {useTopics} from "../../../../../hooks/useTopics";
 import useTopicSubscriptions from "../../../../../hooks/useTopicSubscriptions";
-import { deleteTopic, followTopic, unfollowTopic } from "../../../../../services/topicService";
-import { useFavoriteTopics } from "../../../../../hooks/useFavoriteTopics";
-import { showLateralMenu } from "../../../../../utilities/lateralMenuAction";
-import { openModal } from "../../../../../utilities/modalAction";
+import {deleteTopic, followTopic, unfollowTopic} from "../../../../../services/topicService";
+import {useFavoriteTopics} from "../../../../../hooks/useFavoriteTopics";
+import {showLateralMenu} from "../../../../../utilities/lateralMenuAction";
+import {openModal} from "../../../../../utilities/modalAction";
 
 const REFRESH_TOPICS_INTERVAL = 10000;
 
@@ -231,9 +226,6 @@ const TopicPageComponent = ({ topicId }: { topicId: string }) => {
         resetFilters={resetFilters}
       />
       <TopTitle>
-        <Button clickAction={() => showLateralMenu(LATERAL_NAVIGATION_MENU_ID)} showOnlyOnMobile={true}>
-          <MenuIcon />
-        </Button>
         <FlexRow hideOverflow={true}>
           <FlexItem grow={true} />
           <FlexRow>
@@ -283,11 +275,6 @@ const TopicPageComponent = ({ topicId }: { topicId: string }) => {
           </FlexRow>
           <FlexItem grow={true} />
         </FlexRow>
-        <Dropdown button={<OptionsIcon />} start={false} bottom={true}>
-          <Menu>
-            {dropdownButtons}
-          </Menu>
-        </Dropdown>
       </TopTitle>
       {topicIsError && !topicIsLoading &&
         <FlexRow position={"center"}>

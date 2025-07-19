@@ -3,7 +3,6 @@
 import {useTranslations} from 'next-intl';
 import React, {useEffect, useState} from "react";
 import Button from "../../../../../components/atoms/Button";
-import Dropdown from "../../../../../components/atoms/Dropdown";
 import FlexColumn from "../../../../../components/atoms/FlexColumn";
 import FlexItem from "../../../../../components/atoms/FlexItem";
 import FlexRow from "../../../../../components/atoms/FlexRow";
@@ -11,13 +10,10 @@ import {
   AddIcon,
   CrossIcon,
   FunnelIcon,
-  MenuIcon,
   MinusIcon,
-  OptionsIcon,
   RectangleGroup,
   ThumbsUpFilledIcon
 } from "../../../../../components/atoms/Icons";
-import Menu from "../../../../../components/atoms/Menu";
 import {MenuItem} from "../../../../../components/atoms/MenuItem";
 import Miniature from "../../../../../components/atoms/Miniature";
 import Tag from "../../../../../components/atoms/Tag";
@@ -25,7 +21,6 @@ import Drawer from "../../../../../components/molecules/Drawer";
 import TopTitle from "../../../../../components/molecules/TopTitle";
 import CuratorDetails, {CURATOR_DETAILS_ID} from "../../../../../components/organism/CuratorDetails";
 import CuratorVideoCardGrid from "../../../../../components/organism/CuratorVideoCardGrid";
-import {LATERAL_NAVIGATION_MENU_ID} from "../../../../../components/organism/LateralNavigationMenu";
 import {paths} from "../../../../../configuration";
 import {useCurator} from "../../../../../hooks/useCurator";
 import useCuratorItems from "../../../../../hooks/useCuratorItems";
@@ -145,9 +140,6 @@ const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
     <Drawer id={CURATOR_DETAILS_ID} right={true} alwaysOpenOnDesktop={false}>
       <CuratorDetails curator={curator} filters={filters} setFilters={setFilters} resetFilters={resetFilters}/>
       <TopTitle>
-        <Button clickAction={() => showLateralMenu(LATERAL_NAVIGATION_MENU_ID)} showOnlyOnMobile={true}>
-          <MenuIcon/>
-        </Button>
         <FlexRow hideOverflow={true}>
           <FlexItem grow={true}/>
           <FlexRow>
@@ -184,11 +176,6 @@ const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
           </FlexRow>
           <FlexItem grow={true}/>
         </FlexRow>
-        <Dropdown start={false} bottom={true} button={<OptionsIcon/>}>
-          <Menu>
-            {dropdownButtons}
-          </Menu>
-        </Dropdown>
       </TopTitle>
 
       {/* Mobile tabs */}
