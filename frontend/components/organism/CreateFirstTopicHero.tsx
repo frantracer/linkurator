@@ -12,7 +12,7 @@ const CreateFirstTopicHero = () => {
   const t = useTranslations("common");
 
   return (
-    <div className="hero min-h-screen bg-base-100">
+    <div className="hero min-h-dvh bg-base-100">
       <div className="hero-content text-center">
         <div className="max-w-md">
           <FlexColumn position={"center"}>

@@ -55,7 +55,7 @@ const TopicVideoCardGrid = (props: TopicVideoCardGridProps) => {
   return (
     <main onScroll={props.handleScroll} className="flex flex-col w-full overflow-auto">
       {props.isTopicBeingScanned &&
-          <div className="flex items-center justify-center h-screen">
+          <div className="flex items-center justify-center h-dvh">
               <FlexRow position={"center"}>
                   <Spinner/>
                   <span>{t("downloading_content", {title: props.topic?.name})}</span>

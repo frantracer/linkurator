@@ -61,7 +61,7 @@ const SubscriptionVideoCardGrid = (props: SubscriptionVideoCardGridProps) => {
             </div>
         }
         {props.subscription.isBeingScanned &&
-            <div className="flex items-center justify-center h-screen">
+            <div className="flex items-center justify-center h-dvh">
                 <FlexRow position={"center"}>
                     <Spinner/>
                     <span>{t("downloading_content", {title: props.subscription.name})}</span>

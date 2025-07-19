@@ -10,7 +10,7 @@ export default function DashboardLayout(
     children?: React.ReactNode
   }) {
   return (
-    <div className="flex flex-col h-screen w-screen overflow-y-hidden">
+    <div className="flex flex-col h-dvh w-dvw overflow-y-hidden">
       <div className="flex flex-grow overflow-y-hidden">
         <LateralNavigationMenu>
           {children}

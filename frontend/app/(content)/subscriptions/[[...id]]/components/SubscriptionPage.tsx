@@ -296,7 +296,7 @@ const SubscriptionPageComponent = ({subscriptionId}: { subscriptionId: string })
           </FlexRow>
       }
       {isSubscriptionError &&
-          <div className="flex items-center justify-center h-screen">
+          <div className="flex items-center justify-center h-dvh">
               <span>{t("subscription_not_exist")}</span>
           </div>
       }

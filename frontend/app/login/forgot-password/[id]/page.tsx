@@ -43,7 +43,7 @@ const ChangePassword: NextPage = () => {
   }
 
   return (
-    <main className="hero min-h-screen bg-base-200">
+    <main className="hero min-h-dvh bg-base-200">
       <div className="hero-content">
         <div className="max-w-md">
           <LinkuratorHeader/>

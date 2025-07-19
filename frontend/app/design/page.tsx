@@ -422,7 +422,7 @@ const MainContent = () => {
 
 const DesignSystemPage = () => {
   return (
-    <div className="h-screen w-screen">
+    <div className="h-dvh w-dvw">
       <Drawer id={SIDE_BAR_NAME}>
         <LateralMenu closeMenu={() => hideLateralMenu(SIDE_BAR_NAME)}/>
         <TopTitle>
