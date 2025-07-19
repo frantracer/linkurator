@@ -25,7 +25,7 @@ const FlexRow = (
   };
 
   const wrapClasses = wrap ? "flex-wrap" : "";
-  const overflowClasses = hideOverflow ? "overflow-hidden" : "";
+  const overflowClasses = hideOverflow ? "overflow-visible" : "";
   const hideOnMobileClasses = hideOnMobile ? "hidden lg:flex" : "";
 
   return (

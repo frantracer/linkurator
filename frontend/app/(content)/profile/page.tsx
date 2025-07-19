@@ -11,9 +11,6 @@ import TopTitle from "../../../components/molecules/TopTitle";
 import FlexRow from "../../../components/atoms/FlexRow";
 import Avatar from "../../../components/atoms/Avatar";
 import Box from "../../../components/atoms/Box";
-import {showLateralMenu} from "../../../utilities/lateralMenuAction";
-import {LATERAL_NAVIGATION_MENU_ID} from "../../../components/organism/LateralNavigationMenu";
-import {MenuIcon} from "../../../components/atoms/Icons";
 import {deleteProfile, updateFirstName, updateLastName, updateUsername} from "../../../services/profileService";
 import DeleteAccountModal, {DeleteAccountModalId} from "../../../components/organism/DeleteAccountModal";
 import {openModal} from "../../../utilities/modalAction";
@@ -126,14 +123,9 @@ const ProfilePage: NextPage = () => {
   }, [profileIsLoading, router, profile]);
 
   return (
-    <main className="flex flex-col min-h-screen w-full bg-base-100">
+    <main className="flex flex-col bg-base-100">
       <TopTitle>
         <FlexRow position={'center'}>
-          <FlexItem>
-            <Button clickAction={() => showLateralMenu(LATERAL_NAVIGATION_MENU_ID)} showOnlyOnMobile={true}>
-              <MenuIcon/>
-            </Button>
-          </FlexItem>
           <FlexItem grow={true}>
             <h1 className="text-2xl font-bold text-center">
               {t("my_profile")}

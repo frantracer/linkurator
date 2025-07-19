@@ -1,6 +1,7 @@
 'use client';
 
 import {LateralNavigationMenu} from "../../components/organism/LateralNavigationMenu";
+import BottomMenuMobile from "../../components/atoms/BottomMenuMobile";
 
 export default function DashboardLayout(
   {
@@ -9,10 +10,15 @@ export default function DashboardLayout(
     children?: React.ReactNode
   }) {
   return (
-    <div className="h-screen w-screen">
-      <LateralNavigationMenu>
-        {children}
-      </LateralNavigationMenu>
+    <div className="flex flex-col h-screen w-screen overflow-y-hidden">
+      <div className="flex flex-grow overflow-y-hidden">
+        <LateralNavigationMenu>
+          {children}
+        </LateralNavigationMenu>
+      </div>
+      <div className="flex flex-none">
+        <BottomMenuMobile/>
+      </div>
     </div>
   )
 }

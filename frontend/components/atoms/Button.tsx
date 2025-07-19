@@ -10,6 +10,7 @@ type ButtonProps = {
   fitContent?: boolean
   disabled?: boolean
   primary?: boolean
+  borderless?: boolean
   children?: React.ReactNode
 }
 
@@ -25,17 +26,20 @@ const Button = (
     fitContent = true,
     disabled = false,
     primary = true,
+    borderless = false,
     children
   }: ButtonProps
 ) => {
   const className = classNames(
     "btn btn-sm rounded px-1 btn-primary",
     {
-      "btn-outline": !primary,
+      "btn-outline": !primary && !borderless,
       "w-fit": fitContent,
-      "w-full": !fitContent,
+      "flex-1": !fitContent,
       "lg:hidden": showOnlyOnMobile,
-      "opacity-50 cursor-not-allowed": disabled
+      "opacity-50 cursor-not-allowed": disabled,
+      "btn-ghost": borderless,
+      "text-primary": borderless,
     }
   );
 

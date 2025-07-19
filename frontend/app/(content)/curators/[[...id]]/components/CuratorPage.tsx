@@ -3,7 +3,6 @@
 import {useTranslations} from 'next-intl';
 import React, {useEffect, useState} from "react";
 import Button from "../../../../../components/atoms/Button";
-import Dropdown from "../../../../../components/atoms/Dropdown";
 import FlexColumn from "../../../../../components/atoms/FlexColumn";
 import FlexItem from "../../../../../components/atoms/FlexItem";
 import FlexRow from "../../../../../components/atoms/FlexRow";
@@ -11,13 +10,11 @@ import {
   AddIcon,
   CrossIcon,
   FunnelIcon,
-  MenuIcon,
   MinusIcon,
   OptionsIcon,
   RectangleGroup,
   ThumbsUpFilledIcon
 } from "../../../../../components/atoms/Icons";
-import Menu from "../../../../../components/atoms/Menu";
 import {MenuItem} from "../../../../../components/atoms/MenuItem";
 import Miniature from "../../../../../components/atoms/Miniature";
 import Tag from "../../../../../components/atoms/Tag";
@@ -25,7 +22,6 @@ import Drawer from "../../../../../components/molecules/Drawer";
 import TopTitle from "../../../../../components/molecules/TopTitle";
 import CuratorDetails, {CURATOR_DETAILS_ID} from "../../../../../components/organism/CuratorDetails";
 import CuratorVideoCardGrid from "../../../../../components/organism/CuratorVideoCardGrid";
-import {LATERAL_NAVIGATION_MENU_ID} from "../../../../../components/organism/LateralNavigationMenu";
 import {paths} from "../../../../../configuration";
 import {useCurator} from "../../../../../hooks/useCurator";
 import useCuratorItems from "../../../../../hooks/useCuratorItems";
@@ -38,6 +34,8 @@ import {showLateralMenu} from "../../../../../utilities/lateralMenuAction";
 import CuratorTopicsList from "../../../../../components/organism/CuratorTopicsList";
 import {Tabs} from "../../../../../components/atoms/Tabs";
 import {useTopics} from "../../../../../hooks/useTopics";
+import Dropdown from "../../../../../components/atoms/Dropdown";
+import Menu from "../../../../../components/atoms/Menu";
 
 const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
   const t = useTranslations("common");
@@ -145,9 +143,6 @@ const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
     <Drawer id={CURATOR_DETAILS_ID} right={true} alwaysOpenOnDesktop={false}>
       <CuratorDetails curator={curator} filters={filters} setFilters={setFilters} resetFilters={resetFilters}/>
       <TopTitle>
-        <Button clickAction={() => showLateralMenu(LATERAL_NAVIGATION_MENU_ID)} showOnlyOnMobile={true}>
-          <MenuIcon/>
-        </Button>
         <FlexRow hideOverflow={true}>
           <FlexItem grow={true}/>
           <FlexRow>
@@ -183,16 +178,16 @@ const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
             </FlexItem>
           </FlexRow>
           <FlexItem grow={true}/>
+          <Dropdown start={false} bottom={true} button={<OptionsIcon/>}>
+            <Menu>
+              {dropdownButtons}
+            </Menu>
+          </Dropdown>
         </FlexRow>
-        <Dropdown start={false} bottom={true} button={<OptionsIcon/>}>
-          <Menu>
-            {dropdownButtons}
-          </Menu>
-        </Dropdown>
       </TopTitle>
 
       {/* Mobile tabs */}
-      <div className="md:hidden overflow-hidden">
+      <div className="flex flex-col md:hidden overflow-y-hidden">
         <Tabs tabsText={[t("recommendations"), t("topics")]}
               selectedTab={activeTab}
               onTabSelected={(tab) => setActiveTab(tab)}/>
