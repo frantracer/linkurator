@@ -1,6 +1,7 @@
 'use client';
 
 import {LateralNavigationMenu} from "../../components/organism/LateralNavigationMenu";
+import BottomMenuMobile from "../../components/atoms/BottomMenuMobile";
 
 export default function DashboardLayout(
   {
@@ -13,6 +14,7 @@ export default function DashboardLayout(
       <LateralNavigationMenu>
         {children}
       </LateralNavigationMenu>
+      <BottomMenuMobile />
     </div>
   )
 }
