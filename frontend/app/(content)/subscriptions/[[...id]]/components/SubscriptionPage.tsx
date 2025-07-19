@@ -13,6 +13,7 @@ import {
   CrossIcon,
   FunnelIcon,
   MinusIcon,
+  OptionsIcon,
   PencilIcon,
   RefreshIcon
 } from "../../../../../components/atoms/Icons";
@@ -40,6 +41,8 @@ import {
 } from "../../../../../services/subscriptionService";
 import {showLateralMenu} from "../../../../../utilities/lateralMenuAction";
 import {openModal} from "../../../../../utilities/modalAction";
+import Dropdown from "../../../../../components/atoms/Dropdown";
+import Menu from "../../../../../components/atoms/Menu";
 
 const REFRESH_SUBSCRIPTIONS_INTERVAL = 10000;
 
@@ -269,6 +272,11 @@ const SubscriptionPageComponent = ({subscriptionId}: { subscriptionId: string })
             </FlexItem>
           </FlexRow>
           <FlexItem grow={true}/>
+          <Dropdown button={<OptionsIcon/>} start={false} bottom={true}>
+            <Menu>
+              {dropdownButtons}
+            </Menu>
+          </Dropdown>
         </FlexRow>
       </TopTitle>
       {error &&

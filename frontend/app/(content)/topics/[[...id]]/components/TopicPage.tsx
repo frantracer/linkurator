@@ -12,7 +12,7 @@ import {
   AddIcon,
   CrossIcon,
   FunnelIcon,
-  MinusIcon,
+  MinusIcon, OptionsIcon,
   PencilIcon,
   StarFilledIcon,
   StarIcon,
@@ -43,6 +43,8 @@ import {deleteTopic, followTopic, unfollowTopic} from "../../../../../services/t
 import {useFavoriteTopics} from "../../../../../hooks/useFavoriteTopics";
 import {showLateralMenu} from "../../../../../utilities/lateralMenuAction";
 import {openModal} from "../../../../../utilities/modalAction";
+import Dropdown from "../../../../../components/atoms/Dropdown";
+import Menu from "../../../../../components/atoms/Menu";
 
 const REFRESH_TOPICS_INTERVAL = 10000;
 
@@ -274,6 +276,11 @@ const TopicPageComponent = ({ topicId }: { topicId: string }) => {
             </FlexItem>
           </FlexRow>
           <FlexItem grow={true} />
+          <Dropdown button={<OptionsIcon />} start={false} bottom={true} borderless={true}>
+            <Menu>
+              {dropdownButtons}
+            </Menu>
+          </Dropdown>
         </FlexRow>
       </TopTitle>
       {topicIsError && !topicIsLoading &&

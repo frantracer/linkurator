@@ -11,6 +11,7 @@ import {
   CrossIcon,
   FunnelIcon,
   MinusIcon,
+  OptionsIcon,
   RectangleGroup,
   ThumbsUpFilledIcon
 } from "../../../../../components/atoms/Icons";
@@ -33,6 +34,8 @@ import {showLateralMenu} from "../../../../../utilities/lateralMenuAction";
 import CuratorTopicsList from "../../../../../components/organism/CuratorTopicsList";
 import {Tabs} from "../../../../../components/atoms/Tabs";
 import {useTopics} from "../../../../../hooks/useTopics";
+import Dropdown from "../../../../../components/atoms/Dropdown";
+import Menu from "../../../../../components/atoms/Menu";
 
 const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
   const t = useTranslations("common");
@@ -175,6 +178,11 @@ const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
             </FlexItem>
           </FlexRow>
           <FlexItem grow={true}/>
+          <Dropdown start={false} bottom={true} button={<OptionsIcon/>}>
+            <Menu>
+              {dropdownButtons}
+            </Menu>
+          </Dropdown>
         </FlexRow>
       </TopTitle>
 

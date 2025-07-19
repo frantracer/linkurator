@@ -34,7 +34,7 @@ const Dropdown = (
       <div className={"dropdown " + verticalPosition + " " + horizontalPosition}>
         <div tabIndex={0} role="button" className={buttonClass}>{button}</div>
         <div tabIndex={0}
-             className="dropdown-content bg-base-100 rounded-box z-[1] p-2 shadow w-72 max-h-96 overflow-y-auto border-2 border-neutral">
+             className="dropdown-content bg-base-100 rounded-box z-1 p-2 shadow w-72 max-h-96 overflow-y-auto border-2 border-neutral">
           <ul>{children}</ul>
         </div>
       </div>
