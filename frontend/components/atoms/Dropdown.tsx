@@ -30,7 +30,7 @@ const Dropdown = (
   )
 
   return (
-    <div className="flex-1 flex justify-center">
+    <div className="flex-none flex justify-center">
       <div className={"dropdown " + verticalPosition + " " + horizontalPosition}>
         <div tabIndex={0} role="button" className={buttonClass}>{button}</div>
         <div tabIndex={0}
