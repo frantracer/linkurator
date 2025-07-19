@@ -5,8 +5,6 @@ import {useRouter} from "next/navigation";
 import React, {useEffect, useState} from "react";
 import Button from "../../../../../components/atoms/Button";
 import {ErrorBanner} from "../../../../../components/atoms/ErrorBanner";
-import FlexColumn from "../../../../../components/atoms/FlexColumn";
-import FlexItem from "../../../../../components/atoms/FlexItem";
 import FlexRow from "../../../../../components/atoms/FlexRow";
 import {
   AddIcon,
@@ -224,60 +222,58 @@ const SubscriptionPageComponent = ({subscriptionId}: { subscriptionId: string })
                            setFilters={setFilters}
                            resetFilters={resetFilters}/>
       <TopTitle>
-        <FlexRow hideOverflow={true}>
-          <FlexItem grow={true}/>
-          <FlexRow>
-            <FlexItem>
-              <FlexColumn gap={0} position={"center"}>
-                <FlexRow>
-                  {selectedSubscription &&
-                      <Miniature src={selectedSubscription.thumbnail} alt={selectedSubscription.name}/>
-                  }
-                  <h1 className="text-xl font-bold whitespace-nowrap truncate">
-                    {subscriptionName}
-                  </h1>
-                </FlexRow>
-                <FlexRow>
-                  {selectedSubscription &&
-                      <Button primary={false} clickAction={openSubscriptionUrl}>
-                          <Miniature src={providerIconUrl(selectedSubscription.provider)}
-                                     alt={selectedSubscription.provider}/>
-                        {providerPrettyName(selectedSubscription.provider)}
-                      </Button>
-                  }
-                  {selectedSubscription && selectedSubscription.followed &&
-                      <Tag>
+        <div className="flex flex-row midd items-center overflow-visible">
+          <div className="flex-grow"/>
+          <div className="flex flex-row items-center gap-2 overflow-hidden">
+            <div className="flex flex-col gap-2 overflow-hidden">
+              <div className="flex flex-row items-center justify-center gap-2 overflow-hidden">
+                {selectedSubscription &&
+                    <Miniature src={selectedSubscription.thumbnail} alt={selectedSubscription.name}/>
+                }
+                <h1 className="text-xl font-bold whitespace-nowrap truncate">
+                  {subscriptionName}
+                </h1>
+              </div>
+              <div className="flex flex-row items-center justify-center gap-2">
+                {selectedSubscription &&
+                    <Button primary={false} clickAction={openSubscriptionUrl}>
+                        <Miniature src={providerIconUrl(selectedSubscription.provider)}
+                                   alt={selectedSubscription.provider}/>
+                      {providerPrettyName(selectedSubscription.provider)}
+                    </Button>
+                }
+                {selectedSubscription && selectedSubscription.followed &&
+                    <Tag>
                       <span>
                         {t("following")}
                       </span>
-                          <div className="hover:cursor-pointer"
-                               onClick={() => handleUnfollowSubscription(selectedSubscription.uuid)}>
-                              <CrossIcon/>
-                          </div>
-                      </Tag>
-                  }
-                  {selectedSubscription && !selectedSubscription.followed && isUserLogged &&
-                      <Button primary={false}
-                              clickAction={() => handleFollowSubscription(selectedSubscription.uuid)}>
-                        {t("follow")}
-                      </Button>
-                  }
-                  {selectedSubscription && !selectedSubscription.followed && !isUserLogged &&
-                      <Button primary={false} href={paths.LOGIN}>
-                        {t("follow")}
-                      </Button>
-                  }
-                </FlexRow>
-              </FlexColumn>
-            </FlexItem>
-          </FlexRow>
-          <FlexItem grow={true}/>
+                        <div className="hover:cursor-pointer"
+                             onClick={() => handleUnfollowSubscription(selectedSubscription.uuid)}>
+                            <CrossIcon/>
+                        </div>
+                    </Tag>
+                }
+                {selectedSubscription && !selectedSubscription.followed && isUserLogged &&
+                    <Button primary={false}
+                            clickAction={() => handleFollowSubscription(selectedSubscription.uuid)}>
+                      {t("follow")}
+                    </Button>
+                }
+                {selectedSubscription && !selectedSubscription.followed && !isUserLogged &&
+                    <Button primary={false} href={paths.LOGIN}>
+                      {t("follow")}
+                    </Button>
+                }
+              </div>
+            </div>
+          </div>
+          <div className="flex-grow"/>
           <Dropdown button={<OptionsIcon/>} start={false} bottom={true}>
             <Menu>
               {dropdownButtons}
             </Menu>
           </Dropdown>
-        </FlexRow>
+        </div>
       </TopTitle>
       {error &&
           <FlexRow position={"center"}>
