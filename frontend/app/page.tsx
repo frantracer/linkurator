@@ -106,7 +106,7 @@ export default function LandingPage() {
                 </div>
               </div>
               <div className="flex items-center justify-center">
-                <div className="relative overflow-visible rounded-xl border shadow-xl">
+                <div className="relative overflow-hidden rounded-xl border shadow-xl">
                   <Image
                     src="/linkurator_main_page.png"
                     width={2787}
@@ -133,7 +133,7 @@ export default function LandingPage() {
                   {title: t("cooking_topic"), link: "/topics/9ebf46b2-be81-48fc-8124-50e98f9c7436"},
                   {title: t("science_topic"), link: "/topics/b502f236-1716-4e2c-bd7d-3d943741897c"},
                 ].map((category, i) => (
-                  <div key={i} className="card bg-base-100 w-72 shadow-xl overflow-visible rounded-xl border">
+                  <div key={i} className="card bg-base-100 w-72 shadow-xl overflow-hidden rounded-xl border">
                     <div className="card-body items-center text-center">
                       <h2 className="card-title">{category.title}</h2>
                       <div className="card-actions">
