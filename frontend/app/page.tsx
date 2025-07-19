@@ -289,66 +289,59 @@ export default function LandingPage() {
                 </ul>
               </div>
             </div>
-            <div className={"container max-w-5xl"}>
-              <FlexColumn position={"start"}>
-                <FlexRow position={"start"} wrap={false}>
-                  <FlexRow position={"start"} wrap={false}>
-                    <Image
-                      src="/youtube_icon.webp"
-                      width={60}
-                      height={60}
-                      alt="YouTube logo"
-                      className="h-8 object-contain"
-                    />
-                    <span>YouTube</span>
-                  </FlexRow>
-                  <FlexRow position={"start"} wrap={false}>
-                    <Image
-                      src="/spotify_icon.webp"
-                      width={60}
-                      height={60}
-                      alt="Spotify logo"
-                      className="h-8 object-contain"
-                    />
-                    <span>Spotify</span>
-                  </FlexRow>
-
-                  <FlexRow position={"start"} wrap={false}>
-                    <Image
-                      src="/rss_icon.webp"
-                      width={60}
-                      height={60}
-                      alt="RSS logo"
-                      className="h-8 object-contain"
-                    />
-                    <span>{"RSS (" + t("soon") + ")"}</span>
-                  </FlexRow>
-                </FlexRow>
-                <FlexRow position={"start"} wrap={false}>
-
-                  <FlexRow position={"start"} wrap={false}>
-                    <Image
-                      src="/patreon_icon.webp"
-                      width={60}
-                      height={60}
-                      alt="Patreon logo"
-                      className="h-8 object-contain"
-                    />
-
-                    <span>{"Patreon (" + t("soon") + ")"}</span>
-                  </FlexRow>
-                  <FlexRow position={"start"} wrap={false}>
-                    <Image
-                      src="/podimo_icon.webp"
-                      width={60}
-                      height={60}
-                      alt="Podimo logo"
-                      className="h-8 object-contain"
-                    />
-                    <span>{"Podimo (" + t("soon") + ")"}</span>
-                  </FlexRow>
-                </FlexRow>
-              </FlexColumn>
+            <div className={""}>
+              <div className={"flex flex-row flex-wrap items-center justify-center gap-4"}>
+                <div className={"flex flex-row items-center justify-start"}>
+                  <Image
+                    src="/youtube_icon.webp"
+                    width={60}
+                    height={60}
+                    alt="YouTube logo"
+                    className="h-8 object-contain"
+                  />
+                  <span>YouTube</span>
+                </div>
+                <div className={"flex flex-row items-center justify-start"}>
+                  <Image
+                    src="/spotify_icon.webp"
+                    width={60}
+                    height={60}
+                    alt="Spotify logo"
+                    className="h-8 object-contain"
+                  />
+                  <span>Spotify</span>
+                </div>
+                <div className={"flex flex-row items-center justify-start"}>
+                  <Image
+                    src="/rss_icon.webp"
+                    width={60}
+                    height={60}
+                    alt="RSS logo"
+                    className="h-8 object-contain"
+                  />
+                  <span>{"RSS (" + t("soon") + ")"}</span>
+                </div>
+                <div className={"flex flex-row items-center justify-start"}>
+                  <Image
+                    src="/patreon_icon.webp"
+                    width={60}
+                    height={60}
+                    alt="Patreon logo"
+                    className="h-8 object-contain"
+                  />
+                  <span>{"Patreon (" + t("soon") + ")"}</span>
+                </div>
+                <div className={"flex flex-row items-center justify-start"}>
+                  <Image
+                    src="/podimo_icon.webp"
+                    width={60}
+                    height={60}
+                    alt="Podimo logo"
+                    className="h-8 object-contain"
+                  />
+                  <span>{"Podimo (" + t("soon") + ")"}</span>
+                </div>
+              </div>
             </div>
           </FlexColumn>
         </section>
