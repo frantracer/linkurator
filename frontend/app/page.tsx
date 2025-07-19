@@ -11,9 +11,8 @@ import LanguageSelector from "../components/molecules/LanguageSelector";
 import {LogoImage} from "../components/atoms/LogoImage";
 import FlexRow from "../components/atoms/FlexRow";
 import FlexItem from "../components/atoms/FlexItem";
-import TopTitle from "../components/molecules/TopTitle";
 import {useTranslations} from "next-intl";
-import {BookmarkSquared, ThumbsUpIcon, LinkedinIcon, RectangleGroup, UserIconFilled} from "../components/atoms/Icons";
+import {BookmarkSquared, LinkedinIcon, RectangleGroup, ThumbsUpIcon, UserIconFilled} from "../components/atoms/Icons";
 
 export default function LandingPage() {
   const t = useTranslations("common");
@@ -47,7 +46,8 @@ export default function LandingPage() {
 
   return (
     <div className="w-full h-full">
-      <TopTitle>
+      <div className="sticky top-0 z-10 flex flex-row items-center justify-between
+        m-1 min-h-16 border-b-2 border-neutral bg-base-100 text-base-content">
         <FlexRow position={"start"}>
           <FlexItem whiteSpace={true}/>
           <LogoImage/>
@@ -78,7 +78,7 @@ export default function LandingPage() {
             {t("log_in")}
           </Button>
         </FlexRow>
-      </TopTitle>
+      </div>
       <main className="flex-1">
         {/* Hero Section */}
         <section className="w-full py-12 md:py-24 lg:py-32 xl:py-48 bg-base-200">
