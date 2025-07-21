@@ -268,11 +268,13 @@ const SubscriptionPageComponent = ({subscriptionId}: { subscriptionId: string })
             </div>
           </div>
           <div className="flex-grow"/>
-          <Dropdown button={<OptionsIcon/>} start={false} bottom={true}>
-            <Menu>
-              {dropdownButtons}
-            </Menu>
-          </Dropdown>
+          {selectedSubscription &&
+              <Dropdown button={<OptionsIcon/>} start={false} bottom={true} borderless={true}>
+                  <Menu>
+                    {dropdownButtons}
+                  </Menu>
+              </Dropdown>
+          }
         </div>
       </TopTitle>
       {error &&

@@ -275,11 +275,13 @@ const TopicPageComponent = ({topicId}: { topicId: string }) => {
             </div>
           </div>
           <div className="flex-grow"/>
-          <Dropdown button={<OptionsIcon/>} start={false} bottom={true} borderless={true}>
-            <Menu>
-              {dropdownButtons}
-            </Menu>
-          </Dropdown>
+          {selectedTopic &&
+              <Dropdown button={<OptionsIcon/>} start={false} bottom={true} borderless={true}>
+                  <Menu>
+                    {dropdownButtons}
+                  </Menu>
+              </Dropdown>
+          }
         </div>
       </TopTitle>
       {

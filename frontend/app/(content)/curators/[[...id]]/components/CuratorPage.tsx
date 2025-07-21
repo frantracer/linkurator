@@ -178,11 +178,13 @@ const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
             </FlexItem>
           </FlexRow>
           <FlexItem grow={true}/>
-          <Dropdown start={false} bottom={true} button={<OptionsIcon/>}>
-            <Menu>
-              {dropdownButtons}
-            </Menu>
-          </Dropdown>
+          {curator &&
+              <Dropdown start={false} bottom={true} button={<OptionsIcon/>} borderless={true}>
+                  <Menu>
+                    {dropdownButtons}
+                  </Menu>
+              </Dropdown>
+          }
         </FlexRow>
       </TopTitle>
 
