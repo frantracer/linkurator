@@ -50,6 +50,7 @@ const paths = {
   PROFILE: '/profile',
   REGISTER: '/register',
   CURATORS: '/curators',
+  CHAT: '/chat',
   FORGOT_PASSWORD: '/login/forgot-password',
   REGISTER_EMAIL_SENT: '/register/email-sent',
   REGISTER_VALIDATE: '/register/validate',

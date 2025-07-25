@@ -9,7 +9,7 @@ import Divider from "../atoms/Divider";
 import Menu from "../atoms/Menu";
 import {MenuItem} from "../atoms/MenuItem";
 import FlexRow from "../atoms/FlexRow";
-import {AddIcon, BookmarkSquaredFilled, FunnelIcon, RectangleGroup, UserIconFilled} from "../atoms/Icons";
+import {AddIcon, BookmarkSquaredFilled, ChatBubbleFilledIcon, FunnelIcon, RectangleGroup, UserIconFilled} from "../atoms/Icons";
 import SearchBar from "../molecules/SearchBar";
 import LateralSubscriptionList from "./LateralSubscriptionList";
 import LateralTopicList from "./LateralTopicList";
@@ -25,6 +25,8 @@ import {paths} from "../../configuration";
 import FlexColumn from "../atoms/FlexColumn";
 import {useCurators} from "../../hooks/useCurators";
 import LateralCuratorList from "./LateralCuratorList";
+import LateralChatList from "./LateralChatList";
+import useChatConversations from "../../hooks/useChatConversations";
 import FolowCuratorModal, {FollowCuratorModalId} from "./FollowCuratorModal";
 import NewSubscriptionModal, {NewSubscriptionModalId} from "./NewSubscriptionModal";
 import FlexItem from "../atoms/FlexItem";
@@ -36,7 +38,7 @@ import SearchModal, { SearchModalId } from "./SearchModal";
 
 export const LATERAL_NAVIGATION_MENU_ID = 'lateral-navigation-menu';
 
-type CurrentPage = 'topics' | 'subscriptions' | 'profile' | 'curators' | 'other';
+type CurrentPage = 'topics' | 'subscriptions' | 'profile' | 'curators' | 'chat' | 'other';
 
 type LateralNavigationMenuProps = {
   children?: React.ReactNode;
@@ -52,6 +54,8 @@ const mapStringToPage = (page: string): CurrentPage => {
       return 'profile';
     case 'curators':
       return 'curators';
+    case 'chat':
+      return 'chat';
     default:
       return 'other';
   }
@@ -71,12 +75,14 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
   const {subscriptions, refreshSubscriptions} = useSubscriptions(profile);
   const {curators, refreshCurators} = useCurators(profile, profileIsLoading);
   const {topics, refreshTopics} = useTopics(profile, profileIsLoading);
+  const {conversations} = useChatConversations();
   const [currentPage, setCurrentPage] = useState<CurrentPage>(initialPage);
   const [currentTab, setCurrentTab] = useState<CurrentPage>(initialPage);
 
   const selectedSubscription = subscriptions.find(subscription => subscription.uuid === selectedId);
   const selectedTopic = topics.find(topic => topic.uuid === selectedId);
   const selectedCurator = curators.find(curator => curator.id === selectedId);
+  const selectedConversation = conversations.find(conversation => conversation.id === selectedId);
 
   useEffect(() => {
     setCurrentPage(initialPage);
@@ -232,6 +238,23 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
                         </FlexItem>
                     </FlexRow>
                 </MenuItem>
+                <MenuItem onClick={() => {
+                  setCurrentTab('chat');
+                }} selected={currentTab === 'chat'}>
+                    <FlexRow position={"start"}>
+                        <FlexItem>
+                            <ChatBubbleFilledIcon/>
+                        </FlexItem>
+                        <FlexItem grow={true}>
+                          Chat
+                        </FlexItem>
+                        <FlexItem grow={false}>
+                            <Button fitContent={true} href={paths.CHAT + "/new"} clickAction={closeMenu}>
+                                <AddIcon/>
+                            </Button>
+                        </FlexItem>
+                    </FlexRow>
+                </MenuItem>
             </Menu>
         }
         {profile && <Divider/>}
@@ -254,6 +277,13 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
                 curators={curators}
                 closeMenu={closeMenu}
                 selectedCurator={selectedCurator}
+            />
+        }
+        {profile && currentTab === 'chat' &&
+            <LateralChatList
+                conversations={conversations}
+                closeMenu={closeMenu}
+                selectedConversation={selectedConversation}
             />
         }
       </Sidebar>
