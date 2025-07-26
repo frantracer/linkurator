@@ -177,7 +177,7 @@ const ProfilePage: NextPage = () => {
 
                         <span className={"font-bold"}>{t("username")}</span>
                         <InputText value={username === null ? "" : username} onChange={(value) => {
-                          setUsername(value)
+                          setUsername(value.toLowerCase())
                         }}/>
                         {changeUsernameOk === false &&
                             <ErrorBanner>
