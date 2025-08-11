@@ -1,7 +1,5 @@
 import {ChatConversation, ChatMessage} from "../entities/Chat";
-
-// Mock service for chat functionality
-// In a real implementation, this would make API calls to a chat backend
+import {configuration} from "../configuration";
 
 export const getChatConversations = async (): Promise<ChatConversation[]> => {
   // Mock implementation - in real app this would fetch from API
@@ -32,7 +30,6 @@ export const createChatConversation = async (title: string, initialMessage?: str
 };
 
 export const sendChatMessage = async (conversationId: string, message: string): Promise<ChatMessage> => {
-  // Mock implementation - in real app this would send via API and get AI response
   const userMessage: ChatMessage = {
     id: Date.now().toString(),
     content: message,
@@ -40,18 +37,30 @@ export const sendChatMessage = async (conversationId: string, message: string): 
     timestamp: new Date()
   };
 
-  // Simulate AI response
-  setTimeout(() => {
-    const aiMessage: ChatMessage = {
-      id: (Date.now() + 1).toString(),
-      content: `AI response to: "${message}"`,
-      sender: 'assistant',
-      timestamp: new Date()
-    };
-    // In real implementation, this would be handled by the hook or component
-  }, 1000);
-
   return userMessage;
+};
+
+export const queryAgent = async (query: string): Promise<string> => {
+  try {
+    const response = await fetch(configuration.AGENT_QUERY_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      credentials: 'include',
+      body: JSON.stringify({ query: query }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    return data.message || 'Sorry, I could not process your request.';
+  } catch (error) {
+    console.error('Error querying agent:', error);
+    throw new Error('Failed to get response from agent');
+  }
 };
 
 export const deleteChatConversation = async (conversationId: string): Promise<void> => {

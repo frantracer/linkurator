@@ -7,6 +7,7 @@ import FlexItem from "../../../../../components/atoms/FlexItem";
 import {PencilIcon} from "../../../../../components/atoms/Icons";
 import TopTitle from "../../../../../components/molecules/TopTitle";
 import {ChatConversation, ChatMessage} from "../../../../../entities/Chat";
+import {queryAgent} from "../../../../../services/chatService";
 
 const ChatPageComponent = ({conversationId}: { conversationId?: string }) => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -36,17 +37,27 @@ const ChatPageComponent = ({conversationId}: { conversationId?: string }) => {
     setInputMessage('');
     setIsLoading(true);
 
-    // Simulate AI response
-    setTimeout(() => {
+    try {
+      const agentResponse = await queryAgent(userMessage.content);
       const aiMessage: ChatMessage = {
         id: (Date.now() + 1).toString(),
-        content: `This is a response to: "${userMessage.content}"`,
+        content: agentResponse,
         sender: 'assistant',
         timestamp: new Date()
       };
       setMessages(prev => [...prev, aiMessage]);
+    } catch (error) {
+      console.error('Error getting agent response:', error);
+      const errorMessage: ChatMessage = {
+        id: (Date.now() + 1).toString(),
+        content: 'Sorry, I encountered an error while processing your request. Please try again.',
+        sender: 'assistant',
+        timestamp: new Date()
+      };
+      setMessages(prev => [...prev, errorMessage]);
+    } finally {
       setIsLoading(false);
-    }, 1000);
+    }
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
