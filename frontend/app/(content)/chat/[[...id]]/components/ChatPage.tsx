@@ -12,7 +12,9 @@ import useChat from "../../../../../hooks/useChat";
 import {useQueryClient} from '@tanstack/react-query';
 import {v4 as uuidv4} from 'uuid';
 import {useRouter} from 'next/navigation';
-import DeleteChatConfirmationModal, {DeleteChatConfirmationModalId} from "../../../../../components/organism/DeleteChatConfirmationModal";
+import DeleteChatConfirmationModal, {
+  DeleteChatConfirmationModalId
+} from "../../../../../components/organism/DeleteChatConfirmationModal";
 import ErrorModal, {ErrorModalId} from "../../../../../components/organism/ErrorModal";
 import {openModal, closeModal} from "../../../../../utilities/modalAction";
 
@@ -20,7 +22,7 @@ const ChatPageComponent = ({conversationId}: { conversationId: string }) => {
   const [inputMessage, setInputMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
-  const [errorMessage, setErrorMessage] = useState({ title: '', message: '' });
+  const [errorMessage, setErrorMessage] = useState({title: '', message: ''});
   const queryClient = useQueryClient();
   const router = useRouter();
 
@@ -90,10 +92,10 @@ const ChatPageComponent = ({conversationId}: { conversationId: string }) => {
 
       // Close the modal and navigate
       closeModal(DeleteChatConfirmationModalId);
-      
+
       // Invalidate and refetch the conversations list
-      queryClient.invalidateQueries({ queryKey: ['chatConversations'] });
-      queryClient.removeQueries({ queryKey: ['chat', conversationId] });
+      queryClient.invalidateQueries({queryKey: ['chatConversations']});
+      queryClient.removeQueries({queryKey: ['chat', conversationId]});
 
       // Navigate back to chat home
       router.push('/chat/' + uuidv4());
@@ -117,25 +119,28 @@ const ChatPageComponent = ({conversationId}: { conversationId: string }) => {
   return (
     <div className="flex flex-col h-full">
       <TopTitle>
-        <div className="flex flex-row items-center overflow-visible">
-          <div className="flex-grow"/>
-          <div className="flex-grow items-center gap-2 overflow-hidden">
-            <h1 className="text-xl text-center font-bold whitespace-nowrap truncate">
+        <div className="flex flex-row items-center justify-between overflow-visible w-full h-full">
+          <div className="flex-shrink-0 w-12"/>
+          <div className="flex-grow flex justify-center items-center overflow-hidden h-full">
+            <h1 className="text-xl font-bold whitespace-nowrap truncate">
               {conversationLoading
                 ? 'Loading...'
                 : conversation?.title || 'New chat'
               }
             </h1>
           </div>
-          <div className="flex-grow"/>
-          <Button
-            fitContent={true}
-            clickAction={handleDeleteButtonClick}
-            disabled={isDeleting}
-            primary={false}
-          >
-            <TrashIcon/>
-          </Button>
+          <div className="flex-shrink-0 w-12 flex justify-end items-center h-full">
+            {localMessages.length > 0 && (
+              <Button
+                fitContent={true}
+                clickAction={handleDeleteButtonClick}
+                disabled={isDeleting}
+                primary={false}
+              >
+                <TrashIcon/>
+              </Button>
+            )}
+          </div>
         </div>
       </TopTitle>
 
@@ -216,13 +221,13 @@ const ChatPageComponent = ({conversationId}: { conversationId: string }) => {
           </FlexRow>
         </div>
       </div>
-      
+
       {/* Modals */}
-      <DeleteChatConfirmationModal 
+      <DeleteChatConfirmationModal
         onDeleteChat={handleDeleteChat}
         isDeleting={isDeleting}
       />
-      <ErrorModal 
+      <ErrorModal
         title={errorMessage.title}
         message={errorMessage.message}
       />
