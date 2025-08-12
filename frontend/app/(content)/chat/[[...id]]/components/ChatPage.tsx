@@ -12,7 +12,7 @@ import useChat from "../../../../../hooks/useChat";
 import {useQueryClient} from '@tanstack/react-query';
 import {v4 as uuidv4} from 'uuid';
 
-const ChatPageComponent = ({conversationId}: { conversationId: string | null }) => {
+const ChatPageComponent = ({conversationId}: { conversationId: string }) => {
   const [inputMessage, setInputMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const queryClient = useQueryClient();
@@ -67,7 +67,7 @@ const ChatPageComponent = ({conversationId}: { conversationId: string | null }) 
     }
   };
 
-  const handleKeyPress = (e: React.KeyboardEvent) => {
+  const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
       handleSendMessage();
@@ -83,7 +83,7 @@ const ChatPageComponent = ({conversationId}: { conversationId: string | null }) 
             <h1 className="text-xl text-center font-bold whitespace-nowrap truncate">
               {conversationLoading
                 ? 'Loading...'
-                : conversation?.title || (conversationId ? `Chat ${conversationId}` : 'New Chat')
+                : conversation?.title || 'New chat'
               }
             </h1>
           </div>
@@ -151,7 +151,7 @@ const ChatPageComponent = ({conversationId}: { conversationId: string | null }) 
               <textarea
                 value={inputMessage}
                 onChange={(e) => setInputMessage(e.target.value)}
-                onKeyPress={handleKeyPress}
+                onKeyDown={handleKeyDown}
                 placeholder="Type your message..."
                 className="textarea textarea-bordered w-full resize-none"
                 rows={2}

@@ -63,10 +63,9 @@ export const getChat = async (conversationId: string): Promise<ChatConversation 
   }
 }
 
-export const queryAgent = async (conversationId: string | null, query: string): Promise<string> => {
+export const queryAgent = async (conversationId: string, query: string): Promise<string> => {
   try {
-    const chatId = conversationId || uuidv4();
-    const response = await fetch(configuration.CHATS_URL + "/" + chatId + "/messages", {
+    const response = await fetch(configuration.CHATS_URL + "/" + conversationId + "/messages", {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

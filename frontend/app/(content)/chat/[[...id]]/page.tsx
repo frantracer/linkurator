@@ -8,5 +8,5 @@ export default async function ChatPage({ params }: ChatPageParams) {
   const { id } = await params;
   const conversationId = Array.isArray(id) ? id[0] : id;
 
-  return <ChatPageComponent conversationId={conversationId === 'new' ? null : conversationId} />
+  return <ChatPageComponent conversationId={conversationId} />
 }
