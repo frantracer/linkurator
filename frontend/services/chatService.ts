@@ -1,19 +1,6 @@
 import {configuration} from "../configuration";
 import {v4 as uuidv4} from 'uuid';
-
-type ChatMessage = {
-  content: string;
-  sender: 'user' | 'assistant';
-  timestamp: Date;
-}
-
-type ChatConversation = {
-  id: string;
-  title: string;
-  messages: ChatMessage[];
-  created_at: Date;
-  updated_at: Date;
-}
+import {ChatConversation, ChatMessage} from "../entities/Chat";
 
 export const getChats = async (): Promise<ChatConversation[]> => {
   try {
@@ -57,6 +44,7 @@ export const getChat = async (conversationId: string): Promise<ChatConversation 
     const data = await response.json();
 
     const messages = data.messages.map((msg: any) => ({
+      id: uuidv4(),
       content: msg.content,
       sender: msg.role,
       timestamp: new Date(msg.timestamp),

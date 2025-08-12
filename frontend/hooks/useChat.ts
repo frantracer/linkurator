@@ -7,13 +7,16 @@ const useChat = (conversationId: string | null) => {
     queryKey: ['chat', conversationId],
     queryFn: async (): Promise<ChatConversation | null> => {
       if (!conversationId) return null;
-      
+
       try {
         const rawConversation = await getChat(conversationId);
+
+        if (!rawConversation) return null;
+
         return {
           id: rawConversation.id,
-          title: rawConversation.title || `Chat ${rawConversation.id}`,
-          messages: rawConversation.messages || [],
+          title: rawConversation.title,
+          messages: rawConversation.messages,
           created_at: new Date(rawConversation.created_at),
           updated_at: new Date(rawConversation.updated_at)
         };

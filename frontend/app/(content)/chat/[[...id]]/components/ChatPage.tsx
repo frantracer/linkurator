@@ -9,14 +9,15 @@ import TopTitle from "../../../../../components/molecules/TopTitle";
 import {ChatMessage} from "../../../../../entities/Chat";
 import {queryAgent} from "../../../../../services/chatService";
 import useChat from "../../../../../hooks/useChat";
-import { useQueryClient } from '@tanstack/react-query';
+import {useQueryClient} from '@tanstack/react-query';
+import {v4 as uuidv4} from 'uuid';
 
 const ChatPageComponent = ({conversationId}: { conversationId: string | null }) => {
   const [inputMessage, setInputMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const queryClient = useQueryClient();
-  
-  const { conversation, isLoading: conversationLoading } = useChat(conversationId);
+
+  const {conversation, isLoading: conversationLoading} = useChat(conversationId);
   const [localMessages, setLocalMessages] = useState<ChatMessage[]>([]);
 
   useEffect(() => {
@@ -29,7 +30,7 @@ const ChatPageComponent = ({conversationId}: { conversationId: string | null }) 
     if (!inputMessage.trim() || isLoading) return;
 
     const userMessage: ChatMessage = {
-      id: Date.now().toString(),
+      id: uuidv4(),
       content: inputMessage,
       sender: 'user',
       timestamp: new Date()
@@ -42,20 +43,20 @@ const ChatPageComponent = ({conversationId}: { conversationId: string | null }) 
     try {
       const agentResponse = await queryAgent(conversationId, userMessage.content);
       const aiMessage: ChatMessage = {
-        id: (Date.now() + 1).toString(),
+        id: uuidv4(),
         content: agentResponse,
         sender: 'assistant',
         timestamp: new Date()
       };
       setLocalMessages(prev => [...prev, aiMessage]);
-      
+
       // Invalidate and refetch the conversation data
-      queryClient.invalidateQueries({ queryKey: ['chat', conversationId] });
-      queryClient.invalidateQueries({ queryKey: ['chatConversations'] });
+      queryClient.invalidateQueries({queryKey: ['chat', conversationId]});
+      queryClient.invalidateQueries({queryKey: ['chatConversations']});
     } catch (error) {
       console.error('Error getting agent response:', error);
       const errorMessage: ChatMessage = {
-        id: (Date.now() + 1).toString(),
+        id: uuidv4(),
         content: 'Sorry, I encountered an error while processing your request. Please try again.',
         sender: 'assistant',
         timestamp: new Date()
@@ -80,8 +81,8 @@ const ChatPageComponent = ({conversationId}: { conversationId: string | null }) 
           <div className="flex-grow"/>
           <div className="flex-grow items-center gap-2 overflow-hidden">
             <h1 className="text-xl text-center font-bold whitespace-nowrap truncate">
-              {conversationLoading 
-                ? 'Loading...' 
+              {conversationLoading
+                ? 'Loading...'
                 : conversation?.title || (conversationId ? `Chat ${conversationId}` : 'New Chat')
               }
             </h1>
@@ -133,8 +134,10 @@ const ChatPageComponent = ({conversationId}: { conversationId: string | null }) 
               <div className="bg-base-200 text-base-content max-w-[80%] p-3 rounded-lg">
                 <div className="flex space-x-1">
                   <div className="w-2 h-2 bg-current rounded-full animate-bounce"></div>
-                  <div className="w-2 h-2 bg-current rounded-full animate-bounce" style={{animationDelay: '0.1s'}}></div>
-                  <div className="w-2 h-2 bg-current rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
+                  <div className="w-2 h-2 bg-current rounded-full animate-bounce"
+                       style={{animationDelay: '0.1s'}}></div>
+                  <div className="w-2 h-2 bg-current rounded-full animate-bounce"
+                       style={{animationDelay: '0.2s'}}></div>
                 </div>
               </div>
             </div>
