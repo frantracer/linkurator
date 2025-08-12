@@ -12,11 +12,15 @@ import useChat from "../../../../../hooks/useChat";
 import {useQueryClient} from '@tanstack/react-query';
 import {v4 as uuidv4} from 'uuid';
 import {useRouter} from 'next/navigation';
+import DeleteChatConfirmationModal, {DeleteChatConfirmationModalId} from "../../../../../components/organism/DeleteChatConfirmationModal";
+import ErrorModal, {ErrorModalId} from "../../../../../components/organism/ErrorModal";
+import {openModal, closeModal} from "../../../../../utilities/modalAction";
 
 const ChatPageComponent = ({conversationId}: { conversationId: string }) => {
   const [inputMessage, setInputMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState({ title: '', message: '' });
   const queryClient = useQueryClient();
   const router = useRouter();
 
@@ -80,13 +84,13 @@ const ChatPageComponent = ({conversationId}: { conversationId: string }) => {
   const handleDeleteChat = async () => {
     if (isDeleting) return;
 
-    const confirmed = window.confirm('Are you sure you want to delete this conversation? This action cannot be undone.');
-    if (!confirmed) return;
-
     setIsDeleting(true);
     try {
       await deleteChat(conversationId);
 
+      // Close the modal and navigate
+      closeModal(DeleteChatConfirmationModalId);
+      
       // Invalidate and refetch the conversations list
       queryClient.invalidateQueries({ queryKey: ['chatConversations'] });
       queryClient.removeQueries({ queryKey: ['chat', conversationId] });
@@ -95,10 +99,19 @@ const ChatPageComponent = ({conversationId}: { conversationId: string }) => {
       router.push('/chat/' + uuidv4());
     } catch (error) {
       console.error('Error deleting conversation:', error);
-      alert('Failed to delete conversation. Please try again.');
+      closeModal(DeleteChatConfirmationModalId);
+      setErrorMessage({
+        title: 'Deletion Failed',
+        message: 'Failed to delete conversation. Please try again.'
+      });
+      openModal(ErrorModalId);
     } finally {
       setIsDeleting(false);
     }
+  };
+
+  const handleDeleteButtonClick = () => {
+    openModal(DeleteChatConfirmationModalId);
   };
 
   return (
@@ -117,7 +130,7 @@ const ChatPageComponent = ({conversationId}: { conversationId: string }) => {
           <div className="flex-grow"/>
           <Button
             fitContent={true}
-            clickAction={handleDeleteChat}
+            clickAction={handleDeleteButtonClick}
             disabled={isDeleting}
             primary={false}
           >
@@ -203,6 +216,16 @@ const ChatPageComponent = ({conversationId}: { conversationId: string }) => {
           </FlexRow>
         </div>
       </div>
+      
+      {/* Modals */}
+      <DeleteChatConfirmationModal 
+        onDeleteChat={handleDeleteChat}
+        isDeleting={isDeleting}
+      />
+      <ErrorModal 
+        title={errorMessage.title}
+        message={errorMessage.message}
+      />
     </div>
   );
 };
