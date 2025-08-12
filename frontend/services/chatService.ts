@@ -63,6 +63,22 @@ export const getChat = async (conversationId: string): Promise<ChatConversation 
   }
 }
 
+export const deleteChat = async (conversationId: string): Promise<void> => {
+  try {
+    const response = await fetch(configuration.CHATS_URL + "/" + conversationId, {
+      method: 'DELETE',
+      credentials: 'include',
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+  } catch (error) {
+    console.error('Error deleting chat:', error);
+    throw new Error('Failed to delete chat');
+  }
+};
+
 export const queryAgent = async (conversationId: string, query: string): Promise<string> => {
   try {
     const response = await fetch(configuration.CHATS_URL + "/" + conversationId + "/messages", {
