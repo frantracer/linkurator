@@ -3,6 +3,7 @@ import FlexColumn from "../atoms/FlexColumn";
 import FlexRow from "../atoms/FlexRow";
 import Button from "../atoms/Button";
 import {closeModal} from "../../utilities/modalAction";
+import {useTranslations} from 'next-intl';
 
 export const DeleteChatConfirmationModalId = "delete-chat-confirmation-modal";
 
@@ -12,12 +13,14 @@ type DeleteChatConfirmationModalProps = {
 }
 
 const DeleteChatConfirmationModal = (props: DeleteChatConfirmationModalProps) => {
+  const t = useTranslations('common');
+  
   return (
     <Modal id={DeleteChatConfirmationModalId}>
       <FlexColumn>
-        <h1 className="font-bold text-xl w-full text-center">Delete Conversation</h1>
+        <h1 className="font-bold text-xl w-full text-center">{t('delete_conversation')}</h1>
         <p className="text-center mb-4">
-          Are you sure you want to delete this conversation? This action cannot be undone.
+          {t('delete_conversation_confirmation')}
         </p>
         <FlexRow position={"end"}>
           <Button 
@@ -25,7 +28,7 @@ const DeleteChatConfirmationModal = (props: DeleteChatConfirmationModalProps) =>
             disabled={props.isDeleting}
             primary={false}
           >
-            <span>Cancel</span>
+            <span>{t('cancel')}</span>
           </Button>
           <Button 
             clickAction={async () => {
@@ -34,7 +37,7 @@ const DeleteChatConfirmationModal = (props: DeleteChatConfirmationModalProps) =>
             disabled={props.isDeleting}
             primary={true}
           >
-            <span>{props.isDeleting ? 'Deleting...' : 'Delete'}</span>
+            <span>{props.isDeleting ? t('deleting') : t('delete')}</span>
           </Button>
         </FlexRow>
       </FlexColumn>

@@ -17,6 +17,7 @@ import DeleteChatConfirmationModal, {
 } from "../../../../../components/organism/DeleteChatConfirmationModal";
 import ErrorModal, {ErrorModalId} from "../../../../../components/organism/ErrorModal";
 import {openModal, closeModal} from "../../../../../utilities/modalAction";
+import {useTranslations} from 'next-intl';
 
 const ChatPageComponent = ({conversationId}: { conversationId: string }) => {
   const [inputMessage, setInputMessage] = useState('');
@@ -25,6 +26,7 @@ const ChatPageComponent = ({conversationId}: { conversationId: string }) => {
   const [errorMessage, setErrorMessage] = useState({title: '', message: ''});
   const queryClient = useQueryClient();
   const router = useRouter();
+  const t = useTranslations('common');
 
   const {conversation, isLoading: conversationLoading} = useChat(conversationId);
   const [localMessages, setLocalMessages] = useState<ChatMessage[]>([]);
@@ -66,7 +68,7 @@ const ChatPageComponent = ({conversationId}: { conversationId: string }) => {
       console.error('Error getting agent response:', error);
       const errorMessage: ChatMessage = {
         id: uuidv4(),
-        content: 'Sorry, I encountered an error while processing your request. Please try again.',
+        content: t('chat_error'),
         sender: 'assistant',
         timestamp: new Date()
       };
@@ -103,8 +105,8 @@ const ChatPageComponent = ({conversationId}: { conversationId: string }) => {
       console.error('Error deleting conversation:', error);
       closeModal(DeleteChatConfirmationModalId);
       setErrorMessage({
-        title: 'Deletion Failed',
-        message: 'Failed to delete conversation. Please try again.'
+        title: t('deletion_failed'),
+        message: t('delete_conversation_error')
       });
       openModal(ErrorModalId);
     } finally {
@@ -124,8 +126,8 @@ const ChatPageComponent = ({conversationId}: { conversationId: string }) => {
           <div className="flex-grow flex justify-center items-center overflow-hidden h-full">
             <h1 className="text-xl font-bold whitespace-nowrap truncate">
               {conversationLoading
-                ? 'Loading...'
-                : conversation?.title || 'New chat'
+                ? t('loading')
+                : conversation?.title || t('new_chat')
               }
             </h1>
           </div>
@@ -149,13 +151,13 @@ const ChatPageComponent = ({conversationId}: { conversationId: string }) => {
         <div className="flex-1 overflow-y-auto p-4 space-y-4">
           {localMessages.length === 0 && !conversationLoading && (
             <div className="text-center text-base-content/60 mt-8">
-              <p>Start a new conversation!</p>
+              <p>{t('start_conversation')}</p>
             </div>
           )}
 
           {conversationLoading && localMessages.length === 0 && (
             <div className="text-center text-base-content/60 mt-8">
-              <p>Loading conversation...</p>
+              <p>{t('loading_conversation')}</p>
             </div>
           )}
 
@@ -202,7 +204,7 @@ const ChatPageComponent = ({conversationId}: { conversationId: string }) => {
                 value={inputMessage}
                 onChange={(e) => setInputMessage(e.target.value)}
                 onKeyDown={handleKeyDown}
-                placeholder="Type your message..."
+                placeholder={t('type_message')}
                 className="textarea textarea-bordered w-full resize-none"
                 rows={2}
                 disabled={isLoading}
@@ -215,7 +217,7 @@ const ChatPageComponent = ({conversationId}: { conversationId: string }) => {
                 primary={true}
                 fitContent={true}
               >
-                Send
+                {t('send')}
               </Button>
             </FlexItem>
           </FlexRow>

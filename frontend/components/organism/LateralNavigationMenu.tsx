@@ -247,7 +247,7 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
                             <ChatBubbleFilledIcon/>
                         </FlexItem>
                         <FlexItem grow={true}>
-                          Chat
+                          {t("chats")}
                         </FlexItem>
                         <FlexItem grow={false}>
                             <Button fitContent={true} href={paths.CHAT + "/" + uuidv4()} clickAction={closeMenu}>

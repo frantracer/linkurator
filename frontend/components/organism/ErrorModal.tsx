@@ -3,6 +3,7 @@ import FlexColumn from "../atoms/FlexColumn";
 import FlexRow from "../atoms/FlexRow";
 import Button from "../atoms/Button";
 import {closeModal} from "../../utilities/modalAction";
+import {useTranslations} from 'next-intl';
 
 export const ErrorModalId = "error-modal";
 
@@ -12,6 +13,8 @@ type ErrorModalProps = {
 }
 
 const ErrorModal = (props: ErrorModalProps) => {
+  const t = useTranslations('common');
+  
   return (
     <Modal id={ErrorModalId}>
       <FlexColumn>
@@ -24,7 +27,7 @@ const ErrorModal = (props: ErrorModalProps) => {
             clickAction={() => closeModal(ErrorModalId)}
             primary={true}
           >
-            <span>OK</span>
+            <span>{t('ok')}</span>
           </Button>
         </FlexRow>
       </FlexColumn>
