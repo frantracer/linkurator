@@ -12,6 +12,7 @@ type LateralChatListProps = {
   conversations: ChatConversation[];
   selectedConversation: ChatConversation | undefined;
   closeMenu: () => void;
+  isLoading: boolean;
 }
 
 const LateralChatList = (props: LateralChatListProps) => {
@@ -51,11 +52,19 @@ const LateralChatList = (props: LateralChatListProps) => {
     </InfoBanner>
   )
 
+  const loadingItems = (
+    <InfoBanner>
+      <span className={"text-sm"}>Loading conversations...</span>
+    </InfoBanner>
+  )
+
   return (
     <Menu>
-      {props.conversations.length > 0 
-        ? props.conversations.map(renderConversationItem)
-        : noItems
+      {props.isLoading
+        ? loadingItems
+        : props.conversations.length > 0 
+          ? props.conversations.map(renderConversationItem)
+          : noItems
       }
     </Menu>
   )

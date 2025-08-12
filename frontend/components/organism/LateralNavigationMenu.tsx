@@ -35,6 +35,7 @@ import {TOPIC_DETAILS_ID} from "./TopicDetails";
 import {CURATOR_DETAILS_ID} from "./CuratorDetails";
 import {useTranslations} from "next-intl";
 import SearchModal, { SearchModalId } from "./SearchModal";
+import { v4 as uuidv4 } from 'uuid';
 
 export const LATERAL_NAVIGATION_MENU_ID = 'lateral-navigation-menu';
 
@@ -75,7 +76,7 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
   const {subscriptions, refreshSubscriptions} = useSubscriptions(profile);
   const {curators, refreshCurators} = useCurators(profile, profileIsLoading);
   const {topics, refreshTopics} = useTopics(profile, profileIsLoading);
-  const {conversations} = useChatConversations();
+  const {conversations, isLoading: conversationsLoading} = useChatConversations();
   const [currentPage, setCurrentPage] = useState<CurrentPage>(initialPage);
   const [currentTab, setCurrentTab] = useState<CurrentPage>(initialPage);
 
@@ -249,7 +250,7 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
                           Chat
                         </FlexItem>
                         <FlexItem grow={false}>
-                            <Button fitContent={true} href={paths.CHAT + "/new"} clickAction={closeMenu}>
+                            <Button fitContent={true} href={paths.CHAT + "/" + uuidv4()} clickAction={closeMenu}>
                                 <AddIcon/>
                             </Button>
                         </FlexItem>
@@ -284,6 +285,7 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
                 conversations={conversations}
                 closeMenu={closeMenu}
                 selectedConversation={selectedConversation}
+                isLoading={conversationsLoading}
             />
         }
       </Sidebar>

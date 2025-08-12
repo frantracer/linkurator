@@ -1,27 +1,29 @@
 'use client';
 
-import React, {useState} from "react";
+import React, {useState, useEffect} from "react";
 import Button from "../../../../../components/atoms/Button";
 import FlexRow from "../../../../../components/atoms/FlexRow";
 import FlexItem from "../../../../../components/atoms/FlexItem";
 import {PencilIcon} from "../../../../../components/atoms/Icons";
 import TopTitle from "../../../../../components/molecules/TopTitle";
-import {ChatConversation, ChatMessage} from "../../../../../entities/Chat";
+import {ChatMessage} from "../../../../../entities/Chat";
 import {queryAgent} from "../../../../../services/chatService";
+import useChat from "../../../../../hooks/useChat";
+import { useQueryClient } from '@tanstack/react-query';
 
-const ChatPageComponent = ({conversationId}: { conversationId?: string }) => {
-  const [messages, setMessages] = useState<ChatMessage[]>([]);
+const ChatPageComponent = ({conversationId}: { conversationId: string | null }) => {
   const [inputMessage, setInputMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const queryClient = useQueryClient();
   
-  // Mock conversation data for now
-  const mockConversation: ChatConversation = {
-    id: conversationId || 'new',
-    title: conversationId ? `Chat ${conversationId}` : 'New Chat',
-    messages: messages,
-    created_at: new Date(),
-    updated_at: new Date()
-  };
+  const { conversation, isLoading: conversationLoading } = useChat(conversationId);
+  const [localMessages, setLocalMessages] = useState<ChatMessage[]>([]);
+
+  useEffect(() => {
+    if (conversation?.messages) {
+      setLocalMessages(conversation.messages);
+    }
+  }, [conversation]);
 
   const handleSendMessage = async () => {
     if (!inputMessage.trim() || isLoading) return;
@@ -33,19 +35,23 @@ const ChatPageComponent = ({conversationId}: { conversationId?: string }) => {
       timestamp: new Date()
     };
 
-    setMessages(prev => [...prev, userMessage]);
+    setLocalMessages(prev => [...prev, userMessage]);
     setInputMessage('');
     setIsLoading(true);
 
     try {
-      const agentResponse = await queryAgent(userMessage.content);
+      const agentResponse = await queryAgent(conversationId, userMessage.content);
       const aiMessage: ChatMessage = {
         id: (Date.now() + 1).toString(),
         content: agentResponse,
         sender: 'assistant',
         timestamp: new Date()
       };
-      setMessages(prev => [...prev, aiMessage]);
+      setLocalMessages(prev => [...prev, aiMessage]);
+      
+      // Invalidate and refetch the conversation data
+      queryClient.invalidateQueries({ queryKey: ['chat', conversationId] });
+      queryClient.invalidateQueries({ queryKey: ['chatConversations'] });
     } catch (error) {
       console.error('Error getting agent response:', error);
       const errorMessage: ChatMessage = {
@@ -54,7 +60,7 @@ const ChatPageComponent = ({conversationId}: { conversationId?: string }) => {
         sender: 'assistant',
         timestamp: new Date()
       };
-      setMessages(prev => [...prev, errorMessage]);
+      setLocalMessages(prev => [...prev, errorMessage]);
     } finally {
       setIsLoading(false);
     }
@@ -74,7 +80,10 @@ const ChatPageComponent = ({conversationId}: { conversationId?: string }) => {
           <div className="flex-grow"/>
           <div className="flex-grow items-center gap-2 overflow-hidden">
             <h1 className="text-xl text-center font-bold whitespace-nowrap truncate">
-              {mockConversation.title}
+              {conversationLoading 
+                ? 'Loading...' 
+                : conversation?.title || (conversationId ? `Chat ${conversationId}` : 'New Chat')
+              }
             </h1>
           </div>
           <div className="flex-grow"/>
@@ -83,17 +92,23 @@ const ChatPageComponent = ({conversationId}: { conversationId?: string }) => {
           </Button>
         </div>
       </TopTitle>
-      
+
       <div className="flex flex-col flex-1 overflow-hidden">
         {/* Messages Area */}
         <div className="flex-1 overflow-y-auto p-4 space-y-4">
-          {messages.length === 0 && (
+          {localMessages.length === 0 && !conversationLoading && (
             <div className="text-center text-base-content/60 mt-8">
               <p>Start a new conversation!</p>
             </div>
           )}
-          
-          {messages.map((message) => (
+
+          {conversationLoading && localMessages.length === 0 && (
+            <div className="text-center text-base-content/60 mt-8">
+              <p>Loading conversation...</p>
+            </div>
+          )}
+
+          {localMessages.map((message) => (
             <div
               key={message.id}
               className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
@@ -112,7 +127,7 @@ const ChatPageComponent = ({conversationId}: { conversationId?: string }) => {
               </div>
             </div>
           ))}
-          
+
           {isLoading && (
             <div className="flex justify-start">
               <div className="bg-base-200 text-base-content max-w-[80%] p-3 rounded-lg">
@@ -125,7 +140,7 @@ const ChatPageComponent = ({conversationId}: { conversationId?: string }) => {
             </div>
           )}
         </div>
-        
+
         {/* Input Area */}
         <div className="border-t border-base-300 p-4">
           <FlexRow>
@@ -141,7 +156,7 @@ const ChatPageComponent = ({conversationId}: { conversationId?: string }) => {
               />
             </FlexItem>
             <FlexItem>
-              <Button 
+              <Button
                 clickAction={handleSendMessage}
                 disabled={!inputMessage.trim() || isLoading}
                 primary={true}

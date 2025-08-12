@@ -17,7 +17,7 @@ const TERMS_OF_SERVICE_URL = `${WEB_BASE_URL}/tos`;
 const PRIVACY_POLICY_URL = `${WEB_BASE_URL}/privacy`;
 const REGISTER_VALIDATE_BASE_URL = `${WEB_BASE_URL}/register/validate`;
 const FORGOT_PASSWORD_BASE_URL = `${WEB_BASE_URL}/login/forgot-password`;
-const AGENT_QUERY_URL = `${API_BASE_URL}/chats`;
+const CHATS_URL = `${API_BASE_URL}/chats`;
 
 const configuration = {
   SUBSCRIPTIONS_URL,
@@ -40,7 +40,7 @@ const configuration = {
   EXAMPLE_VIDEO_GAMES_NEWS_TOPIC_URL: `${WEB_BASE_URL}/topics/ffd2f348-6e99-413b-be75-0f7b01ea9b01`,
   REGISTER_VALIDATE_BASE_URL,
   FORGOT_PASSWORD_BASE_URL,
-  AGENT_QUERY_URL
+  CHATS_URL
 };
 
 const paths = {
