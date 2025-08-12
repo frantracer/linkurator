@@ -17,7 +17,7 @@ const TERMS_OF_SERVICE_URL = `${WEB_BASE_URL}/tos`;
 const PRIVACY_POLICY_URL = `${WEB_BASE_URL}/privacy`;
 const REGISTER_VALIDATE_BASE_URL = `${WEB_BASE_URL}/register/validate`;
 const FORGOT_PASSWORD_BASE_URL = `${WEB_BASE_URL}/login/forgot-password`;
-const AGENT_QUERY_URL = `${API_BASE_URL}/agent/query`;
+const AGENT_QUERY_URL = `${API_BASE_URL}/chats`;
 
 const configuration = {
   SUBSCRIPTIONS_URL,
