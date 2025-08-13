@@ -1,5 +1,7 @@
 import React from 'react';
 import { SubscriptionItem } from '../../entities/SubscriptionItem';
+import { readableAgoUnits } from '../../utilities/dateFormatter';
+import { useTranslations } from 'next-intl';
 
 type ItemCardProps = {
   item: SubscriptionItem;
@@ -7,6 +9,8 @@ type ItemCardProps = {
 };
 
 const ItemCard = ({ item, onClick }: ItemCardProps) => {
+  const t = useTranslations("common");
+
   const handleClick = () => {
     if (onClick) {
       onClick(item);
@@ -15,12 +19,18 @@ const ItemCard = ({ item, onClick }: ItemCardProps) => {
     }
   };
 
+  const convertPublishedToAgoText = (date: Date | string) => {
+    const dateObj = typeof date === 'string' ? new Date(date) : date;
+    const ago = readableAgoUnits(dateObj);
+    return t("ago_label", {value: ago.value, unit: t(ago.unit)});
+  };
+
   const formatDuration = (duration?: number) => {
     if (!duration) return null;
     const hours = Math.floor(duration / 3600);
     const minutes = Math.floor((duration % 3600) / 60);
     const seconds = duration % 60;
-    
+
     if (hours > 0) {
       return `${hours}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
     }
@@ -28,30 +38,33 @@ const ItemCard = ({ item, onClick }: ItemCardProps) => {
   };
 
   return (
-    <div 
-      className="flex-shrink-0 w-48 bg-base-200 rounded-lg shadow-sm border border-base-300 cursor-pointer hover:shadow-md transition-shadow duration-200"
+    <div
+      className="flex-shrink-0 w-48 h-48 bg-base-200 rounded-lg shadow-sm border border-base-300 cursor-pointer hover:shadow-md transition-shadow duration-200 flex flex-col"
       onClick={handleClick}
     >
-      <div className="h-24 w-full overflow-hidden rounded-t-lg">
-        <img 
-          src={item.thumbnail} 
+      <div className="h-24 w-full overflow-hidden rounded-t-lg relative">
+        <img
+          src={item.thumbnail}
           alt={item.name}
           className="w-full h-full object-cover"
         />
+        {item.duration && (
+          <span className="absolute top-1 right-1 px-1.5 py-0.5 bg-black bg-opacity-75 rounded text-white text-xs font-medium">
+            {formatDuration(item.duration)}
+          </span>
+        )}
       </div>
-      <div className="p-3">
+      <div className="p-3 flex flex-col flex-1">
         <h3 className="text-sm font-medium text-base-content line-clamp-2 mb-1">
           {item.name}
         </h3>
         <p className="text-xs text-base-content/70 line-clamp-1 mb-2">
           {item.subscription.name}
         </p>
-        <div className="flex items-center justify-between">
-          {item.duration && (
-            <span className="text-xs text-base-content/60">
-              {formatDuration(item.duration)}
-            </span>
-          )}
+        <div className="flex items-center justify-between mt-auto">
+          <span className="text-xs text-base-content/60">
+            {convertPublishedToAgoText(item.published_at)}
+          </span>
           {item.recommended && (
             <span className="inline-block px-2 py-1 text-xs bg-success/10 text-success rounded-full">
               ★
