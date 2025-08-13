@@ -18,6 +18,8 @@ import DeleteChatConfirmationModal, {
 import ErrorModal, {ErrorModalId} from "../../../../../components/organism/ErrorModal";
 import {openModal, closeModal} from "../../../../../utilities/modalAction";
 import {useTranslations} from 'next-intl';
+import CollapsibleCarousel from "../../../../../components/molecules/CollapsibleCarousel";
+import { SubscriptionItem } from "../../../../../entities/SubscriptionItem";
 
 const ChatPageComponent = ({conversationId}: { conversationId: string }) => {
   const [inputMessage, setInputMessage] = useState('');
@@ -44,7 +46,8 @@ const ChatPageComponent = ({conversationId}: { conversationId: string }) => {
       id: uuidv4(),
       content: inputMessage,
       sender: 'user',
-      timestamp: new Date()
+      timestamp: new Date(),
+      items: [],
     };
 
     setLocalMessages(prev => [...prev, userMessage]);
@@ -57,7 +60,8 @@ const ChatPageComponent = ({conversationId}: { conversationId: string }) => {
         id: uuidv4(),
         content: agentResponse,
         sender: 'assistant',
-        timestamp: new Date()
+        timestamp: new Date(),
+        items: [],
       };
       setLocalMessages(prev => [...prev, aiMessage]);
 
@@ -70,7 +74,8 @@ const ChatPageComponent = ({conversationId}: { conversationId: string }) => {
         id: uuidv4(),
         content: t('chat_error'),
         sender: 'assistant',
-        timestamp: new Date()
+        timestamp: new Date(),
+        items: [],
       };
       setLocalMessages(prev => [...prev, errorMessage]);
     } finally {
@@ -116,6 +121,10 @@ const ChatPageComponent = ({conversationId}: { conversationId: string }) => {
 
   const handleDeleteButtonClick = () => {
     openModal(DeleteChatConfirmationModalId);
+  };
+
+  const handleItemClick = (item: SubscriptionItem) => {
+    window.open(item.url, '_blank', 'noopener,noreferrer');
   };
 
   return (
@@ -174,6 +183,14 @@ const ChatPageComponent = ({conversationId}: { conversationId: string }) => {
                 }`}
               >
                 <p className="whitespace-pre-wrap">{message.content}</p>
+                {message.items && message.items.length > 0 && (
+                  <CollapsibleCarousel
+                    items={message.items}
+                    title={t('suggested_items')}
+                    defaultExpanded={true}
+                    onItemClick={handleItemClick}
+                  />
+                )}
                 <p className="text-xs opacity-70 mt-1">
                   {message.timestamp.toLocaleTimeString()}
                 </p>

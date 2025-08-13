@@ -1,8 +1,11 @@
+import { SubscriptionItem } from './SubscriptionItem';
+
 export type ChatMessage = {
   id: string;
   content: string;
   sender: 'user' | 'assistant';
   timestamp: Date;
+  items: SubscriptionItem[];
 };
 
 export type ChatConversation = {

@@ -48,6 +48,7 @@ export const getChat = async (conversationId: string): Promise<ChatConversation 
       content: msg.content,
       sender: msg.role,
       timestamp: new Date(msg.timestamp),
+      items: msg.items || [],
     })) as ChatMessage[];
 
     return {

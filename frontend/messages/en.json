@@ -256,7 +256,8 @@
     "delete_conversation_error": "Failed to delete conversation. Please try again.",
     "ok": "OK",
     "chats": "Chats",
-    "chat_error": "Sorry, I encountered an error while processing your request. Please try again."
+    "chat_error": "Sorry, I encountered an error while processing your request. Please try again.",
+    "suggested_items": "Suggested items"
   },
   "legal": {
     "tos_title": "Terms of Service",
