@@ -12,13 +12,17 @@ type CollapsibleCarouselProps = {
   onItemClick?: (item: SubscriptionItem) => void;
 };
 
-const CollapsibleCarousel = ({ 
-  items, 
-  title = "Items", 
+const CollapsibleCarousel = ({
+  items,
+  title = "Items",
   defaultExpanded = false,
-  onItemClick 
+  onItemClick
 }: CollapsibleCarouselProps) => {
   const [isExpanded, setIsExpanded] = useState(defaultExpanded);
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    e.stopPropagation();
+  };
 
   if (!items || items.length === 0) {
     return null;
@@ -43,11 +47,14 @@ const CollapsibleCarousel = ({
       {/* Carousel Content */}
       {isExpanded && (
         <div className="mt-2">
-          <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-base-300 scrollbar-track-transparent">
+          <div
+            className="flex gap-3 overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-base-300 scrollbar-track-transparent"
+            onTouchStart={handleTouchStart}
+          >
             {items.map((item) => (
-              <ItemCard 
-                key={item.uuid} 
-                item={item} 
+              <ItemCard
+                key={item.uuid}
+                item={item}
                 onClick={onItemClick}
               />
             ))}
