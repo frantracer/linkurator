@@ -70,16 +70,16 @@ const LateralChatList = (props: LateralChatListProps) => {
   )
 
   return (
-    <div>
-      <Button
-        clickAction={handleNewChat}
-        primary={true}
-        fitContent={false}
-      >
-        <AddIcon/>
-        {t('new_chat')}
-      </Button>
+    <div className="overflow-hidden">
       <Menu>
+        <Button
+          clickAction={handleNewChat}
+          primary={true}
+          fitContent={false}
+        >
+          <AddIcon/>
+          {t('new_chat')}
+        </Button>
         {props.isLoading
           ? loadingItems
           : props.conversations.length > 0
