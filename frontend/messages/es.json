@@ -257,7 +257,9 @@
         "ok": "OK",
         "chats": "Conversaciones",
         "chat_error": "Lo siento, he encontrado un error al procesar tu solicitud. Por favor, inténtalo de nuevo.",
-        "suggested_items": "Elementos sugeridos"
+        "suggested_items": "Elementos sugeridos",
+        "no_conversations_yet": "Aún no hay conversaciones.",
+        "loading_conversations": "Cargando conversaciones..."
     },
     "legal": {
         "tos_title": "Términos del servicio",

@@ -36,6 +36,7 @@ const Button = (
       "btn-outline": !primary && !borderless,
       "w-fit": fitContent,
       "flex-1": !fitContent,
+      "w-full": !fitContent,
       "lg:hidden": showOnlyOnMobile,
       "opacity-50 cursor-not-allowed": disabled,
       "btn-ghost": borderless,

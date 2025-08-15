@@ -257,7 +257,9 @@
     "ok": "OK",
     "chats": "Chats",
     "chat_error": "Sorry, I encountered an error while processing your request. Please try again.",
-    "suggested_items": "Suggested items"
+    "suggested_items": "Suggested items",
+    "no_conversations_yet": "No conversations yet.",
+    "loading_conversations": "Loading conversations..."
   },
   "legal": {
     "tos_title": "Terms of Service",
