@@ -20,6 +20,7 @@ import {openModal, closeModal} from "../../../../../utilities/modalAction";
 import {useTranslations} from 'next-intl';
 import CollapsibleCarousel from "../../../../../components/molecules/CollapsibleCarousel";
 import { SubscriptionItem } from "../../../../../entities/SubscriptionItem";
+import ReactMarkdown from 'react-markdown';
 
 const ChatPageComponent = ({conversationId}: { conversationId: string }) => {
   const [inputMessage, setInputMessage] = useState('');
@@ -182,7 +183,11 @@ const ChatPageComponent = ({conversationId}: { conversationId: string }) => {
                     : 'bg-base-200 text-base-content'
                 }`}
               >
-                <p className="whitespace-pre-wrap">{message.content}</p>
+                <div className="markdown-content">
+                  <ReactMarkdown>
+                    {message.content}
+                  </ReactMarkdown>
+                </div>
                 {message.items && message.items.length > 0 && (
                   <CollapsibleCarousel
                     items={message.items}
