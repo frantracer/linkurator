@@ -243,7 +243,21 @@
         "faq_question_5": "¿Puedo eliminar mi cuenta?",
         "faq_answer_5": "Sí, puedes eliminar tu cuenta en cualquier momento desde la configuración de tu perfil.",
         "faq_question_6": "¿Puedo compartir mis recomendaciones y categorías con mis amigos?",
-        "faq_answer_6": "Sí, puedes compartir los enlaces a tus categorías y recomendaciones con cualquier persona. No es necesario que tengan una cuenta de Linkurator para verlas."
+        "faq_answer_6": "Sí, puedes compartir los enlaces a tus categorías y recomendaciones con cualquier persona. No es necesario que tengan una cuenta de Linkurator para verlas.",
+        "new_chat": "Nuevo chat",
+        "start_conversation": "¡Inicia una nueva conversación!",
+        "loading_conversation": "Cargando conversación...",
+        "type_message": "Escribe tu mensaje...",
+        "send": "Enviar",
+        "delete_conversation": "Eliminar Conversación",
+        "delete_conversation_confirmation": "¿Estás seguro de que quieres eliminar esta conversación? Esta acción no se puede deshacer.",
+        "deleting": "Eliminando...",
+        "deletion_failed": "Error al Eliminar",
+        "delete_conversation_error": "Error al eliminar la conversación. Por favor, inténtalo de nuevo.",
+        "ok": "OK",
+        "chats": "Conversaciones",
+        "chat_error": "Lo siento, he encontrado un error al procesar tu solicitud. Por favor, inténtalo de nuevo.",
+        "suggested_items": "Elementos sugeridos"
     },
     "legal": {
         "tos_title": "Términos del servicio",

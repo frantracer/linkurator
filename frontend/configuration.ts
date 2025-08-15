@@ -17,6 +17,7 @@ const TERMS_OF_SERVICE_URL = `${WEB_BASE_URL}/tos`;
 const PRIVACY_POLICY_URL = `${WEB_BASE_URL}/privacy`;
 const REGISTER_VALIDATE_BASE_URL = `${WEB_BASE_URL}/register/validate`;
 const FORGOT_PASSWORD_BASE_URL = `${WEB_BASE_URL}/login/forgot-password`;
+const CHATS_URL = `${API_BASE_URL}/chats`;
 
 const configuration = {
   SUBSCRIPTIONS_URL,
@@ -38,7 +39,8 @@ const configuration = {
   EXAMPLE_GEOPOLITICS_TOPIC_URL: `${WEB_BASE_URL}/topics/8b281f83-c3b0-4846-866b-a1521ed39670`,
   EXAMPLE_VIDEO_GAMES_NEWS_TOPIC_URL: `${WEB_BASE_URL}/topics/ffd2f348-6e99-413b-be75-0f7b01ea9b01`,
   REGISTER_VALIDATE_BASE_URL,
-  FORGOT_PASSWORD_BASE_URL
+  FORGOT_PASSWORD_BASE_URL,
+  CHATS_URL
 };
 
 const paths = {
@@ -50,6 +52,7 @@ const paths = {
   PROFILE: '/profile',
   REGISTER: '/register',
   CURATORS: '/curators',
+  CHAT: '/chat',
   FORGOT_PASSWORD: '/login/forgot-password',
   REGISTER_EMAIL_SENT: '/register/email-sent',
   REGISTER_VALIDATE: '/register/validate',
