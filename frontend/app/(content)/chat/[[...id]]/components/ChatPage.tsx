@@ -1,6 +1,6 @@
 'use client';
 
-import React, {useState, useEffect} from "react";
+import React, {useState, useEffect, useRef} from "react";
 import Button from "../../../../../components/atoms/Button";
 import FlexRow from "../../../../../components/atoms/FlexRow";
 import FlexItem from "../../../../../components/atoms/FlexItem";
@@ -30,15 +30,25 @@ const ChatPageComponent = ({conversationId}: { conversationId: string }) => {
   const queryClient = useQueryClient();
   const router = useRouter();
   const t = useTranslations('common');
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const {conversation, isLoading: conversationLoading} = useChat(conversationId);
   const [localMessages, setLocalMessages] = useState<ChatMessage[]>([]);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
 
   useEffect(() => {
     if (conversation?.messages) {
       setLocalMessages(conversation.messages);
     }
   }, [conversation]);
+
+  // Scroll to bottom when messages change
+  useEffect(() => {
+    scrollToBottom();
+  }, [localMessages]);
 
   const handleSendMessage = async () => {
     if (!inputMessage.trim() || isLoading) return;
@@ -216,6 +226,7 @@ const ChatPageComponent = ({conversationId}: { conversationId: string }) => {
               </div>
             </div>
           )}
+          <div ref={messagesEndRef} />
         </div>
 
         {/* Input Area */}
