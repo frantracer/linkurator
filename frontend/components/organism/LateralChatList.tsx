@@ -58,15 +58,19 @@ const LateralChatList = (props: LateralChatListProps) => {
   );
 
   const noItems = (
-    <InfoBanner>
-      <span className={"text-sm"}>{t('no_conversations_yet')}</span>
-    </InfoBanner>
+    <div className="flex flex-col items-center justify-center">
+      <InfoBanner>
+        <span className={"text-sm"}>{t('no_conversations_yet')}</span>
+      </InfoBanner>
+    </div>
   )
 
   const loadingItems = (
-    <InfoBanner>
-      <span className={"text-sm"}>{t('loading_conversations')}</span>
-    </InfoBanner>
+    <div className="flex flex-col items-center justify-center">
+      <InfoBanner>
+        <span className={"text-sm"}>{t('loading_conversations')}</span>
+      </InfoBanner>
+    </div>
   )
 
   return (
