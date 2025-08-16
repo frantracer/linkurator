@@ -3,7 +3,7 @@ import Drawer from "../molecules/Drawer";
 import useProfile from "../../hooks/useProfile";
 import useSubscriptions from "../../hooks/useSubscriptions";
 import {useTopics} from "../../hooks/useTopics";
-import {useParams, usePathname} from "next/navigation";
+import {useParams, usePathname, useRouter} from "next/navigation";
 import Sidebar from "../atoms/Sidebar";
 import Divider from "../atoms/Divider";
 import Menu from "../atoms/Menu";
@@ -64,6 +64,7 @@ const mapStringToPage = (page: string): CurrentPage => {
 
 export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) => {
   const t = useTranslations("common");
+  const router = useRouter();
   const pathname = usePathname()
   const pathnameArray = pathname.split('/').filter((path) => path !== '');
   const initialPage: CurrentPage = mapStringToPage(pathnameArray[0]);
@@ -111,6 +112,12 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
   const openSearchModal = () => {
     openModal(SearchModalId);
     closeMenu();
+  }
+
+  const goToNewChat = () => {
+    closeMenu();
+    const newChatId = uuidv4();
+    router.push(paths.CHAT + "/" + newChatId);
   }
 
   const openFilters = (page: CurrentPage) => {
@@ -250,7 +257,7 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
                           {t("chats")}
                         </FlexItem>
                         <FlexItem grow={false}>
-                            <Button fitContent={true} href={paths.CHAT + "/" + uuidv4()} clickAction={closeMenu}>
+                            <Button fitContent={true} clickAction={goToNewChat}>
                                 <AddIcon/>
                             </Button>
                         </FlexItem>
