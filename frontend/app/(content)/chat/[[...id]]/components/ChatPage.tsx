@@ -22,6 +22,8 @@ import CollapsibleCarousel from "../../../../../components/molecules/Collapsible
 import { SubscriptionItem } from "../../../../../entities/SubscriptionItem";
 import ReactMarkdown from 'react-markdown';
 
+const MESSAGE_LIMIT = 5;
+
 const ChatPageComponent = ({conversationId}: { conversationId: string }) => {
   const [inputMessage, setInputMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -50,8 +52,12 @@ const ChatPageComponent = ({conversationId}: { conversationId: string }) => {
     scrollToBottom();
   }, [localMessages]);
 
+  // Count user messages
+  const userMessageCount = localMessages.filter(message => message.sender === 'user').length;
+  const isMessageLimitReached = userMessageCount >= MESSAGE_LIMIT;
+
   const handleSendMessage = async () => {
-    if (!inputMessage.trim() || isLoading) return;
+    if (!inputMessage.trim() || isLoading || isMessageLimitReached) return;
 
     const userMessage: ChatMessage = {
       id: uuidv4(),
@@ -264,13 +270,13 @@ const ChatPageComponent = ({conversationId}: { conversationId: string }) => {
                 placeholder={t('type_message')}
                 className="textarea textarea-bordered w-full resize-none"
                 rows={2}
-                disabled={isLoading}
+                disabled={isLoading || isMessageLimitReached}
               />
             </FlexItem>
             <FlexItem>
               <Button
                 clickAction={handleSendMessage}
-                disabled={!inputMessage.trim() || isLoading}
+                disabled={!inputMessage.trim() || isLoading || isMessageLimitReached}
                 primary={true}
                 fitContent={true}
               >
@@ -278,6 +284,17 @@ const ChatPageComponent = ({conversationId}: { conversationId: string }) => {
               </Button>
             </FlexItem>
           </FlexRow>
+          
+          {/* Message limit counter */}
+          <div className="mt-2 text-center">
+            {isMessageLimitReached ? (
+              <p className="text-sm text-error">{t('message_limit_reached')}</p>
+            ) : (
+              <p className={`text-sm ${userMessageCount >= MESSAGE_LIMIT - 2 ? 'text-warning' : 'text-base-content/60'}`}>
+                {t('messages_remaining', { remaining: MESSAGE_LIMIT - userMessageCount })}
+              </p>
+            )}
+          </div>
         </div>
       </div>
 

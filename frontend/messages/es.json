@@ -262,7 +262,9 @@
         "loading_conversations": "Cargando conversaciones...",
         "sample_questions": "Prueba preguntando:",
         "sample_question_1": "Ayúdame a organizar mejor mi contenido",
-        "sample_question_2": "Recomiéndame algunos videos de mis categorías"
+        "sample_question_2": "Recomiéndame algunos videos de mis categorías",
+        "message_limit_reached": "Límite de mensajes alcanzado (5/5). Inicia una nueva conversación para continuar.",
+        "messages_remaining": "{remaining} mensajes restantes"
     },
     "legal": {
         "tos_title": "Términos del servicio",
