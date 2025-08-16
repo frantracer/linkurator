@@ -138,6 +138,10 @@ const ChatPageComponent = ({conversationId}: { conversationId: string }) => {
     window.open(item.url, '_blank', 'noopener,noreferrer');
   };
 
+  const handleSampleQuestionClick = (question: string) => {
+    setInputMessage(question);
+  };
+
   return (
     <div className="flex flex-col h-full">
       <TopTitle>
@@ -170,8 +174,28 @@ const ChatPageComponent = ({conversationId}: { conversationId: string }) => {
         {/* Messages Area */}
         <div className="flex-1 overflow-y-auto p-4 space-y-4">
           {localMessages.length === 0 && !conversationLoading && (
-            <div className="text-center text-base-content/60 mt-8">
-              <p>{t('start_conversation')}</p>
+            <div className="flex flex-col items-center space-y-6 mt-8">
+              <div className="text-center text-base-content/60">
+                <p className="text-lg mb-4">{t('start_conversation')}</p>
+                <p className="text-sm mb-6">{t('sample_questions')}</p>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 w-full max-w-2xl">
+                <button
+                  onClick={() => handleSampleQuestionClick(t('sample_question_1'))}
+                  className="p-4 text-left bg-base-200 hover:bg-base-300 rounded-lg transition-colors duration-200 border border-base-300 hover:border-primary"
+                >
+                  <span className="text-sm">{t('sample_question_1')}</span>
+                </button>
+
+                <button
+                  onClick={() => handleSampleQuestionClick(t('sample_question_2'))}
+                  className="p-4 text-left bg-base-200 hover:bg-base-300 rounded-lg transition-colors duration-200 border border-base-300 hover:border-primary"
+                >
+                  <span className="text-sm">{t('sample_question_2')}</span>
+                </button>
+
+              </div>
             </div>
           )}
 

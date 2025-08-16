@@ -259,7 +259,10 @@
         "chat_error": "Lo siento, he encontrado un error al procesar tu solicitud. Por favor, inténtalo de nuevo.",
         "suggested_items": "Elementos sugeridos",
         "no_conversations_yet": "Aún no hay conversaciones.",
-        "loading_conversations": "Cargando conversaciones..."
+        "loading_conversations": "Cargando conversaciones...",
+        "sample_questions": "Prueba preguntando:",
+        "sample_question_1": "Ayúdame a organizar mejor mi contenido",
+        "sample_question_2": "Recomiéndame algunos videos de mis categorías"
     },
     "legal": {
         "tos_title": "Términos del servicio",
