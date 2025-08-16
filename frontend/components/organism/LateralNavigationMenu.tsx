@@ -160,7 +160,7 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
         </FlexRow>
         <Divider/>
         {profile &&
-            <FlexRow>
+            <FlexRow hideOnMobile={true}>
                 <FlexItem grow={true}>
                     <SearchBar placeholder={t("search_placeholder")} handleClick={openSearchModal}/>
                 </FlexItem>
