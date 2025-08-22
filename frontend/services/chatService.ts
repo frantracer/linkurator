@@ -2,6 +2,11 @@ import {configuration} from "../configuration";
 import {v4 as uuidv4} from 'uuid';
 import {ChatConversation, ChatMessage} from "../entities/Chat";
 
+export type QueryResponse = {
+  message: string;
+  newTopicsCreated: boolean;
+}
+
 export const getChats = async (): Promise<ChatConversation[]> => {
   try {
     const response = await fetch(configuration.CHATS_URL, {
@@ -80,7 +85,7 @@ export const deleteChat = async (conversationId: string): Promise<void> => {
   }
 };
 
-export const queryAgent = async (conversationId: string, query: string): Promise<string> => {
+export const queryAgent = async (conversationId: string, query: string): Promise<QueryResponse> => {
   try {
     const response = await fetch(configuration.CHATS_URL + "/" + conversationId + "/messages", {
       method: 'POST',
@@ -96,7 +101,10 @@ export const queryAgent = async (conversationId: string, query: string): Promise
     }
 
     const data = await response.json();
-    return data.message || 'Sorry, I could not process your request.';
+    return {
+      message: data.message || 'Sorry, I could not process your request.',
+      newTopicsCreated: data.topics_were_created || false,
+    }
   } catch (error) {
     console.error('Error querying agent:', error);
     throw new Error('Failed to get response from agent');

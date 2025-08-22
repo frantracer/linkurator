@@ -1,13 +1,13 @@
 'use client';
 
-import React, {useState, useEffect, useRef} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import Button from "../../../../../components/atoms/Button";
 import FlexRow from "../../../../../components/atoms/FlexRow";
 import FlexItem from "../../../../../components/atoms/FlexItem";
 import {TrashIcon} from "../../../../../components/atoms/Icons";
 import TopTitle from "../../../../../components/molecules/TopTitle";
 import {ChatMessage} from "../../../../../entities/Chat";
-import {queryAgent, deleteChat} from "../../../../../services/chatService";
+import {deleteChat, queryAgent} from "../../../../../services/chatService";
 import useChat from "../../../../../hooks/useChat";
 import {useQueryClient} from '@tanstack/react-query';
 import {v4 as uuidv4} from 'uuid';
@@ -16,11 +16,12 @@ import DeleteChatConfirmationModal, {
   DeleteChatConfirmationModalId
 } from "../../../../../components/organism/DeleteChatConfirmationModal";
 import ErrorModal, {ErrorModalId} from "../../../../../components/organism/ErrorModal";
-import {openModal, closeModal} from "../../../../../utilities/modalAction";
+import {closeModal, openModal} from "../../../../../utilities/modalAction";
 import {useTranslations} from 'next-intl';
 import CollapsibleCarousel from "../../../../../components/molecules/CollapsibleCarousel";
-import { SubscriptionItem } from "../../../../../entities/SubscriptionItem";
+import {SubscriptionItem} from "../../../../../entities/SubscriptionItem";
 import ReactMarkdown from 'react-markdown';
+import {invalidateTopicsCache} from "../../../../../hooks/useTopics";
 
 const MESSAGE_LIMIT = 5;
 
@@ -38,7 +39,7 @@ const ChatPageComponent = ({conversationId}: { conversationId: string }) => {
   const [localMessages, setLocalMessages] = useState<ChatMessage[]>([]);
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    messagesEndRef.current?.scrollIntoView({behavior: 'smooth'});
   };
 
   useEffect(() => {
@@ -75,12 +76,16 @@ const ChatPageComponent = ({conversationId}: { conversationId: string }) => {
       const agentResponse = await queryAgent(conversationId, userMessage.content);
       const aiMessage: ChatMessage = {
         id: uuidv4(),
-        content: agentResponse,
+        content: agentResponse.message,
         sender: 'assistant',
         timestamp: new Date(),
         items: [],
       };
       setLocalMessages(prev => [...prev, aiMessage]);
+
+      if (agentResponse.newTopicsCreated) {
+        invalidateTopicsCache(queryClient);
+      }
 
       // Invalidate and refetch the conversation data
       queryClient.invalidateQueries({queryKey: ['chat', conversationId]});
@@ -256,7 +261,7 @@ const ChatPageComponent = ({conversationId}: { conversationId: string }) => {
               </div>
             </div>
           )}
-          <div ref={messagesEndRef} />
+          <div ref={messagesEndRef}/>
         </div>
 
         {/* Input Area */}
@@ -284,14 +289,15 @@ const ChatPageComponent = ({conversationId}: { conversationId: string }) => {
               </Button>
             </FlexItem>
           </FlexRow>
-          
+
           {/* Message limit counter */}
           <div className="mt-2 text-center">
             {isMessageLimitReached ? (
               <p className="text-sm text-error">{t('message_limit_reached')}</p>
             ) : (
-              <p className={`text-sm ${userMessageCount >= MESSAGE_LIMIT - 2 ? 'text-warning' : 'text-base-content/60'}`}>
-                {t('messages_remaining', { remaining: MESSAGE_LIMIT - userMessageCount })}
+              <p
+                className={`text-sm ${userMessageCount >= MESSAGE_LIMIT - 2 ? 'text-warning' : 'text-base-content/60'}`}>
+                {t('messages_remaining', {remaining: MESSAGE_LIMIT - userMessageCount})}
               </p>
             )}
           </div>

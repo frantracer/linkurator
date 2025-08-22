@@ -1,4 +1,4 @@
-import {useQuery} from '@tanstack/react-query';
+import {QueryClient, useQuery} from '@tanstack/react-query';
 import {Topic, topicSorting} from '../entities/Topic';
 import {getTopics} from '../services/topicService';
 import {Profile} from "../services/profileService";
@@ -32,4 +32,15 @@ export function useTopics(profile: Profile | undefined, profileIsLoading: boolea
     topicsAreLoading,
     refreshTopics,
   };
+}
+
+export function invalidateTopicsCache(queryClient: QueryClient) {
+  queryClient.invalidateQueries(['topics']).then(
+    () => {
+      console.log("Topics cache invalidated");
+    },
+    (error) => {
+      console.error("Error invalidating topics cache:", error);
+    }
+  )
 }
