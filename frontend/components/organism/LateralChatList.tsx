@@ -58,7 +58,7 @@ const LateralChatList = (props: LateralChatListProps) => {
   );
 
   const noItems = (
-    <div className="flex flex-col items-center justify-center">
+    <div className="flex flex-col items-center h-fit gap-2 p-1">
       <InfoBanner>
         <span className={"text-sm"}>{t('no_conversations_yet')}</span>
       </InfoBanner>
@@ -74,7 +74,7 @@ const LateralChatList = (props: LateralChatListProps) => {
   )
 
   return (
-    <div className="overflow-hidden">
+    <div className="overflow-hidden p-1">
       <Menu>
         <Button
           clickAction={handleNewChat}

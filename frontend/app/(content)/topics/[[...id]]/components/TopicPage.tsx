@@ -294,7 +294,7 @@ const TopicPageComponent = ({topicId}: { topicId: string }) => {
       }
       {
         !selectedTopic && !topicIsLoading && !topicIsError &&
-          <CreateFirstTopicHero/>
+          <CreateFirstTopicHero numberOfTopics={topics.length} numberOfSubscriptions={subscriptions.length}/>
       }
       {
         selectedTopic &&

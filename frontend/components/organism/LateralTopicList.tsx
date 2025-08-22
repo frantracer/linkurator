@@ -11,11 +11,14 @@ import FlexItem from "../atoms/FlexItem";
 import {useTranslations} from "next-intl";
 import Collapse from "../atoms/Collapse";
 import React from "react";
+import Button from "../atoms/Button";
+import {AddIcon} from "../atoms/Icons";
 
 type LateralTopicListProps = {
   topics: Topic[];
   selectedTopic: Topic | undefined;
   closeMenu: () => void;
+  openCreateTopicModal: () => void;
 }
 
 const LateralTopicList = (props: LateralTopicListProps) => {
@@ -59,7 +62,7 @@ const LateralTopicList = (props: LateralTopicListProps) => {
 
   const renderSection = (title: string, topics: Topic[], sectionKey: keyof typeof isArenaSectionOpen) => {
     if (topics.length === 0) return null;
-    
+
     return (
       <Collapse
         key={title}
@@ -79,9 +82,15 @@ const LateralTopicList = (props: LateralTopicListProps) => {
   };
 
   const noItems = (
+    <div className="flex flex-col items-center h-fit gap-2 p-1">
+    <Button fitContent={false} clickAction={props.openCreateTopicModal}>
+      <AddIcon/>
+      {t("create_topic")}
+    </Button>
     <InfoBanner>
       <span className={"text-sm"}>{t("no_topics_found")}</span>
     </InfoBanner>
+    </div>
   )
 
   const sections = [

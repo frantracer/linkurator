@@ -272,19 +272,23 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
                 topics={topics}
                 selectedSubscription={selectedSubscription}
                 closeMenu={closeMenu}
+                openSyncModal={openNewSubscriptionModal}
             />
         }
         {profile && currentTab === 'topics' &&
             <LateralTopicList
                 topics={topics}
                 closeMenu={closeMenu}
-                selectedTopic={selectedTopic}/>
+                selectedTopic={selectedTopic}
+                openCreateTopicModal={openNewTopicModal}
+            />
         }
         {profile && currentTab === 'curators' &&
             <LateralCuratorList
                 curators={curators}
                 closeMenu={closeMenu}
                 selectedCurator={selectedCurator}
+                openFollowCuratorModal={openFollowCuratorModal}
             />
         }
         {profile && currentTab === 'chat' &&
