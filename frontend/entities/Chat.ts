@@ -14,6 +14,7 @@ export type ChatConversation = {
   messages: ChatMessage[];
   created_at: Date;
   updated_at: Date;
+  is_waiting_for_response?: boolean;
 };
 
 export function conversationSorting(a: ChatConversation, b: ChatConversation): number {

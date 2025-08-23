@@ -62,6 +62,7 @@ export const getChat = async (conversationId: string): Promise<ChatConversation 
       messages: messages,
       created_at: new Date(data.created_at),
       updated_at: new Date(data.updated_at),
+      is_waiting_for_response: data.is_waiting_for_response || false,
     } as ChatConversation;
   } catch (error) {
     console.error('Error fetching chat:', error);

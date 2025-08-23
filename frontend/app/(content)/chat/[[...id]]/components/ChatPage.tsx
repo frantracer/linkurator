@@ -43,7 +43,8 @@ const ChatPageComponent = ({conversationId}: { conversationId: string }) => {
   };
 
   useEffect(() => {
-    if (conversation?.messages) {
+    if (conversation) {
+      setIsLoading(conversation.is_waiting_for_response || false);
       setLocalMessages(conversation.messages);
     }
   }, [conversation]);
@@ -100,8 +101,6 @@ const ChatPageComponent = ({conversationId}: { conversationId: string }) => {
         items: [],
       };
       setLocalMessages(prev => [...prev, errorMessage]);
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -248,7 +247,7 @@ const ChatPageComponent = ({conversationId}: { conversationId: string }) => {
             </div>
           ))}
 
-          {isLoading && (
+          {(isLoading || conversation?.is_waiting_for_response) && (
             <div className="flex justify-start">
               <div className="bg-base-200 text-base-content max-w-[80%] p-3 rounded-lg">
                 <div className="flex space-x-1">
