@@ -88,14 +88,17 @@ export const deleteChat = async (conversationId: string): Promise<void> => {
 
 export const queryAgent = async (conversationId: string, query: string): Promise<QueryResponse> => {
   try {
-    const response = await fetch(configuration.CHATS_URL + "/" + conversationId + "/messages", {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      credentials: 'include',
-      body: JSON.stringify({query: query}),
-    });
+    const response = await fetch(
+      configuration.CHATS_URL + "/" + conversationId + "/messages",
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify({query: query}),
+        signal: AbortSignal.timeout(3 * 60 * 1000) // 3 minutes timeout
+      });
 
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
