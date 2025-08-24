@@ -148,7 +148,7 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
                 </FlexRow>
               </ALink>
               <FlexRow position={"center"}>
-                <ALink href={"https://x.com/frantracer"}>
+                <ALink href={"https://www.linkedin.com/in/frantracer/"}>
                   <span className={"text-xs"}>{t("project_by")} <b>{"@frantracer"}</b></span>
                 </ALink>
               </FlexRow>
