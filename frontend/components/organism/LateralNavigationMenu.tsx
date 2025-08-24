@@ -278,9 +278,11 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
         {profile && currentTab === 'topics' &&
             <LateralTopicList
                 topics={topics}
+                subscriptions={subscriptions}
                 closeMenu={closeMenu}
                 selectedTopic={selectedTopic}
                 openCreateTopicModal={openNewTopicModal}
+                openSyncSubscriptionModal={openNewSubscriptionModal}
             />
         }
         {profile && currentTab === 'curators' &&

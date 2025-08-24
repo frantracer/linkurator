@@ -13,12 +13,15 @@ import Collapse from "../atoms/Collapse";
 import React from "react";
 import Button from "../atoms/Button";
 import {AddIcon} from "../atoms/Icons";
+import {Subscription} from "../../entities/Subscription";
 
 type LateralTopicListProps = {
   topics: Topic[];
   selectedTopic: Topic | undefined;
+  subscriptions: Subscription[];
   closeMenu: () => void;
   openCreateTopicModal: () => void;
+  openSyncSubscriptionModal: () => void;
 }
 
 const LateralTopicList = (props: LateralTopicListProps) => {
@@ -83,13 +86,21 @@ const LateralTopicList = (props: LateralTopicListProps) => {
 
   const noItems = (
     <div className="flex flex-col items-center h-fit gap-2 p-1">
-    <Button fitContent={false} clickAction={props.openCreateTopicModal}>
-      <AddIcon/>
-      {t("create_topic")}
-    </Button>
-    <InfoBanner>
-      <span className={"text-sm"}>{t("no_topics_found")}</span>
-    </InfoBanner>
+      {props.subscriptions.length === 0 &&
+          <Button fitContent={false} clickAction={props.openSyncSubscriptionModal}>
+              <AddIcon/>
+            {t("sync_subscriptions")}
+          </Button>
+      }
+      {props.subscriptions.length > 0 &&
+          <Button fitContent={false} clickAction={props.openCreateTopicModal}>
+              <AddIcon/>
+            {t("create_topic")}
+          </Button>
+      }
+      <InfoBanner>
+        <span className={"text-sm"}>{t("no_topics_found")}</span>
+      </InfoBanner>
     </div>
   )
 
