@@ -218,7 +218,9 @@ const NewTopicModal = (props: NewTopicModalProps) => {
                       </div>
                       <SearchBar value={searchValue} placeholder={t("search_placeholder")} handleChange={(value) => setSearchValue(value)}/>
                   </Dropdown>
-                  <Button clickAction={async () => {
+                  <Button
+                    disabled={subscriptionsToAdd.length === 0 || newTopicName.length < 2}
+                    clickAction={async () => {
                     const newTopicUuid = uuidv4();
                     createTopic(newTopicUuid, newTopicName, subscriptionsToAdd.map(s => s.uuid)).then(
                       () => {
