@@ -5,6 +5,7 @@ import {Profile} from "../services/profileService";
 
 type subscriptionState = {
   subscriptions: Subscription[];
+  subscriptionsAreLoading: boolean;
   refreshSubscriptions: () => void;
 }
 
@@ -19,7 +20,7 @@ const useSubscriptions = (profile: Profile | undefined): subscriptionState => {
     }
   };
 
-  const {data: subscriptions = [], refetch: refreshSubscriptions} = useQuery({
+  const {data: subscriptions = [], isLoading: subscriptionsAreLoading, refetch: refreshSubscriptions} = useQuery({
     queryKey: ['subscriptions'],
     queryFn: fetchSubscriptions,
     enabled: !!profile,
@@ -28,6 +29,7 @@ const useSubscriptions = (profile: Profile | undefined): subscriptionState => {
 
   return {
     subscriptions,
+    subscriptionsAreLoading,
     refreshSubscriptions,
   };
 };

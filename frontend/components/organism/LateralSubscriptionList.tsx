@@ -17,6 +17,7 @@ import {AddIcon} from "../atoms/Icons";
 type LateralItemListProps = {
   subscriptions: Subscription[];
   topics: Topic[];
+  isLoading: boolean;
   selectedSubscription: Subscription | undefined;
   closeMenu: () => void;
   openSyncModal: () => void;
@@ -110,7 +111,9 @@ const LateralSubscriptionList = (props: LateralItemListProps) => {
       {spotifyItems.length > 0 &&
           <Collapse isOpen={true} title={spotifyTitle} content={spotifyItems}/>
       }
-      {youtubeItems.length === 0 && spotifyItems.length === 0 && noItems}
+      {youtubeItems.length === 0 && spotifyItems.length === 0 && !props.isLoading &&
+        noItems
+      }
     </Menu>
   )
 }

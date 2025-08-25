@@ -74,9 +74,9 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
   const selectedId: string | undefined = pathParamsArray.length > 0 ? pathParamsArray[0] : undefined;
 
   const {profile, profileIsLoading} = useProfile();
-  const {subscriptions, refreshSubscriptions} = useSubscriptions(profile);
-  const {curators, refreshCurators} = useCurators(profile, profileIsLoading);
-  const {topics, refreshTopics} = useTopics(profile, profileIsLoading);
+  const {subscriptions, subscriptionsAreLoading, refreshSubscriptions} = useSubscriptions(profile);
+  const {curators, curatorsAreLoading, refreshCurators} = useCurators(profile, profileIsLoading);
+  const {topics, topicsAreLoading, refreshTopics} = useTopics(profile, profileIsLoading);
   const {conversations, isLoading: conversationsLoading} = useChatConversations();
   const [currentPage, setCurrentPage] = useState<CurrentPage>(initialPage);
   const [currentTab, setCurrentTab] = useState<CurrentPage>(initialPage);
@@ -270,6 +270,7 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
             <LateralSubscriptionList
                 subscriptions={subscriptions}
                 topics={topics}
+                isLoading={subscriptionsAreLoading || topicsAreLoading}
                 selectedSubscription={selectedSubscription}
                 closeMenu={closeMenu}
                 openSyncModal={openNewSubscriptionModal}
@@ -279,6 +280,7 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
             <LateralTopicList
                 topics={topics}
                 subscriptions={subscriptions}
+                isLoading={topicsAreLoading || subscriptionsAreLoading}
                 closeMenu={closeMenu}
                 selectedTopic={selectedTopic}
                 openCreateTopicModal={openNewTopicModal}
@@ -288,6 +290,7 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
         {profile && currentTab === 'curators' &&
             <LateralCuratorList
                 curators={curators}
+                isLoading={curatorsAreLoading}
                 closeMenu={closeMenu}
                 selectedCurator={selectedCurator}
                 openFollowCuratorModal={openFollowCuratorModal}

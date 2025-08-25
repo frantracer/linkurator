@@ -14,6 +14,7 @@ import {AddIcon} from "../atoms/Icons";
 
 type LateralCuratorListProps = {
   curators: Curator[];
+  isLoading: boolean;
   selectedCurator: Curator | undefined;
   closeMenu: () => void;
   openFollowCuratorModal: () => void;
@@ -60,7 +61,8 @@ const LateralCuratorList = (props: LateralCuratorListProps) => {
 
   return (
     <Menu>
-      {items.length > 0 ? items : noItems}
+      {items.length > 0 && items}
+      {items.length === 0 && !props.isLoading && noItems}
     </Menu>
   )
 }

@@ -19,6 +19,7 @@ type LateralTopicListProps = {
   topics: Topic[];
   selectedTopic: Topic | undefined;
   subscriptions: Subscription[];
+  isLoading: boolean;
   closeMenu: () => void;
   openCreateTopicModal: () => void;
   openSyncSubscriptionModal: () => void;
@@ -112,7 +113,8 @@ const LateralTopicList = (props: LateralTopicListProps) => {
 
   return (
     <Menu>
-      {sections.length > 0 ? sections : noItems}
+      {sections.length > 0 && sections}
+      {sections.length === 0 && !props.isLoading && noItems}
     </Menu>
   )
 }
