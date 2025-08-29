@@ -3,20 +3,25 @@ import { SubscriptionItem } from './SubscriptionItem';
 export type ChatMessage = {
   id: string;
   content: string;
-  sender: 'user' | 'assistant';
+  sender: 'user' | 'assistant' | 'error';
   timestamp: Date;
   items: SubscriptionItem[];
+  topicsWereCreated: boolean;
 };
 
 export type ChatConversation = {
   id: string;
   title: string;
   messages: ChatMessage[];
-  created_at: Date;
-  updated_at: Date;
-  is_waiting_for_response?: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+  isWaitingForResponse?: boolean;
 };
 
 export function conversationSorting(a: ChatConversation, b: ChatConversation): number {
-  return b.updated_at.getTime() - a.updated_at.getTime();
+  return b.updatedAt.getTime() - a.updatedAt.getTime();
+}
+
+export function newTopicsWereCreated(chat: ChatConversation): boolean {
+  return chat.messages.some(message => message.topicsWereCreated);
 }

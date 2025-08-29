@@ -265,7 +265,8 @@
     "sample_question_1": "Help me organize my subscriptions into topics",
     "sample_question_2": "Recommend some videos from my topics",
     "message_limit_reached": "Message limit reached (5/5). Start a new conversation to continue.",
-    "messages_remaining": "{remaining} messages remaining"
+    "messages_remaining": "{remaining} messages remaining",
+    "agent_error": "An error occurred while generating a response. Please try again."
   },
   "legal": {
     "tos_title": "Terms of Service",

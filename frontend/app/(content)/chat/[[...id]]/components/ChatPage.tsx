@@ -6,7 +6,7 @@ import FlexRow from "../../../../../components/atoms/FlexRow";
 import FlexItem from "../../../../../components/atoms/FlexItem";
 import {TrashIcon} from "../../../../../components/atoms/Icons";
 import TopTitle from "../../../../../components/molecules/TopTitle";
-import {ChatMessage} from "../../../../../entities/Chat";
+import {ChatMessage, newTopicsWereCreated} from "../../../../../entities/Chat";
 import {deleteChat, queryAgent} from "../../../../../services/chatService";
 import useChat from "../../../../../hooks/useChat";
 import {useQueryClient} from '@tanstack/react-query';
@@ -44,10 +44,14 @@ const ChatPageComponent = ({conversationId}: { conversationId: string }) => {
 
   useEffect(() => {
     if (conversation) {
-      setIsLoading(conversation.is_waiting_for_response || false);
+      setIsLoading(conversation.isWaitingForResponse || false);
       setLocalMessages(conversation.messages);
+
+      if (newTopicsWereCreated(conversation)) {
+        invalidateTopicsCache(queryClient);
+      }
     }
-  }, [conversation]);
+  }, [conversation, queryClient]);
 
   // Scroll to bottom when messages change
   useEffect(() => {
@@ -67,6 +71,7 @@ const ChatPageComponent = ({conversationId}: { conversationId: string }) => {
       sender: 'user',
       timestamp: new Date(),
       items: [],
+      topicsWereCreated: false,
     };
 
     setLocalMessages(prev => [...prev, userMessage]);
@@ -74,19 +79,7 @@ const ChatPageComponent = ({conversationId}: { conversationId: string }) => {
     setIsLoading(true);
 
     try {
-      const agentResponse = await queryAgent(conversationId, userMessage.content);
-      const aiMessage: ChatMessage = {
-        id: uuidv4(),
-        content: agentResponse.message,
-        sender: 'assistant',
-        timestamp: new Date(),
-        items: [],
-      };
-      setLocalMessages(prev => [...prev, aiMessage]);
-
-      if (agentResponse.newTopicsCreated) {
-        invalidateTopicsCache(queryClient);
-      }
+      await queryAgent(conversationId, userMessage.content);
 
       // Invalidate and refetch the conversation data
       queryClient.invalidateQueries({queryKey: ['chat', conversationId]});
@@ -96,9 +89,10 @@ const ChatPageComponent = ({conversationId}: { conversationId: string }) => {
       const errorMessage: ChatMessage = {
         id: uuidv4(),
         content: t('chat_error'),
-        sender: 'assistant',
+        sender: 'error',
         timestamp: new Date(),
         items: [],
+        topicsWereCreated: false,
       };
       setLocalMessages(prev => [...prev, errorMessage]);
     }
@@ -229,7 +223,7 @@ const ChatPageComponent = ({conversationId}: { conversationId: string }) => {
               >
                 <div className="markdown-content">
                   <ReactMarkdown>
-                    {message.content}
+                    {message.sender === 'error' ? t("agent_error") : message.content}
                   </ReactMarkdown>
                 </div>
                 {message.items && message.items.length > 0 && (
@@ -247,7 +241,7 @@ const ChatPageComponent = ({conversationId}: { conversationId: string }) => {
             </div>
           ))}
 
-          {(isLoading || conversation?.is_waiting_for_response) && (
+          {(isLoading || conversation?.isWaitingForResponse) && (
             <div className="flex justify-start">
               <div className="bg-base-200 text-base-content max-w-[80%] p-3 rounded-lg">
                 <div className="flex space-x-1">

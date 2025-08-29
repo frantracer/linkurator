@@ -49,7 +49,7 @@ const LateralChatList = (props: LateralChatListProps) => {
           <div className="flex flex-col items-start">
             <span className="text-wrap font-medium">{conversation.title}</span>
             <span className="text-xs text-base-content/60">
-              {new Date(conversation.updated_at).toLocaleDateString()}
+              {new Date(conversation.updatedAt).toLocaleDateString()}
             </span>
           </div>
         </FlexItem>
