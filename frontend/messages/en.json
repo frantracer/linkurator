@@ -266,7 +266,8 @@
     "sample_question_2": "Recommend some videos from my topics",
     "message_limit_reached": "Message limit reached (5/5). Start a new conversation to continue.",
     "messages_remaining": "{remaining} messages remaining",
-    "agent_error": "An error occurred while generating a response. Please try again."
+    "agent_error": "An error occurred while generating a response. Please try again.",
+    "agent_rate_limit_error": "Too many requests, please wait a few minutes.\n\nYou can also sign up to continue using the service immediately."
   },
   "legal": {
     "tos_title": "Terms of Service",

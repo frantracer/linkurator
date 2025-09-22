@@ -3,7 +3,7 @@ import { SubscriptionItem } from './SubscriptionItem';
 export type ChatMessage = {
   id: string;
   content: string;
-  sender: 'user' | 'assistant' | 'error';
+  sender: 'user' | 'assistant' | 'error' | 'rate_limit';
   timestamp: Date;
   items: SubscriptionItem[];
   topicsWereCreated: boolean;

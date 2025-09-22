@@ -2,6 +2,13 @@ import {configuration} from "../configuration";
 import {v4 as uuidv4} from 'uuid';
 import {ChatConversation, ChatMessage} from "../entities/Chat";
 
+export class ChatRateLimitError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "RateLimitError";
+  }
+}
+
 export const getChats = async (): Promise<ChatConversation[]> => {
   try {
     const response = await fetch(configuration.CHATS_URL, {
@@ -83,44 +90,43 @@ export const deleteChat = async (conversationId: string): Promise<void> => {
 };
 
 export const queryAgent = async (conversationId: string, query: string): Promise<ChatConversation> => {
-  try {
-    const response = await fetch(
-      configuration.CHATS_URL + "/" + conversationId + "/messages",
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include',
-        body: JSON.stringify({query: query}),
-        signal: AbortSignal.timeout(3 * 60 * 1000) // 3 minutes timeout
-      });
+  const response = await fetch(
+    configuration.CHATS_URL + "/" + conversationId + "/messages",
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      credentials: 'include',
+      body: JSON.stringify({query: query}),
+      signal: AbortSignal.timeout(3 * 60 * 1000) // 3 minutes timeout
+    });
 
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    const data = await response.json();
-
-    const messages = data.messages.map((msg: any) => ({
-      id: uuidv4(),
-      content: msg.content,
-      sender: msg.role,
-      timestamp: new Date(msg.timestamp),
-      items: msg.items || [],
-      topicsWereCreated: msg.topics_were_created || false,
-    })) as ChatMessage[];
-
-    return {
-      id: data.uuid,
-      title: data.title,
-      messages: messages,
-      createdAt: data.created_at,
-      updatedAt: data.updated_at,
-      isWaitingForResponse: data.is_waiting_for_response || false,
-    } as ChatConversation;
-  } catch (error) {
-    console.error('Error querying agent:', error);
-    throw new Error('Failed to get response from agent');
+  if (response.status === 429) {
+    throw new ChatRateLimitError('Rate limit exceeded. Please try again later.');
   }
+
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
+
+  const data = await response.json();
+
+  const messages = data.messages.map((msg: any) => ({
+    id: uuidv4(),
+    content: msg.content,
+    sender: msg.role,
+    timestamp: new Date(msg.timestamp),
+    items: msg.items || [],
+    topicsWereCreated: msg.topics_were_created || false,
+  })) as ChatMessage[];
+
+  return {
+    id: data.uuid,
+    title: data.title,
+    messages: messages,
+    createdAt: data.created_at,
+    updatedAt: data.updated_at,
+    isWaitingForResponse: data.is_waiting_for_response || false,
+  } as ChatConversation;
 };

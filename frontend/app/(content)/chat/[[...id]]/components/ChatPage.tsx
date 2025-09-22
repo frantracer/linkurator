@@ -7,7 +7,7 @@ import FlexItem from "../../../../../components/atoms/FlexItem";
 import {TrashIcon} from "../../../../../components/atoms/Icons";
 import TopTitle from "../../../../../components/molecules/TopTitle";
 import {ChatMessage, newTopicsWereCreated} from "../../../../../entities/Chat";
-import {deleteChat, queryAgent} from "../../../../../services/chatService";
+import {ChatRateLimitError, deleteChat, queryAgent} from "../../../../../services/chatService";
 import useChat from "../../../../../hooks/useChat";
 import {useQueryClient} from '@tanstack/react-query';
 import {v4 as uuidv4} from 'uuid';
@@ -82,19 +82,25 @@ const ChatPageComponent = ({conversationId}: { conversationId: string }) => {
       await queryAgent(conversationId, userMessage.content);
 
       // Invalidate and refetch the conversation data
-      queryClient.invalidateQueries({queryKey: ['chat', conversationId]});
-      queryClient.invalidateQueries({queryKey: ['chatConversations']});
+      await queryClient.invalidateQueries({queryKey: ['chat', conversationId]});
+      await queryClient.invalidateQueries({queryKey: ['chatConversations']});
     } catch (error) {
       console.error('Error getting agent response:', error);
+      let sender: "error" | "rate_limit" = 'error';
+      if (error instanceof ChatRateLimitError) {
+        sender = 'rate_limit';
+      }
+
       const errorMessage: ChatMessage = {
         id: uuidv4(),
-        content: t('chat_error'),
-        sender: 'error',
+        content: "",
+        sender: sender,
         timestamp: new Date(),
         items: [],
         topicsWereCreated: false,
       };
       setLocalMessages(prev => [...prev, errorMessage]);
+      setIsLoading(false);
     }
   };
 
@@ -145,6 +151,16 @@ const ChatPageComponent = ({conversationId}: { conversationId: string }) => {
   const handleSampleQuestionClick = (question: string) => {
     setInputMessage(question);
   };
+
+  const getMessageContent = (message: ChatMessage) => {
+    if (message.sender === 'rate_limit') {
+      return t("agent_rate_limit_error");
+    }
+    if (message.sender === 'error') {
+      return t("agent_error");
+    }
+    return message.content;
+  }
 
   return (
     <div className="flex flex-col h-full">
@@ -223,9 +239,16 @@ const ChatPageComponent = ({conversationId}: { conversationId: string }) => {
               >
                 <div className="markdown-content">
                   <ReactMarkdown>
-                    {message.sender === 'error' ? t("agent_error") : message.content}
+                    {getMessageContent(message)}
                   </ReactMarkdown>
                 </div>
+                {message.sender === 'rate_limit' && (
+                  <div className={"py-4"}>
+                    <Button fitContent={true} clickAction={() => router.push('/register')} primary={true}>
+                      {t('register')}
+                    </Button>
+                  </div>
+                )}
                 {message.items && message.items.length > 0 && (
                   <CollapsibleCarousel
                     items={message.items}

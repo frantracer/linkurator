@@ -266,7 +266,8 @@
         "sample_question_2": "Recomiéndame algunos videos de mis categorías",
         "message_limit_reached": "Límite de mensajes alcanzado (5/5). Inicia una nueva conversación para continuar.",
         "messages_remaining": "{remaining} mensajes restantes",
-        "agent_error": "Error al generar una respuesta. Por favor, inténtalo de nuevo."
+        "agent_error": "Error al generar una respuesta. Por favor, inténtalo de nuevo.",
+        "agent_rate_limit_error": "Demasiadas solicitudes, por favor espera unos minutos.\n\nTambién puedes registrarte para seguir usando el servicio de inmediato."
     },
     "legal": {
         "tos_title": "Términos del servicio",
