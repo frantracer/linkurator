@@ -24,6 +24,7 @@ import ReactMarkdown from 'react-markdown';
 import {invalidateTopicsCache} from "../../../../../hooks/useTopics";
 
 const MESSAGE_LIMIT = 5;
+const CHARACTER_LIMIT = 500;
 
 const ChatPageComponent = ({conversationId}: { conversationId: string }) => {
   const [inputMessage, setInputMessage] = useState('');
@@ -63,7 +64,7 @@ const ChatPageComponent = ({conversationId}: { conversationId: string }) => {
   const isMessageLimitReached = userMessageCount >= MESSAGE_LIMIT;
 
   const handleSendMessage = async () => {
-    if (!inputMessage.trim() || isLoading || isMessageLimitReached) return;
+    if (!inputMessage.trim() || isLoading || isMessageLimitReached || inputMessage.length > CHARACTER_LIMIT) return;
 
     const userMessage: ChatMessage = {
       id: uuidv4(),
@@ -286,7 +287,11 @@ const ChatPageComponent = ({conversationId}: { conversationId: string }) => {
             <FlexItem grow={true}>
               <textarea
                 value={inputMessage}
-                onChange={(e) => setInputMessage(e.target.value)}
+                onChange={(e) => {
+                  if (e.target.value.length <= CHARACTER_LIMIT) {
+                    setInputMessage(e.target.value);
+                  }
+                }}
                 onKeyDown={handleKeyDown}
                 placeholder={t('type_message')}
                 className="textarea textarea-bordered w-full resize-none"
@@ -297,7 +302,7 @@ const ChatPageComponent = ({conversationId}: { conversationId: string }) => {
             <FlexItem>
               <Button
                 clickAction={handleSendMessage}
-                disabled={!inputMessage.trim() || isLoading || isMessageLimitReached}
+                disabled={!inputMessage.trim() || isLoading || isMessageLimitReached || inputMessage.length > CHARACTER_LIMIT}
                 primary={true}
                 fitContent={true}
               >
@@ -306,16 +311,22 @@ const ChatPageComponent = ({conversationId}: { conversationId: string }) => {
             </FlexItem>
           </FlexRow>
 
-          {/* Message limit counter */}
-          <div className="mt-2 text-center">
-            {isMessageLimitReached ? (
-              <p className="text-sm text-error">{t('message_limit_reached')}</p>
-            ) : (
-              <p
-                className={`text-sm ${userMessageCount >= MESSAGE_LIMIT - 2 ? 'text-warning' : 'text-base-content/60'}`}>
-                {t('messages_remaining', {remaining: MESSAGE_LIMIT - userMessageCount})}
+          {/* Character and message counters */}
+          <div className="mt-2 text-center space-y-1">
+            <div className="grid grid-cols-4">
+              <p className={`text-left text-sm ${inputMessage.length > CHARACTER_LIMIT - 50 ? 'text-warning' : 'text-base-content/60'}`}>
+                {inputMessage.length}/{CHARACTER_LIMIT}
               </p>
-            )}
+              {isMessageLimitReached ? (
+                <p className="col-span-2 text-sm text-error">{t('message_limit_reached')}</p>
+              ) : (
+                <p
+                  className={`col-span-2 text-sm ${userMessageCount >= MESSAGE_LIMIT - 2 ? 'text-warning' : 'text-base-content/60'}`}>
+                  {t('messages_remaining', {remaining: MESSAGE_LIMIT - userMessageCount})}
+                </p>
+              )}
+              <p></p>
+            </div>
           </div>
         </div>
       </div>
