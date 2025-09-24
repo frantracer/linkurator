@@ -22,6 +22,7 @@ import CollapsibleCarousel from "../../../../../components/molecules/Collapsible
 import {SubscriptionItem} from "../../../../../entities/SubscriptionItem";
 import ReactMarkdown from 'react-markdown';
 import {invalidateTopicsCache} from "../../../../../hooks/useTopics";
+import {paths} from "../../../../../configuration";
 
 const MESSAGE_LIMIT = 5;
 const CHARACTER_LIMIT = 500;
@@ -127,7 +128,7 @@ const ChatPageComponent = ({conversationId}: { conversationId: string }) => {
       queryClient.removeQueries({queryKey: ['chat', conversationId]});
 
       // Navigate back to chat home
-      router.push('/chat/' + uuidv4());
+      router.push(paths.CHATS + '/' + uuidv4());
     } catch (error) {
       console.error('Error deleting conversation:', error);
       closeModal(DeleteChatConfirmationModalId);

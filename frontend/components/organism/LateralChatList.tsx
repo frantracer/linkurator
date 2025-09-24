@@ -11,6 +11,7 @@ import React from "react";
 import {v4 as uuidv4} from 'uuid';
 import {useTranslations} from 'next-intl';
 import {AddIcon} from "../atoms/Icons";
+import {paths} from "../../configuration";
 
 type LateralChatListProps = {
   conversations: ChatConversation[];
@@ -28,14 +29,14 @@ const LateralChatList = (props: LateralChatListProps) => {
     if (conversation) {
       props.closeMenu();
       scrollToDrawerTop()
-      router.push("/chat/" + conversation.id)
+      router.push(paths.CHATS + "/" + conversation.id)
     }
   }
 
   const handleNewChat = () => {
     props.closeMenu();
     scrollToDrawerTop();
-    router.push("/chat/" + uuidv4());
+    router.push(paths.CHATS + "/" + uuidv4());
   }
 
   const renderConversationItem = (conversation: ChatConversation) => (

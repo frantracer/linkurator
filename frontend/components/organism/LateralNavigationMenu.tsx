@@ -39,7 +39,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 export const LATERAL_NAVIGATION_MENU_ID = 'lateral-navigation-menu';
 
-type CurrentPage = 'topics' | 'subscriptions' | 'profile' | 'curators' | 'chat' | 'other';
+type CurrentPage = 'topics' | 'subscriptions' | 'profile' | 'curators' | 'chats' | 'other';
 
 type LateralNavigationMenuProps = {
   children?: React.ReactNode;
@@ -55,8 +55,8 @@ const mapStringToPage = (page: string): CurrentPage => {
       return 'profile';
     case 'curators':
       return 'curators';
-    case 'chat':
-      return 'chat';
+    case 'chats':
+      return 'chats';
     default:
       return 'other';
   }
@@ -117,7 +117,7 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
   const goToNewChat = () => {
     closeMenu();
     const newChatId = uuidv4();
-    router.push(paths.CHAT + "/" + newChatId);
+    router.push(paths.CHATS + "/" + newChatId);
   }
 
   const openFilters = (page: CurrentPage) => {
@@ -247,8 +247,8 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
                     </FlexRow>
                 </MenuItem>
                 <MenuItem onClick={() => {
-                  setCurrentTab('chat');
-                }} selected={currentTab === 'chat'}>
+                  setCurrentTab('chats');
+                }} selected={currentTab === 'chats'}>
                     <FlexRow position={"start"}>
                         <FlexItem>
                             <ChatBubbleFilledIcon/>
@@ -296,7 +296,7 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
                 openFollowCuratorModal={openFollowCuratorModal}
             />
         }
-        {profile && currentTab === 'chat' &&
+        {profile && currentTab === 'chats' &&
             <LateralChatList
                 conversations={conversations}
                 closeMenu={closeMenu}
