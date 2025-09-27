@@ -13,7 +13,8 @@ import {
   AddIcon,
   BookmarkSquaredFilled,
   ChatBubbleFilledIcon,
-  FunnelIcon, MagnifyingGlassIcon,
+  FunnelIcon,
+  MagnifyingGlassIcon,
   RectangleGroup,
   UserIconFilled
 } from "../atoms/Icons";
@@ -36,7 +37,8 @@ import LateralCuratorList from "./LateralCuratorList";
 import LateralChatList from "./LateralChatList";
 import useChatConversations from "../../hooks/useChatConversations";
 import FolowCuratorModal, {FollowCuratorModalId} from "./FollowCuratorModal";
-import NewSubscriptionModal, {NewSubscriptionModalId} from "./NewSubscriptionModal";
+import FindSubscriptionModal, {FindSubscriptionModalId} from "./FindSubscriptionModal";
+import SynchronizeSubscriptionsModal, {SynchronizeSubscriptionsModalId} from "./SynchronizeSubscriptionsModal";
 import FlexItem from "../atoms/FlexItem";
 import {SUBSCRIPTION_DETAILS_ID} from "./SubscriptionDetails";
 import {TOPIC_DETAILS_ID} from "./TopicDetails";
@@ -112,8 +114,13 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
     closeMenu();
   }
 
-  const openNewSubscriptionModal = () => {
-    openModal(NewSubscriptionModalId);
+  const openFindSubscriptionModal = () => {
+    openModal(FindSubscriptionModalId);
+    closeMenu();
+  }
+
+  const openSynchronizeSubscriptionsModal = () => {
+    openModal(SynchronizeSubscriptionsModalId);
     closeMenu();
   }
 
@@ -236,8 +243,8 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
                           {t("subscriptions")}
                         </FlexItem>
                         <FlexItem grow={false}>
-                            <Button clickAction={openNewSubscriptionModal}>
-                                <AddIcon/>
+                            <Button fitContent={true} clickAction={openFindSubscriptionModal}>
+                                <MagnifyingGlassIcon/>
                             </Button>
                         </FlexItem>
                     </FlexRow>
@@ -288,7 +295,7 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
                     closeMenu={closeMenu}
                     selectedTopic={selectedTopic}
                     openCreateTopicModal={openNewTopicModal}
-                    openSyncSubscriptionModal={openNewSubscriptionModal}
+                    openSyncSubscriptionModal={openSynchronizeSubscriptionsModal}
                 />
                 <Button clickAction={openNewTopicModal} fitContent={false}>
                     <AddIcon/>
@@ -297,14 +304,20 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
             </div>
         }
         {profile && currentTab === 'subscriptions' &&
-            <LateralSubscriptionList
-                subscriptions={subscriptions}
-                topics={topics}
-                isLoading={subscriptionsAreLoading || topicsAreLoading}
-                selectedSubscription={selectedSubscription}
-                closeMenu={closeMenu}
-                openSyncModal={openNewSubscriptionModal}
-            />
+            <div className={"flex flex-col overflow-auto gap-2"}>
+                <LateralSubscriptionList
+                    subscriptions={subscriptions}
+                    topics={topics}
+                    isLoading={subscriptionsAreLoading || topicsAreLoading}
+                    selectedSubscription={selectedSubscription}
+                    closeMenu={closeMenu}
+                    openSyncModal={openSynchronizeSubscriptionsModal}
+                />
+                <Button fitContent={false} clickAction={openSynchronizeSubscriptionsModal}>
+                    <AddIcon/>
+                  {t("synchronize_subscriptions")}
+                </Button>
+            </div>
         }
         {profile && currentTab === 'curators' &&
             <LateralCuratorList
@@ -326,7 +339,8 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
       </Sidebar>
       <NewTopicModal refreshTopics={refreshTopics} subscriptions={subscriptions}/>
       <FindTopicModal refreshTopics={refreshTopics}/>
-      <NewSubscriptionModal refreshSubscriptions={refreshSubscriptions}/>
+      <FindSubscriptionModal refreshSubscriptions={refreshSubscriptions}/>
+      <SynchronizeSubscriptionsModal/>
       <FolowCuratorModal refreshCurators={refreshCurators} curators={curators}/>
       <SearchModal onClose={() => closeModal(SearchModalId)}/>
       {

@@ -150,6 +150,8 @@
         "search_topic_prompt": "Introduce una palabra para buscar categorías",
         "find_topics": "Buscar Categorías",
         "find": "Buscar",
+        "find_subscriptions": "Buscar Subscripciones",
+        "synchronize_subscriptions": "Sincronizar Subscripciones",
         "interactions": "Interacciones",
         "not_viewed": "No visto",
         "viewed": "Visto",

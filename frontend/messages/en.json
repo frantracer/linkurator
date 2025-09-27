@@ -150,6 +150,8 @@
     "search_topic_prompt": "Enter a word to search for topics",
     "find_topics": "Find Topics",
     "find": "Find",
+    "find_subscriptions": "Find Subscriptions",
+    "synchronize_subscriptions": "Synchronize Subscriptions",
     "interactions": "Interactions",
     "not_viewed": "Not viewed",
     "viewed": "Viewed",

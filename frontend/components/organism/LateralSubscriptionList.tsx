@@ -11,8 +11,6 @@ import {InfoBanner} from "../atoms/InfoBanner";
 import FlexRow from "../atoms/FlexRow";
 import Collapse from "../atoms/Collapse";
 import {useTranslations} from "next-intl";
-import Button from "../atoms/Button";
-import {AddIcon} from "../atoms/Icons";
 
 type LateralItemListProps = {
   subscriptions: Subscription[];
@@ -73,14 +71,6 @@ const LateralSubscriptionList = (props: LateralItemListProps) => {
 
   const noItems = (
     <div className="flex flex-col items-center h-fit gap-2 p-1">
-      <Button
-        clickAction={props.openSyncModal}
-        primary={true}
-        fitContent={false}
-      >
-        <AddIcon/>
-        {t("sync")}
-      </Button>
       <InfoBanner>
         <span className={"text-sm"}>{t("no_subscriptions_found")}</span>
       </InfoBanner>
