@@ -1,11 +1,11 @@
-import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { v4 as uuidv4 } from 'uuid';
-import { paths } from "../../configuration";
-import { Subscription, subscriptionSorting } from "../../entities/Subscription";
+import {useRouter} from "next/navigation";
+import React, {useState} from "react";
+import {v4 as uuidv4} from 'uuid';
+import {paths} from "../../configuration";
+import {Subscription, subscriptionSorting} from "../../entities/Subscription";
 import useSubscriptionsToAdd from "../../hooks/useSubscriptionsToAdd";
-import { createTopic } from "../../services/topicService";
-import { closeModal } from "../../utilities/modalAction";
+import {createTopic} from "../../services/topicService";
+import {closeModal} from "../../utilities/modalAction";
 import ALink from "../atoms/ALink";
 import Box from "../atoms/Box";
 import Button from "../atoms/Button";
@@ -13,15 +13,15 @@ import Dropdown from "../atoms/Dropdown";
 import FlexColumn from "../atoms/FlexColumn";
 import FlexItem from "../atoms/FlexItem";
 import FlexRow from "../atoms/FlexRow";
-import { CheckCircleIcon, CircleIcon } from "../atoms/Icons";
+import {AddIcon, CheckCircleIcon, CircleIcon, CrossIcon} from "../atoms/Icons";
 import InputText from "../atoms/InputText";
 import Menu from "../atoms/Menu";
-import { MenuItem } from "../atoms/MenuItem";
+import {MenuItem} from "../atoms/MenuItem";
 import Miniature from "../atoms/Miniature";
 import Modal from "../atoms/Modal";
 import Tag from "../atoms/Tag";
 import SearchBar from "../molecules/SearchBar";
-import { useTranslations } from 'next-intl';
+import {useTranslations} from 'next-intl';
 
 export const NewTopicModalId = "new-topic-modal";
 
@@ -84,56 +84,69 @@ const NewTopicModal = (props: NewTopicModalProps) => {
           <Tag>
             <Miniature src={subscription.thumbnail} alt={subscription.name}/>
             {subscription.name}
+            <div onClick={
+              (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                removeSubscription(subscription);
+              }
+            }>
+              <CrossIcon/>
+            </div>
           </Tag>
         </ALink>)
     })
 
   return (
     <Modal id={NewTopicModalId} onClose={handleClose}>
-      <h1 className="font-bold text-xl w-full text-center">{t("create_topic")}</h1>
+      <h1 className="font-bold text-xl w-full text-center mb-4">{t("create_topic")}</h1>
       <FlexColumn>
-          <InputText placeholder={t("enter_new_topic_name")} value={newTopicName}
-                     onChange={(value) => setNewTopicName(value)}/>
-          <Box title={t("subscriptions") + " (" + subscriptionsToAdd.length + ")"}>
-              <div className={"h-60 overflow-y-auto"}>
-                  <FlexRow wrap={true}>
-                    {subscriptionTags.length === 0 &&
-                        <span>{t("no_subscriptions")}</span>
-                    }
-                    {subscriptionTags.length > 0 &&
-                      subscriptionTags
-                    }
-                  </FlexRow>
+        <InputText placeholder={t("enter_new_topic_name")} value={newTopicName}
+                   onChange={(value) => setNewTopicName(value)}/>
+        <Box title={t("subscriptions") + " (" + subscriptionsToAdd.length + ")"}>
+          <div className={"h-60 flex flex-col overflow-auto mb-2"}>
+            <FlexRow wrap={true}>
+              {subscriptionTags.length > 0 &&
+                subscriptionTags
+              }
+            </FlexRow>
+          </div>
+          <Dropdown
+            start={true} bottom={false}
+            button={
+              <div className="flex flex-row justify-center items-center w-72">
+                <AddIcon/>
+                {t("add_or_remove_subscriptions")}
               </div>
-          </Box>
-          <FlexRow hideOverflow={false} position={"between"}>
-              <Dropdown start={true} bottom={false}
-                        button={<FlexRow><span>{t("add_or_remove_subscriptions")}</span></FlexRow>}>
-                  <div className={"h-60"}>
-                      <Menu>
-                        {subscriptionsMenuItems.length === 0 &&
-                            <MenuItem>{t("no_subscriptions")}</MenuItem>
-                        }
-                        {subscriptionsMenuItems.length > 0 && subscriptionsMenuItems}
-                      </Menu>
-                  </div>
-                  <SearchBar value={searchValue} placeholder={t("search_placeholder")} handleChange={(value) => setSearchValue(value)}/>
-              </Dropdown>
-              <Button
-                disabled={subscriptionsToAdd.length === 0 || newTopicName.length < 2}
-                clickAction={async () => {
-                const newTopicUuid = uuidv4();
-                createTopic(newTopicUuid, newTopicName, subscriptionsToAdd.map(s => s.uuid)).then(
-                  () => {
-                    handleClose();
-                    props.refreshTopics();
-                    router.push(paths.TOPICS + "/" + newTopicUuid);
-                  }
-                )
-              }}>
-                  <span>{t("create")}</span>
-              </Button>
-          </FlexRow>
+            }>
+            <div className={"h-60"}>
+              <Menu>
+                {subscriptionsMenuItems.length === 0 &&
+                    <MenuItem>{t("no_subscriptions")}</MenuItem>
+                }
+                {subscriptionsMenuItems.length > 0 && subscriptionsMenuItems}
+              </Menu>
+            </div>
+            <SearchBar value={searchValue} placeholder={t("search_placeholder")}
+                       handleChange={(value) => setSearchValue(value)}/>
+          </Dropdown>
+        </Box>
+        <FlexRow hideOverflow={false} position={"end"}>
+          <Button
+            disabled={subscriptionsToAdd.length == 0 || newTopicName.length == 0}
+            clickAction={async () => {
+              const newTopicUuid = uuidv4();
+              createTopic(newTopicUuid, newTopicName, subscriptionsToAdd.map(s => s.uuid)).then(
+                () => {
+                  handleClose();
+                  props.refreshTopics();
+                  router.push(paths.TOPICS + "/" + newTopicUuid);
+                }
+              )
+            }}>
+            <span>{t("create")}</span>
+          </Button>
+        </FlexRow>
       </FlexColumn>
     </Modal>
   )
