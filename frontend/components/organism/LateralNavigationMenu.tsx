@@ -9,12 +9,20 @@ import Divider from "../atoms/Divider";
 import Menu from "../atoms/Menu";
 import {MenuItem} from "../atoms/MenuItem";
 import FlexRow from "../atoms/FlexRow";
-import {AddIcon, BookmarkSquaredFilled, ChatBubbleFilledIcon, FunnelIcon, RectangleGroup, UserIconFilled} from "../atoms/Icons";
+import {
+  AddIcon,
+  BookmarkSquaredFilled,
+  ChatBubbleFilledIcon,
+  FunnelIcon, MagnifyingGlassIcon,
+  RectangleGroup,
+  UserIconFilled
+} from "../atoms/Icons";
 import SearchBar from "../molecules/SearchBar";
 import LateralSubscriptionList from "./LateralSubscriptionList";
 import LateralTopicList from "./LateralTopicList";
 import {closeModal, openModal} from "../../utilities/modalAction";
 import NewTopicModal, {NewTopicModalId} from "./NewTopicModal";
+import FindTopicModal, {FindTopicModalId} from "./FindTopicModal";
 import Button from "../atoms/Button";
 import Avatar from "../atoms/Avatar";
 import ALink from "../atoms/ALink";
@@ -34,8 +42,8 @@ import {SUBSCRIPTION_DETAILS_ID} from "./SubscriptionDetails";
 import {TOPIC_DETAILS_ID} from "./TopicDetails";
 import {CURATOR_DETAILS_ID} from "./CuratorDetails";
 import {useTranslations} from "next-intl";
-import SearchModal, { SearchModalId } from "./SearchModal";
-import { v4 as uuidv4 } from 'uuid';
+import SearchModal, {SearchModalId} from "./SearchModal";
+import {v4 as uuidv4} from 'uuid';
 
 export const LATERAL_NAVIGATION_MENU_ID = 'lateral-navigation-menu';
 
@@ -96,6 +104,11 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
 
   const openNewTopicModal = () => {
     openModal(NewTopicModalId);
+    closeMenu();
+  }
+
+  const openFindTopicModal = () => {
+    openModal(FindTopicModalId);
     closeMenu();
   }
 
@@ -206,8 +219,8 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
                           {t("topics")}
                         </FlexItem>
                         <FlexItem grow={false}>
-                            <Button fitContent={true} clickAction={openNewTopicModal}>
-                                <AddIcon/>
+                            <Button fitContent={true} clickAction={openFindTopicModal}>
+                                <MagnifyingGlassIcon/>
                             </Button>
                         </FlexItem>
                     </FlexRow>
@@ -266,6 +279,23 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
             </Menu>
         }
         {profile && <Divider/>}
+        {profile && currentTab === 'topics' &&
+            <div className={"flex flex-col overflow-auto"}>
+                <LateralTopicList
+                    topics={topics}
+                    subscriptions={subscriptions}
+                    isLoading={topicsAreLoading || subscriptionsAreLoading}
+                    closeMenu={closeMenu}
+                    selectedTopic={selectedTopic}
+                    openCreateTopicModal={openNewTopicModal}
+                    openSyncSubscriptionModal={openNewSubscriptionModal}
+                />
+                <Button clickAction={openNewTopicModal} fitContent={false}>
+                    <AddIcon/>
+                  {t("create_topic")}
+                </Button>
+            </div>
+        }
         {profile && currentTab === 'subscriptions' &&
             <LateralSubscriptionList
                 subscriptions={subscriptions}
@@ -274,17 +304,6 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
                 selectedSubscription={selectedSubscription}
                 closeMenu={closeMenu}
                 openSyncModal={openNewSubscriptionModal}
-            />
-        }
-        {profile && currentTab === 'topics' &&
-            <LateralTopicList
-                topics={topics}
-                subscriptions={subscriptions}
-                isLoading={topicsAreLoading || subscriptionsAreLoading}
-                closeMenu={closeMenu}
-                selectedTopic={selectedTopic}
-                openCreateTopicModal={openNewTopicModal}
-                openSyncSubscriptionModal={openNewSubscriptionModal}
             />
         }
         {profile && currentTab === 'curators' &&
@@ -306,6 +325,7 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
         }
       </Sidebar>
       <NewTopicModal refreshTopics={refreshTopics} subscriptions={subscriptions}/>
+      <FindTopicModal refreshTopics={refreshTopics}/>
       <NewSubscriptionModal refreshSubscriptions={refreshSubscriptions}/>
       <FolowCuratorModal refreshCurators={refreshCurators} curators={curators}/>
       <SearchModal onClose={() => closeModal(SearchModalId)}/>

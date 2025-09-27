@@ -148,6 +148,8 @@
         "enter_new_topic_name": "Introduce el nombre de la nueva categoría",
         "search_topic_placeholder": "Introduce una palabra para buscar categorías",
         "search_topic_prompt": "Introduce una palabra para buscar categorías",
+        "find_topics": "Buscar Categorías",
+        "find": "Buscar",
         "interactions": "Interacciones",
         "not_viewed": "No visto",
         "viewed": "Visto",

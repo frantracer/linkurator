@@ -148,6 +148,8 @@
     "enter_new_topic_name": "Enter the new topic name",
     "search_topic_placeholder": "Enter a word to search for topics",
     "search_topic_prompt": "Enter a word to search for topics",
+    "find_topics": "Find Topics",
+    "find": "Find",
     "interactions": "Interactions",
     "not_viewed": "Not viewed",
     "viewed": "Viewed",
