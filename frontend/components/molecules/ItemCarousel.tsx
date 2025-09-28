@@ -8,7 +8,6 @@ import { ChevronDownIcon, ChevronUpIcon } from '../atoms/Icons';
 type ItemCarouselProps = {
   items: SubscriptionItem[];
   title?: string;
-  onItemClick?: (item: SubscriptionItem) => void;
   isLoading?: boolean;
   collapsible?: boolean;
   defaultExpanded?: boolean;
@@ -18,7 +17,6 @@ type ItemCarouselProps = {
 const ItemCarousel = ({
   items,
   title = "Items",
-  onItemClick,
   isLoading = false,
   collapsible = false,
   defaultExpanded = false,
@@ -85,7 +83,6 @@ const ItemCarousel = ({
               <ItemCard
                 key={item.uuid}
                 item={item}
-                onClick={onItemClick}
               />
             ))}
           </div>

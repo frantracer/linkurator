@@ -2,20 +2,54 @@ import React from 'react';
 import { SubscriptionItem } from '../../entities/SubscriptionItem';
 import { readableAgoUnits } from '../../utilities/dateFormatter';
 import { useTranslations } from 'next-intl';
+import Link from 'next/link';
+import { paths } from '../../configuration';
+import { SwapButton } from './SwapButton';
+import {
+  ArchiveBoxFilledIcon,
+  ArchiveBoxIcon,
+  CheckCircleFilledIcon,
+  CheckCircleIcon,
+  ThumbsDownFilledIcon,
+  ThumbsDownIcon,
+  ThumbsUpFilledIcon,
+  ThumbsUpIcon
+} from './Icons';
+import { InteractionType, interactWithItem, removeInteractionWithItem } from '../../services/interactionService';
+import Miniature from './Miniature';
+import { providerIconUrl } from '../../entities/Subscription';
 
 type ItemCardProps = {
   item: SubscriptionItem;
-  onClick?: (item: SubscriptionItem) => void;
+  withInteractions?: boolean;
+  onChange?: () => void;
 };
 
-const ItemCard = ({ item, onClick }: ItemCardProps) => {
+const ItemCard = ({ item, withInteractions = true, onChange }: ItemCardProps) => {
   const t = useTranslations("common");
 
-  const handleClick = () => {
-    if (onClick) {
-      onClick(item);
+
+  const handleOpenItem = (itemUrl: string) => {
+    const isIOS = /iPad|iPhone/.test(navigator.userAgent);
+    if (isIOS) {
+      window.location.href = itemUrl;
     } else {
-      window.open(item.url, '_blank', 'noopener,noreferrer');
+      window.open(itemUrl, "_blank");
+    }
+  };
+
+  const handleInteraction = async (interactionType: InteractionType, checked: boolean) => {
+    try {
+      if (checked) {
+        await interactWithItem(item.uuid, interactionType);
+      } else {
+        await removeInteractionWithItem(item.uuid, interactionType);
+      }
+      if (onChange) {
+        onChange();
+      }
+    } catch (error) {
+      console.error('Error updating interaction:', error);
     }
   };
 
@@ -38,11 +72,8 @@ const ItemCard = ({ item, onClick }: ItemCardProps) => {
   };
 
   return (
-    <div
-      className="flex-shrink-0 w-48 h-48 bg-base-200 rounded-lg shadow-sm border border-base-300 cursor-pointer hover:shadow-md transition-shadow duration-200 flex flex-col"
-      onClick={handleClick}
-    >
-      <div className="h-24 w-full overflow-hidden rounded-t-lg relative">
+    <div className="flex-shrink-0 w-60 bg-base-200 rounded-lg shadow-sm border border-base-300 hover:shadow-md transition-shadow duration-200 flex flex-col">
+      <div className="h-40 w-full overflow-hidden rounded-t-lg relative cursor-pointer" onClick={() => handleOpenItem(item.url)}>
         <img
           src={item.thumbnail}
           alt={item.name}
@@ -55,20 +86,59 @@ const ItemCard = ({ item, onClick }: ItemCardProps) => {
         )}
       </div>
       <div className="p-3 flex flex-col flex-1">
-        <h3 className="text-sm font-medium text-base-content line-clamp-2 mb-1">
+        <h3
+          className="text-sm font-medium text-base-content line-clamp-2 mb-2 cursor-pointer hover:text-primary"
+          onClick={() => handleOpenItem(item.url)}
+        >
           {item.name}
         </h3>
-        <p className="text-xs text-base-content/70 line-clamp-1 mb-2">
-          {item.subscription.name}
-        </p>
+
+        <div className="flex gap-x-2 items-center mb-2">
+          <Miniature src={providerIconUrl(item.subscription.provider)} alt={item.subscription.provider} />
+          <Miniature src={item.subscription.thumbnail} alt={item.subscription.name} />
+          <Link
+            href={paths.SUBSCRIPTIONS + "/" + item.subscription.uuid}
+            className="text-xs text-base-content/70 hover:text-primary line-clamp-1"
+          >
+            {item.subscription.name}
+          </Link>
+        </div>
+
         <div className="flex items-center justify-between mt-auto">
           <span className="text-xs text-base-content/60">
             {convertPublishedToAgoText(item.published_at)}
           </span>
-          {item.recommended && (
-            <span className="inline-block px-2 py-1 text-xs bg-success/10 text-success rounded-full">
-              ★
-            </span>
+          {withInteractions && (
+            <div className="flex gap-1">
+              <SwapButton
+                defaultChecked={item.discouraged}
+                onChange={(isChecked) => handleInteraction(InteractionType.Discouraged, isChecked)}
+              >
+                <ThumbsDownFilledIcon />
+                <ThumbsDownIcon />
+              </SwapButton>
+              <SwapButton
+                defaultChecked={item.recommended}
+                onChange={(isChecked) => handleInteraction(InteractionType.Recommended, isChecked)}
+              >
+                <ThumbsUpFilledIcon />
+                <ThumbsUpIcon />
+              </SwapButton>
+              <SwapButton
+                defaultChecked={item.hidden}
+                onChange={(isChecked) => handleInteraction(InteractionType.Hidden, isChecked)}
+              >
+                <ArchiveBoxFilledIcon />
+                <ArchiveBoxIcon />
+              </SwapButton>
+              <SwapButton
+                defaultChecked={item.viewed}
+                onChange={(isChecked) => handleInteraction(InteractionType.Viewed, isChecked)}
+              >
+                <CheckCircleFilledIcon />
+                <CheckCircleIcon />
+              </SwapButton>
+            </div>
           )}
         </div>
       </div>

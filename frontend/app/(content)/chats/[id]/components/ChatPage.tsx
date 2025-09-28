@@ -19,7 +19,6 @@ import ErrorModal, {ErrorModalId} from "../../../../../components/organism/Error
 import {closeModal, openModal} from "../../../../../utilities/modalAction";
 import {useTranslations} from 'next-intl';
 import ItemCarousel from "../../../../../components/molecules/ItemCarousel";
-import {SubscriptionItem} from "../../../../../entities/SubscriptionItem";
 import ReactMarkdown from 'react-markdown';
 import {invalidateTopicsCache} from "../../../../../hooks/useTopics";
 import {paths} from "../../../../../configuration";
@@ -146,9 +145,6 @@ const ChatPageComponent = ({conversationId}: { conversationId: string }) => {
     openModal(DeleteChatConfirmationModalId);
   };
 
-  const handleItemClick = (item: SubscriptionItem) => {
-    window.open(item.url, '_blank', 'noopener,noreferrer');
-  };
 
   const handleSampleQuestionClick = (question: string) => {
     setInputMessage(question);
@@ -257,7 +253,6 @@ const ChatPageComponent = ({conversationId}: { conversationId: string }) => {
                     title={t('suggested_items')}
                     collapsible={true}
                     defaultExpanded={true}
-                    onItemClick={handleItemClick}
                   />
                 )}
                 <p className="text-xs opacity-70 mt-1">
