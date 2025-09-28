@@ -44,7 +44,7 @@ const configuration = {
 };
 
 const paths = {
-  HOME: '/',
+  LANDING: '/',
   LOGIN: '/login',
   LOGOUT: '/logout',
   TOPICS: '/topics',

@@ -113,7 +113,7 @@ const ProfilePage: NextPage = () => {
   useEffect(() => {
     if (!profileIsLoading) {
       if (!profile) {
-        router.push(paths.HOME)
+        router.push(paths.LANDING)
       } else {
         setFirstName(profile.first_name);
         setLastName(profile.last_name);
