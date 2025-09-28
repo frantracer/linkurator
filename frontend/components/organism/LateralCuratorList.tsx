@@ -9,8 +9,6 @@ import FlexRow from "../atoms/FlexRow";
 import Miniature from "../atoms/Miniature";
 import {InfoBanner} from "../atoms/InfoBanner";
 import {useTranslations} from "next-intl";
-import Button from "../atoms/Button";
-import {AddIcon} from "../atoms/Icons";
 
 type LateralCuratorListProps = {
   curators: Curator[];
@@ -49,10 +47,6 @@ const LateralCuratorList = (props: LateralCuratorListProps) => {
 
   const noItems = (
     <div className="flex flex-col items-center h-fit gap-2 p-1">
-      <Button fitContent={false} clickAction={props.openFollowCuratorModal}>
-        <AddIcon/>
-        {t("browse_curators")}
-      </Button>
       <InfoBanner>
         <span className={"text-sm"}>{t("no_curators_found")}</span>
       </InfoBanner>

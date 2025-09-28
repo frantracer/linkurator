@@ -261,7 +261,7 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
                         </FlexItem>
                         <FlexItem grow={false}>
                             <Button fitContent={true} clickAction={openFollowCuratorModal}>
-                                <AddIcon/>
+                                <MagnifyingGlassIcon/>
                             </Button>
                         </FlexItem>
                     </FlexRow>
@@ -320,13 +320,19 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
             </div>
         }
         {profile && currentTab === 'curators' &&
-            <LateralCuratorList
-                curators={curators}
-                isLoading={curatorsAreLoading}
-                closeMenu={closeMenu}
-                selectedCurator={selectedCurator}
-                openFollowCuratorModal={openFollowCuratorModal}
-            />
+            <div className={"flex flex-col overflow-auto gap-2"}>
+                <LateralCuratorList
+                    curators={curators}
+                    isLoading={curatorsAreLoading}
+                    closeMenu={closeMenu}
+                    selectedCurator={selectedCurator}
+                    openFollowCuratorModal={openFollowCuratorModal}
+                />
+                <Button fitContent={false} clickAction={openFollowCuratorModal}>
+                    <MagnifyingGlassIcon/>
+                  {t("browse_curators")}
+                </Button>
+            </div>
         }
         {profile && currentTab === 'chats' &&
             <LateralChatList
