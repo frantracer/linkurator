@@ -287,7 +287,7 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
         }
         {profile && <Divider/>}
         {profile && currentTab === 'topics' &&
-            <div className={"flex flex-col overflow-auto"}>
+            <div className={"flex flex-col overflow-y-auto overflow-x-hidden gap-2"}>
                 <LateralTopicList
                     topics={topics}
                     subscriptions={subscriptions}
@@ -304,7 +304,7 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
             </div>
         }
         {profile && currentTab === 'subscriptions' &&
-            <div className={"flex flex-col overflow-auto gap-2"}>
+            <div className={"flex flex-col overflow-y-auto overflow-x-hidden gap-2"}>
                 <LateralSubscriptionList
                     subscriptions={subscriptions}
                     topics={topics}
@@ -320,7 +320,7 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
             </div>
         }
         {profile && currentTab === 'curators' &&
-            <div className={"flex flex-col overflow-auto gap-2"}>
+            <div className={"flex flex-col overflow-y-auto overflow-x-hidden gap-2"}>
                 <LateralCuratorList
                     curators={curators}
                     isLoading={curatorsAreLoading}
