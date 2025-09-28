@@ -45,13 +45,13 @@ const Home: NextPage = () => {
 
   useEffect(() => {
     if (!profileIsLoading && profile) {
-      router.push(paths.TOPICS)
+      router.push(paths.HOME)
     }
   }, [router, profile, profileIsLoading]);
 
   const handleLogin = () => {
     login(email, password).then(() => {
-      router.push(paths.TOPICS);
+      router.push(paths.HOME);
     }).catch(() => {
       setLoginError(t("incorrect_email_or_password"));
     });

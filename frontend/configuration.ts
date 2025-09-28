@@ -4,12 +4,13 @@ const SUBSCRIPTIONS_URL = `${API_BASE_URL}/subscriptions/`;
 const TOPICS_URL = `${API_BASE_URL}/topics/`;
 const ITEMS_URL = `${API_BASE_URL}/items/`;
 const PROFILE_URL = `${API_BASE_URL}/profile/`;
+const WEB_HOME_URL = `${WEB_BASE_URL}/home/`;
 const WEB_LOGIN_URL = `${WEB_BASE_URL}/login/`;
 const CURATORS_URL = `${API_BASE_URL}/curators/`;
-const LOGIN_URL = `${API_BASE_URL}/login/?redirect_uri=${encodeURI(WEB_LOGIN_URL)}`;
+const LOGIN_URL = `${API_BASE_URL}/login/?redirect_uri=${encodeURI(WEB_HOME_URL)}`;
 const LOGOUT_URL = `${API_BASE_URL}/logout/?redirect_uri=${encodeURI(WEB_LOGIN_URL)}`;
 const LOGIN_EMAIL_URL = `${API_BASE_URL}/login_email`;
-const REGISTER_URL = `${API_BASE_URL}/register/?redirect_uri=${encodeURI(WEB_LOGIN_URL)}`;
+const REGISTER_URL = `${API_BASE_URL}/register/?redirect_uri=${encodeURI(WEB_HOME_URL)}`;
 const SUBSCRIPTIONS_WEB_URL = `${WEB_BASE_URL}/subscriptions`;
 const SUBSCRIPTIONS_YOUTUBE_SYNC_URL = `${API_BASE_URL}/subscriptions/sync/youtube?redirect_uri=${encodeURI(SUBSCRIPTIONS_WEB_URL)}`;
 
@@ -45,6 +46,7 @@ const configuration = {
 
 const paths = {
   LANDING: '/',
+  HOME: '/home',
   LOGIN: '/login',
   LOGOUT: '/logout',
   TOPICS: '/topics',

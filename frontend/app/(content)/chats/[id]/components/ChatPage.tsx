@@ -18,7 +18,7 @@ import DeleteChatConfirmationModal, {
 import ErrorModal, {ErrorModalId} from "../../../../../components/organism/ErrorModal";
 import {closeModal, openModal} from "../../../../../utilities/modalAction";
 import {useTranslations} from 'next-intl';
-import CollapsibleCarousel from "../../../../../components/molecules/CollapsibleCarousel";
+import ItemCarousel from "../../../../../components/molecules/ItemCarousel";
 import {SubscriptionItem} from "../../../../../entities/SubscriptionItem";
 import ReactMarkdown from 'react-markdown';
 import {invalidateTopicsCache} from "../../../../../hooks/useTopics";
@@ -252,9 +252,10 @@ const ChatPageComponent = ({conversationId}: { conversationId: string }) => {
                   </div>
                 )}
                 {message.items && message.items.length > 0 && (
-                  <CollapsibleCarousel
+                  <ItemCarousel
                     items={message.items}
                     title={t('suggested_items')}
+                    collapsible={true}
                     defaultExpanded={true}
                     onItemClick={handleItemClick}
                   />

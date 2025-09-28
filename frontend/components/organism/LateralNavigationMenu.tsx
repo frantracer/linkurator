@@ -14,6 +14,7 @@ import {
   BoltIcon,
   BookmarkSquaredFilled,
   ChatBubbleFilledIcon,
+  HomeIcon,
   MagnifyingGlassIcon,
   RectangleGroup,
   UserIconFilled
@@ -45,7 +46,7 @@ import {v4 as uuidv4} from 'uuid';
 
 export const LATERAL_NAVIGATION_MENU_ID = 'lateral-navigation-menu';
 
-type CurrentPage = 'topics' | 'subscriptions' | 'profile' | 'curators' | 'chats' | 'other';
+type CurrentPage = 'home' | 'topics' | 'subscriptions' | 'profile' | 'curators' | 'chats' | 'other';
 
 type LateralNavigationMenuProps = {
   children?: React.ReactNode;
@@ -53,6 +54,8 @@ type LateralNavigationMenuProps = {
 
 const mapStringToPage = (page: string): CurrentPage => {
   switch (page) {
+    case 'home':
+      return 'home';
     case 'topics':
       return 'topics';
     case 'subscriptions':
@@ -178,6 +181,20 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
         }
         {profile &&
             <Menu isFullHeight={false}>
+                <MenuItem onClick={() => {
+                  setCurrentTab('home');
+                  router.push(paths.HOME);
+                  closeMenu();
+                }} selected={currentTab === 'home'}>
+                    <FlexRow position={"start"}>
+                        <FlexItem>
+                            <HomeIcon/>
+                        </FlexItem>
+                        <FlexItem grow={true}>
+                          {t("home")}
+                        </FlexItem>
+                    </FlexRow>
+                </MenuItem>
                 <MenuItem onClick={() => {
                   setCurrentTab('topics');
                 }} selected={currentTab === 'topics'}>

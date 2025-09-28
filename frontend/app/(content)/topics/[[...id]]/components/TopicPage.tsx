@@ -21,7 +21,6 @@ import {MenuItem} from "../../../../../components/atoms/MenuItem";
 import Miniature from "../../../../../components/atoms/Miniature";
 import Tag from "../../../../../components/atoms/Tag";
 import Drawer from "../../../../../components/molecules/Drawer";
-import CreateFirstTopicHero from "../../../../../components/organism/CreateFirstTopicHero";
 import DeleteTopicConfirmationModal, {
   DeleteTopicConfirmationModalId
 } from "../../../../../components/organism/DeleteTopicConfirmationModal";
@@ -288,10 +287,6 @@ const TopicPageComponent = ({topicId}: { topicId: string }) => {
                   <span>{t("topic_not_found")}</span>
               </ErrorBanner>
           </FlexRow>
-      }
-      {
-        !selectedTopic && !topicIsLoading && !topicIsError &&
-          <CreateFirstTopicHero numberOfTopics={topics.length} numberOfSubscriptions={subscriptions.length}/>
       }
       {
         selectedTopic &&
