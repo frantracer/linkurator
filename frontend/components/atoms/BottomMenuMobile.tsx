@@ -1,7 +1,7 @@
 import React from "react";
 import {usePathname} from "next/navigation";
 import Button from "./Button";
-import {FunnelIcon, MagnifyingGlassIcon, MenuIcon} from "./Icons";
+import {BoltIcon, FunnelIcon, MenuIcon} from "./Icons";
 import {showLateralMenu} from "../../utilities/lateralMenuAction";
 import {openModal} from "../../utilities/modalAction";
 import {LATERAL_NAVIGATION_MENU_ID} from "../organism/LateralNavigationMenu";
@@ -76,7 +76,7 @@ const BottomMenuMobile = () => {
           primary={false}
           borderless={true}
         >
-          <MagnifyingGlassIcon/>
+          <BoltIcon/>
         </Button>
 
         {

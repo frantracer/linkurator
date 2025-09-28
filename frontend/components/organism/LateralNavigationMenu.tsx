@@ -11,13 +11,13 @@ import {MenuItem} from "../atoms/MenuItem";
 import FlexRow from "../atoms/FlexRow";
 import {
   AddIcon,
+  BoltIcon,
   BookmarkSquaredFilled,
   ChatBubbleFilledIcon,
   MagnifyingGlassIcon,
   RectangleGroup,
   UserIconFilled
 } from "../atoms/Icons";
-import SearchBar from "../molecules/SearchBar";
 import LateralSubscriptionList from "./LateralSubscriptionList";
 import LateralTopicList from "./LateralTopicList";
 import {closeModal, openModal} from "../../utilities/modalAction";
@@ -164,13 +164,6 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
           </FlexItem>
         </FlexRow>
         <Divider/>
-        {profile &&
-            <FlexRow hideOnMobile={true}>
-                <FlexItem grow={true}>
-                    <SearchBar placeholder={t("search_placeholder")} handleClick={openSearchModal}/>
-                </FlexItem>
-            </FlexRow>
-        }
         {!profile && !profileIsLoading &&
             <FlexRow>
                 <FlexColumn>
@@ -254,6 +247,14 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
                     </FlexRow>
                 </MenuItem>
             </Menu>
+        }
+        {profile &&
+            <FlexRow hideOnMobile={true}>
+                <Button primary={false} fitContent={false} clickAction={openSearchModal}>
+                    <BoltIcon/>
+                    <span>{t("quick_accesses")}</span>
+                </Button>
+            </FlexRow>
         }
         {profile && <Divider/>}
         {profile && currentTab === 'topics' &&
