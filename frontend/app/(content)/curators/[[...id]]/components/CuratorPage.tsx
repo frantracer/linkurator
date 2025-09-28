@@ -97,14 +97,6 @@ const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
 
   const dropdownButtons = []
   if (curator) {
-    dropdownButtons.push(
-      <MenuItem key={"curators-filter"} onClick={handleFilter} hideMenuOnClick={true}>
-        <FlexRow position="center">
-          <FunnelIcon/>
-          {t("filter")}
-        </FlexRow>
-      </MenuItem>
-    )
     if (isUserLogged) {
       if (curator.followed) {
         dropdownButtons.push(
@@ -153,6 +145,9 @@ const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
                   <h1 className="text-xl font-bold whitespace-nowrap truncate">
                     {curatorName}
                   </h1>
+                  <Button primary={false} fitContent={true} clickAction={handleFilter}>
+                    <FunnelIcon/>
+                  </Button>
                 </FlexRow>
                 {curator && curator.followed &&
                     <Tag>

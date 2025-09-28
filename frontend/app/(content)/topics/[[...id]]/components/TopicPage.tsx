@@ -147,14 +147,6 @@ const TopicPageComponent = ({topicId}: { topicId: string }) => {
   }, [debouncedFilters.textSearch, filters]);
 
   const dropdownButtons = []
-  dropdownButtons.push(
-    <MenuItem key={"topics-show-filters"} onClick={handleShowFilters} hideMenuOnClick={true}>
-      <FlexRow position="center">
-        <FunnelIcon/>
-        {t("filter")}
-      </FlexRow>
-    </MenuItem>
-  )
   if (selectedTopic && isUserLogged) {
     if (selectedTopic.is_owner) {
       dropdownButtons.push(
@@ -235,9 +227,14 @@ const TopicPageComponent = ({topicId}: { topicId: string }) => {
           <div className="flex-grow"/>
           <div className="flex-grow items-center gap-2 overflow-hidden">
             <div className="flex flex-col gap-2">
-              <h1 className="text-xl text-center font-bold whitespace-nowrap truncate">
-                {topicName}
-              </h1>
+              <div className="flex flex-row items-center justify-center gap-2">
+                <h1 className="text-xl font-bold whitespace-nowrap truncate">
+                  {topicName}
+                </h1>
+                <Button primary={false} fitContent={true} clickAction={handleShowFilters}>
+                  <FunnelIcon/>
+                </Button>
+              </div>
               <FlexRow>
                 {selectedTopic && !selectedTopic.is_owner &&
                     <Button primary={false} href={paths.CURATORS + "/" + selectedTopic.curator.username}>

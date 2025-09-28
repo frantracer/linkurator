@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useState} from "react";
 import Drawer from "../molecules/Drawer";
 import useProfile from "../../hooks/useProfile";
 import useSubscriptions from "../../hooks/useSubscriptions";
@@ -13,7 +13,6 @@ import {
   AddIcon,
   BookmarkSquaredFilled,
   ChatBubbleFilledIcon,
-  FunnelIcon,
   MagnifyingGlassIcon,
   RectangleGroup,
   UserIconFilled
@@ -29,7 +28,7 @@ import Avatar from "../atoms/Avatar";
 import ALink from "../atoms/ALink";
 import {LogoImage} from "../atoms/LogoImage";
 import {LogoTitle} from "../atoms/LogoTitle";
-import {hideLateralMenu, showLateralMenu} from "../../utilities/lateralMenuAction";
+import {hideLateralMenu} from "../../utilities/lateralMenuAction";
 import {paths} from "../../configuration";
 import FlexColumn from "../atoms/FlexColumn";
 import {useCurators} from "../../hooks/useCurators";
@@ -40,9 +39,6 @@ import FolowCuratorModal, {FollowCuratorModalId} from "./FollowCuratorModal";
 import FindSubscriptionModal, {FindSubscriptionModalId} from "./FindSubscriptionModal";
 import SynchronizeSubscriptionsModal, {SynchronizeSubscriptionsModalId} from "./SynchronizeSubscriptionsModal";
 import FlexItem from "../atoms/FlexItem";
-import {SUBSCRIPTION_DETAILS_ID} from "./SubscriptionDetails";
-import {TOPIC_DETAILS_ID} from "./TopicDetails";
-import {CURATOR_DETAILS_ID} from "./CuratorDetails";
 import {useTranslations} from "next-intl";
 import SearchModal, {SearchModalId} from "./SearchModal";
 import {v4 as uuidv4} from 'uuid';
@@ -88,7 +84,6 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
   const {curators, curatorsAreLoading, refreshCurators} = useCurators(profile, profileIsLoading);
   const {topics, topicsAreLoading, refreshTopics} = useTopics(profile, profileIsLoading);
   const {conversations, isLoading: conversationsLoading} = useChatConversations();
-  const [currentPage, setCurrentPage] = useState<CurrentPage>(initialPage);
   const [currentTab, setCurrentTab] = useState<CurrentPage>(initialPage);
 
   const selectedSubscription = subscriptions.find(subscription => subscription.uuid === selectedId);
@@ -96,9 +91,6 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
   const selectedCurator = curators.find(curator => curator.id === selectedId);
   const selectedConversation = conversations.find(conversation => conversation.id === selectedId);
 
-  useEffect(() => {
-    setCurrentPage(initialPage);
-  }, [initialPage]);
 
   const closeMenu = () => {
     hideLateralMenu(LATERAL_NAVIGATION_MENU_ID)
@@ -140,20 +132,6 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
     router.push(paths.CHATS + "/" + newChatId);
   }
 
-  const openFilters = (page: CurrentPage) => {
-    switch (page) {
-      case 'subscriptions':
-        showLateralMenu(SUBSCRIPTION_DETAILS_ID);
-        break;
-      case 'topics':
-        showLateralMenu(TOPIC_DETAILS_ID);
-        break;
-      case 'curators':
-        showLateralMenu(CURATOR_DETAILS_ID);
-        break;
-    }
-    hideLateralMenu(LATERAL_NAVIGATION_MENU_ID);
-  }
 
   return (
     <Drawer id={LATERAL_NAVIGATION_MENU_ID}>
@@ -190,14 +168,6 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
             <FlexRow hideOnMobile={true}>
                 <FlexItem grow={true}>
                     <SearchBar placeholder={t("search_placeholder")} handleClick={openSearchModal}/>
-                </FlexItem>
-                <FlexItem shrink={false}>
-                    <Button fitContent={true} clickAction={() => openFilters(currentPage)}>
-                        <FlexRow>
-                            <FunnelIcon/>
-                            <span>{t("filter")}</span>
-                        </FlexRow>
-                    </Button>
                 </FlexItem>
             </FlexRow>
         }

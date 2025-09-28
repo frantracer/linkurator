@@ -163,14 +163,6 @@ const SubscriptionPageComponent = ({subscriptionId}: { subscriptionId: string })
   }, [router, subscriptionId, subscriptions]);
 
   const dropdownButtons = []
-  dropdownButtons.push(
-    <MenuItem key={"subscriptions-show-filters"} onClick={handleShowFilters} hideMenuOnClick={true}>
-      <FlexRow position="center">
-        <FunnelIcon/>
-        {t("filter")}
-      </FlexRow>
-    </MenuItem>
-  )
   if (selectedSubscription && isUserLogged) {
     dropdownButtons.push(
       <MenuItem key={"subscriptions-assign"} onClick={handleAssignSubscription} hideMenuOnClick={true}>
@@ -233,6 +225,9 @@ const SubscriptionPageComponent = ({subscriptionId}: { subscriptionId: string })
                 <h1 className="text-xl font-bold whitespace-nowrap truncate">
                   {subscriptionName}
                 </h1>
+                <Button primary={false} fitContent={true} clickAction={handleShowFilters}>
+                  <FunnelIcon/>
+                </Button>
               </div>
               <div className="flex flex-row items-center justify-center gap-2">
                 {selectedSubscription &&
