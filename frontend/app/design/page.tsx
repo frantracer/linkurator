@@ -16,6 +16,7 @@ import {
   ArchiveBoxFilledIcon,
   ArchiveBoxIcon,
   ArrowUturnLeft,
+  BoltIcon,
   BookmarkSquared,
   BookmarkSquaredFilled,
   CheckCircleFilledIcon,
@@ -175,6 +176,7 @@ const IconsSection = () => {
         <UserIconFilled/>
         <InfoCircleIcon/>
         <CircleIcon/>
+        <BoltIcon/>
       </div>
     </Section>
   );
