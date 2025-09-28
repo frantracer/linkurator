@@ -120,10 +120,13 @@ const TopicPageComponent = ({topicId}: { topicId: string }) => {
   }
 
   useEffect(() => {
-    if (!topicId && topics.length > 0) {
+    if (!topicId && topics.length > 0 && !topicsAreLoading) {
       router.push(paths.TOPICS + "/" + topics[0].uuid)
     }
-  }, [router, topicId, topics]);
+    if (!topicId && topics.length === 0 && !topicsAreLoading) {
+      router.push(paths.HOME)
+    }
+  }, [router, topicId, topics, topicsAreLoading]);
 
   useEffect(() => {
     if (isTopicBeingScanned) {
