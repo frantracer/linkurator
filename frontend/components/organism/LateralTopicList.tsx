@@ -87,12 +87,6 @@ const LateralTopicList = (props: LateralTopicListProps) => {
 
   const noItems = (
     <div className="flex flex-col items-center h-fit gap-2 p-1">
-      {props.subscriptions.length === 0 &&
-          <Button fitContent={false} clickAction={props.openSyncSubscriptionModal}>
-              <AddIcon/>
-            {t("sync_subscriptions")}
-          </Button>
-      }
       {props.subscriptions.length > 0 &&
           <Button fitContent={false} clickAction={props.openCreateTopicModal}>
               <AddIcon/>
