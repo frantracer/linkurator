@@ -213,3 +213,31 @@ export async function unfollowSubscription(uuid: string): Promise<boolean> {
   }
   return false;
 }
+
+export async function getFollowedSubscriptionsItems(
+  minDuration: number,
+  maxDuration: number,
+  searchText: string = "",
+  interactionsToInclude: InteractionFilter[] = [],
+  pageSize: number = ITEMS_PER_PAGE
+): Promise<SubscriptionItemsResponse> {
+  let items: SubscriptionItem[] = []
+  let nextPage: URL | undefined = undefined;
+  try {
+    const searchParam = searchText ? "&search=" + searchText : "";
+    const interactionsParam = interactionsToInclude.length > 0 ? "&include_interactions=" + interactionsToInclude.join(",") : "";
+    const minDurationParam = "&min_duration=" + minDuration;
+    const maxDurationParam = "&max_duration=" + maxDuration;
+    const url = configuration.SUBSCRIPTIONS_URL + "items?page_size=" + pageSize + searchParam +
+      interactionsParam + minDurationParam + maxDurationParam;
+    const {status, data} = await axios.get(url, {withCredentials: true});
+    if (status === 200) {
+      const response = mapJsonToSubscriptionItemsResponse(data);
+      items = response.elements;
+      nextPage = response.nextPage ? new URL(response.nextPage) : undefined;
+    }
+  } catch (error: any) {
+    console.error("Error retrieving followed subscriptions items", error);
+  }
+  return {elements: items, nextPage: nextPage};
+}
