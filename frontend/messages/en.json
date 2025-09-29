@@ -94,7 +94,6 @@
     "error_changing_username": "Error changing username",
     "username_changed_successfully": "Username changed successfully",
     "follow_before_assign": "Follow before assigning the subscription",
-    "cannot_unfollow": "You cannot unfollow a subscription assigned to a topic",
     "assign": "Assign",
     "refresh": "Refresh",
     "subscription_updated": "Subscription updated",

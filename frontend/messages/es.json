@@ -94,7 +94,6 @@
         "error_changing_username": "Error cambiando el usuario",
         "username_changed_successfully": "Usuario cambiado correctamente",
         "follow_before_assign": "Dale a Seguir antes de asignar la subscripción",
-        "cannot_unfollow": "No puedes dejar de seguir una subscripción asociada a una categoría",
         "assign": "Asignar",
         "refresh": "Actualizar",
         "subscription_updated": "Subscripción actualizada",

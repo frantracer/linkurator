@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useTranslations } from "next-intl";
+import { useQueryClient } from '@tanstack/react-query';
 import { paths } from "../../configuration";
 import { Subscription } from "../../entities/Subscription";
 import { Topic } from "../../entities/Topic";
@@ -34,6 +35,7 @@ type EditTopicModalProps = {
 
 const EditTopicModal = (props: EditTopicModalProps) => {
   const t = useTranslations("common");
+  const queryClient = useQueryClient();
   const [searchValue, setSearchValue] = useState("");
   const [newTopicName, setNewTopicName] = useState(props.topic.name);
   const {
@@ -49,6 +51,8 @@ const EditTopicModal = (props: EditTopicModalProps) => {
         props.refreshTopics();
         props.refreshTopicItems();
         props.refreshSubscriptions();
+        // Invalidate topic items cache
+        queryClient.invalidateQueries({ queryKey: ['topicItems', props.topic.uuid] });
         closeModal(EditTopicModalId);
       }
     )

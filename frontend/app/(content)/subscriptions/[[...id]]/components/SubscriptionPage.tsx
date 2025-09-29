@@ -4,7 +4,6 @@ import {useTranslations} from 'next-intl';
 import {useRouter} from "next/navigation";
 import React, {useEffect, useState} from "react";
 import Button from "../../../../../components/atoms/Button";
-import {ErrorBanner} from "../../../../../components/atoms/ErrorBanner";
 import FlexRow from "../../../../../components/atoms/FlexRow";
 import {
   AddIcon,
@@ -48,7 +47,6 @@ const SubscriptionPageComponent = ({subscriptionId}: { subscriptionId: string })
   const t = useTranslations("common");
   const router = useRouter()
 
-  const [error, setError] = useState<string | null>(null);
   const [showRefreshedMessage, setShowRefreshedMessage] = useState<boolean>(false);
 
   const {filters, setFilters, resetFilters} = useFilters();
@@ -93,12 +91,7 @@ const SubscriptionPageComponent = ({subscriptionId}: { subscriptionId: string })
   }
 
   const handleAssignSubscription = () => {
-    if (selectedSubscription && !selectedSubscription.followed) {
-      setError(t("follow_before_assign"));
-    } else {
-      openModal(AssignTopicModalId);
-      setError(null);
-    }
+    openModal(AssignTopicModalId);
   }
 
   const handleRefreshSubscription = (subscriptionId: string) => {
@@ -116,13 +109,8 @@ const SubscriptionPageComponent = ({subscriptionId}: { subscriptionId: string })
   }
 
   const handleUnfollowSubscription = (subscriptionId: string) => {
-    unfollowSubscription(subscriptionId).then((resultOk) => {
-      if (resultOk) {
-        refreshSubscriptions();
-        setError(null);
-      } else {
-        setError(t("cannot_unfollow"));
-      }
+    unfollowSubscription(subscriptionId).then(() => {
+      refreshSubscriptions();
     })
   }
 
@@ -272,16 +260,6 @@ const SubscriptionPageComponent = ({subscriptionId}: { subscriptionId: string })
           }
         </div>
       </TopTitle>
-      {error &&
-          <FlexRow position={"center"}>
-              <ErrorBanner>
-                  <span>{error}</span>
-                  <div className={"hover:cursor-pointer"} onClick={() => setError(null)}>
-                      <CrossIcon/>
-                  </div>
-              </ErrorBanner>
-          </FlexRow>
-      }
       {showRefreshedMessage &&
           <FlexRow position={"center"}>
               <InfoBanner>

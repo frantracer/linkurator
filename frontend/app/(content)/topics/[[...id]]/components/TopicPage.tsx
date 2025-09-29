@@ -66,6 +66,12 @@ const TopicPageComponent = ({topicId}: { topicId: string }) => {
     refreshTopicItems,
     fetchMoreItems
   } = useTopicItems(selectedTopic ? selectedTopic.uuid : undefined, debouncedFilters);
+  const combinedSubscriptions = subscriptions.concat(topicSubscriptions)
+    .filter((value, index, self) =>
+      index === self.findIndex((t) => (
+        t.uuid === value.uuid
+      )))
+    .sort((a, b) => a.name.localeCompare(b.name));
 
   const topicName = selectedTopic ? selectedTopic.name : "";
   const isTopicBeingScanned = selectedTopic ? !isTopicScanned(selectedTopic, subscriptions) : false
@@ -309,7 +315,7 @@ const TopicPageComponent = ({topicId}: { topicId: string }) => {
       {
         selectedTopic &&
           <EditTopicModal refreshTopics={refreshTopics}
-                          subscriptions={subscriptions}
+                          subscriptions={combinedSubscriptions}
                           topic={selectedTopic}
                           refreshTopicItems={refreshTopicItems}
                           refreshSubscriptions={refreshSubscriptions}

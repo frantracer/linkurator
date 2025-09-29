@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useState} from "react";
 import Modal from "../atoms/Modal";
 import Box from "../atoms/Box";
 import FlexColumn from "../atoms/FlexColumn";
@@ -14,7 +14,6 @@ import Menu from "../atoms/Menu";
 import Button from "../atoms/Button";
 import {AddIcon, MinusIcon} from "../atoms/Icons";
 import {followSubscription, unfollowSubscription} from "../../services/subscriptionService";
-import {ErrorBanner} from "../atoms/ErrorBanner";
 import {closeModal} from "../../utilities/modalAction";
 import FlexItem from "../atoms/FlexItem";
 import {providerIconUrl} from "../../entities/Subscription";
@@ -32,8 +31,6 @@ const FindSubscriptionModal = (props: FindSubscriptionModalProps) => {
   const [subscriptionSearch, setSubscriptionSearch] = useState("");
   const debouncedSubscriptionSearch = useDebounce(subscriptionSearch, 500);
 
-  const [unfollowError, setUnollowError] = useState<boolean>(false);
-
   const {
     subscriptions,
     subscriptionsAreLoading,
@@ -44,31 +41,20 @@ const FindSubscriptionModal = (props: FindSubscriptionModalProps) => {
     followSubscription(subscriptionUuid).then(() => {
       refreshSubscriptions();
       props.refreshSubscriptions();
-      setUnollowError(false);
     });
   }
 
   const handleUnfollow = (subscriptionUuid: string) => {
-    unfollowSubscription(subscriptionUuid).then((resultOk) => {
-      if (resultOk) {
-        refreshSubscriptions();
-        props.refreshSubscriptions();
-        setUnollowError(false);
-      } else {
-        setUnollowError(true);
-      }
+    unfollowSubscription(subscriptionUuid).then(() => {
+      refreshSubscriptions();
+      props.refreshSubscriptions();
     });
   }
 
   const handleClose = () => {
     setSubscriptionSearch("");
-    setUnollowError(false);
     closeModal(FindSubscriptionModalId);
   }
-
-  useEffect(() => {
-    setUnollowError(false);
-  }, [debouncedSubscriptionSearch]);
 
   const subItems = subscriptions.map((subscription) => {
     return (
@@ -124,7 +110,6 @@ const FindSubscriptionModal = (props: FindSubscriptionModalProps) => {
             }
           </div>
         </Box>
-        {unfollowError && <ErrorBanner>{t("cannot_unfollow")}</ErrorBanner>}
       </FlexColumn>
     </Modal>
   )

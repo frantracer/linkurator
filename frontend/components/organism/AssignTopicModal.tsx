@@ -1,5 +1,6 @@
 import {useState} from "react";
 import {v4 as uuidv4} from 'uuid';
+import {useQueryClient} from '@tanstack/react-query';
 import {paths} from "../../configuration";
 import {Subscription} from "../../entities/Subscription";
 import {Topic, topicSorting} from "../../entities/Topic";
@@ -30,18 +31,27 @@ type AssignTopicModalProps = {
 
 const AssignTopicModal = (props: AssignTopicModalProps) => {
   const t = useTranslations("common");
+  const queryClient = useQueryClient();
   const [topicName, setTopicName] = useState<string>("");
   const [searchValue, setSearchValue] = useState("");
 
   function assignButtonAction(topicId: string) {
     assignSubscriptionToTopic(topicId, props.subscription.uuid)
-      .then(() => props.refreshTopics())
+      .then(() => {
+        props.refreshTopics();
+        // Invalidate topic items cache
+        queryClient.invalidateQueries({ queryKey: ['topicItems', topicId] });
+      })
       .catch(err => console.log(err));
   }
 
   function unassignButtonAction(topicId: string) {
     unassignSubscriptionToTopic(topicId, props.subscription.uuid)
-      .then(() => props.refreshTopics())
+      .then(() => {
+        props.refreshTopics();
+        // Invalidate topic items cache
+        queryClient.invalidateQueries({ queryKey: ['topicItems', topicId] });
+      })
       .catch(err => console.log(err));
   }
 
@@ -52,6 +62,8 @@ const AssignTopicModal = (props: AssignTopicModalProps) => {
         .then(async () => {
           await assignSubscriptionToTopic(new_uuid, props.subscription.uuid)
           props.refreshTopics();
+          // Invalidate topic items cache
+          queryClient.invalidateQueries({ queryKey: ['topicItems', new_uuid] });
         })
         .catch(err => console.log(err));
       setTopicName("");
