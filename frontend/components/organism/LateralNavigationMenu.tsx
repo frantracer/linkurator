@@ -143,7 +143,7 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
         <FlexRow position={"between"}>
           <FlexRow>
             <FlexColumn gap={1}>
-              <ALink href={paths.LANDING}>
+              <ALink href={paths.HOME}>
                 <FlexRow position={"start"}>
                   <LogoImage/>
                   <LogoTitle/>
