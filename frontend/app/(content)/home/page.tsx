@@ -17,7 +17,7 @@ import useLatestFavoriteTopicItems from "../../../hooks/useLatestFavoriteTopicIt
 import useLatestFollowedCuratorItems from "../../../hooks/useLatestFollowedCuratorItems";
 import {useCurators} from "../../../hooks/useCurators";
 import {openModal} from "../../../utilities/modalAction";
-import {FollowCuratorModalId} from "../../../components/organism/FollowCuratorModal";
+import {FindCuratorModalId} from "../../../components/organism/FindCuratorModal";
 
 const HomePageComponent = () => {
   const t = useTranslations("common");
@@ -133,7 +133,7 @@ const HomePageComponent = () => {
                     <h3 className="text-lg font-semibold mb-2">{t("no_followed_curators_title")}</h3>
                     <p className="text-base-content/70 mb-4">{t("no_followed_curators_message")}</p>
                     <Button
-                        clickAction={() => openModal(FollowCuratorModalId)}
+                        clickAction={() => openModal(FindCuratorModalId)}
                         primary={false}
                         fitContent={true}
                     >

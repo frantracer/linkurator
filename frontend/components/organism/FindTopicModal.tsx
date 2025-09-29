@@ -1,25 +1,25 @@
-import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { paths } from "../../configuration";
-import { Topic } from "../../entities/Topic";
-import { useDebounce } from "../../hooks/useDebounce";
+import {useRouter} from "next/navigation";
+import {useState} from "react";
+import {paths} from "../../configuration";
+import {Topic} from "../../entities/Topic";
+import {useDebounce} from "../../hooks/useDebounce";
 import useFindTopics from "../../hooks/useFindTopics";
 import useProfile from "../../hooks/useProfile";
-import { followTopic, unfollowTopic } from "../../services/topicService";
-import { closeModal } from "../../utilities/modalAction";
+import {followTopic, unfollowTopic} from "../../services/topicService";
+import {closeModal} from "../../utilities/modalAction";
 import Button from "../atoms/Button";
 import Collapse from "../atoms/Collapse";
-import { ErrorBanner } from "../atoms/ErrorBanner";
+import {ErrorBanner} from "../atoms/ErrorBanner";
 import FlexColumn from "../atoms/FlexColumn";
 import FlexItem from "../atoms/FlexItem";
 import FlexRow from "../atoms/FlexRow";
-import { AddIcon, MinusIcon } from "../atoms/Icons";
+import {AddIcon, MinusIcon} from "../atoms/Icons";
 import Menu from "../atoms/Menu";
-import { MenuItem } from "../atoms/MenuItem";
+import {MenuItem} from "../atoms/MenuItem";
 import Miniature from "../atoms/Miniature";
 import Modal from "../atoms/Modal";
 import SearchBar from "../molecules/SearchBar";
-import { useTranslations } from 'next-intl';
+import {useTranslations} from 'next-intl';
 import Box from "../atoms/Box";
 
 export const FindTopicModalId = "find-topic-modal";
@@ -122,32 +122,29 @@ const FindTopicModal = (props: FindTopicModalProps) => {
 
   return (
     <Modal id={FindTopicModalId} onClose={handleClose}>
-      <h1 className="font-bold text-xl w-full text-center">{t("find_topics")}</h1>
+      <h1 className="font-bold text-xl w-full text-center pb-2">{t("find_topics")}</h1>
       <FlexColumn>
-          <FlexItem grow={true}>
-              <SearchBar placeholder={t("search_topic_placeholder")} value={topicSearch}
-                         handleChange={setTopicSearch}/>
-          </FlexItem>
-          <Box title={t("topics")}>
-              <div className={"h-72 overflow-y-auto"}>
-                  <FlexColumn>
-                    {debouncedTopicSearch === "" &&
-                        <span>{t("search_topic_prompt")}</span>
-                    }
-                    {topics.length === 0 && !topicsAreLoading && debouncedTopicSearch !== "" &&
-                        <ErrorBanner>{t("no_topics_found") + ": " + debouncedTopicSearch}</ErrorBanner>
-                    }
-                    {topicsAreLoading && <span>{t("loading")}</span>}
-                    {topics.length > 0 &&
-                        <div className={"max-h-72 overflow-y-auto w-full"}>
-                            <Menu isFullHeight={true}>
-                              {CollapsableMenuItems}
-                            </Menu>
-                        </div>
-                    }
-                  </FlexColumn>
-              </div>
-          </Box>
+        <FlexItem grow={true}>
+          <SearchBar placeholder={t("search_topic_placeholder")} value={topicSearch}
+                     handleChange={setTopicSearch}/>
+        </FlexItem>
+        <Box title={""}>
+          <div className={"h-72 overflow-y-auto"}>
+            <FlexColumn position={"center"}>
+              {topics.length === 0 && !topicsAreLoading && debouncedTopicSearch !== "" &&
+                  <ErrorBanner>{t("no_topics_found") + ": " + debouncedTopicSearch}</ErrorBanner>
+              }
+              {topicsAreLoading && <span>{t("loading")}</span>}
+              {topics.length > 0 &&
+                  <div className={"max-h-72 overflow-y-auto w-full"}>
+                      <Menu isFullHeight={true}>
+                        {CollapsableMenuItems}
+                      </Menu>
+                  </div>
+              }
+            </FlexColumn>
+          </div>
+        </Box>
       </FlexColumn>
     </Modal>
   )

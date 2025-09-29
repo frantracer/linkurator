@@ -5,7 +5,8 @@ import Button from "../atoms/Button";
 import {closeModal} from "../../utilities/modalAction";
 import InputText from "../atoms/InputText";
 import {useState} from "react";
-import { useTranslations } from "next-intl";
+import {useTranslations} from "next-intl";
+import Box from "../atoms/Box";
 
 export const DeleteAccountModalId = "delete-account-modal";
 
@@ -20,25 +21,32 @@ const DeleteAccountModal = (props: DeleteAccountModalProps) => {
 
   const buttonDisabled = inputValue !== props.userEmail;
 
+  const handleCancel = () => {
+    setInputValue("");
+    closeModal(DeleteAccountModalId);
+  };
+
   return (
-    <Modal id={DeleteAccountModalId}>
-      <FlexColumn>
-        <h1 className="font-bold text-xl w-full text-center">{t("delete_account_title")}</h1>
-        <p className="text-center">{t("delete_account_warning")}</p>
-        <p className="text-center">{t("delete_account_instruction")}</p>
-        <InputText placeholder="Email" value={inputValue} onChange={(value) => setInputValue(value)}/>
-        <FlexRow position={"end"}>
-          <Button clickAction={() => closeModal(DeleteAccountModalId)}>
-            <span>{t("cancel")}</span>
-          </Button>
-          <Button disabled={buttonDisabled} clickAction={async () => {
-            props.onDeleteAccount();
-            closeModal(DeleteAccountModalId);
-          }}>
-            <span>{t("delete")}</span>
-          </Button>
-        </FlexRow>
-      </FlexColumn>
+    <Modal id={DeleteAccountModalId} onClose={handleCancel}>
+      <h1 className="font-bold text-xl w-full text-center">{t("delete_account_title")}</h1>
+      <Box>
+        <FlexColumn position={"center"}>
+          <p className="text-center mb-2">{t("delete_account_warning")}</p>
+          <p className="text-center mb-4">{t("delete_account_instruction")}</p>
+          <InputText placeholder="Email" value={inputValue} onChange={(value) => setInputValue(value)}/>
+          <FlexRow position={"center"}>
+            <Button clickAction={handleCancel} primary={true}>
+              <span>{t("cancel")}</span>
+            </Button>
+            <Button disabled={buttonDisabled} clickAction={async () => {
+              props.onDeleteAccount();
+              closeModal(DeleteAccountModalId);
+            }} primary={false}>
+              <span>{t("delete")}</span>
+            </Button>
+          </FlexRow>
+        </FlexColumn>
+      </Box>
     </Modal>
   )
 }

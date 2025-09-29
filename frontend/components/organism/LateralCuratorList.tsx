@@ -15,7 +15,7 @@ type LateralCuratorListProps = {
   isLoading: boolean;
   selectedCurator: Curator | undefined;
   closeMenu: () => void;
-  openFollowCuratorModal: () => void;
+  openFindCuratorModal: () => void;
 }
 
 const LateralCuratorList = (props: LateralCuratorListProps) => {

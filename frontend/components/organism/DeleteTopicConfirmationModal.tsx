@@ -18,15 +18,24 @@ const DeleteTopicConfirmationModal = (props: DeleteTopicConfirmationModalProps) 
     <Modal id={DeleteTopicConfirmationModalId}>
       <FlexColumn>
         <h1 className="font-bold text-xl w-full text-center">{t("delete_topic_confirmation")}</h1>
-        <FlexRow position={"end"}>
-          <Button clickAction={() => closeModal(DeleteTopicConfirmationModalId)}>
-            <span>{t("cancel")}</span>
-          </Button>
-          <Button clickAction={async () => {
-            props.onDeleteTopic();
-            closeModal(DeleteTopicConfirmationModalId);
-          }}>
+        <p className="text-center mb-4">
+          {t("delete_topic_confirmation_message")}
+        </p>
+        <FlexRow position={"center"}>
+          <Button
+            clickAction={async () => {
+              props.onDeleteTopic();
+              closeModal(DeleteTopicConfirmationModalId);
+            }}
+            primary={false}
+          >
             <span>{t("delete")}</span>
+          </Button>
+          <Button
+            clickAction={() => closeModal(DeleteTopicConfirmationModalId)}
+            primary={true}
+          >
+            <span>{t("cancel")}</span>
           </Button>
         </FlexRow>
       </FlexColumn>

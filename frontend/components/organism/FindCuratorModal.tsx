@@ -17,14 +17,14 @@ import ALink from "../atoms/ALink";
 import FlexItem from "../atoms/FlexItem";
 import {useTranslations} from "next-intl";
 
-export const FollowCuratorModalId = "follow-curator-modal";
+export const FindCuratorModalId = "find-curator-modal";
 
-type FolowCuratorModalProps = {
+type FindCuratorModalProps = {
   curators: Curator[];
   refreshCurators: () => void;
 }
 
-const FolowCuratorModal = (props: FolowCuratorModalProps) => {
+const FindCuratorModal = (props: FindCuratorModalProps) => {
   const t = useTranslations("common");
   const [curatorSearch, setCuratorSearch] = useState("");
   const debouncedCuratorSearch = useDebounce(curatorSearch, 500);
@@ -53,45 +53,42 @@ const FolowCuratorModal = (props: FolowCuratorModalProps) => {
 
   const handleClose = () => {
     setCuratorSearch("");
-    closeModal(FollowCuratorModalId);
+    closeModal(FindCuratorModalId);
   }
 
   return (
-    <Modal id={FollowCuratorModalId} onClose={handleClose}>
+    <Modal id={FindCuratorModalId} onClose={handleClose}>
       <FlexColumn>
-        <h1 className="font-bold text-xl w-full text-center">{t("follow_curator")}</h1>
+        <h1 className="font-bold text-xl w-full text-center">{t("find_curators")}</h1>
         <FlexItem grow={true}>
           <SearchBar placeholder={t("search_curator")} value={curatorSearch}
                      handleChange={setCuratorSearch}/>
         </FlexItem>
-        <Box title={`${t("curators")} (${displayCurators.length})`}>
+        <Box title={""}>
           <div className="h-80 overflow-y-auto overflow-x-hidden">
-            <FlexColumn>
+            <FlexColumn position={"center"}>
               {debouncedCuratorSearch !== "" && displayCurators.length === 0 && !isLoading &&
                   <ErrorBanner>{t("curator_not_found", { curator: debouncedCuratorSearch })}</ErrorBanner>
               }
               {isLoading && <span>{t("loading")}</span>}
               {displayCurators.map((curator) => (
-                  <FlexRow key={curator.id}>
-                    <ALink href={paths.CURATORS + "/" + curator.username} onClick={handleClose}>
-                      <FlexRow>
-                        <Avatar src={curator.avatar_url} alt={curator.username}/>
-                        <span>{curator.username}</span>
-                      </FlexRow>
-                    </ALink>
-                    <FlexItem grow={true}></FlexItem>
-                    {!curator.followed &&
-                        <Button fitContent={true} clickAction={() => handleFollowCurator(curator.id)}>{t("follow")}</Button>
-                    }
-                    {curator.followed &&
-                        <Button fitContent={true}
-                                clickAction={() => handleUnfollowCurator(curator.id)}>{t("unfollow")}</Button>
-                    }
-                  </FlexRow>
+                <FlexRow key={curator.id}>
+                  <ALink href={paths.CURATORS + "/" + curator.username} onClick={handleClose}>
+                    <FlexRow>
+                      <Avatar src={curator.avatar_url} alt={curator.username}/>
+                      <span>{curator.username}</span>
+                    </FlexRow>
+                  </ALink>
+                  <FlexItem grow={true}></FlexItem>
+                  {!curator.followed &&
+                      <Button fitContent={true} clickAction={() => handleFollowCurator(curator.id)}>{t("follow")}</Button>
+                  }
+                  {curator.followed &&
+                      <Button fitContent={true}
+                              clickAction={() => handleUnfollowCurator(curator.id)}>{t("unfollow")}</Button>
+                  }
+                </FlexRow>
               ))}
-              {debouncedCuratorSearch === "" &&
-                  <FlexRow position={"center"}>{t("search_curator_prompt")}</FlexRow>
-              }
             </FlexColumn>
           </div>
         </Box>
@@ -100,4 +97,4 @@ const FolowCuratorModal = (props: FolowCuratorModalProps) => {
   )
 }
 
-export default FolowCuratorModal;
+export default FindCuratorModal;

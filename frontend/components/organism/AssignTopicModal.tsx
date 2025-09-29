@@ -1,10 +1,9 @@
-import { useState } from "react";
-import { v4 as uuidv4 } from 'uuid';
-import { paths } from "../../configuration";
-import { Subscription } from "../../entities/Subscription";
-import { Topic, topicSorting } from "../../entities/Topic";
-import { assignSubscriptionToTopic, createTopic, unassignSubscriptionToTopic } from "../../services/topicService";
-import { closeModal } from "../../utilities/modalAction";
+import {useState} from "react";
+import {v4 as uuidv4} from 'uuid';
+import {paths} from "../../configuration";
+import {Subscription} from "../../entities/Subscription";
+import {Topic, topicSorting} from "../../entities/Topic";
+import {assignSubscriptionToTopic, createTopic, unassignSubscriptionToTopic} from "../../services/topicService";
 import ALink from "../atoms/ALink";
 import Box from "../atoms/Box";
 import Button from "../atoms/Button";
@@ -12,14 +11,14 @@ import Dropdown from "../atoms/Dropdown";
 import FlexColumn from "../atoms/FlexColumn";
 import FlexItem from "../atoms/FlexItem";
 import FlexRow from "../atoms/FlexRow";
-import { CheckCircleIcon, CircleIcon } from "../atoms/Icons";
+import {AddIcon, CheckCircleIcon, CircleIcon, CrossIcon} from "../atoms/Icons";
 import InputText from "../atoms/InputText";
 import Menu from "../atoms/Menu";
-import { MenuItem } from "../atoms/MenuItem";
+import {MenuItem} from "../atoms/MenuItem";
 import Modal from "../atoms/Modal";
 import Tag from "../atoms/Tag";
 import SearchBar from "../molecules/SearchBar";
-import { useTranslations } from 'next-intl';
+import {useTranslations} from 'next-intl';
 
 export const AssignTopicModalId = "assign-topic-modal";
 
@@ -92,6 +91,15 @@ const AssignTopicModal = (props: AssignTopicModalProps) => {
         <ALink href={paths.TOPICS + "/" + topic.uuid} key={topic.uuid}>
           <Tag>
             {topic.name}
+            <div onClick={
+              (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                unassignButtonAction(topic.uuid);
+              }
+            }>
+              <CrossIcon/>
+            </div>
           </Tag>
         </ALink>
       )
@@ -122,21 +130,24 @@ const AssignTopicModal = (props: AssignTopicModalProps) => {
             </FlexRow>
           </div>
         </Box>
-        <FlexRow hideOverflow={false} position={"between"}>
-          <Dropdown start={true} bottom={false}
-                    button={<FlexRow><span>{t("assign_or_unassign_topic")}</span></FlexRow>}>
+        <FlexRow hideOverflow={false} position={"center"}>
+          <Dropdown
+            start={true}
+            bottom={false}
+            button={
+              <FlexRow>
+                <AddIcon/>
+                {t("assign_topic")}
+              </FlexRow>
+            }>
             <div className={"h-60"}>
               <Menu>
                 {topicsMenuItems}
               </Menu>
             </div>
-            <SearchBar value={searchValue} placeholder={t("search_placeholder")} handleChange={(value) => setSearchValue(value)}/>
+            <SearchBar value={searchValue} placeholder={t("search_placeholder")}
+                       handleChange={(value) => setSearchValue(value)}/>
           </Dropdown>
-          <Button clickAction={() => {
-            closeModal(AssignTopicModalId);
-          }}>
-            <span>{t("accept")}</span>
-          </Button>
         </FlexRow>
       </FlexColumn>
     </Modal>

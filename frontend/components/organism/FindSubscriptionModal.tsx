@@ -105,28 +105,25 @@ const FindSubscriptionModal = (props: FindSubscriptionModalProps) => {
 
   return (
     <Modal id={FindSubscriptionModalId} onClose={handleClose}>
-      <h1 className="font-bold text-xl w-full text-center">{t("find_subscriptions")}</h1>
+      <h1 className="font-bold text-xl w-full text-center pb-2">{t("find_subscriptions")}</h1>
       <FlexColumn>
-          <FlexItem grow={true}>
-              <SearchBar placeholder={t("search_subscription")} value={subscriptionSearch}
-                         handleChange={setSubscriptionSearch}/>
-          </FlexItem>
-          <Box title={t("subscriptions")}>
-              <div className={"h-72 overflow-y-auto"}>
-                {debouncedSubscriptionSearch === "" &&
-                    <FlexRow position={"center"}>{t("search_subscription")}</FlexRow>
-                }
-                {subscriptionsAreLoading && <span>{t("loading_subscriptions")}</span>}
-                {subItems.length > 0 &&
-                    <Menu isFullHeight={true}>
-                      {subItems}
-                    </Menu>
-                }
-                {subItems.length === 0 && !subscriptionsAreLoading && debouncedSubscriptionSearch !== "" &&
-                    <FlexRow position={"center"}>{t("no_subscriptions_found")}</FlexRow>
-                }
-              </div>
-          </Box>
+        <FlexItem grow={true}>
+          <SearchBar placeholder={t("search_subscription")} value={subscriptionSearch}
+                     handleChange={setSubscriptionSearch}/>
+        </FlexItem>
+        <Box title={""}>
+          <div className={"h-72 overflow-y-auto"}>
+            {subscriptionsAreLoading && <span>{t("loading_subscriptions")}</span>}
+            {subItems.length > 0 &&
+                <Menu isFullHeight={true}>
+                  {subItems}
+                </Menu>
+            }
+            {subItems.length === 0 && !subscriptionsAreLoading && debouncedSubscriptionSearch !== "" &&
+                <FlexRow position={"center"}>{t("no_subscriptions_found")}</FlexRow>
+            }
+          </div>
+        </Box>
         {unfollowError && <ErrorBanner>{t("cannot_unfollow")}</ErrorBanner>}
       </FlexColumn>
     </Modal>

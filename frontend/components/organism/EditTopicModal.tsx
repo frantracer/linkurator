@@ -13,7 +13,7 @@ import Dropdown from "../atoms/Dropdown";
 import FlexColumn from "../atoms/FlexColumn";
 import FlexItem from "../atoms/FlexItem";
 import FlexRow from "../atoms/FlexRow";
-import { CheckCircleIcon, CircleIcon } from "../atoms/Icons";
+import { AddIcon, CheckCircleIcon, CircleIcon, CrossIcon } from "../atoms/Icons";
 import InputText from "../atoms/InputText";
 import Menu from "../atoms/Menu";
 import { MenuItem } from "../atoms/MenuItem";
@@ -89,35 +89,44 @@ const EditTopicModal = (props: EditTopicModalProps) => {
     .sort((a, b) => a.name.localeCompare(b.name))
     .map(subscription => {
       return (
-        <ALink key={subscription.uuid} href={paths.SUBSCRIPTIONS + "/" + subscription.uuid}>
+        <ALink key={subscription.uuid} href={paths.SUBSCRIPTIONS + "/" + subscription.uuid}
+               onClick={handleCancel}>
           <Tag>
             <Miniature src={subscription.thumbnail} alt={subscription.name}/>
             {subscription.name}
+            <div onClick={
+              (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                removeSubscription(subscription);
+              }
+            }>
+              <CrossIcon/>
+            </div>
           </Tag>
         </ALink>)
     })
 
   return (
     <Modal id={EditTopicModalId} onClose={handleCancel}>
+      <h1 className="font-bold text-xl w-full text-center mb-4">{t("edit_topic")}</h1>
       <FlexColumn>
-        <h1 className="font-bold text-xl w-full text-center">{t("edit")}</h1>
-        <InputText placeholder={t("new_topic_name")} value={newTopicName}
-                   onChange={(value) => setNewTopicName(value)}/>
-        <Box title={t("subscriptions") + " (" + subscriptionTags.length + ")"}>
-          <div className={"h-60 overflow-y-auto"}>
+        <Box title={t("subscriptions") + " (" + subscriptionsToAdd.length + ")"}>
+          <div className={"h-60 flex flex-col overflow-auto mb-2"}>
             <FlexRow wrap={true}>
-              {subscriptionTags.length === 0 &&
-                  <p>{t("no_subscriptions")}</p>
-              }
               {subscriptionTags.length > 0 &&
                 subscriptionTags
               }
             </FlexRow>
           </div>
-        </Box>
-        <FlexRow hideOverflow={false} position={"between"}>
-          <Dropdown start={true} bottom={false}
-                    button={<FlexRow><span>{t("add_or_remove_subscriptions")}</span></FlexRow>}>
+          <Dropdown
+            start={true} bottom={false}
+            button={
+              <div className="flex flex-row justify-center items-center w-72">
+                <AddIcon/>
+                {t("add_subscriptions")}
+              </div>
+            }>
             <div className={"h-60"}>
               <Menu>
                 {subscriptionsMenuItems.length === 0 &&
@@ -126,10 +135,17 @@ const EditTopicModal = (props: EditTopicModalProps) => {
                 {subscriptionsMenuItems.length > 0 && subscriptionsMenuItems}
               </Menu>
             </div>
-            <SearchBar value={searchValue} placeholder={t("search_placeholder")} 
-            handleChange={(value) => setSearchValue(value)}/>
+            <SearchBar value={searchValue} placeholder={t("search_placeholder")}
+                       handleChange={(value) => setSearchValue(value)}/>
           </Dropdown>
-          <Button clickAction={handleUpdateTopic}>
+        </Box>
+        <InputText placeholder={t("new_topic_name")} value={newTopicName}
+                   onChange={(value) => setNewTopicName(value)}/>
+        <FlexRow position={"center"}>
+          <Button clickAction={handleCancel} primary={false}>
+            <span>{t("cancel")}</span>
+          </Button>
+          <Button clickAction={handleUpdateTopic} primary={true}>
             <span>{t("edit")}</span>
           </Button>
         </FlexRow>

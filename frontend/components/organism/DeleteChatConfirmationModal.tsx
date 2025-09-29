@@ -22,22 +22,22 @@ const DeleteChatConfirmationModal = (props: DeleteChatConfirmationModalProps) =>
         <p className="text-center mb-4">
           {t('delete_conversation_confirmation')}
         </p>
-        <FlexRow position={"end"}>
-          <Button 
-            clickAction={() => closeModal(DeleteChatConfirmationModalId)}
-            disabled={props.isDeleting}
-            primary={false}
-          >
-            <span>{t('cancel')}</span>
-          </Button>
-          <Button 
+        <FlexRow position={"center"}>
+          <Button
             clickAction={async () => {
               props.onDeleteChat();
             }}
             disabled={props.isDeleting}
-            primary={true}
+            primary={false}
           >
             <span>{props.isDeleting ? t('deleting') : t('delete')}</span>
+          </Button>
+          <Button
+            clickAction={() => closeModal(DeleteChatConfirmationModalId)}
+            disabled={props.isDeleting}
+            primary={true}
+          >
+            <span>{t('cancel')}</span>
           </Button>
         </FlexRow>
       </FlexColumn>

@@ -17,6 +17,7 @@ import {
   HomeIcon,
   MagnifyingGlassIcon,
   RectangleGroup,
+  RefreshIcon,
   UserIconFilled
 } from "../atoms/Icons";
 import LateralSubscriptionList from "./LateralSubscriptionList";
@@ -36,7 +37,7 @@ import {useCurators} from "../../hooks/useCurators";
 import LateralCuratorList from "./LateralCuratorList";
 import LateralChatList from "./LateralChatList";
 import useChatConversations from "../../hooks/useChatConversations";
-import FolowCuratorModal, {FollowCuratorModalId} from "./FollowCuratorModal";
+import FindCuratorModal, {FindCuratorModalId} from "./FindCuratorModal";
 import FindSubscriptionModal, {FindSubscriptionModalId} from "./FindSubscriptionModal";
 import SynchronizeSubscriptionsModal, {SynchronizeSubscriptionsModalId} from "./SynchronizeSubscriptionsModal";
 import FlexItem from "../atoms/FlexItem";
@@ -119,8 +120,8 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
     closeMenu();
   }
 
-  const openFollowCuratorModal = () => {
-    openModal(FollowCuratorModalId);
+  const openFindCuratorModal = () => {
+    openModal(FindCuratorModalId);
     closeMenu();
   }
 
@@ -240,7 +241,7 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
                           {t("curators")}
                         </FlexItem>
                         <FlexItem grow={false}>
-                            <Button fitContent={true} clickAction={openFollowCuratorModal}>
+                            <Button fitContent={true} clickAction={openFindCuratorModal}>
                                 <MagnifyingGlassIcon/>
                             </Button>
                         </FlexItem>
@@ -302,7 +303,7 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
                     openSyncModal={openSynchronizeSubscriptionsModal}
                 />
                 <Button fitContent={false} clickAction={openSynchronizeSubscriptionsModal}>
-                    <AddIcon/>
+                    <RefreshIcon/>
                   {t("synchronize_subscriptions")}
                 </Button>
             </div>
@@ -314,9 +315,9 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
                     isLoading={curatorsAreLoading}
                     closeMenu={closeMenu}
                     selectedCurator={selectedCurator}
-                    openFollowCuratorModal={openFollowCuratorModal}
+                    openFindCuratorModal={openFindCuratorModal}
                 />
-                <Button fitContent={false} clickAction={openFollowCuratorModal}>
+                <Button fitContent={false} clickAction={openFindCuratorModal}>
                     <MagnifyingGlassIcon/>
                   {t("browse_curators")}
                 </Button>
@@ -335,7 +336,7 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
       <FindTopicModal refreshTopics={refreshTopics}/>
       <FindSubscriptionModal refreshSubscriptions={refreshSubscriptions}/>
       <SynchronizeSubscriptionsModal/>
-      <FolowCuratorModal refreshCurators={refreshCurators} curators={curators}/>
+      <FindCuratorModal refreshCurators={refreshCurators} curators={curators}/>
       <SearchModal onClose={() => closeModal(SearchModalId)}/>
       {
         children

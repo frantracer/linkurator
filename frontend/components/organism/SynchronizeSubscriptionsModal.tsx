@@ -31,8 +31,8 @@ const SynchronizeSubscriptionsModal = () => {
     <Modal id={SynchronizeSubscriptionsModalId} onClose={handleClose}>
       <h1 className="font-bold text-xl w-full text-center">{t("sync_subscriptions")}</h1>
       <FlexColumn>
-          <Box title={t("sync")}>
-              <div className={"h-80 overflow-y-auto"}>
+          <Box title={""}>
+              <div className={"h-72 overflow-y-auto"}>
                   <FlexColumn position={"center"}>
                       <Card title={<FlexRow position={"center"}>
                         <Miniature src={providerIconUrl("youtube")} alt={"youtube logo"}/>

@@ -101,8 +101,6 @@ const NewTopicModal = (props: NewTopicModalProps) => {
     <Modal id={NewTopicModalId} onClose={handleClose}>
       <h1 className="font-bold text-xl w-full text-center mb-4">{t("create_topic")}</h1>
       <FlexColumn>
-        <InputText placeholder={t("enter_new_topic_name")} value={newTopicName}
-                   onChange={(value) => setNewTopicName(value)}/>
         <Box title={t("subscriptions") + " (" + subscriptionsToAdd.length + ")"}>
           <div className={"h-60 flex flex-col overflow-auto mb-2"}>
             <FlexRow wrap={true}>
@@ -116,7 +114,7 @@ const NewTopicModal = (props: NewTopicModalProps) => {
             button={
               <div className="flex flex-row justify-center items-center w-72">
                 <AddIcon/>
-                {t("add_or_remove_subscriptions")}
+                {t("add_subscriptions")}
               </div>
             }>
             <div className={"h-60"}>
@@ -131,7 +129,15 @@ const NewTopicModal = (props: NewTopicModalProps) => {
                        handleChange={(value) => setSearchValue(value)}/>
           </Dropdown>
         </Box>
-        <FlexRow hideOverflow={false} position={"end"}>
+        <InputText placeholder={t("enter_new_topic_name")} value={newTopicName}
+                   onChange={(value) => setNewTopicName(value)}/>
+        <FlexRow hideOverflow={false} position={"center"}>
+          <Button
+            clickAction={handleClose}
+            primary={false}
+          >
+            <span>{t("cancel")}</span>
+          </Button>
           <Button
             disabled={subscriptionsToAdd.length == 0 || newTopicName.length == 0}
             clickAction={async () => {
@@ -143,7 +149,9 @@ const NewTopicModal = (props: NewTopicModalProps) => {
                   router.push(paths.TOPICS + "/" + newTopicUuid);
                 }
               )
-            }}>
+            }}
+            primary={true}
+          >
             <span>{t("create")}</span>
           </Button>
         </FlexRow>
