@@ -275,6 +275,38 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
             </FlexRow>
         }
         {profile && <Divider/>}
+        {profile && currentTab === 'home' &&
+            <div className={"flex flex-col overflow-y-auto overflow-x-hidden gap-2"}>
+                <Menu>
+                    <MenuItem onClick={() => {
+                        router.push(paths.HOME);
+                        closeMenu();
+                    }} selected={pathname === paths.HOME}>
+                        <FlexRow position={"start"}>
+                            <FlexItem>
+                                <HomeIcon/>
+                            </FlexItem>
+                            <FlexItem grow={true}>
+                                {t("recommendations")}
+                            </FlexItem>
+                        </FlexRow>
+                    </MenuItem>
+                    <MenuItem onClick={() => {
+                        router.push(paths.PROFILE);
+                        closeMenu();
+                    }} selected={pathname === paths.PROFILE}>
+                        <FlexRow position={"start"}>
+                            <FlexItem>
+                                <UserIconFilled/>
+                            </FlexItem>
+                            <FlexItem grow={true}>
+                                {t("my_profile")}
+                            </FlexItem>
+                        </FlexRow>
+                    </MenuItem>
+                </Menu>
+            </div>
+        }
         {profile && currentTab === 'topics' &&
             <div className={"flex flex-col overflow-y-auto overflow-x-hidden gap-2"}>
                 <LateralTopicList
