@@ -194,6 +194,11 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
                         <FlexItem grow={true}>
                           {t("home")}
                         </FlexItem>
+                        <FlexItem grow={false}>
+                            <Button primary={false} fitContent={true} clickAction={openQuickAccessesModal}>
+                                <BoltIcon/>
+                            </Button>
+                        </FlexItem>
                     </FlexRow>
                 </MenuItem>
                 <MenuItem onClick={() => {
@@ -207,7 +212,7 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
                           {t("topics")}
                         </FlexItem>
                         <FlexItem grow={false}>
-                            <Button fitContent={true} clickAction={openFindTopicModal}>
+                            <Button primary={false} fitContent={true} clickAction={openFindTopicModal}>
                                 <MagnifyingGlassIcon/>
                             </Button>
                         </FlexItem>
@@ -224,7 +229,7 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
                           {t("subscriptions")}
                         </FlexItem>
                         <FlexItem grow={false}>
-                            <Button fitContent={true} clickAction={openFindSubscriptionModal}>
+                            <Button primary={false} fitContent={true} clickAction={openFindSubscriptionModal}>
                                 <MagnifyingGlassIcon/>
                             </Button>
                         </FlexItem>
@@ -241,7 +246,7 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
                           {t("curators")}
                         </FlexItem>
                         <FlexItem grow={false}>
-                            <Button fitContent={true} clickAction={openFindCuratorModal}>
+                            <Button primary={false} fitContent={true} clickAction={openFindCuratorModal}>
                                 <MagnifyingGlassIcon/>
                             </Button>
                         </FlexItem>
@@ -258,7 +263,7 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
                           {t("chats")}
                         </FlexItem>
                         <FlexItem grow={false}>
-                            <Button fitContent={true} clickAction={goToNewChat}>
+                            <Button primary={false} fitContent={true} clickAction={goToNewChat}>
                                 <AddIcon/>
                             </Button>
                         </FlexItem>
@@ -266,17 +271,13 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
                 </MenuItem>
             </Menu>
         }
-        {profile &&
-            <FlexRow hideOnMobile={true}>
-                <Button primary={false} fitContent={false} clickAction={openQuickAccessesModal}>
-                    <BoltIcon/>
-                    <span>{t("quick_accesses")}</span>
-                </Button>
-            </FlexRow>
-        }
         {profile && <Divider/>}
         {profile && currentTab === 'home' &&
             <div className={"flex flex-col overflow-y-auto overflow-x-hidden gap-2"}>
+                <Button primary={false} fitContent={false} clickAction={openQuickAccessesModal}>
+                    <BoltIcon/>
+                  {t("quick_accesses")}
+                </Button>
                 <Menu>
                     <MenuItem onClick={() => {
                         router.push(paths.HOME);
