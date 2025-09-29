@@ -5,7 +5,7 @@ import {BoltIcon, FunnelIcon, MenuIcon} from "./Icons";
 import {showLateralMenu} from "../../utilities/lateralMenuAction";
 import {openModal} from "../../utilities/modalAction";
 import {LATERAL_NAVIGATION_MENU_ID} from "../organism/LateralNavigationMenu";
-import {SearchModalId} from "../organism/SearchModal";
+import {QuickAccessesModalId} from "../organism/QuickAccessesModal";
 import {SUBSCRIPTION_DETAILS_ID} from "../organism/SubscriptionDetails";
 import {TOPIC_DETAILS_ID} from "../organism/TopicDetails";
 import {CURATOR_DETAILS_ID} from "../organism/CuratorDetails";
@@ -38,8 +38,8 @@ const BottomMenuMobile = () => {
     showLateralMenu(LATERAL_NAVIGATION_MENU_ID);
   };
 
-  const openSearchModal = () => {
-    openModal(SearchModalId);
+  const openQuickAccessesModal = () => {
+    openModal(QuickAccessesModalId);
   };
 
   const openFilters = () => {
@@ -71,7 +71,7 @@ const BottomMenuMobile = () => {
         </Button>
 
         <Button
-          clickAction={openSearchModal}
+          clickAction={openQuickAccessesModal}
           fitContent={false}
           primary={false}
           borderless={true}

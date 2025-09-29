@@ -42,7 +42,7 @@ import FindSubscriptionModal, {FindSubscriptionModalId} from "./FindSubscription
 import SynchronizeSubscriptionsModal, {SynchronizeSubscriptionsModalId} from "./SynchronizeSubscriptionsModal";
 import FlexItem from "../atoms/FlexItem";
 import {useTranslations} from "next-intl";
-import SearchModal, {SearchModalId} from "./SearchModal";
+import QuickAccessesModal, {QuickAccessesModalId} from "./QuickAccessesModal";
 import {v4 as uuidv4} from 'uuid';
 
 export const LATERAL_NAVIGATION_MENU_ID = 'lateral-navigation-menu';
@@ -125,8 +125,8 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
     closeMenu();
   }
 
-  const openSearchModal = () => {
-    openModal(SearchModalId);
+  const openQuickAccessesModal = () => {
+    openModal(QuickAccessesModalId);
     closeMenu();
   }
 
@@ -268,7 +268,7 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
         }
         {profile &&
             <FlexRow hideOnMobile={true}>
-                <Button primary={false} fitContent={false} clickAction={openSearchModal}>
+                <Button primary={false} fitContent={false} clickAction={openQuickAccessesModal}>
                     <BoltIcon/>
                     <span>{t("quick_accesses")}</span>
                 </Button>
@@ -369,7 +369,7 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
       <FindSubscriptionModal refreshSubscriptions={refreshSubscriptions}/>
       <SynchronizeSubscriptionsModal/>
       <FindCuratorModal refreshCurators={refreshCurators} curators={curators}/>
-      <SearchModal onClose={() => closeModal(SearchModalId)}/>
+      <QuickAccessesModal onClose={() => closeModal(QuickAccessesModalId)}/>
       {
         children
       }
