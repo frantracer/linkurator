@@ -1,8 +1,8 @@
 {
     "common": {
-        "hero_title": "Conviértete en el curador de contenido que tu comunidad necesita",
-        "hero_subtitle_1": "Agrupa contenido de plataformas como YouTube y Spotify.",
-        "hero_subtitle_2": "Organízalo por categorías, sigue a otros y obtén recomendaciones.",
+        "hero_title": "Encuentra lo que quieres, descubre lo que te importa",
+        "hero_subtitle_1": "Todo el contenido de plataformas como YouTube y Spotify en un sólo lugar",
+        "hero_subtitle_2": "Organízalo por categorías, sigue a otros y obtén recomendaciones",
         "trending_curations": "Categorías populares",
         "geopolitics_topic": "🌍 Geopolítica",
         "programming_topic": "💻 Programación",
@@ -239,8 +239,14 @@
             "feature_3_title": "Sigue y Descubre",
             "feature_3_subtitle": "Sigue las listas y recomendaciones curadas por otros usuarios",
             "feature_4_title": "Recomienda y Comparte",
-            "feature_4_subtitle": "Comparte tus recomendaciones con otros"
+            "feature_4_subtitle": "Comparte tus recomendaciones con otros",
+            "feature_5_title": "Asistente de IA",
+            "feature_5_subtitle": "Obtén recomendaciones personalizadas y organiza tu contenido con IA"
         },
+        "chat_section_title": "Asistente con Inteligencia Artificial",
+        "chat_section_subtitle": "Obtén ayuda personalizada para organizar tu contenido con nuestro chatbot inteligente",
+        "chat_section_description": "Nuestro asistente de IA te ayuda a descubrir nuevo contenido, organizar tus subscripciones y obtener recomendaciones adaptadas a tus intereses",
+        "try_chat": "Prueba el Chat",
         "testimonials_subtitle": "Lo que dicen nuestros usuarios",
         "testimonial_1": {
             "author": "Juan Pérez",

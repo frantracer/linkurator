@@ -1,7 +1,7 @@
 {
   "common": {
-    "hero_title": "Become the content curator your community needs",
-    "hero_subtitle_1": "Aggregate content from platforms like YouTube & Spotify.",
+    "hero_title": "Find what you want, discover what matters to you",
+    "hero_subtitle_1": "All the content from platforms like YouTube & Spotify in a single place.",
     "hero_subtitle_2": "Organize it by topics, follow others, and get recommendations.",
     "trending_curations": "Trending curated topics",
     "geopolitics_topic": "🌍 Geopolitics",
@@ -239,8 +239,14 @@
       "feature_3_title": "Follow & Discover",
       "feature_3_subtitle": "Track other users' curated lists and recommendations",
       "feature_4_title": "Recommend & Share",
-      "feature_4_subtitle": "Share your recommendations with others"
+      "feature_4_subtitle": "Share your recommendations with others",
+      "feature_5_title": "AI Assistant",
+      "feature_5_subtitle": "Get personalized recommendations and organize your content with AI"
     },
+    "chat_section_title": "AI-Powered Assistant",
+    "chat_section_subtitle": "Get personalized help organizing your content with our intelligent chatbot",
+    "chat_section_description": "Our AI assistant helps you discover new content, organize your subscriptions, and get recommendations tailored to your interests",
+    "try_chat": "Try the Chat",
     "testimonials_subtitle": "What our users are saying",
     "testimonial_1": {
       "author": "Juan Pérez",

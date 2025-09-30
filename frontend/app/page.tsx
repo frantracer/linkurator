@@ -12,7 +12,7 @@ import {LogoImage} from "../components/atoms/LogoImage";
 import FlexRow from "../components/atoms/FlexRow";
 import FlexItem from "../components/atoms/FlexItem";
 import {useTranslations} from "next-intl";
-import {BookmarkSquared, LinkedinIcon, RectangleGroup, ThumbsUpIcon, UserIconFilled} from "../components/atoms/Icons";
+import {BookmarkSquared, ChatBubbleIcon, LinkedinIcon, RectangleGroup, ThumbsUpIcon, UserIconFilled} from "../components/atoms/Icons";
 
 export default function LandingPage() {
   const t = useTranslations("common");
@@ -147,8 +147,43 @@ export default function LandingPage() {
           </FlexColumn>
         </section>
 
+        {/* Chat Section */}
+        <section className="w-full py-12 md:py-24 lg:py-32 bg-base-200">
+          <div className="mx-auto container px-4 md:px-6">
+            <div className="grid gap-6 lg:grid-cols-2 lg:gap-12 items-center">
+              <div className="flex flex-col justify-center space-y-4">
+                <div className="space-y-2">
+                  <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">
+                    {t("chat_section_title")}
+                  </h2>
+                  <p className="text-muted-foreground md:text-xl">
+                    {t("chat_section_subtitle")}
+                  </p>
+                  <p className="text-muted-foreground">
+                    {t("chat_section_description")}
+                  </p>
+                </div>
+                <div className="flex flex-col gap-2 min-[400px]:flex-row">
+                  <Button href={"/chats"}>
+                    {t("try_chat")}
+                  </Button>
+                </div>
+              </div>
+              <div className="flex items-center justify-center">
+                <div className="relative flex items-center justify-center w-64 h-64 rounded-full bg-primary/10">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-32 h-32 text-primary">
+                    <path fillRule="evenodd"
+                          d="M4.848 2.771A49.144 49.144 0 0 1 12 2.25c2.43 0 4.817.178 7.152.52 1.978.292 3.348 2.024 3.348 3.97v6.02c0 1.946-1.37 3.678-3.348 3.97a48.901 48.901 0 0 1-3.476.383.39.39 0 0 0-.297.17l-2.755 4.133a.75.75 0 0 1-1.248 0l-2.755-4.133a.39.39 0 0 0-.297-.17 48.9 48.9 0 0 1-3.476-.384c-1.978-.29-3.348-2.024-3.348-3.97V6.741c0-1.946 1.37-3.68 3.348-3.97ZM6.75 8.25a.75.75 0 0 1 .75-.75h9a.75.75 0 0 1 0 1.5h-9a.75.75 0 0 1-.75-.75Zm.75 2.25a.75.75 0 0 0 0 1.5H12a.75.75 0 0 0 0-1.5H7.5Z"
+                          clipRule="evenodd"/>
+                  </svg>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
         {/* How It Works */}
-        <section id="how-it-works" className="w-full py-12 md:py-24 lg:py-32 bg-base-200">
+        <section id="how-it-works" className="w-full py-12 md:py-24 lg:py-32 bg-base-100">
           <FlexColumn position={"center"}>
             <div className="flex flex-col items-center justify-center space-y-4 text-center">
               <div className="space-y-2">
@@ -217,7 +252,7 @@ export default function LandingPage() {
         </section>
 
         {/* Interactive Demo */}
-        <section className="w-full py-12 md:py-24 lg:py-32 bg-base-100">
+        <section className="w-full py-12 md:py-24 lg:py-32 bg-base-200">
           <FlexColumn position={"center"}>
             <div className="flex flex-col items-center justify-center space-y-4 text-center">
               <div className="space-y-2">
@@ -240,7 +275,7 @@ export default function LandingPage() {
         </section>
 
         {/* Features Section */}
-        <section id="features" className="w-full py-12 md:py-24 lg:py-32 bg-base-200">
+        <section id="features" className="w-full py-12 md:py-24 lg:py-32 bg-base-100">
           <FlexColumn position={"center"}>
             <div className="flex flex-col items-center justify-center space-y-4 text-center">
               <div className="space-y-2">
@@ -274,6 +309,11 @@ export default function LandingPage() {
                       title: t("features_list.feature_4_title"),
                       description: t("features_list.feature_4_subtitle"),
                       icon: <ThumbsUpIcon/>,
+                    },
+                    {
+                      title: t("features_list.feature_5_title"),
+                      description: t("features_list.feature_5_subtitle"),
+                      icon: <ChatBubbleIcon/>,
                     },
                   ].map((feature, i) => (
                     <li key={i} className="flex items-start gap-4">
@@ -347,7 +387,7 @@ export default function LandingPage() {
         </section>
 
         {/* Social Proof & Testimonials */}
-        <section id="testimonials" className="w-full py-12 md:py-24 lg:py-32 bg-base-100">
+        <section id="testimonials" className="w-full py-12 md:py-24 lg:py-32 bg-base-200">
           <FlexColumn position={"center"}>
             <div className="flex flex-col items-center justify-center space-y-4 text-center">
               <div className="space-y-2">
@@ -388,7 +428,8 @@ export default function LandingPage() {
           </FlexColumn>
         </section>
 
-        <section id="signup" className="w-full py-12 md:py-24 lg:py-32 bg-base-200">
+        {/* Call to Action Section */}
+        <section id="signup" className="w-full py-12 md:py-24 lg:py-32 bg-base-100">
           <FlexColumn position={"center"}>
             <div className="flex flex-col items-center justify-center space-y-4 text-center">
               <div className="space-y-2">
@@ -405,7 +446,7 @@ export default function LandingPage() {
         </section>
 
         {/* FAQ Section */}
-        <section id="faq" className="w-full py-12 md:py-24 lg:py-32 bg-base-100">
+        <section id="faq" className="w-full py-12 md:py-24 lg:py-32 bg-base-200">
           <FlexColumn position={"center"}>
             <div className="flex flex-col items-center justify-center space-y-4 text-center">
               <div className="space-y-2">
