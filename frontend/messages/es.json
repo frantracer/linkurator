@@ -294,6 +294,8 @@
         "sample_questions": "Prueba preguntando:",
         "sample_question_1": "Ayúdame a organizar mejor mis subscripciones en categorías",
         "sample_question_2": "Recomiéndame algunos videos de mis categorías",
+        "sample_question_guest_1": "¿Cuáles son las últimas tendencias en inteligencia artificial?",
+        "sample_question_guest_2": "Recomiéndame recetas de diferentes tipos de pizza",
         "message_limit_reached": "Límite de mensajes alcanzado (5/5). Inicia una nueva conversación para continuar.",
         "messages_remaining": "{remaining} mensajes restantes",
         "agent_error": "Error al generar una respuesta. Por favor, inténtalo de nuevo.",

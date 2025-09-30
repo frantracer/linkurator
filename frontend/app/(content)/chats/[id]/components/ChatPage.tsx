@@ -10,6 +10,7 @@ import {ChatMessage, newTopicsWereCreated} from "../../../../../entities/Chat";
 import {ChatRateLimitError, deleteChat, queryAgent} from "../../../../../services/chatService";
 import useChat from "../../../../../hooks/useChat";
 import {useQueryClient} from '@tanstack/react-query';
+import useProfile from "../../../../../hooks/useProfile";
 import {v4 as uuidv4} from 'uuid';
 import {useRouter} from 'next/navigation';
 import DeleteChatConfirmationModal, {
@@ -38,6 +39,8 @@ const ChatPageComponent = ({conversationId}: { conversationId: string }) => {
 
   const {conversation, isLoading: conversationLoading} = useChat(conversationId);
   const [localMessages, setLocalMessages] = useState<ChatMessage[]>([]);
+  const {profile} = useProfile();
+  const isLoggedIn = !!profile;
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({behavior: 'smooth'});
@@ -200,17 +203,17 @@ const ChatPageComponent = ({conversationId}: { conversationId: string }) => {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3 w-full max-w-2xl">
                 <button
-                  onClick={() => handleSampleQuestionClick(t('sample_question_1'))}
+                  onClick={() => handleSampleQuestionClick(isLoggedIn ? t('sample_question_1') : t('sample_question_guest_1'))}
                   className="p-4 text-left bg-base-200 hover:bg-base-300 rounded-lg transition-colors duration-200 border border-base-300 hover:border-primary"
                 >
-                  <span className="text-sm">{t('sample_question_1')}</span>
+                  <span className="text-sm">{isLoggedIn ? t('sample_question_1') : t('sample_question_guest_1')}</span>
                 </button>
 
                 <button
-                  onClick={() => handleSampleQuestionClick(t('sample_question_2'))}
+                  onClick={() => handleSampleQuestionClick(isLoggedIn ? t('sample_question_2') : t('sample_question_guest_2'))}
                   className="p-4 text-left bg-base-200 hover:bg-base-300 rounded-lg transition-colors duration-200 border border-base-300 hover:border-primary"
                 >
-                  <span className="text-sm">{t('sample_question_2')}</span>
+                  <span className="text-sm">{isLoggedIn ? t('sample_question_2') : t('sample_question_guest_2')}</span>
                 </button>
 
               </div>
