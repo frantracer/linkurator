@@ -10,6 +10,7 @@ import {SUBSCRIPTION_DETAILS_ID} from "../organism/SubscriptionDetails";
 import {TOPIC_DETAILS_ID} from "../organism/TopicDetails";
 import {CURATOR_DETAILS_ID} from "../organism/CuratorDetails";
 import FlexRow from "./FlexRow";
+import {useTranslations} from "next-intl";
 
 type CurrentPage = 'topics' | 'subscriptions' | 'curators' | 'profile' | 'other';
 
@@ -30,6 +31,7 @@ const mapStringToPage = (page: string): CurrentPage => {
 
 const BottomMenuMobile = () => {
   const pathname = usePathname();
+  const t = useTranslations("common");
 
   const pathnameArray = pathname.split('/').filter((path) => path !== '');
   const currentPage: CurrentPage = mapStringToPage(pathnameArray[0]);
@@ -66,6 +68,7 @@ const BottomMenuMobile = () => {
           fitContent={false}
           primary={false}
           borderless={true}
+          tooltip={t("menu")}
         >
           <MenuIcon/>
         </Button>
@@ -75,6 +78,7 @@ const BottomMenuMobile = () => {
           fitContent={false}
           primary={false}
           borderless={true}
+          tooltip={t("quick_accesses")}
         >
           <BoltIcon/>
         </Button>
@@ -86,6 +90,7 @@ const BottomMenuMobile = () => {
                 fitContent={false}
                 primary={false}
                 borderless={true}
+                tooltip={t("filter")}
             >
                 <FunnelIcon/>
             </Button>

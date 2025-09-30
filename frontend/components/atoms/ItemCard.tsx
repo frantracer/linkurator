@@ -113,6 +113,7 @@ const ItemCard = ({ item, withInteractions = true, onChange }: ItemCardProps) =>
               <SwapButton
                 defaultChecked={item.discouraged}
                 onChange={(isChecked) => handleInteraction(InteractionType.Discouraged, isChecked)}
+                tooltip={item.discouraged ? t("mark_as_not_recommended") : t("mark_as_not_recommended")}
               >
                 <ThumbsDownFilledIcon />
                 <ThumbsDownIcon />
@@ -120,6 +121,7 @@ const ItemCard = ({ item, withInteractions = true, onChange }: ItemCardProps) =>
               <SwapButton
                 defaultChecked={item.recommended}
                 onChange={(isChecked) => handleInteraction(InteractionType.Recommended, isChecked)}
+                tooltip={item.recommended ? t("not_recommended") : t("mark_as_recommended")}
               >
                 <ThumbsUpFilledIcon />
                 <ThumbsUpIcon />
@@ -127,6 +129,7 @@ const ItemCard = ({ item, withInteractions = true, onChange }: ItemCardProps) =>
               <SwapButton
                 defaultChecked={item.hidden}
                 onChange={(isChecked) => handleInteraction(InteractionType.Hidden, isChecked)}
+                tooltip={item.hidden ? t("mark_as_not_archived") : t("mark_as_archived")}
               >
                 <ArchiveBoxFilledIcon />
                 <ArchiveBoxIcon />
@@ -134,6 +137,7 @@ const ItemCard = ({ item, withInteractions = true, onChange }: ItemCardProps) =>
               <SwapButton
                 defaultChecked={item.viewed}
                 onChange={(isChecked) => handleInteraction(InteractionType.Viewed, isChecked)}
+                tooltip={item.viewed ? t("mark_as_not_viewed") : t("mark_as_viewed")}
               >
                 <CheckCircleFilledIcon />
                 <CheckCircleIcon />

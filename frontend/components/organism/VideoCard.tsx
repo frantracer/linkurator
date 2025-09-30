@@ -130,7 +130,8 @@ const VideoCard = (
                         onChange={
                           (isChecked) => onChangeSwapButton &&
                             onChangeSwapButton(item.uuid, InteractionType.Discouraged, isChecked).then(onChange)
-                        }>
+                        }
+                        tooltip={item.discouraged ? t("mark_as_not_recommended") : t("mark_as_not_recommended")}>
                         <ThumbsDownFilledIcon/>
                         <ThumbsDownIcon/>
                     </SwapButton>
@@ -139,21 +140,24 @@ const VideoCard = (
                         onChange={
                           (isChecked) => onChangeSwapButton &&
                             onChangeSwapButton(item.uuid, InteractionType.Recommended, isChecked).then(onChange)
-                        }>
+                        }
+                        tooltip={item.recommended ? t("not_recommended") : t("mark_as_recommended")}>
                         <ThumbsUpFilledIcon/>
                         <ThumbsUpIcon/>
                     </SwapButton>
                     <SwapButton
                         defaultChecked={item.hidden}
                         onChange={(isChecked) => onChangeSwapButton &&
-                          onChangeSwapButton(item.uuid, InteractionType.Hidden, isChecked).then(onChange)}>
+                          onChangeSwapButton(item.uuid, InteractionType.Hidden, isChecked).then(onChange)}
+                        tooltip={item.hidden ? t("mark_as_not_archived") : t("mark_as_archived")}>
                         <ArchiveBoxFilledIcon/>
                         <ArchiveBoxIcon/>
                     </SwapButton>
                     <SwapButton
                         defaultChecked={item.viewed}
                         onChange={(isChecked) => onChangeSwapButton &&
-                          onChangeSwapButton(item.uuid, InteractionType.Viewed, isChecked).then(onChange)}>
+                          onChangeSwapButton(item.uuid, InteractionType.Viewed, isChecked).then(onChange)}
+                        tooltip={item.viewed ? t("mark_as_not_viewed") : t("mark_as_viewed")}>
                         <CheckCircleFilledIcon/>
                         <CheckCircleIcon/>
                     </SwapButton>

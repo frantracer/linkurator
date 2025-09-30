@@ -3,6 +3,7 @@ import React from "react";
 type SwapButtonProps = {
   onChange?: (isChecked: boolean) => void
   defaultChecked?: boolean
+  tooltip?: string
   children?: React.ReactNode
 }
 
@@ -14,6 +15,7 @@ export const SwapButton = (
   {
     onChange = noAction,
     defaultChecked = false,
+    tooltip = undefined,
     children
   }: SwapButtonProps) => {
   const childrenArray = React.Children.toArray(children)
@@ -21,7 +23,7 @@ export const SwapButton = (
   const OffIcon = childrenArray[1]
 
   return (
-    <label className="swap swap-rotate">
+    <label className="swap swap-rotate" title={tooltip}>
       <input onChange={(e) => {
         onChange && onChange(e.target.checked)
       }} type="checkbox" defaultChecked={defaultChecked}/>

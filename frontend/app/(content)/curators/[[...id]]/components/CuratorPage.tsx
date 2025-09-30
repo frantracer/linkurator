@@ -145,7 +145,7 @@ const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
                   <h1 className="text-xl font-bold whitespace-nowrap truncate">
                     {curatorName}
                   </h1>
-                  <Button primary={false} fitContent={true} clickAction={handleFilter}>
+                  <Button primary={false} fitContent={true} clickAction={handleFilter} tooltip={t("filter")}>
                     <FunnelIcon/>
                   </Button>
                 </FlexRow>

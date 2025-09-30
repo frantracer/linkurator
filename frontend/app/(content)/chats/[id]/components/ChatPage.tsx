@@ -183,6 +183,7 @@ const ChatPageComponent = ({conversationId}: { conversationId: string }) => {
                 clickAction={handleDeleteButtonClick}
                 disabled={isDeleting}
                 primary={false}
+                tooltip={t("delete_conversation")}
               >
                 <TrashIcon/>
               </Button>

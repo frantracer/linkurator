@@ -11,6 +11,7 @@ type ButtonProps = {
   disabled?: boolean
   primary?: boolean
   borderless?: boolean
+  tooltip?: string
   children?: React.ReactNode
 }
 
@@ -27,6 +28,7 @@ const Button = (
     disabled = false,
     primary = true,
     borderless = false,
+    tooltip = undefined,
     children
   }: ButtonProps
 ) => {
@@ -58,14 +60,14 @@ const Button = (
 
   if (href) {
     return (
-      <Link href={href} className={className}>
+      <Link href={href} className={className} title={tooltip}>
         {children}
       </Link>
     );
   }
 
   return (
-    <label role={"button"} onClick={handleClick} htmlFor={relatedModalId} className={className}>
+    <label role={"button"} onClick={handleClick} htmlFor={relatedModalId} className={className} title={tooltip}>
       {children}
     </label>
   );
