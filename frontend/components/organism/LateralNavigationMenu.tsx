@@ -18,6 +18,7 @@ import {
   MagnifyingGlassIcon,
   RectangleGroup,
   RefreshIcon,
+  ThumbsUpFilledIcon,
   UserIconFilled
 } from "../atoms/Icons";
 import LateralSubscriptionList from "./LateralSubscriptionList";
@@ -199,7 +200,8 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
                           {t("home")}
                         </FlexItem>
                         <FlexItem grow={false}>
-                            <Button primary={false} fitContent={true} clickAction={openQuickAccessesModal} tooltip={t("quick_accesses")}>
+                            <Button primary={false} fitContent={true} clickAction={openQuickAccessesModal}
+                                    tooltip={t("quick_accesses")}>
                                 <BoltIcon/>
                             </Button>
                         </FlexItem>
@@ -216,7 +218,8 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
                           {t("topics")}
                         </FlexItem>
                         <FlexItem grow={false}>
-                            <Button primary={false} fitContent={true} clickAction={openFindTopicModal} tooltip={t("find_topics")}>
+                            <Button primary={false} fitContent={true} clickAction={openFindTopicModal}
+                                    tooltip={t("find_topics")}>
                                 <MagnifyingGlassIcon/>
                             </Button>
                         </FlexItem>
@@ -233,7 +236,8 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
                           {t("subscriptions")}
                         </FlexItem>
                         <FlexItem grow={false}>
-                            <Button primary={false} fitContent={true} clickAction={openFindSubscriptionModal} tooltip={t("find_subscriptions")}>
+                            <Button primary={false} fitContent={true} clickAction={openFindSubscriptionModal}
+                                    tooltip={t("find_subscriptions")}>
                                 <MagnifyingGlassIcon/>
                             </Button>
                         </FlexItem>
@@ -250,7 +254,8 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
                           {t("curators")}
                         </FlexItem>
                         <FlexItem grow={false}>
-                            <Button primary={false} fitContent={true} clickAction={openFindCuratorModal} tooltip={t("find_curators")}>
+                            <Button primary={false} fitContent={true} clickAction={openFindCuratorModal}
+                                    tooltip={t("find_curators")}>
                                 <MagnifyingGlassIcon/>
                             </Button>
                         </FlexItem>
@@ -284,31 +289,44 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
                 </Button>
                 <Menu>
                     <MenuItem onClick={() => {
-                        router.push(paths.HOME);
-                        closeMenu();
+                      router.push(paths.HOME);
+                      closeMenu();
                     }} selected={pathname === paths.HOME}>
                         <FlexRow position={"start"}>
                             <FlexItem>
                                 <HomeIcon/>
                             </FlexItem>
                             <FlexItem grow={true}>
-                                {t("recommendations")}
+                              {t("recommendations")}
                             </FlexItem>
                         </FlexRow>
                     </MenuItem>
                     <MenuItem onClick={() => {
-                        router.push(paths.PROFILE);
-                        closeMenu();
+                      router.push(paths.PROFILE);
+                      closeMenu();
                     }} selected={pathname === paths.PROFILE}>
                         <FlexRow position={"start"}>
                             <FlexItem>
                                 <UserIconFilled/>
                             </FlexItem>
                             <FlexItem grow={true}>
-                                {t("my_profile")}
+                              {t("my_profile")}
                             </FlexItem>
                         </FlexRow>
                     </MenuItem>
+                  {profile && <MenuItem onClick={() => {
+                    router.push(paths.CURATORS + "/" + profile.username);
+                    closeMenu();
+                  }} selected={pathname === paths.CURATORS + "/" + profile.username}>
+                      <FlexRow position={"start"}>
+                          <FlexItem>
+                              <ThumbsUpFilledIcon/>
+                          </FlexItem>
+                          <FlexItem grow={true}>
+                            {t("my_recommendations")}
+                          </FlexItem>
+                      </FlexRow>
+                  </MenuItem>}
                 </Menu>
             </div>
         }
