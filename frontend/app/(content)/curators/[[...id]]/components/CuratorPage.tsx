@@ -13,6 +13,7 @@ import {
   MinusIcon,
   OptionsIcon,
   RectangleGroup,
+  ShareIcon,
   ThumbsUpFilledIcon
 } from "../../../../../components/atoms/Icons";
 import {MenuItem} from "../../../../../components/atoms/MenuItem";
@@ -36,6 +37,8 @@ import {Tabs} from "../../../../../components/atoms/Tabs";
 import {useTopics} from "../../../../../hooks/useTopics";
 import Dropdown from "../../../../../components/atoms/Dropdown";
 import Menu from "../../../../../components/atoms/Menu";
+import ShareCuratorModal, {ShareCuratorModalId} from "../../../../../components/organism/ShareCuratorModal";
+import {openModal} from "../../../../../utilities/modalAction";
 
 const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
   const t = useTranslations("common");
@@ -49,6 +52,7 @@ const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
   const {curator} = useCurator(curatorName, curators);
 
   const isUserLogged = !!(profile)
+  const isUserCurator = isUserLogged && !!(curator) && profile.username === curator.username;
 
   const curatorId = curator ? curator.id : null;
   const {
@@ -93,6 +97,10 @@ const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
     unfollowCurator(curatorId).then(() => {
       refreshCurators()
     })
+  }
+
+  const handleShareCurator = () => {
+    openModal(ShareCuratorModalId);
   }
 
   const dropdownButtons = []
@@ -149,26 +157,38 @@ const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
                     <FunnelIcon/>
                   </Button>
                 </FlexRow>
-                {curator && curator.followed &&
-                    <Tag>
+                <FlexRow>
+                  {curator && curator.followed &&
+                      <Tag>
                       <span>
                       {t("following")}
                       </span>
-                        <div className="hover:cursor-pointer" onClick={() => handleUnfollowCurator(curator.id)}>
-                            <CrossIcon/>
-                        </div>
-                    </Tag>
-                }
-                {curator && !curator.followed && isUserLogged &&
-                    <Button primary={false} clickAction={() => handleFollowCurator(curator.id)}>
-                      {t("follow")}
-                    </Button>
-                }
-                {curator && !curator.followed && !isUserLogged &&
-                    <Button primary={false} href={paths.LOGIN}>
-                      {t("follow")}
-                    </Button>
-                }
+                          <div className="hover:cursor-pointer" onClick={() => handleUnfollowCurator(curator.id)}>
+                              <CrossIcon/>
+                          </div>
+                      </Tag>
+                  }
+                  {curator && !curator.followed && isUserLogged && !isUserCurator &&
+                      <FlexRow>
+                          <Button primary={false} clickAction={() => handleFollowCurator(curator.id)}>
+                            {t("follow")}
+                          </Button>
+                      </FlexRow>
+                  }
+                  {curator && !curator.followed && !isUserLogged &&
+                      <FlexRow>
+                          <Button primary={false} href={paths.LOGIN}>
+                            {t("follow")}
+                          </Button>
+                      </FlexRow>
+                  }
+                  {isUserCurator &&
+                      <Button primary={false} clickAction={handleShareCurator}>
+                          <ShareIcon/>
+                        {t("share")}
+                      </Button>
+                  }
+                </FlexRow>
               </FlexColumn>
             </FlexItem>
           </FlexRow>
@@ -242,6 +262,12 @@ const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
           </div>
         </div>
       </div>
+      {curator && (
+        <ShareCuratorModal
+          curatorName={curatorName}
+          curatorUrl={typeof window !== 'undefined' ? window.location.href : ''}
+        />
+      )}
     </Drawer>
   );
 };
