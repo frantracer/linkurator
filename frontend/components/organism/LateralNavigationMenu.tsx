@@ -174,9 +174,13 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
                     <FlexRow>
                         <p className={"text-center"}>{t("follow_and_create")}</p>
                     </FlexRow>
-                    <Button href={paths.REGISTER} fitContent={false}>{t("sign_up")}</Button>
+                    <Button href={paths.REGISTER} fitContent={false} primary={true}>
+                      {t("sign_up")}
+                    </Button>
                     <Divider text={t("or")}/>
-                    <Button href={paths.LOGIN} fitContent={false}>{t("log_in")}</Button>
+                    <Button href={paths.LOGIN} fitContent={false} primary={false}>
+                      {t("log_in")}
+                    </Button>
                 </FlexColumn>
             </FlexRow>
         }
