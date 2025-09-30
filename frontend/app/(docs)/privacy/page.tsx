@@ -31,6 +31,7 @@ const PrivacyPolicy: NextPage = () => {
           <li>{t("privacy_policy_info_collect_list.email")}</li>
           <li>{t("privacy_policy_info_collect_list.youtube_account")}</li>
           <li>{t("privacy_policy_info_collect_list.youtube_subscriptions")}</li>
+          <li>{t("privacy_policy_info_collect_list.chat_messages")}</li>
         </ul>
         <p>{t("privacy_policy_info_collect_usage")}</p>
 
@@ -48,6 +49,10 @@ const PrivacyPolicy: NextPage = () => {
         <h2>{t("privacy_policy_protection_title")}</h2>
         <p>{t("privacy_policy_protection_intro")}</p>
         <p>{t("privacy_policy_protection_note")}</p>
+
+        <h2>{t("privacy_policy_third_party_services_title")}</h2>
+        <p>{t("privacy_policy_third_party_services_intro")}</p>
+        <p>{t("privacy_policy_third_party_services_ai")}</p>
 
         <h2>{t("privacy_policy_gdpr_title")}</h2>
         <p>{t("privacy_policy_gdpr_intro")}</p>

@@ -324,7 +324,7 @@
     "tos_subtitle_4": "Intellectual Property",
     "tos_part_4_1": "The original content belongs to its respective owners and is protected by copyright laws and international treaties. Using our service does not grant you ownership of any content you access.",
     "privacy_policy_title": "Privacy Policy",
-    "privacy_policy_date": "Last updated: May 6, 2024",
+    "privacy_policy_date": "Last updated: Sep 30, 2025",
     "privacy_policy_intro": "At Linkurator (\"we\", \"our\"), respecting your privacy is our priority. This Privacy Policy explains how we collect, use, protect, and, in certain circumstances, share your personal information. This policy applies only to information collected through our application and not to information collected offline.",
     "privacy_policy_info_collect_title": "Information We Collect",
     "privacy_policy_info_collect_intro": "The personal information we collect from our users (\"you\") includes:",
@@ -333,7 +333,8 @@
       "last_name": "Last name",
       "email": "Email",
       "youtube_account": "Associated YouTube account",
-      "youtube_subscriptions": "Subscriptions from your YouTube account"
+      "youtube_subscriptions": "Subscriptions from your YouTube account",
+      "chat_messages": "Chat messages and conversations when using our AI assistant feature"
     },
     "privacy_policy_info_collect_usage": "In addition to your personal information, we collect application usage data",
     "privacy_policy_info_usage_title": "Use of Information",
@@ -349,6 +350,9 @@
     "privacy_policy_protection_title": "Protection of Your Information",
     "privacy_policy_protection_intro": "We are committed to protecting your personal information. We implement a variety of security measures to maintain the security of your personal information. However, please note that no security measure is infallible.",
     "privacy_policy_protection_note": "We do not sell, trade, or otherwise transfer your personally identifiable information to third parties, except to comply with a legal obligation.",
+    "privacy_policy_third_party_services_title": "Third-Party Services",
+    "privacy_policy_third_party_services_intro": "Our application uses third-party services to provide certain features:",
+    "privacy_policy_third_party_services_ai": "AI Assistant: Our chatbot feature uses Google's Gemini API to process and respond to your queries. When you use the chatbot, your messages are sent to Google's servers for processing. Google's use of this data is governed by their privacy policy. We recommend reviewing Google's privacy policy to understand how they handle your data.",
     "privacy_policy_gdpr_title": "GDPR Compliance",
     "privacy_policy_gdpr_intro": "At Linkurator, we are committed to data protection and compliance with the European Union's General Data Protection Regulation (GDPR). This section provides additional information relevant to users in the European Union.",
     "privacy_policy_gdpr_legal_basis": "The processing of your personal information is based on the following legal bases:",
