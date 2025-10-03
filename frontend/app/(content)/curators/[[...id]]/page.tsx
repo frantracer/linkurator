@@ -10,18 +10,24 @@ export async function generateMetadata(
 ): Promise<Metadata> {
   const username = (await params).id;
   let title = 'Linkurator';
-  let description = 'Curated recommendations';
+  let description = 'Recomendaciones curadas de enlaces de alta calidad para aprender y mantenerse informado.';
 
   if (username) {
     title = username;
-    description = `Recommendations from ${username}`;
+    description = `Descubre contenido recomendado por ${username} en Linkurator. Explora enlaces, artículos y recursos seleccionados cuidadosamente por tu curador de confianza para mantenerte informado e inspirado.`;
   }
 
   return {
     title: title,
     description: description,
     openGraph: {
-      images: ['/logo_v1_medium.png'],
+      title: title,
+      description: description,
+      images: [{
+        url: 'https://linkurator.com/logo_v1_medium.png',
+        alt: 'Linkurator Logo',
+        type: 'image/png',
+      }],
     },
   }
 }
