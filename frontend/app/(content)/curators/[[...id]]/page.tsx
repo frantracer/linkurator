@@ -20,6 +20,9 @@ export async function generateMetadata(
   return {
     title: title,
     description: description,
+    openGraph: {
+      images: ['/logo_v1_medium.png'],
+    },
   }
 }
 
