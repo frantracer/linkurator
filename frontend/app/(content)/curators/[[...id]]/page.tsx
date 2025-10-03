@@ -25,6 +25,8 @@ export async function generateMetadata(
       description: description,
       images: [{
         url: 'https://linkurator.com/logo_v1_medium.png',
+        width: 400,
+        height: 400,
         alt: 'Linkurator Logo',
         type: 'image/png',
       }],
