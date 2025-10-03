@@ -1,5 +1,4 @@
-import type { Metadata } from 'next';
-import { getCurator } from '../../../../services/curatorService';
+import type {Metadata} from 'next';
 import CuratorPageComponent from './components/CuratorPage';
 
 type CuratorPageParams = {
@@ -7,23 +6,24 @@ type CuratorPageParams = {
 };
 
 export async function generateMetadata(
-  { params }: CuratorPageParams,
+  {params}: CuratorPageParams,
 ): Promise<Metadata> {
-  const id = (await params).id;
-  const defaultTitle = 'Linkurator';
-  let title = defaultTitle;
+  const username = (await params).id;
+  let title = 'Linkurator';
+  let description = 'Curated recommendations';
 
-  if (id) {
-    const curator = await getCurator(id)
-    title = curator ? curator.username : defaultTitle;
+  if (username) {
+    title = username;
+    description = `Recommendations from ${username}`;
   }
 
   return {
     title: title,
+    description: description,
   }
 }
 
-export default async function TopicPage({ params }: CuratorPageParams) {
-  const { id } = await params;
-  return <CuratorPageComponent curatorName={id} />
+export default async function TopicPage({params}: CuratorPageParams) {
+  const {id} = await params;
+  return <CuratorPageComponent curatorName={id}/>
 }
