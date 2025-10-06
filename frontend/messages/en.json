@@ -311,7 +311,16 @@
     "message_limit_reached": "Message limit reached (5/5). Start a new conversation to continue.",
     "messages_remaining": "{remaining} messages remaining",
     "agent_error": "An error occurred while generating a response. Please try again.",
-    "agent_rate_limit_error": "Too many requests, please wait a few minutes.\n\nYou can also sign up to continue using the service immediately."
+    "agent_rate_limit_error": "Too many requests, please wait a few minutes.\n\nYou can also sign up to continue using the service immediately.",
+    "settings": "Settings",
+    "default_filter_settings": "Default filters",
+    "save_filter": "Save filter",
+    "reset_to_default": "Reset",
+    "saving": "Saving...",
+    "filter_saved_successfully": "Filter saved successfully",
+    "error_saving_filter": "Error saving filter",
+    "filter_reset_successfully": "Filter reset successfully",
+    "error_resetting_filter": "Error resetting filter"
   },
   "legal": {
     "tos_title": "Terms of Service",

@@ -18,6 +18,7 @@ import {
   MagnifyingGlassIcon,
   RectangleGroup,
   RefreshIcon,
+  SettingsIcon,
   ThumbsUpFilledIcon,
   UserIconFilled
 } from "../atoms/Icons";
@@ -327,6 +328,19 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
                           </FlexItem>
                       </FlexRow>
                   </MenuItem>}
+                  <MenuItem onClick={() => {
+                    router.push(paths.SETTINGS);
+                    closeMenu();
+                  }} selected={pathname === paths.SETTINGS}>
+                      <FlexRow position={"start"}>
+                          <FlexItem>
+                              <SettingsIcon/>
+                          </FlexItem>
+                          <FlexItem grow={true}>
+                            {t("settings")}
+                          </FlexItem>
+                      </FlexRow>
+                  </MenuItem>
                 </Menu>
             </div>
         }

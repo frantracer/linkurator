@@ -311,7 +311,16 @@
         "message_limit_reached": "Límite de mensajes alcanzado (5/5). Inicia una nueva conversación para continuar.",
         "messages_remaining": "{remaining} mensajes restantes",
         "agent_error": "Error al generar una respuesta. Por favor, inténtalo de nuevo.",
-        "agent_rate_limit_error": "Demasiadas solicitudes, por favor espera unos minutos.\n\nTambién puedes registrarte para seguir usando el servicio de inmediato."
+        "agent_rate_limit_error": "Demasiadas solicitudes, por favor espera unos minutos.\n\nTambién puedes registrarte para seguir usando el servicio de inmediato.",
+        "settings": "Configuración",
+        "default_filter_settings": "Filtros predeterminados",
+        "save_filter": "Guardar filtro",
+        "reset_to_default": "Restablecer",
+        "saving": "Guardando...",
+        "filter_saved_successfully": "Filtro guardado exitosamente",
+        "error_saving_filter": "Error al guardar el filtro",
+        "filter_reset_successfully": "Filtro restablecido exitosamente",
+        "error_resetting_filter": "Error al restablecer el filtro"
     },
     "legal": {
         "tos_title": "Términos del servicio",

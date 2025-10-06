@@ -1,5 +1,6 @@
-import {useState} from "react";
-import {Filters} from "../entities/Filters";
+import {useEffect, useState} from "react";
+import {defaultFilters, Filters} from "../entities/Filters";
+import useUserFilter from "./useUserFilter";
 
 type UseFilters = {
   filters: Filters,
@@ -7,23 +8,21 @@ type UseFilters = {
   resetFilters: () => void,
 }
 
-const defaultFilters: Filters = {
-  textSearch: "",
-  displayHidden: false,
-  displayViewed: false,
-  displayDiscouraged: false,
-  displayRecommended: false,
-  displayWithoutInteraction: true,
-  durationGroup: "custom",
-  minDuration: 2,
-  maxDuration: 999999,
-  excludedSubscriptions: [],
-}
-
 const useFilters = (): UseFilters => {
+  const {userFilter, isLoading} = useUserFilter();
   const [filters, setFilters] = useState<Filters>(defaultFilters);
 
-  return {filters, setFilters, resetFilters: () => setFilters(defaultFilters)}
+  useEffect(() => {
+    if (!isLoading) {
+      setFilters(userFilter);
+    }
+  }, [userFilter, isLoading]);
+
+  return {
+    filters,
+    setFilters,
+    resetFilters: () => setFilters(defaultFilters)
+  }
 };
 
 export default useFilters;

@@ -52,3 +52,16 @@ export const durationOptions: { key: DurationGroup, label: string }[] = [
   {key: "all", label: "any_duration"},
   {key: "custom", label: "custom_duration"}
 ]
+
+export const defaultFilters: Filters = {
+  textSearch: "",
+  displayHidden: false,
+  displayViewed: true,
+  displayDiscouraged: false,
+  displayRecommended: true,
+  displayWithoutInteraction: true,
+  durationGroup: "custom",
+  minDuration: 0,
+  maxDuration: 1000,
+  excludedSubscriptions: [],
+}
