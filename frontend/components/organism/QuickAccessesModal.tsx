@@ -19,6 +19,7 @@ import { paths } from '../../configuration';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { providerIconUrl } from '../../entities/Subscription';
+import { InfoBanner } from '../atoms/InfoBanner';
 
 export const QuickAccessesModalId = 'quick-accesses-modal';
 
@@ -70,19 +71,21 @@ const QuickAccessesModal: React.FC<QuickAccessesModalProps> = ({ onClose }) => {
           autofocus={true}
         />
         <div className={"h-96 w-full overflow-y-auto p-1"}>
-          <FlexColumn>
-            {filteredTopics.length === 0 && filteredSubscriptions.length === 0 && filteredCurators.length === 0 ? (
-              <div className="flex items-center justify-center h-full text-center text-gray-500">
-                {debouncedSearch !== '' ? (
-                  <p>{t('no_search_results')}</p>
-                ) : (
+          {filteredTopics.length === 0 && filteredSubscriptions.length === 0 && filteredCurators.length === 0 ? (
+            <div className="flex items-center justify-center h-full">
+              {debouncedSearch !== '' ? (
+                <InfoBanner>{t('no_search_results')}</InfoBanner>
+              ) : (
+                <InfoBanner>
                   <div className="text-center">
                     <p className="font-medium">{t('search_nothing_here')}</p>
                     <p className="text-sm mt-1">{t('search_follow_first')}</p>
                   </div>
-                )}
-              </div>
-            ) : (
+                </InfoBanner>
+              )}
+            </div>
+          ) : (
+            <FlexColumn>
               <>
                 {filteredTopics.length > 0 &&
                     <Box title={`${t('topics')} (${filteredTopics.length})`}>
@@ -138,8 +141,8 @@ const QuickAccessesModal: React.FC<QuickAccessesModalProps> = ({ onClose }) => {
                     </Box>
                 }
               </>
-            )}
-          </FlexColumn>
+            </FlexColumn>
+          )}
         </div>
       </FlexColumn>
     </Modal>
