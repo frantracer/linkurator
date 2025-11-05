@@ -40,7 +40,7 @@ const SearchBar = (
       <InputText placeholder={placeholder} onClick={handleClick} onChange={setValue} withLeftPadding={true} value={searchValue} autofocus={autofocus}/>
       {searchValue !== "" &&
           <div
-              className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 cursor-pointer bg-base-200 hover:bg-secondary rounded-full"
+              className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 cursor-pointer bg-base-200 hover:bg-secondary rounded-full"
               onClick={() => setValue("")}>
               <CrossIcon/>
           </div>
