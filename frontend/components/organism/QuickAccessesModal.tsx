@@ -49,11 +49,17 @@ const QuickAccessesModal: React.FC<QuickAccessesModalProps> = ({ onClose }) => {
 
   const handleNavigate = (path: string) => {
     router.push(path);
+    setSearchValue('');
+    onClose?.();
+  };
+
+  const handleClose = () => {
+    setSearchValue('');
     onClose?.();
   };
 
   return (
-    <Modal id={QuickAccessesModalId} onClose={onClose}>
+    <Modal id={QuickAccessesModalId} onClose={handleClose}>
 
       <FlexColumn>
         <h1 className="font-bold text-xl w-full text-center">{t('quick_accesses')}</h1>
