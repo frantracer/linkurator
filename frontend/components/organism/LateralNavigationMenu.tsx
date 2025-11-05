@@ -64,7 +64,9 @@ const mapStringToPage = (page: string): CurrentPage => {
     case 'subscriptions':
       return 'subscriptions';
     case 'profile':
-      return 'profile';
+      return 'home';
+    case 'settings':
+      return 'home';
     case 'curators':
       return 'curators';
     case 'chats':
