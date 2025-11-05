@@ -1,7 +1,13 @@
 import React from "react";
 import {hideLateralMenu, isLateralMenuOpen, showLateralMenu} from "../../utilities/lateralMenuAction";
 
-const SWIPE_DELTA = 100;
+const SWIPE_DELTA = 150;
+const MAX_SWIPE_ANGLE = 30; // degrees
+
+type TouchPosition = {
+  x: number,
+  y: number,
+}
 
 type DrawerProps = {
   id: string,
@@ -17,7 +23,7 @@ const Drawer = (
     alwaysOpenOnDesktop = true,
     children
   }: DrawerProps) => {
-  const [touchStartX, setTouchStartX] = React.useState<number>(0);
+  const [touchStart, setTouchStart] = React.useState<TouchPosition>({x: 0, y: 0});
 
   const childrenArray = React.Children.toArray(children);
   const sideContent = childrenArray[0];
@@ -26,7 +32,10 @@ const Drawer = (
   const alwaysOpenClass = alwaysOpenOnDesktop ? "lg:drawer-open" : "";
 
   const handleTouchStart = (event: React.TouchEvent) => {
-    setTouchStartX(event.touches[0].clientX);
+    setTouchStart({
+      x: event.touches[0].clientX,
+      y: event.touches[0].clientY,
+    });
     const sidebarIsOpen = isLateralMenuOpen(id);
     if (sidebarIsOpen) {
       event.stopPropagation();
@@ -35,14 +44,26 @@ const Drawer = (
 
   const handleTouchEnd = (event: React.TouchEvent) => {
     const touchEndX = event.changedTouches[0].clientX;
-    const delta = Math.abs(touchEndX - touchStartX);
-    const swipeRight = touchEndX - touchStartX > 0;
-    const swipeLeft = touchEndX - touchStartX < 0;
+    const touchEndY = event.changedTouches[0].clientY;
+
+    const deltaX = touchEndX - touchStart.x;
+    const deltaY = touchEndY - touchStart.y;
+    const delta = Math.abs(deltaX);
+
+    const swipeRight = deltaX > 0;
+    const swipeLeft = deltaX < 0;
     const menuIsRight = right;
     const menuIsLeft = !right;
     const sidebarIsOpen = isLateralMenuOpen(id);
 
-    if (delta > SWIPE_DELTA) {
+    // Calculate angle from horizontal (in degrees)
+    let angle = Math.abs(Math.atan2(deltaY, deltaX) * 180 / Math.PI);
+    if (menuIsRight) {
+      angle = Math.abs(angle - 180);
+    }
+
+    // Only process swipe if angle is below MAX_SWIPE_ANGLE (more horizontal)
+    if (delta > SWIPE_DELTA && angle < MAX_SWIPE_ANGLE) {
       if (sidebarIsOpen && (menuIsRight && swipeRight || menuIsLeft && swipeLeft)) {
         hideLateralMenu(id);
         event.stopPropagation();
