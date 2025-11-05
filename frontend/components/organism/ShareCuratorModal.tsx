@@ -28,7 +28,9 @@ const ShareCuratorModal = (props: ShareCuratorModalProps) => {
   }
 
   const shareToLinkedIn = () => {
-    const url = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(props.curatorUrl)}`;
+    const text = encodeURIComponent(t("share_curator_linkedin_message"));
+    const curatorUrl = encodeURIComponent(props.curatorUrl);
+    const url = `https://www.linkedin.com/feed/?shareActive=true&shareUrl=${curatorUrl}&text=${(text)}`;
     window.open(url, '_blank');
     handleClose();
   }
