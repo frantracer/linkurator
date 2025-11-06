@@ -194,7 +194,13 @@ const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
           </FlexRow>
           <FlexItem grow={true}/>
           {curator &&
-              <Dropdown position="end" bottom={true} button={<OptionsIcon/>} borderless={true}>
+              <Dropdown
+                  position="end"
+                  bottom={true}
+                  button={<OptionsIcon/>}
+                  borderless={true}
+                  closeOnClickInside={true}
+              >
                   <Menu>
                     {dropdownButtons}
                   </Menu>
