@@ -365,7 +365,7 @@ const DropdownSection = () => {
           <Button fitContent={false}>Item 1</Button>
           <Button fitContent={false}>Item 2</Button>
         </Dropdown>
-        <Dropdown button={<DropdownButton text={"Bottom end"}/>} start={false}>
+        <Dropdown button={<DropdownButton text={"Bottom end"}/>} position="end">
           <Button fitContent={false}>Item 1</Button>
           <Button fitContent={false}>Item 2</Button>
         </Dropdown>
@@ -373,7 +373,7 @@ const DropdownSection = () => {
           <Button fitContent={false}>Item 1</Button>
           <Button fitContent={false}>Item 2</Button>
         </Dropdown>
-        <Dropdown button={<DropdownButton text={"Top end"}/>} bottom={false} start={false}>
+        <Dropdown button={<DropdownButton text={"Top end"}/>} bottom={false} position="end">
           <Button fitContent={false}>Item 1</Button>
           <Button fitContent={false}>Item 2</Button>
         </Dropdown>

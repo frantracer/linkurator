@@ -124,7 +124,7 @@ const EditTopicModal = (props: EditTopicModalProps) => {
             </FlexRow>
           </div>
           <Dropdown
-            start={true} bottom={false}
+            bottom={false}
             button={
               <div className="flex flex-row justify-center items-center w-72">
                 <AddIcon/>

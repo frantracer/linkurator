@@ -144,7 +144,6 @@ const AssignTopicModal = (props: AssignTopicModalProps) => {
         </Box>
         <FlexRow hideOverflow={false} position={"center"}>
           <Dropdown
-            start={true}
             bottom={false}
             button={
               <FlexRow>
