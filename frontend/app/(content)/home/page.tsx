@@ -27,13 +27,13 @@ const HomePageComponent = () => {
   const {subscriptions} = useSubscriptions(profile);
   const {topics} = useTopics(profile, profileIsLoading);
   const {filters} = useFilters();
-  const {latestItems, isLoading: latestItemsLoading} = useLatestSubscriptionItems(subscriptions, 10, filters);
-  const {latestFavoriteItems, isLoading: latestFavoriteItemsLoading} = useLatestFavoriteTopicItems(topics, 10, filters);
+  const {latestItems, isLoading: latestItemsLoading} = useLatestSubscriptionItems(subscriptions, 20, filters);
+  const {latestFavoriteItems, isLoading: latestFavoriteItemsLoading} = useLatestFavoriteTopicItems(topics, 20, filters);
   const {curators} = useCurators(profile, profileIsLoading);
   const {
     latestCuratorItems,
     isLoading: latestCuratorItemsLoading
-  } = useLatestFollowedCuratorItems(curators, 10, filters);
+  } = useLatestFollowedCuratorItems(curators, 20, filters);
 
   // Get favorite topics and followed curators
   const hasSubscriptions = subscriptions.length > 0;
