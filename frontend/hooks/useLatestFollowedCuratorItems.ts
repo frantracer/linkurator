@@ -43,8 +43,13 @@ const useLatestFollowedCuratorItems = (
       const allItemsArrays = await Promise.all(itemPromises);
       const allItems = allItemsArrays.flat();
 
+      // Remove duplicates based on uuid
+      const uniqueItems = Array.from(
+        new Map(allItems.map(item => [item.uuid, item])).values()
+      );
+
       // Sort by publication date (newest first) and take the limit
-      return allItems
+      return uniqueItems
         .sort((a, b) => new Date(b.published_at).getTime() - new Date(a.published_at).getTime())
         .slice(0, limit);
     },
