@@ -19,6 +19,7 @@ import ItemCardSkeleton from "./ItemCardSkeleton";
 import Miniature from "../atoms/Miniature";
 import {providerIconUrl} from "../../entities/Subscription";
 import {useTranslations} from "next-intl";
+import AvatarGroup from "../atoms/AvatarGroup";
 
 type VideoCardProps = {
   item: SubscriptionItem;
@@ -119,6 +120,14 @@ const VideoCard = (
                   <Miniature src={providerIconUrl(item.subscription.provider)} alt={item.subscription.provider}/>
                   <Miniature src={item.subscription.thumbnail} alt={item.subscription.name}/>
                   <Link href={paths.SUBSCRIPTIONS + "/" + item.subscription.uuid}>{item.subscription.name}</Link>
+              </div>
+          }
+          {item.recommended_by && item.recommended_by.length > 0 &&
+              <div className="flex gap-x-2 items-center">
+                  <span className="text-sm text-base-content/70">{t("recommended_by")}:</span>
+                  <AvatarGroup users={item.recommended_by.map(
+                    curator => ({id: curator.id, username: curator.username, avatarUrl: curator.avatar_url})
+                  )} maxDisplay={3}/>
               </div>
           }
           <div className="flex flex-column">

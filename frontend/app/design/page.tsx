@@ -252,7 +252,13 @@ const CardSection = () => {
     discouraged: false,
     viewed: false,
     hidden: false,
-    duration: 0
+    duration: 0,
+    recommended_by: [
+      {id: "1", username: "user1", avatar_url: "/logo_v1_medium.png", followed: false},
+      {id: "2", username: "user2", avatar_url: "/logo_v1_medium.png", followed: true},
+      {id: "3", username: "user3", avatar_url: "/logo_v1_medium.png", followed: false},
+      {id: "4", username: "user4", avatar_url: "/logo_v1_medium.png", followed: true}
+    ]
   }
 
   return (

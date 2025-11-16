@@ -42,6 +42,7 @@ const mapJsonItemToSubscriptionItem = (json: Record<string, any>): SubscriptionI
     viewed: json.viewed,
     hidden: json.hidden,
     duration: json.duration,
+    recommended_by: [],
   };
 }
 

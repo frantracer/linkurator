@@ -1,4 +1,5 @@
 import {Subscription} from "./Subscription";
+import {Curator} from "./Curators";
 
 export type SubscriptionItem = {
   uuid: string;
@@ -13,6 +14,7 @@ export type SubscriptionItem = {
   viewed: boolean;
   hidden: boolean;
   duration: undefined | number;
+  recommended_by: Curator[];
 };
 
 export function hasInteraction(item: SubscriptionItem) {
