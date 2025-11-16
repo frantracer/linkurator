@@ -32,7 +32,7 @@ const VideoCardGrid = (
     filters,
     isBeingScanned = false,
     scanningEntityName = "",
-    withSubscription = false
+    withSubscription = true
   }: VideoCardGridProps
 ) => {
   const {set: invalidCards, add: addInvalidCard} = useSet<string>();
