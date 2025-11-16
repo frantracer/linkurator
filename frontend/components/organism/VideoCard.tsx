@@ -112,11 +112,12 @@ const VideoCard = (
           }
         </figure>
         <div className="card-body">
-          <h2 className="card-title cursor-pointer" onClick={() => handleOpenItem(item.url)}>
+          <h2 className="card-title cursor-pointer hover:text-primary"
+              onClick={() => handleOpenItem(item.url)}>
             {item.name}
           </h2>
           {withSubscription &&
-              <div className="flex gap-x-2 items-center cursor-pointer">
+              <div className="flex gap-x-2 items-center cursor-pointer hover:text-primary">
                   <Miniature src={providerIconUrl(item.subscription.provider)} alt={item.subscription.provider}/>
                   <Miniature src={item.subscription.thumbnail} alt={item.subscription.name}/>
                   <Link href={paths.SUBSCRIPTIONS + "/" + item.subscription.uuid}>{item.subscription.name}</Link>
@@ -134,42 +135,50 @@ const VideoCard = (
             <p>{convertPublishedToAgoText(item.published_at)}</p>
             {withInteractions &&
                 <div className="card-actions justify-end">
-                    <SwapButton
-                        defaultChecked={item.discouraged}
-                        onChange={
-                          (isChecked) => onChangeSwapButton &&
-                            onChangeSwapButton(item.uuid, InteractionType.Discouraged, isChecked).then(onChange)
-                        }
-                        tooltip={item.discouraged ? t("mark_as_not_recommended") : t("mark_as_not_recommended")}>
-                        <ThumbsDownFilledIcon/>
-                        <ThumbsDownIcon/>
-                    </SwapButton>
-                    <SwapButton
-                        defaultChecked={item.recommended}
-                        onChange={
-                          (isChecked) => onChangeSwapButton &&
-                            onChangeSwapButton(item.uuid, InteractionType.Recommended, isChecked).then(onChange)
-                        }
-                        tooltip={item.recommended ? t("not_recommended") : t("mark_as_recommended")}>
-                        <ThumbsUpFilledIcon/>
-                        <ThumbsUpIcon/>
-                    </SwapButton>
-                    <SwapButton
-                        defaultChecked={item.hidden}
-                        onChange={(isChecked) => onChangeSwapButton &&
-                          onChangeSwapButton(item.uuid, InteractionType.Hidden, isChecked).then(onChange)}
-                        tooltip={item.hidden ? t("mark_as_not_archived") : t("mark_as_archived")}>
-                        <ArchiveBoxFilledIcon/>
-                        <ArchiveBoxIcon/>
-                    </SwapButton>
-                    <SwapButton
-                        defaultChecked={item.viewed}
-                        onChange={(isChecked) => onChangeSwapButton &&
-                          onChangeSwapButton(item.uuid, InteractionType.Viewed, isChecked).then(onChange)}
-                        tooltip={item.viewed ? t("mark_as_not_viewed") : t("mark_as_viewed")}>
-                        <CheckCircleFilledIcon/>
-                        <CheckCircleIcon/>
-                    </SwapButton>
+                    <div className={"hover:text-primary"}>
+                        <SwapButton
+                            defaultChecked={item.discouraged}
+                            onChange={
+                              (isChecked) => onChangeSwapButton &&
+                                onChangeSwapButton(item.uuid, InteractionType.Discouraged, isChecked).then(onChange)
+                            }
+                            tooltip={item.discouraged ? t("mark_as_not_recommended") : t("mark_as_not_recommended")}>
+                            <ThumbsDownFilledIcon/>
+                            <ThumbsDownIcon/>
+                        </SwapButton>
+                    </div>
+                    <div className={"hover:text-primary"}>
+                        <SwapButton
+                            defaultChecked={item.recommended}
+                            onChange={
+                              (isChecked) => onChangeSwapButton &&
+                                onChangeSwapButton(item.uuid, InteractionType.Recommended, isChecked).then(onChange)
+                            }
+                            tooltip={item.recommended ? t("not_recommended") : t("mark_as_recommended")}>
+                            <ThumbsUpFilledIcon/>
+                            <ThumbsUpIcon/>
+                        </SwapButton>
+                    </div>
+                    <div className={"hover:text-primary"}>
+                        <SwapButton
+                            defaultChecked={item.hidden}
+                            onChange={(isChecked) => onChangeSwapButton &&
+                              onChangeSwapButton(item.uuid, InteractionType.Hidden, isChecked).then(onChange)}
+                            tooltip={item.hidden ? t("mark_as_not_archived") : t("mark_as_archived")}>
+                            <ArchiveBoxFilledIcon/>
+                            <ArchiveBoxIcon/>
+                        </SwapButton>
+                    </div>
+                    <div className={"hover:text-primary"}>
+                        <SwapButton
+                            defaultChecked={item.viewed}
+                            onChange={(isChecked) => onChangeSwapButton &&
+                              onChangeSwapButton(item.uuid, InteractionType.Viewed, isChecked).then(onChange)}
+                            tooltip={item.viewed ? t("mark_as_not_viewed") : t("mark_as_viewed")}>
+                            <CheckCircleFilledIcon/>
+                            <CheckCircleIcon/>
+                        </SwapButton>
+                    </div>
                 </div>
             }
           </div>
