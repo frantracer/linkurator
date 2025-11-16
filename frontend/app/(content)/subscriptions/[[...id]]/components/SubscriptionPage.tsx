@@ -22,7 +22,7 @@ import Drawer from "../../../../../components/molecules/Drawer";
 import TopTitle from "../../../../../components/molecules/TopTitle";
 import AssignTopicModal, {AssignTopicModalId} from "../../../../../components/organism/AssignTopicModal";
 import SubscriptionDetails, {SUBSCRIPTION_DETAILS_ID} from "../../../../../components/organism/SubscriptionDetails";
-import SubscriptionVideoCardGrid from "../../../../../components/organism/SubscriptionVideoCardGrid";
+import VideoCardGrid from "../../../../../components/organism/VideoCardGrid";
 import {paths} from "../../../../../configuration";
 import {providerIconUrl, providerPrettyName} from "../../../../../entities/Subscription";
 import useFilters from "../../../../../hooks/useFilters";
@@ -281,18 +281,21 @@ const SubscriptionPageComponent = ({subscriptionId}: { subscriptionId: string })
               <span>{t("subscription_not_exist")}</span>
           </div>
       }
-      <SubscriptionVideoCardGrid
-        refreshItem={refreshSubscriptionItem}
-        fetchMoreItems={fetchMoreItems}
-        topics={topics}
-        subscription={selectedSubscription}
-        items={subscriptionsItems}
-        filters={debouncedFilters}
-        showInteractions={isUserLogged}
-        isLoading={isLoading}
-        isFinished={isFinished}
-        handleScroll={handleGridScroll}
-      />
+      {selectedSubscription &&
+        <VideoCardGrid
+          refreshItem={refreshSubscriptionItem}
+          fetchMoreItems={fetchMoreItems}
+          items={subscriptionsItems}
+          filters={debouncedFilters}
+          showInteractions={isUserLogged}
+          isLoading={isLoading}
+          isFinished={isFinished}
+          handleScroll={handleGridScroll}
+          isBeingScanned={selectedSubscription.isBeingScanned}
+          scanningEntityName={selectedSubscription.name}
+          withSubscription={false}
+        />
+      }
       {selectedSubscription &&
           <AssignTopicModal topics={topics}
                             subscription={selectedSubscription}

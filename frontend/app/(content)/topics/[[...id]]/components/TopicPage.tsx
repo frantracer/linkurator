@@ -26,7 +26,7 @@ import DeleteTopicConfirmationModal, {
 } from "../../../../../components/organism/DeleteTopicConfirmationModal";
 import EditTopicModal, {EditTopicModalId} from "../../../../../components/organism/EditTopicModal";
 import TopicDetails, {TOPIC_DETAILS_ID} from "../../../../../components/organism/TopicDetails";
-import TopicVideoCardGrid from "../../../../../components/organism/TopicVideoCardGrid";
+import VideoCardGrid from "../../../../../components/organism/VideoCardGrid";
 import {paths} from "../../../../../configuration";
 import {isTopicScanned} from "../../../../../entities/Topic";
 import useFilters from "../../../../../hooks/useFilters";
@@ -305,17 +305,17 @@ const TopicPageComponent = ({topicId}: { topicId: string }) => {
       }
       {
         selectedTopic &&
-          <TopicVideoCardGrid topic={selectedTopic}
+          <VideoCardGrid
                               items={topicItems}
                               fetchMoreItems={fetchMoreItems}
                               refreshItem={refreshTopicItem}
-                              subscriptions={topicSubscriptions}
                               filters={debouncedFilters}
                               isLoading={isLoading}
-                              topicIsFinished={isFinished}
+                              isFinished={isFinished}
                               handleScroll={handleGridScroll}
-                              isTopicBeingScanned={isTopicBeingScanned}
-                              displayInteractions={isUserLogged}
+                              isBeingScanned={isTopicBeingScanned}
+                              scanningEntityName={selectedTopic.name}
+                              showInteractions={isUserLogged}
           />
       }
       {
