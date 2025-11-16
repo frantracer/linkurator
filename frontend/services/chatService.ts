@@ -1,6 +1,7 @@
 import {configuration} from "../configuration";
 import {v4 as uuidv4} from 'uuid';
 import {ChatConversation, ChatMessage} from "../entities/Chat";
+import {mapJsonItemToSubscriptionItem} from "./subscriptionService";
 
 export class ChatRateLimitError extends Error {
   constructor(message: string) {
@@ -55,7 +56,9 @@ export const getChat = async (conversationId: string): Promise<ChatConversation 
       content: msg.content,
       sender: msg.role,
       timestamp: new Date(msg.timestamp),
-      items: msg.items || [],
+      items: msg.items.map((item: any) => {
+        return mapJsonItemToSubscriptionItem(item)
+      }) || [],
       topicsWereCreated: msg.topics_were_created || false,
     })) as ChatMessage[];
 

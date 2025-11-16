@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import ItemCard from '../atoms/ItemCard';
+import VideoCard from '../organism/VideoCard';
 import { SubscriptionItem } from '../../entities/SubscriptionItem';
 import { ChevronDownIcon, ChevronUpIcon } from '../atoms/Icons';
 
@@ -12,6 +12,7 @@ type ItemCarouselProps = {
   collapsible?: boolean;
   defaultExpanded?: boolean;
   skeletonCount?: number;
+  refreshItem?: (itemId: string) => void;
 };
 
 const ItemCarousel = ({
@@ -21,6 +22,7 @@ const ItemCarousel = ({
   collapsible = false,
   defaultExpanded = false,
   skeletonCount = 10,
+  refreshItem = () => {},
 }: ItemCarouselProps) => {
   const [isExpanded, setIsExpanded] = useState(defaultExpanded);
 
@@ -36,11 +38,11 @@ const ItemCarousel = ({
     return (
       <div className={containerClass}>
         <h2 className={`${titleClass}`}>{title}</h2>
-        <div className={`flex gap-3 overflow-x-auto pb-2`}>
+        <div className={`flex gap-3 overflow-x-auto`}>
           {Array.from({ length: skeletonCount }).map((_, index) => (
             <div
               key={index}
-              className="flex-shrink-0 w-48 h-32 bg-base-300 rounded-lg animate-pulse"
+              className="flex-shrink-0 w-80 h-96 bg-base-300 rounded-lg animate-pulse"
             />
           ))}
         </div>
@@ -76,14 +78,18 @@ const ItemCarousel = ({
       {shouldShowContent && (
         <div className={collapsible ? "mt-2" : ""}>
           <div
-            className={`flex gap-3 overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-base-300 scrollbar-track-transparent`}
+            className={`flex gap-4 overflow-x-auto py-3 scrollbar-thin scrollbar-thumb-base-300 scrollbar-track-transparent`}
             onTouchStart={handleTouchStart}
           >
             {items.map((item) => (
-              <ItemCard
-                key={item.uuid}
-                item={item}
-              />
+              <div key={item.uuid} className="flex-shrink-0">
+                <VideoCard
+                  item={item}
+                  withSubscription={true}
+                  withInteractions={true}
+                  onChange={() => refreshItem(item.uuid)}
+                />
+              </div>
             ))}
           </div>
         </div>

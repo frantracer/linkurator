@@ -15,7 +15,7 @@ export type SubscriptionItemsResponse = {
   nextPage: URL | undefined;
 }
 
-const mapJsonItemToSubscriptionItem = (json: Record<string, any>): SubscriptionItem => {
+export const mapJsonItemToSubscriptionItem = (json: Record<string, any>): SubscriptionItem => {
   const published_at = new Date(json.published_at);
   if (isNaN(published_at.getTime())) {
     throw new Error("Published at is not a valid date");
