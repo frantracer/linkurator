@@ -77,16 +77,6 @@ const TopicPageComponent = ({topicId}: { topicId: string }) => {
   const isTopicBeingScanned = selectedTopic ? !isTopicScanned(selectedTopic, subscriptions) : false
   const isUserLogged = !!profile
 
-  const handleGridScroll = (event: React.UIEvent<HTMLElement>) => {
-    const element = event.currentTarget
-    if (isFinished || isLoading) {
-      return
-    }
-    if ((element.scrollTop + element.clientHeight) / element.scrollHeight >= 0.90) {
-      fetchMoreItems()
-    }
-  }
-
   const handleShowFilters = () => {
     showLateralMenu(TOPIC_DETAILS_ID);
   }
@@ -306,16 +296,15 @@ const TopicPageComponent = ({topicId}: { topicId: string }) => {
       {
         selectedTopic &&
           <VideoCardGrid
-                              items={topicItems}
-                              fetchMoreItems={fetchMoreItems}
-                              refreshItem={refreshTopicItem}
-                              filters={debouncedFilters}
-                              isLoading={isLoading}
-                              isFinished={isFinished}
-                              handleScroll={handleGridScroll}
-                              isBeingScanned={isTopicBeingScanned}
-                              scanningEntityName={selectedTopic.name}
-                              showInteractions={isUserLogged}
+              items={topicItems}
+              fetchMoreItems={fetchMoreItems}
+              refreshItem={refreshTopicItem}
+              filters={debouncedFilters}
+              isLoading={isLoading}
+              isFinished={isFinished}
+              isBeingScanned={isTopicBeingScanned}
+              scanningEntityName={selectedTopic.name}
+              showInteractions={isUserLogged}
           />
       }
       {

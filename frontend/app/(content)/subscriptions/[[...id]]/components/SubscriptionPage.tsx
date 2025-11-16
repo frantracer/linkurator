@@ -76,16 +76,6 @@ const SubscriptionPageComponent = ({subscriptionId}: { subscriptionId: string })
     isFinished
   } = useSubscriptionItems(selectedSubscription, debouncedFilters);
 
-  const handleGridScroll = (event: React.UIEvent<HTMLElement>) => {
-    const element = event.currentTarget
-    if (isFinished || isLoading) {
-      return
-    }
-    if ((element.scrollTop + element.clientHeight) / element.scrollHeight >= 0.90) {
-      fetchMoreItems()
-    }
-  }
-
   const handleShowFilters = () => {
     showLateralMenu(SUBSCRIPTION_DETAILS_ID);
   }
@@ -290,7 +280,6 @@ const SubscriptionPageComponent = ({subscriptionId}: { subscriptionId: string })
           showInteractions={isUserLogged}
           isLoading={isLoading}
           isFinished={isFinished}
-          handleScroll={handleGridScroll}
           isBeingScanned={selectedSubscription.isBeingScanned}
           scanningEntityName={selectedSubscription.name}
           withSubscription={false}

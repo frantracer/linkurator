@@ -16,7 +16,6 @@ type VideoCardGridProps = {
   showInteractions: boolean;
   isLoading: boolean;
   isFinished: boolean;
-  handleScroll: (event: React.UIEvent<HTMLElement>) => void;
   filters?: Filters;
   isBeingScanned?: boolean;
   scanningEntityName?: string;
@@ -27,6 +26,16 @@ const VideoCardGrid = (props: VideoCardGridProps) => {
   const {set: invalidCards, add: addInvalidCard} = useSet<string>();
   const t = useTranslations("common");
   const cards = [];
+
+  const handleGridScroll = (event: React.UIEvent<HTMLElement>) => {
+    const element = event.currentTarget;
+    if (props.isFinished || props.isLoading) {
+      return;
+    }
+    if ((element.scrollTop + element.clientHeight) / element.scrollHeight >= 0.90) {
+      props.fetchMoreItems();
+    }
+  };
 
   for (let i = 0; i < props.items.length; i++) {
     const item = props.items[i];
@@ -52,7 +61,7 @@ const VideoCardGrid = (props: VideoCardGridProps) => {
   }
 
   return (
-    <main onScroll={props.handleScroll} className="flex flex-col w-full overflow-auto">
+    <main onScroll={handleGridScroll} className="flex flex-col w-full overflow-auto">
       {props.isBeingScanned &&
         <div className="flex items-center justify-center h-dvh">
           <FlexRow position={"center"}>

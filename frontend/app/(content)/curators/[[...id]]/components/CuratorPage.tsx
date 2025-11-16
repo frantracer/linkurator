@@ -73,16 +73,6 @@ const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
 
   const curatorThumbnail = curator ? curator.avatar_url : "";
 
-  const handleGridScroll = (event: React.UIEvent<HTMLElement>) => {
-    const element = event.currentTarget
-    if (isFinished || isLoading) {
-      return
-    }
-    if ((element.scrollTop + element.clientHeight) / element.scrollHeight >= 0.90) {
-      fetchMoreItems()
-    }
-  }
-
   const handleFilter = () => {
     showLateralMenu(CURATOR_DETAILS_ID);
   }
@@ -224,7 +214,6 @@ const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
               showInteractions={isUserLogged}
               isLoading={isLoading}
               isFinished={isFinished}
-              handleScroll={handleGridScroll}
             />
           </div>
         )}
@@ -251,7 +240,6 @@ const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
               showInteractions={isUserLogged}
               isLoading={isLoading}
               isFinished={isFinished}
-              handleScroll={handleGridScroll}
             />
           </FlexColumn>
         </div>
