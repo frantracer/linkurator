@@ -13,6 +13,7 @@ import Box from "../../../components/atoms/Box";
 import FlexItem from "../../../components/atoms/FlexItem";
 import {useTranslations} from "next-intl";
 import useUserFilter from "../../../hooks/useUserFilter";
+import LanguageSelector from "../../../components/molecules/LanguageSelector";
 import Checkbox from "../../../components/atoms/Checkbox";
 import {InfoBanner} from "../../../components/atoms/InfoBanner";
 import {ErrorBanner} from "../../../components/atoms/ErrorBanner";
@@ -24,6 +25,7 @@ import {
   ThumbsDownFilledIcon,
   ThumbsUpFilledIcon
 } from "../../../components/atoms/Icons";
+import Divider from "../../../components/atoms/Divider";
 
 const NOTIFICATION_TIMEOUT = 3000;
 
@@ -249,6 +251,10 @@ const SettingsPage: NextPage = () => {
                             </ErrorBanner>
                         }
                       </FlexColumn>
+                    </Box>
+                    <Divider/>
+                    <Box title={t("language")}>
+                      <LanguageSelector/>
                     </Box>
                   </FlexColumn>
                 </div>

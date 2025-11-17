@@ -20,7 +20,6 @@ import {ErrorBanner} from "../../../components/atoms/ErrorBanner";
 import {InfoBanner} from "../../../components/atoms/InfoBanner";
 import {useDebounce} from "../../../hooks/useDebounce";
 import FlexItem from "../../../components/atoms/FlexItem";
-import LanguageSelector from "../../../components/molecules/LanguageSelector";
 import {useTranslations} from "next-intl";
 
 const NOTIFICATION_TIMEOUT = 3000;
@@ -193,9 +192,6 @@ const ProfilePage: NextPage = () => {
                         <span className={"font-bold"}>{t("email")}</span>
                         <InputText value={email} disabled={true}/>
                       </FlexColumn>
-                    </Box>
-                    <Box title={t("language")}>
-                      <LanguageSelector/>
                     </Box>
                     <Divider/>
                     <Box title={t("session")}>
