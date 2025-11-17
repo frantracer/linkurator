@@ -99,9 +99,9 @@ const VideoCard = (
     )
   } else {
     return (
-      <div className="card card-compact rounded-lg w-80 bg-base-200 hover:scale-105 shadow-md border border-base-300 hover:shadow-xl transition-shadow duration-200">
+      <div className="card card-compact rounded-lg w-80 bg-base-200 hover:scale-105 shadow-md border border-base-300 hover:shadow-xl hover:border-primary duration-200">
         <figure className="aspect-video h-48">
-          <img className="h-full"
+          <img className="h-full hover:cursor-pointer"
                src={item.thumbnail}
                alt={item.name}
                onClick={() => handleOpenItem(item.url)}
