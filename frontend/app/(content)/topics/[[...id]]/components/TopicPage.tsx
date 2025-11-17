@@ -210,6 +210,14 @@ const TopicPageComponent = ({topicId}: { topicId: string }) => {
       )
     }
   }
+  dropdownButtons.push(
+    <MenuItem key={"topics-filter"} onClick={handleShowFilters} hideMenuOnClick={true}>
+      <FlexRow position="center">
+        <FunnelIcon/>
+        {t("filter")}
+      </FlexRow>
+    </MenuItem>
+  )
 
   return (
     <Drawer id={TOPIC_DETAILS_ID} right={true} alwaysOpenOnDesktop={false}>

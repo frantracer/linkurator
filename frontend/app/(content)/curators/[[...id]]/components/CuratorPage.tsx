@@ -116,6 +116,14 @@ const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
         )
       }
     }
+    dropdownButtons.push(
+      <MenuItem key={"curators-filter"} onClick={handleFilter} hideMenuOnClick={true}>
+        <FlexRow position="center">
+          <FunnelIcon/>
+          {t("filter")}
+        </FlexRow>
+      </MenuItem>
+    )
   }
 
   useEffect(() => {

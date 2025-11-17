@@ -183,6 +183,14 @@ const SubscriptionPageComponent = ({subscriptionId}: { subscriptionId: string })
       </MenuItem>
     )
   }
+  dropdownButtons.push(
+    <MenuItem key={"subscriptions-filter"} onClick={handleShowFilters} hideMenuOnClick={true}>
+      <FlexRow position="center">
+        <FunnelIcon/>
+        {t("filter")}
+      </FlexRow>
+    </MenuItem>
+  )
 
   return (
     <Drawer id={SUBSCRIPTION_DETAILS_ID} right={true} alwaysOpenOnDesktop={false}>
