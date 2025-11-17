@@ -175,6 +175,7 @@ const mapJsonToCuratorItemsResponse = (json: Record<string, any>): CuratorItemsR
         viewed: element.viewed,
         hidden: element.hidden,
         duration: element.duration,
+        recommended_by: element.recommended_by || [],
       };
     }),
     nextPage: nextPage,

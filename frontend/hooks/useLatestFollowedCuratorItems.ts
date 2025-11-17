@@ -33,7 +33,11 @@ const useLatestFollowedCuratorItems = (
             Number.MAX_SAFE_INTEGER, // max duration
             filters.textSearch || ""
           );
-          return response.elements;
+          // Add curator to recommended_by for each item
+          return response.elements.map(item => ({
+            ...item,
+            recommended_by: [...(item.recommended_by || []), curator]
+          }));
         } catch (error) {
           console.error(`Error fetching items for curator ${curator.id}:`, error);
           return [];
@@ -43,10 +47,20 @@ const useLatestFollowedCuratorItems = (
       const allItemsArrays = await Promise.all(itemPromises);
       const allItems = allItemsArrays.flat();
 
-      // Remove duplicates based on uuid
-      const uniqueItems = Array.from(
-        new Map(allItems.map(item => [item.uuid, item])).values()
-      );
+      // Remove duplicates based on uuid and merge recommended_by arrays
+      const itemsMap = new Map<string, SubscriptionItem>();
+      allItems.forEach(item => {
+        const existing = itemsMap.get(item.uuid);
+        if (existing) {
+          // Merge recommended_by arrays, avoiding duplicate curators
+          const curatorIds = new Set(existing.recommended_by?.map(c => c.id) || []);
+          const newCurators = item.recommended_by?.filter(c => !curatorIds.has(c.id)) || [];
+          existing.recommended_by = [...(existing.recommended_by || []), ...newCurators];
+        } else {
+          itemsMap.set(item.uuid, item);
+        }
+      });
+      const uniqueItems = Array.from(itemsMap.values());
 
       // Sort by publication date (newest first) and take the limit
       return uniqueItems
