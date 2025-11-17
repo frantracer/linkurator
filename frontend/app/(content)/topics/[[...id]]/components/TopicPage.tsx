@@ -237,7 +237,7 @@ const TopicPageComponent = ({topicId}: { topicId: string }) => {
                 <h1 className="text-xl font-bold whitespace-nowrap truncate">
                   {topicName}
                 </h1>
-                <Button primary={false} fitContent={true} clickAction={handleShowFilters} tooltip={t("filter")}>
+                <Button primary={false} fitContent={true} clickAction={handleShowFilters} tooltip={t("filter")} hideOnMobile={true}>
                   <FunnelIcon/>
                 </Button>
               </div>

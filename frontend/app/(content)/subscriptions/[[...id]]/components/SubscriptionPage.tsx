@@ -211,7 +211,7 @@ const SubscriptionPageComponent = ({subscriptionId}: { subscriptionId: string })
                 <h1 className="text-xl font-bold whitespace-nowrap truncate">
                   {subscriptionName}
                 </h1>
-                <Button primary={false} fitContent={true} clickAction={handleShowFilters} tooltip={t("filter")}>
+                <Button primary={false} fitContent={true} clickAction={handleShowFilters} tooltip={t("filter")} hideOnMobile={true}>
                   <FunnelIcon/>
                 </Button>
               </div>

@@ -7,6 +7,7 @@ type ButtonProps = {
   href?: string
   relatedModalId?: string
   showOnlyOnMobile?: boolean
+  hideOnMobile?: boolean
   fitContent?: boolean
   disabled?: boolean
   primary?: boolean
@@ -24,6 +25,7 @@ const Button = (
     href = undefined,
     relatedModalId = undefined,
     showOnlyOnMobile = false,
+    hideOnMobile = false,
     fitContent = true,
     disabled = false,
     primary = true,
@@ -40,6 +42,7 @@ const Button = (
       "flex-1": !fitContent,
       "w-full": !fitContent,
       "lg:hidden": showOnlyOnMobile,
+      "hidden lg:flex": hideOnMobile,
       "opacity-50 cursor-not-allowed": disabled,
       "btn-ghost": borderless,
       "text-primary": borderless,
