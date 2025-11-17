@@ -12,19 +12,24 @@ const ThemeToogleButton: React.FC = () => {
   const [theme, setTheme] = useState<Theme>(Theme.DARK);
 
   const handleToggle = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.checked) {
-      setTheme(Theme.LIGHT);
-    } else {
-      setTheme(Theme.DARK);
-    }
+    const theme = e.target.checked ? Theme.LIGHT : Theme.DARK;
+    setTheme(theme);
+    localStorage.setItem("theme", e.target.checked ? Theme.LIGHT : Theme.DARK);
   };
 
   useEffect(() => {
-      if (defaultTheme === undefined) {
+      const storedTheme = localStorage.getItem("theme") as Theme | null;
+
+      if (storedTheme) {
+        setTheme(storedTheme);
+      }
+
+      if (defaultTheme === undefined && storedTheme === null) {
         const isDarkTheme = () => window.matchMedia("(prefers-color-scheme: dark)").matches;
         const theme = isDarkTheme() ? Theme.DARK : Theme.LIGHT;
         setDefaultTheme(theme);
         setTheme(theme);
+        localStorage.setItem("theme", theme);
       }
       (document.querySelector("html") as HTMLElement).setAttribute("data-theme", theme);
     },
