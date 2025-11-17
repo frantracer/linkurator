@@ -92,6 +92,7 @@
     "session": "Session",
     "logout": "Log out",
     "language": "Language",
+    "theme": "Theme",
     "privacy": "Privacy",
     "delete_account": "Delete account",
     "error_changing_first_name": "Error changing first name",

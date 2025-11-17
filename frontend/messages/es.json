@@ -92,6 +92,7 @@
         "session": "Sesión",
         "logout": "Cerrar sesión",
         "language": "Idioma",
+        "theme": "Tema",
         "privacy": "Privacidad",
         "delete_account": "Borrar cuenta",
         "error_changing_first_name": "Error cambiando el nombre",
