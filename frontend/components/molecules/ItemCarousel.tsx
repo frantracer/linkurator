@@ -78,7 +78,7 @@ const ItemCarousel = ({
       {shouldShowContent && (
         <div className={collapsible ? "mt-2" : ""}>
           <div
-            className={`flex gap-4 overflow-x-auto py-3 scrollbar-thin scrollbar-thumb-base-300 scrollbar-track-transparent`}
+            className={`flex gap-4 overflow-x-auto px-2 py-3 scrollbar-thin scrollbar-thumb-base-300 scrollbar-track-transparent`}
             onTouchStart={handleTouchStart}
           >
             {items.map((item) => (
@@ -88,6 +88,7 @@ const ItemCarousel = ({
                   withSubscription={true}
                   withInteractions={true}
                   onChange={() => refreshItem(item.uuid)}
+                  limitTitleLength={true}
                 />
               </div>
             ))}

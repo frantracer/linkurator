@@ -28,6 +28,7 @@ type VideoCardProps = {
   withInteractions?: boolean;
   onChange?: () => void;
   onChangeSwapButton?: (itemUuid: string, interactionType: InteractionType, checked: boolean) => Promise<void>;
+  limitTitleLength?: boolean;
 };
 
 const convert_seconds_to_hh_mm_ss = (seconds: number) => {
@@ -60,7 +61,8 @@ const VideoCard = (
     withSubscription = true,
     withInteractions = true,
     onChange = undefined,
-    onChangeSwapButton = defaultOnChangeSwapButton
+    onChangeSwapButton = defaultOnChangeSwapButton,
+    limitTitleLength = false
   }: VideoCardProps) => {
   const {ref, inView} = useInView({threshold: 0});
   const t = useTranslations("common");
@@ -97,7 +99,7 @@ const VideoCard = (
     )
   } else {
     return (
-      <div className="card card-compact w-80 bg-base-200 shadow-base-100 shadow-xl hover:scale-105">
+      <div className="card card-compact rounded-lg w-80 bg-base-200 hover:scale-105 shadow-md border border-base-300 hover:shadow-xl transition-shadow duration-200">
         <figure className="aspect-video h-48">
           <img className="h-full"
                src={item.thumbnail}
@@ -111,13 +113,14 @@ const VideoCard = (
             </span>
           }
         </figure>
-        <div className="card-body">
-          <h2 className="card-title cursor-pointer hover:text-primary"
-              onClick={() => handleOpenItem(item.url)}>
+        <div className="card-body m-1">
+          <h2 className={`card-title text-sm cursor-pointer hover:text-primary ${limitTitleLength ? 'line-clamp-2' : ''}`}
+              onClick={() => handleOpenItem(item.url)}
+              title={limitTitleLength ? item.name : undefined}>
             {item.name}
           </h2>
           {withSubscription &&
-              <div className="flex gap-x-2 items-center cursor-pointer hover:text-primary">
+              <div className="flex text-xs gap-x-2 items-center cursor-pointer hover:text-primary text-base-content/70">
                   <Miniature src={providerIconUrl(item.subscription.provider)} alt={item.subscription.provider}/>
                   <Miniature src={item.subscription.thumbnail} alt={item.subscription.name}/>
                   <Link href={paths.SUBSCRIPTIONS + "/" + item.subscription.uuid}>{item.subscription.name}</Link>
@@ -125,16 +128,18 @@ const VideoCard = (
           }
           {item.recommended_by && item.recommended_by.length > 0 &&
               <div className="flex gap-x-2 items-center">
-                  <span className="text-sm text-base-content/70">{t("recommended_by")}:</span>
+                  <span className="text-xs text-base-content/70">{t("recommended_by")}:</span>
                   <AvatarGroup users={item.recommended_by.map(
                     curator => ({id: curator.id, username: curator.username, avatarUrl: curator.avatar_url})
                   )} maxDisplay={3}/>
               </div>
           }
-          <div className="flex flex-column">
-            <p>{convertPublishedToAgoText(item.published_at)}</p>
+          <div className="flex flex-row">
+            <div className={"flex flex-grow"}>
+              <p className={"text-xs text-base-content/70 self-end"}>{convertPublishedToAgoText(item.published_at)}</p>
+            </div>
             {withInteractions &&
-                <div className="card-actions justify-end">
+                <div className="card-actions flex justify-end">
                     <div className={"hover:text-primary"}>
                         <SwapButton
                             defaultChecked={item.discouraged}
