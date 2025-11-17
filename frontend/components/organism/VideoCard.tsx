@@ -20,6 +20,7 @@ import Miniature from "../atoms/Miniature";
 import {providerIconUrl} from "../../entities/Subscription";
 import {useTranslations} from "next-intl";
 import AvatarGroup from "../atoms/AvatarGroup";
+import {useRouter} from "next/navigation";
 
 type VideoCardProps = {
   item: SubscriptionItem;
@@ -66,6 +67,7 @@ const VideoCard = (
   }: VideoCardProps) => {
   const {ref, inView} = useInView({threshold: 0});
   const t = useTranslations("common");
+  const router = useRouter()
 
   const convertPublishedToAgoText = (date: Date) => {
     const ago = readableAgoUnits(date);
@@ -99,7 +101,8 @@ const VideoCard = (
     )
   } else {
     return (
-      <div className="card card-compact rounded-lg w-80 bg-base-200 hover:scale-105 shadow-md border border-base-300 hover:shadow-xl hover:border-primary duration-200">
+      <div
+        className="card card-compact rounded-lg w-80 bg-base-200 hover:scale-105 shadow-md border border-base-300 hover:shadow-xl hover:border-primary duration-200">
         <figure className="aspect-video h-48">
           <img className="h-full hover:cursor-pointer"
                src={item.thumbnail}
@@ -114,9 +117,10 @@ const VideoCard = (
           }
         </figure>
         <div className="card-body m-1">
-          <h2 className={`card-title text-sm cursor-pointer hover:text-primary ${limitTitleLength ? 'line-clamp-2' : ''}`}
-              onClick={() => handleOpenItem(item.url)}
-              title={limitTitleLength ? item.name : undefined}>
+          <h2
+            className={`card-title text-sm cursor-pointer hover:text-primary ${limitTitleLength ? 'line-clamp-2' : ''}`}
+            onClick={() => handleOpenItem(item.url)}
+            title={limitTitleLength ? item.name : undefined}>
             {item.name}
           </h2>
           {withSubscription &&
@@ -130,7 +134,11 @@ const VideoCard = (
               <div className="flex gap-x-2 items-center">
                   <span className="text-xs text-base-content/70">{t("recommended_by")}:</span>
                   <AvatarGroup users={item.recommended_by.map(
-                    curator => ({id: curator.id, username: curator.username, avatarUrl: curator.avatar_url})
+                    curator => ({
+                      id: curator.id, username: curator.username, avatarUrl: curator.avatar_url, onClick: () => {
+                        router.push(paths.CURATORS + "/" + curator.username);
+                      }
+                    })
                   )} maxDisplay={3}/>
               </div>
           }

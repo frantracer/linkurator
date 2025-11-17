@@ -2,6 +2,7 @@ type User = {
   id: string;
   username: string;
   avatarUrl: string;
+  onClick: () => void;
 }
 
 type AvatarGroupProps = {
@@ -23,7 +24,7 @@ const AvatarGroup = ({users, maxDisplay = 3}: AvatarGroupProps) => {
       {displayUsers.map((user) => (
         <div key={user.id} className="avatar" title={user.username}>
           <div className="w-6 h-6 rounded-full ring ring-base-100">
-            <img src={user.avatarUrl} alt={user.username} />
+            <img src={user.avatarUrl} alt={user.username} onClick={user.onClick} className={"hover:cursor-pointer"}/>
           </div>
         </div>
       ))}
