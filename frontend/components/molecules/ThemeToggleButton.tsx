@@ -7,7 +7,7 @@ enum Theme {
   DARK = "dark"
 }
 
-const ThemeToogleButton: React.FC = () => {
+const ThemeToggleButton: React.FC = () => {
   const [defaultTheme, setDefaultTheme] = useState<Theme | undefined>(undefined);
   const [theme, setTheme] = useState<Theme>(Theme.DARK);
 
@@ -45,4 +45,4 @@ const ThemeToogleButton: React.FC = () => {
   );
 }
 
-export default ThemeToogleButton;
+export default ThemeToggleButton;

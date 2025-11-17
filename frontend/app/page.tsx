@@ -5,7 +5,7 @@ import Image from "next/image"
 import Button from "../components/atoms/Button"
 import Collapse from "../components/atoms/Collapse";
 import FlexColumn from "../components/atoms/FlexColumn";
-import ThemeToogleButton from "../components/molecules/ThemeToogleButton";
+import ThemeToggleButton from "../components/molecules/ThemeToggleButton";
 import Card from "../components/molecules/Card";
 import LanguageSelector from "../components/molecules/LanguageSelector";
 import {LogoImage} from "../components/atoms/LogoImage";
@@ -549,7 +549,7 @@ export default function LandingPage() {
           <div className="flex items-center gap-2 px-4 py-2 w-full">
             <LanguageSelector/>
             <FlexItem grow={true}/>
-            <ThemeToogleButton/>
+            <ThemeToggleButton/>
             <div className="text-center text-sm text-muted-foreground md:text-left">
               © {new Date().getFullYear()} Linkurator. {t("all_rights_reserved")}
             </div>

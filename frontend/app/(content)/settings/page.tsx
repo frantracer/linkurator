@@ -14,7 +14,7 @@ import FlexItem from "../../../components/atoms/FlexItem";
 import {useTranslations} from "next-intl";
 import useUserFilter from "../../../hooks/useUserFilter";
 import LanguageSelector from "../../../components/molecules/LanguageSelector";
-import ThemeToogleButton from "../../../components/molecules/ThemeToogleButton";
+import ThemeToggleButton from "../../../components/molecules/ThemeToggleButton";
 import Checkbox from "../../../components/atoms/Checkbox";
 import {InfoBanner} from "../../../components/atoms/InfoBanner";
 import {ErrorBanner} from "../../../components/atoms/ErrorBanner";
@@ -259,7 +259,7 @@ const SettingsPage: NextPage = () => {
                     </Box>
                     <Divider/>
                     <Box title={t("theme")}>
-                      <ThemeToogleButton/>
+                      <ThemeToggleButton/>
                     </Box>
                   </FlexColumn>
                 </div>

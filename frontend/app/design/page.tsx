@@ -1,7 +1,7 @@
 'use client';
 
 import Drawer from "../../components/molecules/Drawer";
-import ThemeToogleButton from "../../components/molecules/ThemeToogleButton";
+import ThemeToggleButton from "../../components/molecules/ThemeToggleButton";
 import TopTitle from "../../components/molecules/TopTitle";
 import Button from "../../components/atoms/Button";
 import ALink from "../../components/atoms/ALink";
@@ -440,7 +440,7 @@ const DesignSystemPage = () => {
           <h1 className="text-2xl font-bold whitespace-nowrap truncate text-center w-full">
             Design System
           </h1>
-          <ThemeToogleButton/>
+          <ThemeToggleButton/>
         </TopTitle>
         <MainContent/>
       </Drawer>
