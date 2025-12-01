@@ -9,6 +9,7 @@ type UseLatestSubscriptionItems = {
   latestItems: SubscriptionItem[];
   isLoading: boolean;
   error: Error | null;
+  refetch: () => void;
 }
 
 const useLatestSubscriptionItems = (
@@ -16,7 +17,7 @@ const useLatestSubscriptionItems = (
   limit: number = 10,
   filters: Filters
 ): UseLatestSubscriptionItems => {
-  const { data, isLoading, error } = useQuery({
+  const { data, isLoading, error, refetch } = useQuery({
     queryKey: ["latestSubscriptionItems", limit, filters],
     queryFn: async () => {
       if (!subscriptions || subscriptions.length === 0) {
@@ -41,7 +42,8 @@ const useLatestSubscriptionItems = (
   return {
     latestItems: data || [],
     isLoading,
-    error: error as Error | null
+    error: error as Error | null,
+    refetch
   };
 };
 

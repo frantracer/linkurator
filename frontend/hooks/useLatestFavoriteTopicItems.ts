@@ -9,6 +9,7 @@ type UseLatestFavoriteTopicItems = {
   latestFavoriteItems: SubscriptionItem[];
   isLoading: boolean;
   error: Error | null;
+  refetch: () => void;
 }
 
 const useLatestFavoriteTopicItems = (
@@ -16,7 +17,7 @@ const useLatestFavoriteTopicItems = (
   limit: number = 10,
   filters: Filters
 ): UseLatestFavoriteTopicItems => {
-  const { data, isLoading, error } = useQuery({
+  const { data, isLoading, error, refetch } = useQuery({
     queryKey: ["latestFavoriteTopicItems", topics, limit, filters],
     queryFn: async () => {
       const favoriteTopics = topics.filter(topic => topic.is_favorite);
@@ -58,7 +59,8 @@ const useLatestFavoriteTopicItems = (
   return {
     latestFavoriteItems: data || [],
     isLoading,
-    error: error as Error | null
+    error: error as Error | null,
+    refetch
   };
 };
 

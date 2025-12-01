@@ -21,6 +21,7 @@ import {providerIconUrl} from "../../entities/Subscription";
 import {useTranslations} from "next-intl";
 import AvatarGroup from "../atoms/AvatarGroup";
 import {useRouter} from "next/navigation";
+import {useToast} from "../../contexts/ToastContext";
 
 type VideoCardProps = {
   item: SubscriptionItem;
@@ -67,7 +68,8 @@ const VideoCard = (
   }: VideoCardProps) => {
   const {ref, inView} = useInView({threshold: 0});
   const t = useTranslations("common");
-  const router = useRouter()
+  const router = useRouter();
+  const {showToast} = useToast();
 
   const convertPublishedToAgoText = (date: Date) => {
     const ago = readableAgoUnits(date);
@@ -150,10 +152,32 @@ const VideoCard = (
                 <div className="card-actions flex justify-end">
                     <div className={"hover:text-primary"}>
                         <SwapButton
+                            key={`${item.uuid}-discouraged-${item.discouraged}`}
                             defaultChecked={item.discouraged}
                             onChange={
-                              (isChecked) => onChangeSwapButton &&
-                                onChangeSwapButton(item.uuid, InteractionType.Discouraged, isChecked).then(onChange)
+                              (isChecked) => {
+                                if (isChecked) {
+                                  showToast(
+                                    t("action_marked_as_not_recommended"),
+                                    item.name,
+                                    () => {
+                                      onChangeSwapButton &&
+                                        onChangeSwapButton(item.uuid, InteractionType.Discouraged, false).then(onChange);
+                                    }
+                                  );
+                                } else {
+                                  showToast(
+                                    t("action_unmarked_as_not_recommended"),
+                                    item.name,
+                                    () => {
+                                      onChangeSwapButton &&
+                                        onChangeSwapButton(item.uuid, InteractionType.Discouraged, true).then(onChange);
+                                    }
+                                  );
+                                }
+                                return onChangeSwapButton &&
+                                  onChangeSwapButton(item.uuid, InteractionType.Discouraged, isChecked).then(onChange);
+                              }
                             }
                             tooltip={item.discouraged ? t("mark_as_not_recommended") : t("mark_as_not_recommended")}>
                             <ThumbsDownFilledIcon/>
@@ -162,10 +186,32 @@ const VideoCard = (
                     </div>
                     <div className={"hover:text-primary"}>
                         <SwapButton
+                            key={`${item.uuid}-recommended-${item.recommended}`}
                             defaultChecked={item.recommended}
                             onChange={
-                              (isChecked) => onChangeSwapButton &&
-                                onChangeSwapButton(item.uuid, InteractionType.Recommended, isChecked).then(onChange)
+                              (isChecked) => {
+                                if (isChecked) {
+                                  showToast(
+                                    t("action_marked_as_recommended"),
+                                    item.name,
+                                    () => {
+                                      onChangeSwapButton &&
+                                        onChangeSwapButton(item.uuid, InteractionType.Recommended, false).then(onChange);
+                                    }
+                                  );
+                                } else {
+                                  showToast(
+                                    t("action_unmarked_as_recommended"),
+                                    item.name,
+                                    () => {
+                                      onChangeSwapButton &&
+                                        onChangeSwapButton(item.uuid, InteractionType.Recommended, true).then(onChange);
+                                    }
+                                  );
+                                }
+                                return onChangeSwapButton &&
+                                  onChangeSwapButton(item.uuid, InteractionType.Recommended, isChecked).then(onChange);
+                              }
                             }
                             tooltip={item.recommended ? t("not_recommended") : t("mark_as_recommended")}>
                             <ThumbsUpFilledIcon/>
@@ -174,9 +220,31 @@ const VideoCard = (
                     </div>
                     <div className={"hover:text-primary"}>
                         <SwapButton
+                            key={`${item.uuid}-hidden-${item.hidden}`}
                             defaultChecked={item.hidden}
-                            onChange={(isChecked) => onChangeSwapButton &&
-                              onChangeSwapButton(item.uuid, InteractionType.Hidden, isChecked).then(onChange)}
+                            onChange={(isChecked) => {
+                              if (isChecked) {
+                                showToast(
+                                  t("action_marked_as_archived"),
+                                  item.name,
+                                  () => {
+                                    onChangeSwapButton &&
+                                      onChangeSwapButton(item.uuid, InteractionType.Hidden, false).then(onChange);
+                                  }
+                                );
+                              } else {
+                                showToast(
+                                  t("action_marked_as_not_archived"),
+                                  item.name,
+                                  () => {
+                                    onChangeSwapButton &&
+                                      onChangeSwapButton(item.uuid, InteractionType.Hidden, true).then(onChange);
+                                  }
+                                );
+                              }
+                              return onChangeSwapButton &&
+                                onChangeSwapButton(item.uuid, InteractionType.Hidden, isChecked).then(onChange);
+                            }}
                             tooltip={item.hidden ? t("mark_as_not_archived") : t("mark_as_archived")}>
                             <ArchiveBoxFilledIcon/>
                             <ArchiveBoxIcon/>
@@ -184,9 +252,31 @@ const VideoCard = (
                     </div>
                     <div className={"hover:text-primary"}>
                         <SwapButton
+                            key={`${item.uuid}-viewed-${item.viewed}`}
                             defaultChecked={item.viewed}
-                            onChange={(isChecked) => onChangeSwapButton &&
-                              onChangeSwapButton(item.uuid, InteractionType.Viewed, isChecked).then(onChange)}
+                            onChange={(isChecked) => {
+                              if (isChecked) {
+                                showToast(
+                                  t("action_marked_as_viewed"),
+                                  item.name,
+                                  () => {
+                                    onChangeSwapButton &&
+                                      onChangeSwapButton(item.uuid, InteractionType.Viewed, false).then(onChange);
+                                  }
+                                );
+                              } else {
+                                showToast(
+                                  t("action_marked_as_not_viewed"),
+                                  item.name,
+                                  () => {
+                                    onChangeSwapButton &&
+                                      onChangeSwapButton(item.uuid, InteractionType.Viewed, true).then(onChange);
+                                  }
+                                );
+                              }
+                              return onChangeSwapButton &&
+                                onChangeSwapButton(item.uuid, InteractionType.Viewed, isChecked).then(onChange);
+                            }}
                             tooltip={item.viewed ? t("mark_as_not_viewed") : t("mark_as_viewed")}>
                             <CheckCircleFilledIcon/>
                             <CheckCircleIcon/>

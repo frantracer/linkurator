@@ -8,6 +8,7 @@ type UseLatestFollowedCuratorItems = {
   latestCuratorItems: SubscriptionItem[];
   isLoading: boolean;
   error: Error | null;
+  refetch: () => void;
 }
 
 const useLatestFollowedCuratorItems = (
@@ -15,7 +16,7 @@ const useLatestFollowedCuratorItems = (
   limit: number = 10,
   filters: Filters
 ): UseLatestFollowedCuratorItems => {
-  const { data, isLoading, error } = useQuery({
+  const { data, isLoading, error, refetch } = useQuery({
     queryKey: ["latestFollowedCuratorItems", curators, limit, filters],
     queryFn: async () => {
       const followedCurators = curators.filter(curator => curator.followed);
@@ -74,7 +75,8 @@ const useLatestFollowedCuratorItems = (
   return {
     latestCuratorItems: data || [],
     isLoading,
-    error: error as Error | null
+    error: error as Error | null,
+    refetch
   };
 };
 

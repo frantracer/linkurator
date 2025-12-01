@@ -27,12 +27,21 @@ const HomePageComponent = () => {
   const {subscriptions} = useSubscriptions(profile);
   const {topics} = useTopics(profile, profileIsLoading);
   const {filters} = useFilters();
-  const {latestItems, isLoading: latestItemsLoading} = useLatestSubscriptionItems(subscriptions, 20, filters);
-  const {latestFavoriteItems, isLoading: latestFavoriteItemsLoading} = useLatestFavoriteTopicItems(topics, 20, filters);
+  const {
+    latestItems,
+    isLoading: latestItemsLoading,
+    refetch: refetchSubscriptionItems
+  } = useLatestSubscriptionItems(subscriptions, 20, filters);
+  const {
+    latestFavoriteItems,
+    isLoading: latestFavoriteItemsLoading,
+    refetch: refetchFavoriteTopicItems
+  } = useLatestFavoriteTopicItems(topics, 20, filters);
   const {curators} = useCurators(profile, profileIsLoading);
   const {
     latestCuratorItems,
-    isLoading: latestCuratorItemsLoading
+    isLoading: latestCuratorItemsLoading,
+    refetch: refetchCuratorItems
   } = useLatestFollowedCuratorItems(curators, 20, filters);
 
   // Get favorite topics and followed curators
@@ -48,6 +57,12 @@ const HomePageComponent = () => {
 
   const goToChats = () => {
     window.location.href = paths.CHATS;
+  }
+
+  const refreshAllItems = () => {
+    refetchSubscriptionItems();
+    refetchFavoriteTopicItems();
+    refetchCuratorItems();
   }
 
   useEffect(() => {
@@ -90,6 +105,7 @@ const HomePageComponent = () => {
                     isLoading={latestCuratorItemsLoading}
                     collapsible={false}
                     defaultExpanded={true}
+                    refreshItem={refreshAllItems}
                 />
             }
 
@@ -101,6 +117,7 @@ const HomePageComponent = () => {
                     isLoading={latestFavoriteItemsLoading}
                     collapsible={false}
                     defaultExpanded={true}
+                    refreshItem={refreshAllItems}
                 />
             }
 
@@ -111,6 +128,7 @@ const HomePageComponent = () => {
                   isLoading={latestItemsLoading}
                   collapsible={false}
                   defaultExpanded={true}
+                  refreshItem={refreshAllItems}
               />
 
             {/* Suggestions when no followed curators or no topics */}
