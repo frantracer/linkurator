@@ -44,8 +44,10 @@ const useTopicItems = (topicId: OptionalTopicId, filters: Filters): UseTopicItem
   })
 
   function refreshTopicItem(itemId: string) {
-    for (let i = 0; i < data!.pages.length; i++) {
-      const page = data!.pages[i];
+    if (!data) return;
+
+    for (let i = 0; i < data.pages.length; i++) {
+      const page = data.pages[i];
       const item = page.elements.find(item => item.uuid === itemId);
       if (item) {
         refetch({refetchPage: (page, index) => index === i}).then(() => {});
