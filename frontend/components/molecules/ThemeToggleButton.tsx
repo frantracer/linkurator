@@ -1,40 +1,23 @@
 import ToggleButton from "../atoms/ToggleButton";
 import React, {useEffect, useState} from "react";
 import {MoonIcon, SunIcon} from "../atoms/Icons";
-
-enum Theme {
-  LIGHT = "light",
-  DARK = "dark"
-}
+import {setUserTheme} from "../../utilities/theme";
+import {Theme} from "../../utilities/themeConfig";
 
 const ThemeToggleButton: React.FC = () => {
-  const [defaultTheme, setDefaultTheme] = useState<Theme | undefined>(undefined);
   const [theme, setTheme] = useState<Theme>(Theme.DARK);
 
-  const handleToggle = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const theme = e.target.checked ? Theme.LIGHT : Theme.DARK;
-    setTheme(theme);
-    localStorage.setItem("theme", e.target.checked ? Theme.LIGHT : Theme.DARK);
-  };
-
   useEffect(() => {
-      const storedTheme = localStorage.getItem("theme") as Theme | null;
+    const htmlElement = document.querySelector("html") as HTMLElement;
+    const currentTheme = htmlElement.getAttribute("data-theme") as Theme;
+    setTheme(currentTheme || Theme.DARK);
+  }, []);
 
-      if (storedTheme) {
-        setTheme(storedTheme);
-      }
-
-      if (defaultTheme === undefined && storedTheme === null) {
-        const isDarkTheme = () => window.matchMedia("(prefers-color-scheme: dark)").matches;
-        const theme = isDarkTheme() ? Theme.DARK : Theme.LIGHT;
-        setDefaultTheme(theme);
-        setTheme(theme);
-        localStorage.setItem("theme", theme);
-      }
-      (document.querySelector("html") as HTMLElement).setAttribute("data-theme", theme);
-    },
-    [theme, defaultTheme]
-  );
+  const handleToggle = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newTheme = e.target.checked ? Theme.LIGHT : Theme.DARK;
+    await setUserTheme(newTheme);
+    setTheme(newTheme);
+  };
 
   return (
     <label className="flex cursor-pointer gap-2">

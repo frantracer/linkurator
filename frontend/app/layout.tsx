@@ -7,6 +7,7 @@ import { NextIntlClientProvider } from 'next-intl';
 import { getMessages } from 'next-intl/server';
 import { Analytics } from '@vercel/analytics/next';
 import { ToastProvider } from '../contexts/ToastContext';
+import { getUserTheme } from '../utilities/theme';
 
 export const metadata: Metadata = {
   title: 'Linkurator',
@@ -25,9 +26,10 @@ export default async function RootLayout(
     children: React.ReactNode
   }) {
   const messages = await getMessages();
+  const theme = await getUserTheme();
 
   return (
-    <html lang="es" className={"scroll-smooth"}>
+    <html lang="es" className={"scroll-smooth"} data-theme={theme}>
       <head>
         <link rel="manifest" href="/manifest.json" />
         <meta name="apple-mobile-web-app-title" content="Linkurator" />
