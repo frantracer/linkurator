@@ -14,7 +14,6 @@ import {
   PencilIcon,
   RefreshIcon
 } from "../../../../../components/atoms/Icons";
-import {InfoBanner} from "../../../../../components/atoms/InfoBanner";
 import {MenuItem} from "../../../../../components/atoms/MenuItem";
 import Miniature from "../../../../../components/atoms/Miniature";
 import Tag from "../../../../../components/atoms/Tag";
@@ -40,14 +39,14 @@ import {showLateralMenu} from "../../../../../utilities/lateralMenuAction";
 import {openModal} from "../../../../../utilities/modalAction";
 import Dropdown from "../../../../../components/atoms/Dropdown";
 import Menu from "../../../../../components/atoms/Menu";
+import {useToast} from "../../../../../contexts/ToastContext";
 
 const REFRESH_SUBSCRIPTIONS_INTERVAL = 10000;
 
 const SubscriptionPageComponent = ({subscriptionId}: { subscriptionId: string }) => {
   const t = useTranslations("common");
-  const router = useRouter()
-
-  const [showRefreshedMessage, setShowRefreshedMessage] = useState<boolean>(false);
+  const router = useRouter();
+  const {showToast} = useToast();
 
   const {filters, setFilters, resetFilters} = useFilters();
   const [debouncedFilters, setDebouncedFilters] = useState(filters);
@@ -84,11 +83,10 @@ const SubscriptionPageComponent = ({subscriptionId}: { subscriptionId: string })
     openModal(AssignTopicModalId);
   }
 
-  const handleRefreshSubscription = (subscriptionId: string) => {
-    setShowRefreshedMessage(false);
+  const handleRefreshSubscription = (subscriptionId: string, subscriptionName: string) => {
     refreshSubscription(subscriptionId).then(() => {
       refreshSubscriptions();
-      setShowRefreshedMessage(true);
+      showToast(t("subscription_updated"), subscriptionName);
     });
   }
 
@@ -152,7 +150,7 @@ const SubscriptionPageComponent = ({subscriptionId}: { subscriptionId: string })
     )
     dropdownButtons.push(
       <MenuItem key={"subscriptions-refresh"} onClick={() => {
-        handleRefreshSubscription(selectedSubscription.uuid)
+        handleRefreshSubscription(selectedSubscription.uuid, selectedSubscription.name)
       }} hideMenuOnClick={true}>
         <FlexRow position="center">
           <RefreshIcon/>
@@ -264,16 +262,6 @@ const SubscriptionPageComponent = ({subscriptionId}: { subscriptionId: string })
           }
         </div>
       </TopTitle>
-      {showRefreshedMessage &&
-          <FlexRow position={"center"}>
-              <InfoBanner>
-                  <span>{t("subscription_updated")}</span>
-                  <div className={"hover:cursor-pointer"} onClick={() => setShowRefreshedMessage(false)}>
-                      <CrossIcon/>
-                  </div>
-              </InfoBanner>
-          </FlexRow>
-      }
       {isSubscriptionError &&
           <div className="flex items-center justify-center h-dvh">
               <span>{t("subscription_not_exist")}</span>
