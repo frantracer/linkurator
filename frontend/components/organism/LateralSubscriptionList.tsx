@@ -41,6 +41,10 @@ const LateralSubscriptionList = (props: LateralItemListProps) => {
     .filter((subscription) => subscription.provider === "spotify")
     .sort(subscriptionSorting)
 
+  const rssSubs = props.subscriptions
+    .filter((subscription) => subscription.provider === "rss")
+    .sort(subscriptionSorting)
+
   const youtubeItems = youtubeSubs
     .map((subscription) => (
       <MenuItem
@@ -56,6 +60,20 @@ const LateralSubscriptionList = (props: LateralItemListProps) => {
     ))
 
   const spotifyItems = spotifySubs
+    .map((subscription) => (
+      <MenuItem
+        key={subscription.uuid}
+        onClick={() => handleClick(subscription.uuid)}
+        selected={subscription.uuid === props.selectedSubscription?.uuid}
+      >
+        <FlexRow>
+          <Miniature src={subscription.thumbnail} alt={subscription.name}/>
+          <div className="whitespace-nowrap overflow-auto text-wrap w-full">{subscription.name}</div>
+        </FlexRow>
+      </MenuItem>
+    ))
+
+  const rssItems = rssSubs
     .map((subscription) => (
       <MenuItem
         key={subscription.uuid}
@@ -93,6 +111,14 @@ const LateralSubscriptionList = (props: LateralItemListProps) => {
       </span>
     </FlexRow>)
 
+  const rssTitle = (
+    <FlexRow position={"start"}>
+      <Miniature src={providerIconUrl("rss")} alt={"rss logo"}/>
+      <span className="text-sm font-semibold text-base-content/70 tracking-wide">
+        {"RSS"} ({rssItems.length})
+      </span>
+    </FlexRow>)
+
   return (
     <Menu>
       {youtubeItems.length > 0 &&
@@ -101,7 +127,10 @@ const LateralSubscriptionList = (props: LateralItemListProps) => {
       {spotifyItems.length > 0 &&
           <Collapse isOpen={true} title={spotifyTitle} content={spotifyItems}/>
       }
-      {youtubeItems.length === 0 && spotifyItems.length === 0 && !props.isLoading &&
+      {rssItems.length > 0 &&
+          <Collapse isOpen={true} title={rssTitle} content={rssItems}/>
+      }
+      {youtubeItems.length === 0 && spotifyItems.length === 0 && rssItems.length === 0 && !props.isLoading &&
         noItems
       }
     </Menu>

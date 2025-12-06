@@ -1,4 +1,4 @@
-export type SubscriptionProvider = "youtube" | "spotify"
+export type SubscriptionProvider = "youtube" | "spotify" | "rss"
 
 export type Subscription = {
   uuid: string;
@@ -37,6 +37,8 @@ export function providerIconUrl(provider: SubscriptionProvider): string {
       return "https://www.youtube.com/favicon.ico";
     case "spotify":
       return "https://duckduckgo.com/assets/icons/favicons/spotify.2x.png";
+    case "rss":
+      return "https://upload.wikimedia.org/wikipedia/en/4/43/Feed-icon.svg";
   }
 }
 
@@ -46,5 +48,7 @@ export function providerPrettyName(provider: SubscriptionProvider): string {
       return "YouTube";
     case "spotify":
       return "Spotify";
+    case "rss":
+      return "RSS";
   }
 }
