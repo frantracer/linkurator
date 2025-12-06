@@ -5,13 +5,13 @@ import { getChat } from '../services/chatService';
 const useChat = (conversationId: string | undefined) => {
   const { data: conversation, isLoading, error, refetch } = useQuery({
     queryKey: ['chat', conversationId],
-    queryFn: async (): Promise<ChatConversation | undefined> => {
-      if (!conversationId) return undefined;
+    queryFn: async (): Promise<ChatConversation | null> => {
+      if (!conversationId) return null;
 
       try {
         const rawConversation = await getChat(conversationId);
 
-        if (!rawConversation) return undefined;
+        if (!rawConversation) return null;
 
         return {
           id: rawConversation.id,
@@ -23,7 +23,7 @@ const useChat = (conversationId: string | undefined) => {
         };
       } catch (error) {
         console.error('Error fetching conversation:', error);
-        return undefined;
+        throw error;
       }
     },
     enabled: !!conversationId,
