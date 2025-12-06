@@ -121,8 +121,8 @@ export async function getSubscription(uuid: string): Promise<Subscription | unde
 
 export async function getSubscriptionItems(
   uuid: string,
-  minDuration: number,
-  maxDuration: number,
+  minDuration: number | undefined,
+  maxDuration: number | undefined,
   searchText: string = "",
   interactionsToInclude: InteractionFilter[] = []
 ): Promise<SubscriptionItemsResponse> {
@@ -131,8 +131,8 @@ export async function getSubscriptionItems(
   try {
     const searchParam = searchText ? "&search=" + searchText : "";
     const interactionsParam = interactionsToInclude.length > 0 ? "&include_interactions=" + interactionsToInclude.join(",") : "";
-    const minDurationParam = "&min_duration=" + minDuration;
-    const maxDurationParam = "&max_duration=" + maxDuration;
+    const minDurationParam = minDuration !== undefined ? "&min_duration=" + minDuration : "";
+    const maxDurationParam = maxDuration !== undefined ? "&max_duration=" + maxDuration : "";
     const url = configuration.SUBSCRIPTIONS_URL + uuid + "/items?page_size=" + ITEMS_PER_PAGE + searchParam +
       interactionsParam + minDurationParam + maxDurationParam;
     const {status, data} = await axios.get(url, {withCredentials: true});
@@ -216,8 +216,8 @@ export async function unfollowSubscription(uuid: string): Promise<boolean> {
 }
 
 export async function getFollowedSubscriptionsItems(
-  minDuration: number,
-  maxDuration: number,
+  minDuration: number | undefined,
+  maxDuration: number | undefined,
   searchText: string = "",
   interactionsToInclude: InteractionFilter[] = [],
   pageSize: number = ITEMS_PER_PAGE
@@ -227,8 +227,8 @@ export async function getFollowedSubscriptionsItems(
   try {
     const searchParam = searchText ? "&search=" + searchText : "";
     const interactionsParam = interactionsToInclude.length > 0 ? "&include_interactions=" + interactionsToInclude.join(",") : "";
-    const minDurationParam = "&min_duration=" + minDuration;
-    const maxDurationParam = "&max_duration=" + maxDuration;
+    const minDurationParam = minDuration !== undefined ? "&min_duration=" + minDuration : "";
+    const maxDurationParam = maxDuration !== undefined ? "&max_duration=" + maxDuration : "";
     const url = configuration.SUBSCRIPTIONS_URL + "items?page_size=" + pageSize + searchParam +
       interactionsParam + minDurationParam + maxDurationParam;
     const {status, data} = await axios.get(url, {withCredentials: true});

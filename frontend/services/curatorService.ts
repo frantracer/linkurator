@@ -101,16 +101,16 @@ export async function getCuratorTopics(curatorId: string | null): Promise<Topic[
 
 export async function getCuratorItems(
   curatorId: string | null,
-  minDuration: number,
-  maxDuration: number,
+  minDuration: number | undefined,
+  maxDuration: number | undefined,
   searchText: string = "",
 ): Promise<CuratorItemsResponse> {
   if (curatorId === null) {
     return {elements: [], nextPage: undefined};
   }
   const searchParam = searchText ? "&search=" + searchText : "";
-  const minDurationParam = "&min_duration=" + minDuration;
-  const maxDurationParam = "&max_duration=" + maxDuration;
+  const minDurationParam = minDuration !== undefined ? "&min_duration=" + minDuration : "";
+  const maxDurationParam = maxDuration !== undefined ? "&max_duration=" + maxDuration : "";
   const url = configuration.CURATORS_URL + curatorId + "/items?" + searchParam + minDurationParam + maxDurationParam;
 
   const {

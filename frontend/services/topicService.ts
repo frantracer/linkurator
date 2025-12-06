@@ -114,8 +114,8 @@ export async function deleteTopic(uuid: string) {
 
 export async function getTopicItems(
   uuid: string,
-  minDuration: number,
-  maxDuration: number,
+  minDuration: number | undefined,
+  maxDuration: number | undefined,
   searchText: string = "",
   interactionsToInclude: InteractionFilter[] = [],
   excludedSubscriptions: string[] = []
@@ -125,8 +125,8 @@ export async function getTopicItems(
   try {
     const searchParam = searchText ? "&search=" + searchText : "";
     const interactionsParam = interactionsToInclude.length > 0 ? "&include_interactions=" + interactionsToInclude.join(",") : "";
-    const minDurationParam = "&min_duration=" + minDuration;
-    const maxDurationParam = "&max_duration=" + maxDuration;
+    const minDurationParam = minDuration !== undefined ? "&min_duration=" + minDuration : "";
+    const maxDurationParam = maxDuration !== undefined ? "&max_duration=" + maxDuration : "";
     const excludedSubscriptionsParam = excludedSubscriptions.length > 0 ? "&excluded_subscriptions=" + excludedSubscriptions.join(",") : "";
     const url = configuration.TOPICS_URL + uuid + "/items?page_size=" + ITEMS_PER_PAGE + searchParam +
       interactionsParam + minDurationParam + maxDurationParam + excludedSubscriptionsParam;

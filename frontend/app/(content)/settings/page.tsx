@@ -18,7 +18,7 @@ import ThemeToggleButton from "../../../components/molecules/ThemeToggleButton";
 import Checkbox from "../../../components/atoms/Checkbox";
 import {InfoBanner} from "../../../components/atoms/InfoBanner";
 import {ErrorBanner} from "../../../components/atoms/ErrorBanner";
-import {Filters} from "../../../entities/Filters";
+import {Filters, durationOptions} from "../../../entities/Filters";
 import {
   ArchiveBoxFilledIcon,
   CheckCircleFilledIcon,
@@ -117,38 +117,64 @@ const SettingsPage: NextPage = () => {
                       <FlexColumn>
                         <Box title={t("duration")}>
                           <FlexColumn>
-                            <FlexRow>
-                              <p>{t("min")}</p>
-                              <input
-                                className={"input input-sm input-bordered input-primary w-full"}
-                                type="number"
-                                value={localFilter.minDuration}
-                                onChange={(e) => {
-                                  const newMin = parseInt(e.target.value) || 0;
-                                  setLocalFilter({
-                                    ...localFilter,
-                                    minDuration: newMin,
-                                  });
-                                }}
-                                min={0}
-                              />
-                            </FlexRow>
-                            <FlexRow>
-                              <p>{t("max")}</p>
-                              <input
-                                className={"input input-sm input-bordered input-primary w-full"}
-                                type="number"
-                                value={localFilter.maxDuration}
-                                onChange={(e) => {
-                                  const newMax = parseInt(e.target.value) || 0;
-                                  setLocalFilter({
-                                    ...localFilter,
-                                    maxDuration: newMax,
-                                  });
-                                }}
-                                min={0}
-                              />
-                            </FlexRow>
+                            {durationOptions.map((option) => (
+                              <FlexRow key={option.key} position={"start"}>
+                                <input
+                                  type="radio"
+                                  name="duration-group"
+                                  className="radio radio-primary"
+                                  checked={localFilter.durationGroup === option.key}
+                                  onChange={() => {
+                                    setLocalFilter({
+                                      ...localFilter,
+                                      durationGroup: option.key,
+                                      minDuration: option.key === "custom" ? localFilter.minDuration : undefined,
+                                      maxDuration: option.key === "custom" ? localFilter.maxDuration : undefined,
+                                    });
+                                  }}
+                                />
+                                <label>{t(option.label)}</label>
+                              </FlexRow>
+                            ))}
+
+                            {localFilter.durationGroup === "custom" && (
+                              <>
+                                <FlexRow>
+                                  <p>{t("min")}</p>
+                                  <input
+                                    className={"input input-sm input-bordered input-primary w-full"}
+                                    type="number"
+                                    value={localFilter.minDuration ?? ""}
+                                    onChange={(e) => {
+                                      const newMin = e.target.value ? parseInt(e.target.value) : undefined;
+                                      setLocalFilter({
+                                        ...localFilter,
+                                        minDuration: newMin,
+                                      });
+                                    }}
+                                    min={0}
+                                    placeholder={t("min_placeholder")}
+                                  />
+                                </FlexRow>
+                                <FlexRow>
+                                  <p>{t("max")}</p>
+                                  <input
+                                    className={"input input-sm input-bordered input-primary w-full"}
+                                    type="number"
+                                    value={localFilter.maxDuration ?? ""}
+                                    onChange={(e) => {
+                                      const newMax = e.target.value ? parseInt(e.target.value) : undefined;
+                                      setLocalFilter({
+                                        ...localFilter,
+                                        maxDuration: newMax,
+                                      });
+                                    }}
+                                    min={0}
+                                    placeholder={t("max_placeholder")}
+                                  />
+                                </FlexRow>
+                              </>
+                            )}
                           </FlexColumn>
                         </Box>
 

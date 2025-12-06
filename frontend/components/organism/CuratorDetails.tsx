@@ -46,19 +46,19 @@ const CuratorDetails = (
   const handleDurationChange = (key: string) => {
     switch (key) {
       case "short":
-        setFilters({...filters, durationGroup: "short"});
+        setFilters({...filters, durationGroup: "short", minDuration: undefined, maxDuration: undefined});
         break;
       case "medium":
-        setFilters({...filters, durationGroup: "medium"});
+        setFilters({...filters, durationGroup: "medium", minDuration: undefined, maxDuration: undefined});
         break;
       case "long":
-        setFilters({...filters, durationGroup: "long"});
+        setFilters({...filters, durationGroup: "long", minDuration: undefined, maxDuration: undefined});
         break;
       case "all":
-        setFilters({...filters, durationGroup: "all"});
+        setFilters({...filters, durationGroup: "all", minDuration: undefined, maxDuration: undefined});
         break;
       case "custom":
-        setFilters({...filters, minDuration: 0, maxDuration: 999999, durationGroup: "custom"});
+        setFilters({...filters, minDuration: undefined, maxDuration: undefined, durationGroup: "custom"});
         break;
     }
   }

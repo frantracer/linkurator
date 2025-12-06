@@ -10,12 +10,12 @@ export type Filters = {
   displayRecommended: boolean;
   textSearch: string;
   durationGroup: DurationGroup;
-  minDuration: number;
-  maxDuration: number;
+  minDuration: number | undefined;
+  maxDuration: number | undefined;
   excludedSubscriptions: string[];
 }
 
-export function getFilterDuration(filters: Filters): { min: number, max: number } {
+export function getFilterDuration(filters: Filters): { min: number | undefined, max: number | undefined } {
   switch (filters.durationGroup) {
     case "short":
       return {min: 0, max: 119};
@@ -24,9 +24,12 @@ export function getFilterDuration(filters: Filters): { min: number, max: number 
     case "long":
       return {min: 3600, max: 999999};
     case "all":
-      return {min: 0, max: 999999};
+      return {min: undefined, max: undefined};
     default:
-      return {min: filters.minDuration * 60, max: filters.maxDuration * 60};
+      if (filters.minDuration !== undefined && filters.maxDuration !== undefined) {
+        return {min: filters.minDuration * 60, max: filters.maxDuration * 60};
+      }
+      return {min: undefined, max: undefined};
   }
 }
 
@@ -60,8 +63,8 @@ export const defaultFilters: Filters = {
   displayDiscouraged: false,
   displayRecommended: true,
   displayWithoutInteraction: true,
-  durationGroup: "custom",
-  minDuration: 0,
-  maxDuration: 1000,
+  durationGroup: "all",
+  minDuration: undefined,
+  maxDuration: undefined,
   excludedSubscriptions: [],
 }

@@ -1,18 +1,18 @@
 type NumberInputProps = {
   placeholder?: string;
-  value: number;
-  onChange: (value: number) => void;
+  value: number | undefined;
+  onChange: (value: number | undefined) => void;
 }
 
 const NumberInput = (
   {
     placeholder = "",
-    value = 0,
+    value = undefined,
     onChange = () => {
     }
   }: NumberInputProps
 ) => {
-  const handleOnChange = (value: number) => {
+  const handleOnChange = (value: number | undefined) => {
     onChange(value);
   }
 
@@ -20,8 +20,11 @@ const NumberInput = (
     <input type="number"
            placeholder={placeholder}
            className="input input-sm input-primary input-bordered w-full"
-           value={value}
-           onChange={(event) => handleOnChange(parseInt(event.target.value))}/>
+           value={value ?? ""}
+           onChange={(event) => {
+             const parsed = parseInt(event.target.value);
+             handleOnChange(isNaN(parsed) ? undefined : parsed);
+           }}/>
   );
 }
 

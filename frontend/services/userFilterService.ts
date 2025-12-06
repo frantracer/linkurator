@@ -1,6 +1,6 @@
 import {configuration} from "../configuration";
 import axios from "axios";
-import {defaultFilters, Filters} from "../entities/Filters";
+import {defaultFilters, Filters, getFilterDuration} from "../entities/Filters";
 
 type UserFilter = {
   min_duration: number | null;
@@ -17,6 +17,20 @@ const mapUserFilterToFilters = (userFilter: UserFilter | null): Filters => {
     return defaultFilters;
   }
 
+  // Determine durationGroup based on min/max values
+  let durationGroup: "all" | "short" | "medium" | "long" | "custom" = "all";
+  if (userFilter.min_duration === null && userFilter.max_duration === null) {
+    durationGroup = "all";
+  } else if (userFilter.min_duration === 0 && userFilter.max_duration === 119) {
+    durationGroup = "short";
+  } else if (userFilter.min_duration === 120 && userFilter.max_duration === 3599) {
+    durationGroup = "medium";
+  } else if (userFilter.min_duration === 3600 && userFilter.max_duration === 999999) {
+    durationGroup = "long";
+  } else {
+    durationGroup = "custom";
+  }
+
   return {
     textSearch: "",
     displayHidden: userFilter.include_hidden_items,
@@ -24,17 +38,18 @@ const mapUserFilterToFilters = (userFilter: UserFilter | null): Filters => {
     displayDiscouraged: userFilter.include_discouraged_items,
     displayRecommended: userFilter.include_recommended_items,
     displayWithoutInteraction: userFilter.include_items_without_interactions,
-    durationGroup: defaultFilters.durationGroup,
-    minDuration: userFilter.min_duration !== null ? userFilter.min_duration / 60 : defaultFilters.minDuration,
-    maxDuration: userFilter.max_duration !== null ? userFilter.max_duration / 60 : defaultFilters.maxDuration,
+    durationGroup: durationGroup,
+    minDuration: userFilter.min_duration !== null && durationGroup === "custom" ? userFilter.min_duration / 60 : undefined,
+    maxDuration: userFilter.max_duration !== null && durationGroup === "custom" ? userFilter.max_duration / 60 : undefined,
     excludedSubscriptions: [],
   };
 }
 
 const mapFiltersToUserFilter = (filters: Filters): UserFilter => {
+  const duration = getFilterDuration(filters);
   return {
-    min_duration: filters.minDuration * 60,
-    max_duration: filters.maxDuration * 60,
+    min_duration: duration.min !== undefined ? duration.min : null,
+    max_duration: duration.max !== undefined ? duration.max : null,
     include_items_without_interactions: filters.displayWithoutInteraction,
     include_recommended_items: filters.displayRecommended,
     include_discouraged_items: filters.displayDiscouraged,
