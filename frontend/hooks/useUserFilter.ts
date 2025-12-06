@@ -37,7 +37,7 @@ const useUserFilter = () => {
 
   return {
     userFilter,
-    isLoading: isLoading || upsertMutation.isLoading || deleteMutation.isLoading,
+    isLoading: isLoading || upsertMutation.isPending || deleteMutation.isPending,
     refreshUserFilter: refetch,
     upsertUserFilter: upsertMutation.mutate,
     deleteUserFilter: deleteMutation.mutate,

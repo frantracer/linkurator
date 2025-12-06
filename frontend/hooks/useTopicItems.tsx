@@ -1,6 +1,6 @@
 import {getTopicItems, getTopicItemsFromUrl, TopicItemsResponse} from "../services/topicService";
 import {SubscriptionItem} from "../entities/SubscriptionItem";
-import {useInfiniteQuery} from "@tanstack/react-query";
+import {InfiniteData, useInfiniteQuery} from "@tanstack/react-query";
 import {Filters, getFilterDuration} from "../entities/Filters";
 import {mapFiltersToInteractionParams} from "../services/common";
 
@@ -23,9 +23,9 @@ const useTopicItems = (topicId: OptionalTopicId, filters: Filters): UseTopicItem
     hasNextPage,
     isFetching,
     isFetchingNextPage
-  } = useInfiniteQuery<TopicItemsResponse>({
+  } = useInfiniteQuery<TopicItemsResponse, Error, InfiniteData<TopicItemsResponse>, readonly unknown[], string | undefined>({
     queryKey: ["topicItems", topicId, filters],
-    queryFn: async ({pageParam = undefined}) => {
+    queryFn: async ({pageParam}) => {
       if (topicId === undefined) {
         const emptyResponse: TopicItemsResponse = {elements: [], nextPage: undefined};
         return emptyResponse;
@@ -37,8 +37,9 @@ const useTopicItems = (topicId: OptionalTopicId, filters: Filters): UseTopicItem
       }
       return await getTopicItemsFromUrl(pageParam);
     },
+    initialPageParam: undefined,
     getNextPageParam: (lastPage) => {
-      return lastPage.nextPage
+      return lastPage.nextPage?.toString()
     },
     staleTime: Infinity
   })
@@ -50,7 +51,7 @@ const useTopicItems = (topicId: OptionalTopicId, filters: Filters): UseTopicItem
       const page = data.pages[i];
       const item = page.elements.find(item => item.uuid === itemId);
       if (item) {
-        refetch({refetchPage: (page, index) => index === i}).then(() => {});
+        refetch().then(() => {});
         break;
       }
     }

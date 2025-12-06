@@ -4,7 +4,7 @@ import {
   getSubscriptionItemsFromUrl,
   SubscriptionItemsResponse
 } from "../services/subscriptionService";
-import {useInfiniteQuery} from "@tanstack/react-query";
+import {InfiniteData, useInfiniteQuery} from "@tanstack/react-query";
 import {Subscription} from "../entities/Subscription";
 import {Filters, getFilterDuration} from "../entities/Filters";
 import {mapFiltersToInteractionParams} from "../services/common";
@@ -28,9 +28,9 @@ const useSubscriptionItems = (subscription: OptionalSubscription, filters: Filte
     hasNextPage,
     isFetching,
     isFetchingNextPage
-  } = useInfiniteQuery<SubscriptionItemsResponse>({
+  } = useInfiniteQuery<SubscriptionItemsResponse, Error, InfiniteData<SubscriptionItemsResponse>, readonly unknown[], URL | undefined>({
     queryKey: ["subscriptionItems", subscription, filters],
-    queryFn: async ({pageParam = undefined}) => {
+    queryFn: async ({pageParam}) => {
       if (!subscription || (subscription && subscription.isBeingScanned)) {
         const emptyResponse: SubscriptionItemsResponse = {elements: [], nextPage: undefined};
         return emptyResponse;
@@ -40,8 +40,9 @@ const useSubscriptionItems = (subscription: OptionalSubscription, filters: Filte
         return await getSubscriptionItems(subscription.uuid, filterDuration.min, filterDuration.max,
           filters.textSearch, mapFiltersToInteractionParams(filters));
       }
-      return await getSubscriptionItemsFromUrl(pageParam as URL);
+      return await getSubscriptionItemsFromUrl(pageParam);
     },
+    initialPageParam: undefined,
     getNextPageParam: (lastPage) => {
       return lastPage.nextPage
     },
@@ -53,7 +54,7 @@ const useSubscriptionItems = (subscription: OptionalSubscription, filters: Filte
       const page = data!.pages[i];
       const item = page.elements.find(item => item.uuid === itemId);
       if (item) {
-        refetch({refetchPage: (page, index) => index === i}).then(() => {
+        refetch().then(() => {
         });
         break;
       }

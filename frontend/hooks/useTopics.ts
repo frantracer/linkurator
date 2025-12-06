@@ -35,7 +35,7 @@ export function useTopics(profile: Profile | undefined, profileIsLoading: boolea
 }
 
 export function invalidateTopicsCache(queryClient: QueryClient) {
-  queryClient.invalidateQueries(['topics']).then(
+  queryClient.invalidateQueries({ queryKey: ['topics'] }).then(
     () => {
       console.log("Topics cache invalidated");
     },

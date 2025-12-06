@@ -29,7 +29,7 @@ const useChat = (conversationId: string | undefined) => {
     enabled: !!conversationId,
     retry: 1,
     staleTime: 60 * 1000, // 1 minute
-    refetchInterval: (data) => data?.isWaitingForResponse ? 10 * 1000 : false, // Refetch every 10 seconds if waiting for response
+    refetchInterval: (query) => query.state.data?.isWaitingForResponse ? 10 * 1000 : false, // Refetch every 10 seconds if waiting for response
   });
 
   return {
