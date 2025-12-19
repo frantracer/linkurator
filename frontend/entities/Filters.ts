@@ -26,10 +26,10 @@ export function getFilterDuration(filters: Filters): { min: number | undefined, 
     case "all":
       return {min: undefined, max: undefined};
     default:
-      if (filters.minDuration !== undefined && filters.maxDuration !== undefined) {
-        return {min: filters.minDuration * 60, max: filters.maxDuration * 60};
-      }
-      return {min: undefined, max: undefined};
+      return {
+        min: filters.minDuration !== undefined ? filters.minDuration * 60 : undefined,
+        max: filters.maxDuration !== undefined ? filters.maxDuration * 60 : undefined
+      };
   }
 }
 
