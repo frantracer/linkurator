@@ -21,7 +21,7 @@ const useFilters = (): UseFilters => {
   return {
     filters,
     setFilters,
-    resetFilters: () => setFilters(defaultFilters)
+    resetFilters: () => setFilters(userFilter)
   }
 };
 
