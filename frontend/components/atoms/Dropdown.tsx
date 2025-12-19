@@ -21,26 +21,27 @@ const Dropdown = (
   }: DropdownProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const menuContentRef = useRef<HTMLDivElement>(null);
 
   // Close dropdown when clicking
   useEffect(() => {
     const handleClick = (event: MouseEvent) => {
       if (dropdownRef.current) {
-        if (!dropdownRef.current.contains(event.target as Node)) {
+        const clickedInsideDropdown = dropdownRef.current.contains(event.target as Node);
+        const clickedMenuContent = menuContentRef.current && menuContentRef.current.contains(event.target as Node)
+        if (!clickedInsideDropdown) {
           setIsOpen(false);
-        } else {
-          if (closeOnClickInside) {
-            setTimeout(() => {
-              setIsOpen(false);
-            }, 100);
-          }
+        }
+        if (clickedInsideDropdown && clickedMenuContent && closeOnClickInside) {
+          setIsOpen(false);
         }
       }
     };
 
-    document.addEventListener('mousedown', handleClick);
+    // Use capture phase to catch events before stopPropagation in MenuItem
+    document.addEventListener('click', handleClick, true);
     return () => {
-      document.removeEventListener('mousedown', handleClick);
+      document.removeEventListener('click', handleClick, true);
     };
   }, [closeOnClickInside]);
 
@@ -66,7 +67,7 @@ const Dropdown = (
 
   return (
     <div className="flex-none flex justify-center">
-      <div className="relative">
+      <div className="relative" ref={dropdownRef}>
         <div
           tabIndex={0}
           role="button"
@@ -81,7 +82,7 @@ const Dropdown = (
             contentPositionClass,
             "bg-base-200 rounded-lg p-0 shadow-lg w-72 max-h-96 overflow-y-auto border border-neutral"
           )}
-          ref={dropdownRef}
+          ref={menuContentRef}
         >
           <ul>{children}</ul>
         </div>
