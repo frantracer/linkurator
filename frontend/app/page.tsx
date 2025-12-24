@@ -359,7 +359,7 @@ export default function LandingPage() {
                     alt="RSS logo"
                     className="h-8 object-contain"
                   />
-                  <span>{"RSS (" + t("soon") + ")"}</span>
+                  <span>{"RSS"}</span>
                 </div>
                 <div className={"flex flex-row items-center justify-start"}>
                   <Image
