@@ -11,5 +11,9 @@ export async function getUserTheme(): Promise<Theme> {
 }
 
 export async function setUserTheme(theme: Theme) {
-  (await cookies()).set(COOKIE_NAME, theme);
+  (await cookies()).set(COOKIE_NAME, theme, {
+    maxAge: 365 * 24 * 60 * 60, // 1 year in seconds
+    path: '/',
+    sameSite: 'lax'
+  });
 }

@@ -14,10 +14,10 @@ const LanguageSelector = () => {
     });
   }, []);
 
-  const handleToggle = () => {
+  const handleToggle = async () => {
     const newLanguage = language === 'es' ? 'en' : 'es';
     setLanguage(newLanguage);
-    setUserLocale(newLanguage as Locale);
+    await setUserLocale(newLanguage as Locale);
   };
 
   return (
