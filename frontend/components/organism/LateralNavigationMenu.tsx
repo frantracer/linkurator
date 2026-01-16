@@ -14,10 +14,10 @@ import {
   BoltIcon,
   BookmarkSquaredFilled,
   ChatBubbleFilledIcon,
-  HomeIcon, ImportIcon,
+  HomeIcon,
+  ImportIcon,
   MagnifyingGlassIcon,
   RectangleGroup,
-  RefreshIcon,
   SettingsIcon,
   ThumbsUpFilledIcon,
   UserIconFilled

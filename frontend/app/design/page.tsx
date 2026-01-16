@@ -19,9 +19,13 @@ import {
   BoltIcon,
   BookmarkSquared,
   BookmarkSquaredFilled,
+  ChatBubbleFilledIcon,
+  ChatBubbleIcon,
   CheckCircleFilledIcon,
   CheckCircleIcon,
   CheckIcon,
+  ChevronDownIcon,
+  ChevronUpIcon,
   CircleIcon,
   CrossIcon,
   DownloadIcon,
@@ -30,8 +34,11 @@ import {
   EyeSlashIcon,
   FunnelIcon,
   GoogleIcon,
+  HomeIcon,
+  ImportIcon,
   InfoCircleIcon,
   LikeIcon,
+  LinkedinIcon,
   MagnifyingGlassIcon,
   MenuIcon,
   MinusIcon,
@@ -41,12 +48,17 @@ import {
   RectangleGroup,
   RectangleGroupFilled,
   RefreshIcon,
+  SettingsIcon,
+  ShareIcon,
+  StarFilledIcon,
+  StarIcon,
   SunIcon,
   ThumbsDownFilledIcon,
   ThumbsDownIcon,
   ThumbsUpFilledIcon,
   ThumbsUpIcon,
   TrashIcon,
+  TwitterIcon,
   UserIconFilled
 } from "../../components/atoms/Icons";
 import React, {useEffect} from "react";
@@ -177,6 +189,18 @@ const IconsSection = () => {
         <InfoCircleIcon/>
         <CircleIcon/>
         <BoltIcon/>
+        <LinkedinIcon/>
+        <TwitterIcon/>
+        <ShareIcon/>
+        <StarIcon/>
+        <StarFilledIcon/>
+        <ChatBubbleIcon/>
+        <ChatBubbleFilledIcon/>
+        <ChevronDownIcon/>
+        <ChevronUpIcon/>
+        <HomeIcon/>
+        <SettingsIcon/>
+        <ImportIcon/>
       </div>
     </Section>
   );
