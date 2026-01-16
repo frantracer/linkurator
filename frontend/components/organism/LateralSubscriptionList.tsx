@@ -18,7 +18,7 @@ type LateralItemListProps = {
   isLoading: boolean;
   selectedSubscription: Subscription | undefined;
   closeMenu: () => void;
-  openSyncModal: () => void;
+  openImportModal: () => void;
 }
 
 const LateralSubscriptionList = (props: LateralItemListProps) => {

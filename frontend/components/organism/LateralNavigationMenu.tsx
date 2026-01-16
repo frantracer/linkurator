@@ -14,7 +14,7 @@ import {
   BoltIcon,
   BookmarkSquaredFilled,
   ChatBubbleFilledIcon,
-  HomeIcon,
+  HomeIcon, ImportIcon,
   MagnifyingGlassIcon,
   RectangleGroup,
   RefreshIcon,
@@ -41,7 +41,7 @@ import LateralChatList from "./LateralChatList";
 import useChatConversations from "../../hooks/useChatConversations";
 import FindCuratorModal, {FindCuratorModalId} from "./FindCuratorModal";
 import FindSubscriptionModal, {FindSubscriptionModalId} from "./FindSubscriptionModal";
-import SynchronizeSubscriptionsModal, {SynchronizeSubscriptionsModalId} from "./SynchronizeSubscriptionsModal";
+import ImportSubscriptionsModal, {ImportSubscriptionsModalId} from "./ImportSubscriptionsModal";
 import FlexItem from "../atoms/FlexItem";
 import {useTranslations} from "next-intl";
 import QuickAccessesModal, {QuickAccessesModalId} from "./QuickAccessesModal";
@@ -119,8 +119,8 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
     closeMenu();
   }
 
-  const openSynchronizeSubscriptionsModal = () => {
-    openModal(SynchronizeSubscriptionsModalId);
+  const openImportSubscriptionsModal = () => {
+    openModal(ImportSubscriptionsModalId);
     closeMenu();
   }
 
@@ -355,7 +355,7 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
                     closeMenu={closeMenu}
                     selectedTopic={selectedTopic}
                     openCreateTopicModal={openNewTopicModal}
-                    openSyncSubscriptionModal={openSynchronizeSubscriptionsModal}
+                    openImportSubscriptionModal={openImportSubscriptionsModal}
                 />
                 <Button clickAction={openNewTopicModal} fitContent={false}>
                     <AddIcon/>
@@ -371,10 +371,10 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
                     isLoading={subscriptionsAreLoading || topicsAreLoading}
                     selectedSubscription={selectedSubscription}
                     closeMenu={closeMenu}
-                    openSyncModal={openSynchronizeSubscriptionsModal}
+                    openImportModal={openImportSubscriptionsModal}
                 />
-                <Button fitContent={false} clickAction={openSynchronizeSubscriptionsModal}>
-                    <RefreshIcon/>
+                <Button fitContent={false} clickAction={openImportSubscriptionsModal}>
+                    <ImportIcon/>
                   {t("synchronize_subscriptions")}
                 </Button>
             </div>
@@ -406,7 +406,7 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
       <NewTopicModal refreshTopics={refreshTopics} subscriptions={subscriptions}/>
       <FindTopicModal refreshTopics={refreshTopics}/>
       <FindSubscriptionModal refreshSubscriptions={refreshSubscriptions}/>
-      <SynchronizeSubscriptionsModal/>
+      <ImportSubscriptionsModal/>
       <FindCuratorModal refreshCurators={refreshCurators} curators={curators}/>
       <QuickAccessesModal onClose={() => closeModal(QuickAccessesModalId)}/>
       {

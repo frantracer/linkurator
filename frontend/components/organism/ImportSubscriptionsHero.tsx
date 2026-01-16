@@ -2,11 +2,11 @@ import React from "react";
 import {AddIcon} from "../atoms/Icons";
 import Button from "../atoms/Button";
 import {openModal} from "../../utilities/modalAction";
-import {SynchronizeSubscriptionsModalId} from "./SynchronizeSubscriptionsModal";
+import {ImportSubscriptionsModalId} from "./ImportSubscriptionsModal";
 import FlexColumn from "../atoms/FlexColumn";
 import {useTranslations} from "next-intl";
 
-const SynchronizeSubscriptionsHero = () => {
+const ImportSubscriptionsHero = () => {
   const t = useTranslations("common");
 
   return (
@@ -15,10 +15,10 @@ const SynchronizeSubscriptionsHero = () => {
         <div className="max-w-md">
           <FlexColumn position={"center"}>
             <p className="text-5xl font-bold">{t("add_your_content")}</p>
-            <p className="py-2">{t("sync_subscriptions_providers")}</p>
-            <Button clickAction={() => openModal(SynchronizeSubscriptionsModalId)}>
+            <p className="py-2">{t("import_subscriptions_providers")}</p>
+            <Button clickAction={() => openModal(ImportSubscriptionsModalId)}>
               <AddIcon/>
-              <span>{t("sync_subscriptions")}</span>
+              <span>{t("import_subscriptions")}</span>
             </Button>
           </FlexColumn>
         </div>
@@ -27,4 +27,4 @@ const SynchronizeSubscriptionsHero = () => {
   );
 }
 
-export default SynchronizeSubscriptionsHero;
+export default ImportSubscriptionsHero;

@@ -3,7 +3,7 @@
 import {useTranslations} from "next-intl";
 import {useRouter} from "next/navigation";
 import React, {useEffect} from "react";
-import SynchronizeSubscriptionsHero from "../../../components/organism/SynchronizeSubscriptionsHero";
+import ImportSubscriptionsHero from "../../../components/organism/ImportSubscriptionsHero";
 import TopTitle from "../../../components/molecules/TopTitle";
 import Button from "../../../components/atoms/Button";
 import {paths} from "../../../configuration";
@@ -92,7 +92,7 @@ const HomePageComponent = () => {
       </TopTitle>
 
       {!hasSubscriptions &&
-          <SynchronizeSubscriptionsHero/>
+          <ImportSubscriptionsHero/>
       }
 
       {hasSubscriptions &&

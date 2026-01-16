@@ -20,7 +20,7 @@ type LateralTopicListProps = {
   isLoading: boolean;
   closeMenu: () => void;
   openCreateTopicModal: () => void;
-  openSyncSubscriptionModal: () => void;
+  openImportSubscriptionModal: () => void;
 }
 
 const LateralTopicList = (props: LateralTopicListProps) => {
