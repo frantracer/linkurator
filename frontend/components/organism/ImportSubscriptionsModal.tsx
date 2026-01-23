@@ -4,7 +4,8 @@ import Box from "../atoms/Box";
 import FlexColumn from "../atoms/FlexColumn";
 import Miniature from "../atoms/Miniature";
 import Button from "../atoms/Button";
-import {providerIconUrl} from "../../entities/Subscription";
+import {getProviderIcon} from "../../entities/Provider";
+import useProviders from "../../hooks/useProviders";
 import {configuration} from "../../configuration";
 import {closeModal} from "../../utilities/modalAction";
 import {useRouter} from "next/navigation";
@@ -15,6 +16,7 @@ export const ImportSubscriptionsModalId = "import-subscriptions-modal";
 const ImportSubscriptionsModal = () => {
   const t = useTranslations("common");
   const router = useRouter();
+  const {providers} = useProviders();
 
   const handleYoutubeImport = () => {
     router.push(configuration.SUBSCRIPTIONS_YOUTUBE_IMPORT_URL);
@@ -33,7 +35,7 @@ const ImportSubscriptionsModal = () => {
           <div className={"h-72 overflow-y-auto"}>
             <Box title="">
               <div className={"flex flex-row items-center justify-center gap-2"}>
-                <Miniature src={providerIconUrl("youtube")} alt={"youtube logo"}/>
+                <Miniature src={getProviderIcon(providers, "youtube")} alt={"youtube logo"}/>
                 <span className={"font-bold"}>{"YouTube"}</span>
               </div>
               <div className={"flex flex-row items-center justify-center gap-4"}>

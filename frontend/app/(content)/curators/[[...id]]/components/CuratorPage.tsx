@@ -39,9 +39,11 @@ import Dropdown from "../../../../../components/atoms/Dropdown";
 import Menu from "../../../../../components/atoms/Menu";
 import ShareCuratorModal, {ShareCuratorModalId} from "../../../../../components/organism/ShareCuratorModal";
 import {openModal} from "../../../../../utilities/modalAction";
+import useProviders from "../../../../../hooks/useProviders";
 
 const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
   const t = useTranslations("common");
+  const {providers} = useProviders();
 
   const {filters, setFilters, resetFilters} = useFilters();
   const [debouncedFilters, setDebouncedFilters] = useState(filters);
@@ -219,6 +221,7 @@ const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
               refreshItem={refreshCuratorItem}
               fetchMoreItems={fetchMoreItems}
               items={curatorItems}
+              providers={providers}
               showInteractions={isUserLogged}
               isLoading={isLoading}
               isFinished={isFinished}
@@ -245,6 +248,7 @@ const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
               refreshItem={refreshCuratorItem}
               fetchMoreItems={fetchMoreItems}
               items={curatorItems}
+              providers={providers}
               showInteractions={isUserLogged}
               isLoading={isLoading}
               isFinished={isFinished}

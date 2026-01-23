@@ -39,6 +39,7 @@ import {useCurators} from "../../hooks/useCurators";
 import LateralCuratorList from "./LateralCuratorList";
 import LateralChatList from "./LateralChatList";
 import useChatConversations from "../../hooks/useChatConversations";
+import useProviders from "../../hooks/useProviders";
 import FindCuratorModal, {FindCuratorModalId} from "./FindCuratorModal";
 import FindSubscriptionModal, {FindSubscriptionModalId} from "./FindSubscriptionModal";
 import ImportSubscriptionsModal, {ImportSubscriptionsModalId} from "./ImportSubscriptionsModal";
@@ -92,6 +93,7 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
   const {curators, curatorsAreLoading, refreshCurators} = useCurators(profile, profileIsLoading);
   const {topics, topicsAreLoading, refreshTopics} = useTopics(profile, profileIsLoading);
   const {conversations, isLoading: conversationsLoading} = useChatConversations();
+  const {providers} = useProviders();
   const [currentTab, setCurrentTab] = useState<CurrentPage>(initialPage);
 
   const selectedSubscription = subscriptions.find(subscription => subscription.uuid === selectedId);
@@ -99,6 +101,7 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
   const selectedCurator = curators.find(curator => curator.id === selectedId);
   const selectedConversation = conversations.find(conversation => conversation.id === selectedId);
 
+  console.log(providers)
 
   const closeMenu = () => {
     hideLateralMenu(LATERAL_NAVIGATION_MENU_ID)
@@ -368,6 +371,7 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
                 <LateralSubscriptionList
                     subscriptions={subscriptions}
                     topics={topics}
+                    providers={providers}
                     isLoading={subscriptionsAreLoading || topicsAreLoading}
                     selectedSubscription={selectedSubscription}
                     closeMenu={closeMenu}

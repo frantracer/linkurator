@@ -78,7 +78,6 @@ import {Tabs} from "../../components/atoms/Tabs";
 import Dropdown from "../../components/atoms/Dropdown";
 import FlexColumn from "../../components/atoms/FlexColumn";
 import FlexRow from "../../components/atoms/FlexRow";
-import {SubscriptionProvider} from "../../entities/Subscription";
 
 const SIDE_BAR_NAME = "main-menu";
 const ICONS_REF = "icons";
@@ -267,7 +266,7 @@ const CardSection = () => {
       name: "Subscription",
       url: "https://www.youtube.com/@Linkurator",
       thumbnail: "/logo_v1_medium.png",
-      provider: 'youtube' as SubscriptionProvider,
+      provider: 'youtube',
       isBeingScanned: false,
       followed: true,
       topicUuid: "98fbbe67-af08-4954-8249-15ea99e95611"
@@ -291,9 +290,9 @@ const CardSection = () => {
       <div className="flex flex-col md:flex-row gap-12 m-auto p-4 w-full
       border-base-100 border-solid border-2 rounded justify-center items-center">
         <ItemCardSkeleton/>
-        <VideoCard item={item} onChange={undefined} onChangeSwapButton={async () => {
+        <VideoCard item={item} providers={[]} onChange={undefined} onChangeSwapButton={async () => {
         }}/>
-        <VideoCard item={item} withInteractions={false}/>
+        <VideoCard item={item} providers={[]} withInteractions={false}/>
       </div>
     </Section>
   );

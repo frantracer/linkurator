@@ -1,5 +1,6 @@
 import VideoCard from "./VideoCard";
 import {SubscriptionItem} from "../../entities/SubscriptionItem";
+import {Provider} from "../../entities/Provider";
 import React, {useEffect, useRef} from "react";
 import {Filters, isItemShown} from "../../entities/Filters";
 import FlexRow from "../atoms/FlexRow";
@@ -12,6 +13,7 @@ type VideoCardGridProps = {
   refreshItem: (itemId: string) => void;
   fetchMoreItems: () => void;
   items: SubscriptionItem[];
+  providers: Provider[];
   showInteractions: boolean;
   isLoading: boolean;
   isFinished: boolean;
@@ -26,6 +28,7 @@ const VideoCardGrid = (
     refreshItem,
     fetchMoreItems,
     items,
+    providers,
     showInteractions,
     isLoading,
     isFinished,
@@ -71,6 +74,7 @@ const VideoCardGrid = (
         <div className="m-4" key={item.uuid}>
           <VideoCard
             item={item}
+            providers={providers}
             withSubscription={withSubscription}
             withInteractions={showInteractions}
             onChange={() => refreshItem(item.uuid)}

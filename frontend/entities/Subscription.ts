@@ -1,11 +1,9 @@
-export type SubscriptionProvider = "youtube" | "spotify" | "rss"
-
 export type Subscription = {
   uuid: string;
   name: string;
   url: string;
   thumbnail: string;
-  provider: SubscriptionProvider;
+  provider: string;
   topicUuid: string;
   followed: boolean;
   isBeingScanned: boolean;
@@ -29,26 +27,4 @@ export function subscriptionSorting(s1: Subscription, s2: Subscription): number 
     return 1;
   }
   return 0;
-}
-
-export function providerIconUrl(provider: SubscriptionProvider): string {
-  switch (provider) {
-    case "youtube":
-      return "https://www.youtube.com/favicon.ico";
-    case "spotify":
-      return "https://duckduckgo.com/assets/icons/favicons/spotify.2x.png";
-    case "rss":
-      return "https://upload.wikimedia.org/wikipedia/en/4/43/Feed-icon.svg";
-  }
-}
-
-export function providerPrettyName(provider: SubscriptionProvider): string {
-  switch (provider) {
-    case "youtube":
-      return "YouTube";
-    case "spotify":
-      return "Spotify";
-    case "rss":
-      return "RSS";
-  }
 }

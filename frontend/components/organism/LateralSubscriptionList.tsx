@@ -1,5 +1,6 @@
 import {MenuItem} from "../atoms/MenuItem";
-import {providerIconUrl, Subscription, subscriptionSorting} from "../../entities/Subscription";
+import {Subscription, subscriptionSorting} from "../../entities/Subscription";
+import {getProviderIcon, getProviderPrettyName, Provider} from "../../entities/Provider";
 import {useRouter} from "next/navigation";
 import {paths} from "../../configuration";
 import {scrollToDrawerTop} from "../../utilities/scrollToDrawerTop";
@@ -15,6 +16,7 @@ import {useTranslations} from "next-intl";
 type LateralItemListProps = {
   subscriptions: Subscription[];
   topics: Topic[];
+  providers: Provider[];
   isLoading: boolean;
   selectedSubscription: Subscription | undefined;
   closeMenu: () => void;
@@ -33,20 +35,13 @@ const LateralSubscriptionList = (props: LateralItemListProps) => {
     }
   }
 
-  const youtubeSubs = props.subscriptions
-    .filter((subscription) => subscription.provider === "youtube")
-    .sort(subscriptionSorting)
+  // Group subscriptions by provider dynamically
+  const subscriptionsByProvider = props.providers.map((provider) => {
+    const subs = props.subscriptions
+      .filter((subscription) => subscription.provider === provider.name)
+      .sort(subscriptionSorting);
 
-  const spotifySubs = props.subscriptions
-    .filter((subscription) => subscription.provider === "spotify")
-    .sort(subscriptionSorting)
-
-  const rssSubs = props.subscriptions
-    .filter((subscription) => subscription.provider === "rss")
-    .sort(subscriptionSorting)
-
-  const youtubeItems = youtubeSubs
-    .map((subscription) => (
+    const items = subs.map((subscription) => (
       <MenuItem
         key={subscription.uuid}
         onClick={() => handleClick(subscription.uuid)}
@@ -57,35 +52,19 @@ const LateralSubscriptionList = (props: LateralItemListProps) => {
           <div className="whitespace-nowrap overflow-auto text-wrap w-full">{subscription.name}</div>
         </FlexRow>
       </MenuItem>
-    ))
+    ));
 
-  const spotifyItems = spotifySubs
-    .map((subscription) => (
-      <MenuItem
-        key={subscription.uuid}
-        onClick={() => handleClick(subscription.uuid)}
-        selected={subscription.uuid === props.selectedSubscription?.uuid}
-      >
-        <FlexRow>
-          <Miniature src={subscription.thumbnail} alt={subscription.name}/>
-          <div className="whitespace-nowrap overflow-auto text-wrap w-full">{subscription.name}</div>
-        </FlexRow>
-      </MenuItem>
-    ))
+    const title = (
+      <FlexRow position={"start"}>
+        <Miniature src={getProviderIcon(props.providers, provider.name)} alt={`${provider.name} logo`}/>
+        <span className="text-sm font-semibold text-base-content/70 tracking-wide">
+          {getProviderPrettyName(props.providers, provider.name)} ({items.length})
+        </span>
+      </FlexRow>
+    );
 
-  const rssItems = rssSubs
-    .map((subscription) => (
-      <MenuItem
-        key={subscription.uuid}
-        onClick={() => handleClick(subscription.uuid)}
-        selected={subscription.uuid === props.selectedSubscription?.uuid}
-      >
-        <FlexRow>
-          <Miniature src={subscription.thumbnail} alt={subscription.name}/>
-          <div className="whitespace-nowrap overflow-auto text-wrap w-full">{subscription.name}</div>
-        </FlexRow>
-      </MenuItem>
-    ))
+    return { provider, items, title };
+  });
 
   const noItems = (
     <div className="flex flex-col items-center h-fit gap-2 p-1">
@@ -95,44 +74,16 @@ const LateralSubscriptionList = (props: LateralItemListProps) => {
     </div>
   )
 
-  const youtubeTitle = (
-    <FlexRow position={"start"}>
-      <Miniature src={providerIconUrl("youtube")} alt={"youtube logo"}/>
-      <span className="text-sm font-semibold text-base-content/70 tracking-wide">
-        {"YouTube"} ({youtubeItems.length})
-      </span>
-    </FlexRow>)
-
-  const spotifyTitle = (
-    <FlexRow position={"start"}>
-      <Miniature src={providerIconUrl("spotify")} alt={"spotify logo"}/>
-      <span className="text-sm font-semibold text-base-content/70 tracking-wide">
-        {"Spotify"} ({spotifyItems.length})
-      </span>
-    </FlexRow>)
-
-  const rssTitle = (
-    <FlexRow position={"start"}>
-      <Miniature src={providerIconUrl("rss")} alt={"rss logo"}/>
-      <span className="text-sm font-semibold text-base-content/70 tracking-wide">
-        {"RSS"} ({rssItems.length})
-      </span>
-    </FlexRow>)
+  const hasAnyItems = subscriptionsByProvider.some(({ items }) => items.length > 0);
 
   return (
     <Menu>
-      {youtubeItems.length > 0 &&
-          <Collapse isOpen={true} title={youtubeTitle} content={youtubeItems}/>
-      }
-      {spotifyItems.length > 0 &&
-          <Collapse isOpen={true} title={spotifyTitle} content={spotifyItems}/>
-      }
-      {rssItems.length > 0 &&
-          <Collapse isOpen={true} title={rssTitle} content={rssItems}/>
-      }
-      {youtubeItems.length === 0 && spotifyItems.length === 0 && rssItems.length === 0 && !props.isLoading &&
-        noItems
-      }
+      {subscriptionsByProvider.map(({ provider, items, title }) => (
+        items.length > 0 && (
+          <Collapse key={provider.name} isOpen={true} title={title} content={items}/>
+        )
+      ))}
+      {!hasAnyItems && !props.isLoading && noItems}
     </Menu>
   )
 }

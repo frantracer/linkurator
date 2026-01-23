@@ -18,7 +18,8 @@ import { Curator } from '../../entities/Curators';
 import { paths } from '../../configuration';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { providerIconUrl } from '../../entities/Subscription';
+import { getProviderIcon } from '../../entities/Provider';
+import useProviders from '../../hooks/useProviders';
 import { InfoBanner } from '../atoms/InfoBanner';
 
 export const QuickAccessesModalId = 'quick-accesses-modal';
@@ -34,6 +35,7 @@ const QuickAccessesModal: React.FC<QuickAccessesModalProps> = ({ onClose }) => {
   const { topics } = useTopics(profile, profileIsLoading);
   const { subscriptions } = useSubscriptions(profile);
   const { curators } = useCurators(profile, profileIsLoading);
+  const { providers } = useProviders();
 
   const [searchValue, setSearchValue] = useState('');
   const debouncedSearch = useDebounce(searchValue, 300);
@@ -113,7 +115,7 @@ const QuickAccessesModal: React.FC<QuickAccessesModalProps> = ({ onClose }) => {
                                     <Miniature
                                       src={sub.thumbnail}
                                       alt={sub.name}
-                                      badgeImage={providerIconUrl(sub.provider)}
+                                      badgeImage={getProviderIcon(providers, sub.provider)}
                                     />
                                     <span>{sub.name}</span>
                                   </FlexRow>

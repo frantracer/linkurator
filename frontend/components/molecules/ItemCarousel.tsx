@@ -3,10 +3,12 @@
 import React, { useState } from 'react';
 import VideoCard from '../organism/VideoCard';
 import { SubscriptionItem } from '../../entities/SubscriptionItem';
+import { Provider } from '../../entities/Provider';
 import { ChevronDownIcon, ChevronUpIcon } from '../atoms/Icons';
 
 type ItemCarouselProps = {
   items: SubscriptionItem[];
+  providers: Provider[];
   title?: string;
   isLoading?: boolean;
   collapsible?: boolean;
@@ -17,6 +19,7 @@ type ItemCarouselProps = {
 
 const ItemCarousel = ({
   items,
+  providers,
   title = "Items",
   isLoading = false,
   collapsible = false,
@@ -85,6 +88,7 @@ const ItemCarousel = ({
               <div key={item.uuid} className="flex-shrink-0">
                 <VideoCard
                   item={item}
+                  providers={providers}
                   withSubscription={true}
                   withInteractions={true}
                   onChange={() => refreshItem(item.uuid)}

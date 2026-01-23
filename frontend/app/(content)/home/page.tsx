@@ -18,10 +18,12 @@ import useLatestFollowedCuratorItems from "../../../hooks/useLatestFollowedCurat
 import {useCurators} from "../../../hooks/useCurators";
 import {openModal} from "../../../utilities/modalAction";
 import {FindCuratorModalId} from "../../../components/organism/FindCuratorModal";
+import useProviders from "../../../hooks/useProviders";
 
 const HomePageComponent = () => {
   const t = useTranslations("common");
   const router = useRouter();
+  const {providers} = useProviders();
 
   const {profile, profileIsLoading} = useProfile();
   const {subscriptions} = useSubscriptions(profile);
@@ -101,6 +103,7 @@ const HomePageComponent = () => {
             {hasFollowedCurators &&
                 <ItemCarousel
                     items={latestCuratorItems}
+                    providers={providers}
                     title={t("latest_from_followed_curators")}
                     isLoading={latestCuratorItemsLoading}
                     collapsible={false}
@@ -113,6 +116,7 @@ const HomePageComponent = () => {
             {hasTopics && hasFavoriteTopics &&
                 <ItemCarousel
                     items={latestFavoriteItems}
+                    providers={providers}
                     title={t("latest_from_favorite_topics")}
                     isLoading={latestFavoriteItemsLoading}
                     collapsible={false}
@@ -124,6 +128,7 @@ const HomePageComponent = () => {
             {/* Subscriptions Carousel */}
               <ItemCarousel
                   items={latestItems}
+                  providers={providers}
                   title={t("latest_from_subscriptions")}
                   isLoading={latestItemsLoading}
                   collapsible={false}

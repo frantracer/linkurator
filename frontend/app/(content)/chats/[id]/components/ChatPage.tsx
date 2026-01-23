@@ -23,6 +23,7 @@ import ItemCarousel from "../../../../../components/molecules/ItemCarousel";
 import ReactMarkdown from 'react-markdown';
 import {invalidateTopicsCache} from "../../../../../hooks/useTopics";
 import {paths} from "../../../../../configuration";
+import useProviders from "../../../../../hooks/useProviders";
 
 const MESSAGE_LIMIT = 5;
 const CHARACTER_LIMIT = 500;
@@ -35,6 +36,7 @@ const ChatPageComponent = ({conversationId}: { conversationId: string }) => {
   const queryClient = useQueryClient();
   const router = useRouter();
   const t = useTranslations('common');
+  const {providers} = useProviders();
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const {conversation, isLoading: conversationLoading} = useChat(conversationId);
@@ -254,6 +256,7 @@ const ChatPageComponent = ({conversationId}: { conversationId: string }) => {
                 {message.items && message.items.length > 0 && (
                   <ItemCarousel
                     items={message.items}
+                    providers={providers}
                     title={t('suggested_items')}
                     collapsible={true}
                     defaultExpanded={true}

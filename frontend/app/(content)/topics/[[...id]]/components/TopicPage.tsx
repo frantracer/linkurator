@@ -43,6 +43,7 @@ import {openModal} from "../../../../../utilities/modalAction";
 import Dropdown from "../../../../../components/atoms/Dropdown";
 import Menu from "../../../../../components/atoms/Menu";
 import TopTitle from "../../../../../components/molecules/TopTitle";
+import useProviders from "../../../../../hooks/useProviders";
 
 const REFRESH_TOPICS_INTERVAL = 10000;
 
@@ -52,6 +53,7 @@ const TopicPageComponent = ({topicId}: { topicId: string }) => {
 
   const {filters, setFilters, resetFilters} = useFilters();
   const [debouncedFilters, setDebouncedFilters] = useState(filters);
+  const {providers} = useProviders();
   const {profile, profileIsLoading} = useProfile();
   const {subscriptions, refreshSubscriptions} = useSubscriptions(profile);
   const {topics, topicsAreLoading, refreshTopics} = useTopics(profile, profileIsLoading);
@@ -305,6 +307,7 @@ const TopicPageComponent = ({topicId}: { topicId: string }) => {
         selectedTopic &&
           <VideoCardGrid
               items={topicItems}
+              providers={providers}
               fetchMoreItems={fetchMoreItems}
               refreshItem={refreshTopicItem}
               filters={debouncedFilters}

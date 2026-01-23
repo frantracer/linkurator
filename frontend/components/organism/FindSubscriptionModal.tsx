@@ -16,7 +16,8 @@ import {AddIcon, MinusIcon} from "../atoms/Icons";
 import {followSubscription, unfollowSubscription} from "../../services/subscriptionService";
 import {closeModal} from "../../utilities/modalAction";
 import FlexItem from "../atoms/FlexItem";
-import {providerIconUrl} from "../../entities/Subscription";
+import {getProviderIcon} from "../../entities/Provider";
+import useProviders from "../../hooks/useProviders";
 import {useTranslations} from "next-intl";
 
 export const FindSubscriptionModalId = "find-subscription-modal";
@@ -27,6 +28,7 @@ type FindSubscriptionModalProps = {
 
 const FindSubscriptionModal = (props: FindSubscriptionModalProps) => {
   const t = useTranslations("common");
+  const {providers} = useProviders();
 
   const [subscriptionSearch, setSubscriptionSearch] = useState("");
   const debouncedSubscriptionSearch = useDebounce(subscriptionSearch, 500);
@@ -66,7 +68,7 @@ const FindSubscriptionModal = (props: FindSubscriptionModalProps) => {
             <FlexItem grow={true}>
               <FlexRow position={"start"}>
                 <Miniature src={subscription.thumbnail} alt={subscription.name}
-                           badgeImage={providerIconUrl(subscription.provider)}/>
+                           badgeImage={getProviderIcon(providers, subscription.provider)}/>
                 <span>{subscription.name}</span>
               </FlexRow>
             </FlexItem>

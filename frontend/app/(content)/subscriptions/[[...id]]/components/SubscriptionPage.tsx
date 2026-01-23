@@ -23,7 +23,8 @@ import AssignTopicModal, {AssignTopicModalId} from "../../../../../components/or
 import SubscriptionDetails, {SUBSCRIPTION_DETAILS_ID} from "../../../../../components/organism/SubscriptionDetails";
 import VideoCardGrid from "../../../../../components/organism/VideoCardGrid";
 import {paths} from "../../../../../configuration";
-import {providerIconUrl, providerPrettyName} from "../../../../../entities/Subscription";
+import {getProviderIcon, getProviderPrettyName} from "../../../../../entities/Provider";
+import useProviders from "../../../../../hooks/useProviders";
 import useFilters from "../../../../../hooks/useFilters";
 import useProfile from "../../../../../hooks/useProfile";
 import useSubscription from "../../../../../hooks/useSubscription";
@@ -47,6 +48,7 @@ const SubscriptionPageComponent = ({subscriptionId}: { subscriptionId: string })
   const t = useTranslations("common");
   const router = useRouter();
   const {showToast} = useToast();
+  const {providers} = useProviders();
 
   const {filters, setFilters, resetFilters} = useFilters();
   const [debouncedFilters, setDebouncedFilters] = useState(filters);
@@ -216,9 +218,9 @@ const SubscriptionPageComponent = ({subscriptionId}: { subscriptionId: string })
               <div className="flex flex-row items-center justify-center gap-2">
                 {selectedSubscription &&
                     <Button primary={false} clickAction={openSubscriptionUrl}>
-                        <Miniature src={providerIconUrl(selectedSubscription.provider)}
+                        <Miniature src={getProviderIcon(providers, selectedSubscription.provider)}
                                    alt={selectedSubscription.provider}/>
-                      {providerPrettyName(selectedSubscription.provider)}
+                      {getProviderPrettyName(providers, selectedSubscription.provider)}
                     </Button>
                 }
                 {selectedSubscription && selectedSubscription.followed &&
@@ -272,6 +274,7 @@ const SubscriptionPageComponent = ({subscriptionId}: { subscriptionId: string })
           refreshItem={refreshSubscriptionItem}
           fetchMoreItems={fetchMoreItems}
           items={subscriptionsItems}
+          providers={providers}
           filters={debouncedFilters}
           showInteractions={isUserLogged}
           isLoading={isLoading}

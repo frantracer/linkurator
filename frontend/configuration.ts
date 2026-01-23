@@ -7,6 +7,7 @@ const PROFILE_URL = `${API_BASE_URL}/profile/`;
 const WEB_HOME_URL = `${WEB_BASE_URL}/home/`;
 const WEB_LOGIN_URL = `${WEB_BASE_URL}/login/`;
 const CURATORS_URL = `${API_BASE_URL}/curators/`;
+const PROVIDERS_URL = `${API_BASE_URL}/providers/`;
 const LOGIN_URL = `${API_BASE_URL}/login/?redirect_uri=${encodeURI(WEB_HOME_URL)}`;
 const LOGOUT_URL = `${API_BASE_URL}/logout/?redirect_uri=${encodeURI(WEB_LOGIN_URL)}`;
 const LOGIN_EMAIL_URL = `${API_BASE_URL}/login_email`;
@@ -35,6 +36,7 @@ const configuration = {
   TOPICS_URL,
   ITEMS_URL,
   CURATORS_URL,
+  PROVIDERS_URL,
   API_BASE_URL,
   TERMS_OF_SERVICE_URL,
   PRIVACY_POLICY_URL,

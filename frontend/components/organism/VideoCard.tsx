@@ -17,7 +17,7 @@ import {
 } from "../atoms/Icons";
 import ItemCardSkeleton from "./ItemCardSkeleton";
 import Miniature from "../atoms/Miniature";
-import {providerIconUrl} from "../../entities/Subscription";
+import {getProviderIcon, Provider} from "../../entities/Provider";
 import {useTranslations} from "next-intl";
 import AvatarGroup from "../atoms/AvatarGroup";
 import {useRouter} from "next/navigation";
@@ -25,6 +25,7 @@ import {useToast} from "../../contexts/ToastContext";
 
 type VideoCardProps = {
   item: SubscriptionItem;
+  providers: Provider[];
   addInvalidCard?: (uuid: string) => void;
   withSubscription?: boolean;
   withInteractions?: boolean;
@@ -59,6 +60,7 @@ async function defaultOnChangeSwapButton(itemUuid: string, interactionType: Inte
 const VideoCard = (
   {
     item,
+    providers,
     addInvalidCard = undefined,
     withSubscription = true,
     withInteractions = true,
@@ -127,7 +129,7 @@ const VideoCard = (
           </h2>
           {withSubscription &&
               <div className="flex text-xs gap-x-2 items-center cursor-pointer hover:text-primary text-base-content/70">
-                  <Miniature src={providerIconUrl(item.subscription.provider)} alt={item.subscription.provider}/>
+                  <Miniature src={getProviderIcon(providers, item.subscription.provider)} alt={item.subscription.provider}/>
                   <Miniature src={item.subscription.thumbnail} alt={item.subscription.name}/>
                   <Link href={paths.SUBSCRIPTIONS + "/" + item.subscription.uuid}>{item.subscription.name}</Link>
               </div>
