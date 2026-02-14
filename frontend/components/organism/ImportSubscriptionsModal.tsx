@@ -18,8 +18,15 @@ const ImportSubscriptionsModal = () => {
   const router = useRouter();
   const {providers} = useProviders();
 
+  const isProviderAvailable = (name: string) => providers.some((p) => p.name === name);
+
   const handleYoutubeImport = () => {
     router.push(configuration.SUBSCRIPTIONS_YOUTUBE_IMPORT_URL);
+    closeModal(ImportSubscriptionsModalId);
+  }
+
+  const handlePatreonImport = () => {
+    router.push(configuration.SUBSCRIPTIONS_PATREON_IMPORT_URL);
     closeModal(ImportSubscriptionsModalId);
   }
 
@@ -33,17 +40,32 @@ const ImportSubscriptionsModal = () => {
       <FlexColumn>
         <Box title={""}>
           <div className={"h-72 overflow-y-auto"}>
-            <Box title="">
-              <div className={"flex flex-row items-center justify-center gap-2"}>
-                <Miniature src={getProviderIcon(providers, "youtube")} alt={"youtube logo"}/>
-                <span className={"font-bold"}>{"YouTube"}</span>
-              </div>
-              <div className={"flex flex-row items-center justify-center gap-4"}>
-                <Button clickAction={handleYoutubeImport}>
-                  {t("import")}
-                </Button>
-              </div>
-            </Box>
+            {isProviderAvailable("youtube") && (
+              <Box title="">
+                <div className={"flex flex-row items-center justify-center gap-2"}>
+                  <Miniature src={getProviderIcon(providers, "youtube")} alt={"youtube logo"}/>
+                  <span className={"font-bold"}>{"YouTube"}</span>
+                </div>
+                <div className={"flex flex-row items-center justify-center gap-4"}>
+                  <Button clickAction={handleYoutubeImport}>
+                    {t("import")}
+                  </Button>
+                </div>
+              </Box>
+            )}
+            {isProviderAvailable("patreon") && (
+              <Box title="">
+                <div className={"flex flex-row items-center justify-center gap-2"}>
+                  <Miniature src={getProviderIcon(providers, "patreon")} alt={"patreon logo"}/>
+                  <span className={"font-bold"}>{"Patreon"}</span>
+                </div>
+                <div className={"flex flex-row items-center justify-center gap-4"}>
+                  <Button clickAction={handlePatreonImport}>
+                    {t("import")}
+                  </Button>
+                </div>
+              </Box>
+            )}
           </div>
         </Box>
       </FlexColumn>
