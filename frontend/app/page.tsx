@@ -369,7 +369,7 @@ export default function LandingPage() {
                     alt="Patreon logo"
                     className="h-8 object-contain"
                   />
-                  <span>{"Patreon (" + t("soon") + ")"}</span>
+                  <span>{"Patreon"}</span>
                 </div>
                 <div className={"flex flex-row items-center justify-start"}>
                   <Image
