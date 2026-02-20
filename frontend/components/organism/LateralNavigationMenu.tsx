@@ -195,8 +195,6 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
             <Menu isFullHeight={false}>
                 <MenuItem onClick={() => {
                   setCurrentTab('home');
-                  router.push(paths.HOME);
-                  closeMenu();
                 }} selected={currentTab === 'home'}>
                     <FlexRow position={"start"}>
                         <FlexItem>
