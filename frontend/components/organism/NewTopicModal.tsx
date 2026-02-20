@@ -2,6 +2,7 @@ import {useRouter} from "next/navigation";
 import React, {useState} from "react";
 import {v4 as uuidv4} from 'uuid';
 import {paths} from "../../configuration";
+import {getProviderIcon, Provider} from "../../entities/Provider";
 import {Subscription, subscriptionSorting} from "../../entities/Subscription";
 import useSubscriptionsToAdd from "../../hooks/useSubscriptionsToAdd";
 import {createTopic} from "../../services/topicService";
@@ -27,10 +28,11 @@ export const NewTopicModalId = "new-topic-modal";
 
 type NewTopicModalProps = {
   subscriptions: Subscription[];
+  providers: Provider[];
   refreshTopics: () => void;
 }
 
-const NewTopicModal = (props: NewTopicModalProps) => {
+const NewTopicModal = ({ providers, ...props }: NewTopicModalProps) => {
   const router = useRouter();
   const t = useTranslations("common");
 
@@ -66,6 +68,7 @@ const NewTopicModal = (props: NewTopicModalProps) => {
                        selected={false}
                        onClick={handleClick}>
         <FlexRow position={"start"}>
+          <Miniature src={getProviderIcon(providers, subscription.provider)} alt={subscription.provider}/>
           <Miniature src={subscription.thumbnail} alt={subscription.name}/>
           {subscription.name}
           <FlexItem grow={true}/>
@@ -82,6 +85,7 @@ const NewTopicModal = (props: NewTopicModalProps) => {
         <ALink key={subscription.uuid} href={paths.SUBSCRIPTIONS + "/" + subscription.uuid}
                onClick={handleClose}>
           <Tag>
+            <Miniature src={getProviderIcon(providers, subscription.provider)} alt={subscription.provider}/>
             <Miniature src={subscription.thumbnail} alt={subscription.name}/>
             {subscription.name}
             <div onClick={

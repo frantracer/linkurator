@@ -407,7 +407,7 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
             />
         }
       </Sidebar>
-      <NewTopicModal refreshTopics={refreshTopics} subscriptions={subscriptions}/>
+      <NewTopicModal refreshTopics={refreshTopics} subscriptions={subscriptions} providers={providers}/>
       <FindTopicModal refreshTopics={refreshTopics}/>
       <FindSubscriptionModal refreshSubscriptions={refreshSubscriptions}/>
       <ImportSubscriptionsModal/>

@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { useQueryClient } from '@tanstack/react-query';
 import { paths } from "../../configuration";
+import { getProviderIcon, Provider } from "../../entities/Provider";
 import { Subscription } from "../../entities/Subscription";
 import { Topic } from "../../entities/Topic";
 import useSubscriptionsToAdd from "../../hooks/useSubscriptionsToAdd";
@@ -28,12 +29,13 @@ export const EditTopicModalId = "edit-topic-modal";
 type EditTopicModalProps = {
   topic: Topic,
   subscriptions: Subscription[];
+  providers: Provider[];
   refreshTopics: () => void;
   refreshTopicItems: () => void;
   refreshSubscriptions: () => void;
 }
 
-const EditTopicModal = (props: EditTopicModalProps) => {
+const EditTopicModal = ({ providers, ...props }: EditTopicModalProps) => {
   const t = useTranslations("common");
   const queryClient = useQueryClient();
   const [searchValue, setSearchValue] = useState("");
@@ -80,6 +82,7 @@ const EditTopicModal = (props: EditTopicModalProps) => {
                        selected={false}
                        onClick={handleClick}>
         <FlexRow position={"start"}>
+          <Miniature src={getProviderIcon(providers, subscription.provider)} alt={subscription.provider}/>
           <Miniature src={subscription.thumbnail} alt={subscription.name}/>
           {subscription.name}
           <FlexItem grow={true}/>
@@ -96,6 +99,7 @@ const EditTopicModal = (props: EditTopicModalProps) => {
         <ALink key={subscription.uuid} href={paths.SUBSCRIPTIONS + "/" + subscription.uuid}
                onClick={handleCancel}>
           <Tag>
+            <Miniature src={getProviderIcon(providers, subscription.provider)} alt={subscription.provider}/>
             <Miniature src={subscription.thumbnail} alt={subscription.name}/>
             {subscription.name}
             <div onClick={

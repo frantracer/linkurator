@@ -323,6 +323,7 @@ const TopicPageComponent = ({topicId}: { topicId: string }) => {
         selectedTopic &&
           <EditTopicModal refreshTopics={refreshTopics}
                           subscriptions={combinedSubscriptions}
+                          providers={providers}
                           topic={selectedTopic}
                           refreshTopicItems={refreshTopicItems}
                           refreshSubscriptions={refreshSubscriptions}
