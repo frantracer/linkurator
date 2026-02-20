@@ -25,7 +25,7 @@ import DeleteTopicConfirmationModal, {
   DeleteTopicConfirmationModalId
 } from "../../../../../components/organism/DeleteTopicConfirmationModal";
 import EditTopicModal, {EditTopicModalId} from "../../../../../components/organism/EditTopicModal";
-import TopicDetails, {TOPIC_DETAILS_ID} from "../../../../../components/organism/TopicDetails";
+import TopicFilter, {TOPIC_FILTER_ID} from "../../../../../components/organism/TopicFilter";
 import VideoCardGrid from "../../../../../components/organism/VideoCardGrid";
 import {paths} from "../../../../../configuration";
 import {isTopicScanned} from "../../../../../entities/Topic";
@@ -80,7 +80,7 @@ const TopicPageComponent = ({topicId}: { topicId: string }) => {
   const isUserLogged = !!profile
 
   const handleShowFilters = () => {
-    showLateralMenu(TOPIC_DETAILS_ID);
+    showLateralMenu(TOPIC_FILTER_ID);
   }
 
   const handleEditTopic = () => {
@@ -222,13 +222,13 @@ const TopicPageComponent = ({topicId}: { topicId: string }) => {
   )
 
   return (
-    <Drawer id={TOPIC_DETAILS_ID} right={true} alwaysOpenOnDesktop={false}>
-      <TopicDetails topic={selectedTopic}
-                    subscriptions={topicSubscriptions}
-                    filters={filters}
-                    showInteractions={isUserLogged}
-                    setFilters={setFilters}
-                    resetFilters={resetFilters}
+    <Drawer id={TOPIC_FILTER_ID} right={true} alwaysOpenOnDesktop={false}>
+      <TopicFilter topic={selectedTopic}
+                   subscriptions={topicSubscriptions}
+                   filters={filters}
+                   showInteractions={isUserLogged}
+                   setFilters={setFilters}
+                   resetFilters={resetFilters}
       />
       <TopTitle>
         <div className="flex flex-row items-center overflow-visible">

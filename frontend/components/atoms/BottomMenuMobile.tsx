@@ -6,9 +6,9 @@ import {showLateralMenu} from "../../utilities/lateralMenuAction";
 import {openModal} from "../../utilities/modalAction";
 import {LATERAL_NAVIGATION_MENU_ID} from "../organism/LateralNavigationMenu";
 import {QuickAccessesModalId} from "../organism/QuickAccessesModal";
-import {SUBSCRIPTION_DETAILS_ID} from "../organism/SubscriptionDetails";
-import {TOPIC_DETAILS_ID} from "../organism/TopicDetails";
-import {CURATOR_DETAILS_ID} from "../organism/CuratorDetails";
+import {SUBSCRIPTION_FILTER_ID} from "../organism/SubscriptionFilter";
+import {TOPIC_FILTER_ID} from "../organism/TopicFilter";
+import {CURATOR_FILTER_ID} from "../organism/CuratorFilter";
 import FlexRow from "./FlexRow";
 import {useTranslations} from "next-intl";
 
@@ -47,13 +47,13 @@ const BottomMenuMobile = () => {
   const openFilters = () => {
     switch (currentPage) {
       case 'subscriptions':
-        showLateralMenu(SUBSCRIPTION_DETAILS_ID);
+        showLateralMenu(SUBSCRIPTION_FILTER_ID);
         break;
       case 'topics':
-        showLateralMenu(TOPIC_DETAILS_ID);
+        showLateralMenu(TOPIC_FILTER_ID);
         break;
       case 'curators':
-        showLateralMenu(CURATOR_DETAILS_ID);
+        showLateralMenu(CURATOR_FILTER_ID);
         break;
       default:
         break;

@@ -27,9 +27,9 @@ import Select from "../atoms/Select";
 import FlexItem from "../atoms/FlexItem";
 import {useTranslations} from "next-intl";
 
-export const TOPIC_DETAILS_ID = "topic-details";
+export const TOPIC_FILTER_ID = "topic-filter";
 
-type TopicDetailsProps = {
+type TopicFilterProps = {
   subscriptions: Subscription[];
   topic: Topic | null,
   filters: Filters,
@@ -38,7 +38,7 @@ type TopicDetailsProps = {
   resetFilters: () => void;
 };
 
-const TopicDetails = (
+const TopicFilter = (
   {
     subscriptions,
     topic,
@@ -46,7 +46,7 @@ const TopicDetails = (
     showInteractions,
     setFilters,
     resetFilters,
-  }: TopicDetailsProps
+  }: TopicFilterProps
 ) => {
   const t = useTranslations("common");
   const topicName = topic ? topic.name : "";
@@ -200,4 +200,4 @@ const TopicDetails = (
   );
 };
 
-export default TopicDetails;
+export default TopicFilter;

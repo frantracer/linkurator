@@ -1,52 +1,40 @@
 import React from "react";
-import {Subscription} from "../../entities/Subscription";
+import {Curator} from "../../entities/Curators";
 import Sidebar from "../atoms/Sidebar";
 import FlexRow from "../atoms/FlexRow";
 import Divider from "../atoms/Divider";
-import {
-  ArchiveBoxFilledIcon,
-  ArrowUturnLeft,
-  CheckCircleFilledIcon,
-  CheckCircleIcon,
-  ThumbsDownFilledIcon,
-  ThumbsUpFilledIcon
-} from "../atoms/Icons";
+import {ArrowUturnLeft} from "../atoms/Icons";
 import Button from "../atoms/Button";
 import Box from "../atoms/Box";
-import Avatar from "../atoms/Avatar";
 import SearchBar from "../molecules/SearchBar";
 import FlexColumn from "../atoms/FlexColumn";
 import {durationOptions, Filters} from "../../entities/Filters";
-import Checkbox from "../atoms/Checkbox";
 import NumberInput from "../atoms/NumberInput";
 import Select from "../atoms/Select";
 import FlexItem from "../atoms/FlexItem";
+import Avatar from "../atoms/Avatar";
 import { useTranslations } from "next-intl";
 
-export const SUBSCRIPTION_DETAILS_ID = "subscription-details";
+export const CURATOR_FILTER_ID = "curator-filter";
 
-type SubscriptionDetailsProps = {
-  subscription: Subscription | null;
+type CuratorFilterProps = {
+  curator: Curator | null,
   filters: Filters,
-  showInteractions: boolean,
   setFilters: (filters: Filters) => void;
   resetFilters: () => void;
 };
 
-const SubscriptionDetails = (
+const CuratorFilter = (
   {
-    subscription,
+    curator,
     filters,
-    showInteractions,
     setFilters,
     resetFilters,
-  }: SubscriptionDetailsProps
+  }: CuratorFilterProps
 ) => {
   const t = useTranslations("common");
-  const subscriptionName = subscription ? subscription.name : "";
-  const subscriptionThumbnail = subscription ? subscription.thumbnail : "";
-
-  const showCustomDuration = filters.durationGroup == "custom";
+  const curatorName = curator ? curator.username : "";
+  const curatorAvatar = curator ? curator.avatar_url : "";
 
   const translatedDurationOptions = durationOptions.map(option => {
     return {
@@ -75,11 +63,13 @@ const SubscriptionDetails = (
     }
   }
 
+  const showCustomDuration = filters.durationGroup == "custom";
+
   return (
     <Sidebar left={false}>
       <FlexRow position={"center"}>
-        <Avatar src={subscriptionThumbnail} alt={subscriptionName}/>
-        <span>{subscriptionName}</span>
+        <Avatar src={curatorAvatar} alt={curatorName}/>
+        <span>{curatorName}</span>
       </FlexRow>
       <Divider/>
       <FlexRow position={"between"}>
@@ -117,55 +107,10 @@ const SubscriptionDetails = (
               }
             </FlexColumn>
           </Box>
-          {showInteractions &&
-              <Box title={t("interactions")}>
-                  <FlexColumn>
-                      <FlexRow position={"start"}>
-                          <Checkbox checked={filters.displayWithoutInteraction}
-                                    onChange={(checked) => setFilters({
-                                      ...filters,
-                                      displayWithoutInteraction: checked
-                                    })}/>
-                          <CheckCircleIcon/>
-                          <label>{t("not_viewed")}</label>
-                      </FlexRow>
-                      <FlexRow position={"start"}>
-                          <Checkbox checked={filters.displayViewed}
-                                    onChange={(checked) => setFilters({...filters, displayViewed: checked})}/>
-                          <CheckCircleFilledIcon/>
-                          <label>{t("viewed")}</label>
-                      </FlexRow>
-                      <FlexRow position={"start"}>
-                          <Checkbox checked={filters.displayRecommended}
-                                    onChange={(checked) => setFilters({
-                                      ...filters,
-                                      displayRecommended: checked
-                                    })}/>
-                          <ThumbsUpFilledIcon/>
-                          <label>{t("recommended")}</label>
-                      </FlexRow>
-                      <FlexRow position={"start"}>
-                          <Checkbox checked={filters.displayDiscouraged}
-                                    onChange={(checked) => setFilters({
-                                      ...filters,
-                                      displayDiscouraged: checked
-                                    })}/>
-                          <ThumbsDownFilledIcon/>
-                          <label>{t("not_recommended")}</label>
-                      </FlexRow>
-                      <FlexRow position={"start"}>
-                          <Checkbox checked={filters.displayHidden}
-                                    onChange={(checked) => setFilters({...filters, displayHidden: checked})}/>
-                          <ArchiveBoxFilledIcon/>
-                          <label>{t("archived")}</label>
-                      </FlexRow>
-                  </FlexColumn>
-              </Box>
-          }
         </FlexColumn>
       </Box>
     </Sidebar>
   );
 };
 
-export default SubscriptionDetails;
+export default CuratorFilter;

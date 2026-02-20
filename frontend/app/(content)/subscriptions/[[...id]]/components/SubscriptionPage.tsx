@@ -20,7 +20,7 @@ import Tag from "../../../../../components/atoms/Tag";
 import Drawer from "../../../../../components/molecules/Drawer";
 import TopTitle from "../../../../../components/molecules/TopTitle";
 import AssignTopicModal, {AssignTopicModalId} from "../../../../../components/organism/AssignTopicModal";
-import SubscriptionDetails, {SUBSCRIPTION_DETAILS_ID} from "../../../../../components/organism/SubscriptionDetails";
+import SubscriptionFilter, {SUBSCRIPTION_FILTER_ID} from "../../../../../components/organism/SubscriptionFilter";
 import VideoCardGrid from "../../../../../components/organism/VideoCardGrid";
 import {paths} from "../../../../../configuration";
 import {getProviderIcon, getProviderPrettyName} from "../../../../../entities/Provider";
@@ -78,7 +78,7 @@ const SubscriptionPageComponent = ({subscriptionId}: { subscriptionId: string })
   } = useSubscriptionItems(selectedSubscription, debouncedFilters);
 
   const handleShowFilters = () => {
-    showLateralMenu(SUBSCRIPTION_DETAILS_ID);
+    showLateralMenu(SUBSCRIPTION_FILTER_ID);
   }
 
   const handleAssignSubscription = () => {
@@ -193,12 +193,12 @@ const SubscriptionPageComponent = ({subscriptionId}: { subscriptionId: string })
   )
 
   return (
-    <Drawer id={SUBSCRIPTION_DETAILS_ID} right={true} alwaysOpenOnDesktop={false}>
-      <SubscriptionDetails subscription={selectedSubscription}
-                           filters={filters}
-                           showInteractions={isUserLogged}
-                           setFilters={setFilters}
-                           resetFilters={resetFilters}/>
+    <Drawer id={SUBSCRIPTION_FILTER_ID} right={true} alwaysOpenOnDesktop={false}>
+      <SubscriptionFilter subscription={selectedSubscription}
+                          filters={filters}
+                          showInteractions={isUserLogged}
+                          setFilters={setFilters}
+                          resetFilters={resetFilters}/>
       <TopTitle>
         <div className="flex flex-row midd items-center overflow-visible">
           <div className="flex-grow"/>
