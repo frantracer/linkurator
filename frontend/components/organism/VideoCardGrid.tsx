@@ -8,6 +8,7 @@ import {Spinner} from "../atoms/Spinner";
 import {InfoBanner} from "../atoms/InfoBanner";
 import useSet from "../../hooks/useSet";
 import {useTranslations} from "next-intl";
+import useItemInteraction from "../../hooks/useItemInteraction";
 
 type VideoCardGridProps = {
   refreshItem: (itemId: string) => void;
@@ -40,6 +41,7 @@ const VideoCardGrid = (
 ) => {
   const {set: invalidCards, add: addInvalidCard} = useSet<string>();
   const t = useTranslations("common");
+  const {onChangeSwapButton} = useItemInteraction();
   const containerRef = useRef<HTMLElement>(null);
   const cards = [];
 
@@ -78,6 +80,7 @@ const VideoCardGrid = (
             withSubscription={withSubscription}
             withInteractions={showInteractions}
             onChange={() => refreshItem(item.uuid)}
+            onChangeSwapButton={onChangeSwapButton}
             addInvalidCard={addInvalidCard}
           />
         </div>
