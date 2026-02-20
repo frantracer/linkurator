@@ -1,6 +1,7 @@
 import React from "react";
 import {Subscription, subscriptionSorting} from "../../entities/Subscription";
 import {Topic} from "../../entities/Topic";
+import {getProviderIcon, Provider} from "../../entities/Provider";
 import Sidebar from "../atoms/Sidebar";
 import FlexRow from "../atoms/FlexRow";
 import {paths} from "../../configuration";
@@ -31,6 +32,7 @@ export const TOPIC_FILTER_ID = "topic-filter";
 
 type TopicFilterProps = {
   subscriptions: Subscription[];
+  providers: Provider[];
   topic: Topic | null,
   filters: Filters,
   showInteractions: boolean,
@@ -41,6 +43,7 @@ type TopicFilterProps = {
 const TopicFilter = (
   {
     subscriptions,
+    providers,
     topic,
     filters,
     showInteractions,
@@ -67,6 +70,7 @@ const TopicFilter = (
                 })}/>
       <ALink href={paths.SUBSCRIPTIONS + "/" + subscription.uuid}>
         <Tag>
+          <Miniature src={getProviderIcon(providers, subscription.provider)} alt={subscription.provider}/>
           <Miniature src={subscription.thumbnail} alt={subscription.name}/>
           {subscription.name}
         </Tag>

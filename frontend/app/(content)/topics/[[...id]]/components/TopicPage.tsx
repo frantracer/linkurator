@@ -225,6 +225,7 @@ const TopicPageComponent = ({topicId}: { topicId: string }) => {
     <Drawer id={TOPIC_FILTER_ID} right={true} alwaysOpenOnDesktop={false}>
       <TopicFilter topic={selectedTopic}
                    subscriptions={topicSubscriptions}
+                   providers={providers}
                    filters={filters}
                    showInteractions={isUserLogged}
                    setFilters={setFilters}
