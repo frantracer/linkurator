@@ -78,6 +78,7 @@
     "email_validated": "Email validated successfully.",
     "validation_expired": "Validation time has expired or your email has already been validated",
     "recommendations": "Recommendations",
+    "recommendations_for_you": "Recommendations for you",
     "my_profile": "My profile",
     "my_recommendations": "My recommendations",
     "share": "Share",

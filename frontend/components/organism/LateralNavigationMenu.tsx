@@ -301,10 +301,23 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
                                 <HomeIcon/>
                             </FlexItem>
                             <FlexItem grow={true}>
-                              {t("recommendations")}
+                              {t("recommendations_for_you")}
                             </FlexItem>
                         </FlexRow>
                     </MenuItem>
+                    {profile && <MenuItem onClick={() => {
+                      router.push(paths.CURATORS + "/" + profile.username);
+                      closeMenu();
+                    }} selected={pathname === paths.CURATORS + "/" + profile.username}>
+                        <FlexRow position={"start"}>
+                            <FlexItem>
+                                <ThumbsUpFilledIcon/>
+                            </FlexItem>
+                            <FlexItem grow={true}>
+                              {t("my_recommendations")}
+                            </FlexItem>
+                        </FlexRow>
+                    </MenuItem>}
                     <MenuItem onClick={() => {
                       router.push(paths.PROFILE);
                       closeMenu();
@@ -318,19 +331,6 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
                             </FlexItem>
                         </FlexRow>
                     </MenuItem>
-                  {profile && <MenuItem onClick={() => {
-                    router.push(paths.CURATORS + "/" + profile.username);
-                    closeMenu();
-                  }} selected={pathname === paths.CURATORS + "/" + profile.username}>
-                      <FlexRow position={"start"}>
-                          <FlexItem>
-                              <ThumbsUpFilledIcon/>
-                          </FlexItem>
-                          <FlexItem grow={true}>
-                            {t("my_recommendations")}
-                          </FlexItem>
-                      </FlexRow>
-                  </MenuItem>}
                   <MenuItem onClick={() => {
                     router.push(paths.SETTINGS);
                     closeMenu();
