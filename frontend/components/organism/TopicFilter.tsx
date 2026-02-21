@@ -70,8 +70,8 @@ const TopicFilter = (
                 })}/>
       <ALink href={paths.SUBSCRIPTIONS + "/" + subscription.uuid}>
         <Tag>
-          <Miniature src={getProviderIcon(providers, subscription.provider)} alt={subscription.provider}/>
-          <Miniature src={subscription.thumbnail} alt={subscription.name}/>
+          <Miniature src={subscription.thumbnail} alt={subscription.name}
+                     badgeImage={getProviderIcon(providers, subscription.provider)}/>
           {subscription.name}
         </Tag>
       </ALink>

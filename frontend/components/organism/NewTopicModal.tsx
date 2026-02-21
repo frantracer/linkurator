@@ -68,8 +68,8 @@ const NewTopicModal = ({ providers, ...props }: NewTopicModalProps) => {
                        selected={false}
                        onClick={handleClick}>
         <FlexRow position={"start"}>
-          <Miniature src={getProviderIcon(providers, subscription.provider)} alt={subscription.provider}/>
-          <Miniature src={subscription.thumbnail} alt={subscription.name}/>
+          <Miniature src={subscription.thumbnail} alt={subscription.name}
+                     badgeImage={getProviderIcon(providers, subscription.provider)}/>
           {subscription.name}
           <FlexItem grow={true}/>
           {isSelected && <FlexItem><CheckCircleIcon/></FlexItem>}
@@ -85,8 +85,8 @@ const NewTopicModal = ({ providers, ...props }: NewTopicModalProps) => {
         <ALink key={subscription.uuid} href={paths.SUBSCRIPTIONS + "/" + subscription.uuid}
                onClick={handleClose}>
           <Tag>
-            <Miniature src={getProviderIcon(providers, subscription.provider)} alt={subscription.provider}/>
-            <Miniature src={subscription.thumbnail} alt={subscription.name}/>
+            <Miniature src={subscription.thumbnail} alt={subscription.name}
+                       badgeImage={getProviderIcon(providers, subscription.provider)}/>
             {subscription.name}
             <div onClick={
               (e) => {
