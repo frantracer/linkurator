@@ -37,7 +37,10 @@ const useLatestFollowedCuratorItems = (
           // Add curator to recommended_by for each item
           return response.elements.map(item => ({
             ...item,
-            recommended_by: [...(item.recommended_by || []), curator]
+            recommended_by: [
+              ...(item.recommended_by || []),
+              {curator, created_at: new Date()}
+            ]
           }));
         } catch (error) {
           console.error(`Error fetching items for curator ${curator.id}:`, error);
@@ -54,8 +57,8 @@ const useLatestFollowedCuratorItems = (
         const existing = itemsMap.get(item.uuid);
         if (existing) {
           // Merge recommended_by arrays, avoiding duplicate curators
-          const curatorIds = new Set(existing.recommended_by?.map(c => c.id) || []);
-          const newCurators = item.recommended_by?.filter(c => !curatorIds.has(c.id)) || [];
+          const curatorIds = new Set(existing.recommended_by?.map(r => r.curator.id) || []);
+          const newCurators = item.recommended_by?.filter(r => !curatorIds.has(r.curator.id)) || [];
           existing.recommended_by = [...(existing.recommended_by || []), ...newCurators];
         } else {
           itemsMap.set(item.uuid, item);

@@ -138,7 +138,7 @@ const VideoCard = (
               <div className="flex gap-x-2 items-center">
                   <span className="text-xs text-base-content/70">{t("recommended_by")}:</span>
                   <AvatarGroup users={item.recommended_by.map(
-                    curator => ({
+                    ({curator}) => ({
                       id: curator.id, username: curator.username, avatarUrl: curator.avatar_url, onClick: () => {
                         router.push(paths.CURATORS + "/" + curator.username);
                       }

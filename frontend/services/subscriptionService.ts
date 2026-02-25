@@ -42,7 +42,15 @@ export const mapJsonItemToSubscriptionItem = (json: Record<string, any>): Subscr
     viewed: json.viewed,
     hidden: json.hidden,
     duration: json.duration,
-    recommended_by: [],
+    recommended_by: (json.recommended_by || []).map((r: Record<string, any>) => ({
+      curator: {
+        id: r.curator.id,
+        username: r.curator.username,
+        avatar_url: r.curator.avatar_url,
+        followed: r.curator.followed,
+      },
+      created_at: new Date(r.created_at),
+    })),
   };
 }
 

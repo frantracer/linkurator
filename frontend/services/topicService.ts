@@ -276,6 +276,15 @@ const mapJsonToTopicItemsResponse = (json: Record<string, any>): TopicItemsRespo
         viewed: element.viewed,
         hidden: element.hidden,
         duration: element.duration,
+        recommended_by: (element.recommended_by || []).map((r: Record<string, any>) => ({
+          curator: {
+            id: r.curator.id,
+            username: r.curator.username,
+            avatar_url: r.curator.avatar_url,
+            followed: r.curator.followed,
+          },
+          created_at: new Date(r.created_at),
+        })),
       };
     }),
     nextPage: nextPage,
