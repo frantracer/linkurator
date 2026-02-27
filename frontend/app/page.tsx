@@ -13,9 +13,21 @@ import FlexRow from "../components/atoms/FlexRow";
 import FlexItem from "../components/atoms/FlexItem";
 import {useTranslations} from "next-intl";
 import {BookmarkSquared, ChatBubbleIcon, LinkedinIcon, RectangleGroup, ThumbsUpIcon, UserIconFilled} from "../components/atoms/Icons";
+import {useEffect} from "react";
+import useProfile from "../hooks/useProfile";
+import {paths} from "../configuration";
+import {useRouter} from "next/navigation";
 
 export default function LandingPage() {
   const t = useTranslations("common");
+  const router = useRouter();
+  const {profile, profileIsLoading} = useProfile();
+
+  useEffect(() => {
+    if (!profileIsLoading && profile) {
+      router.push(paths.HOME);
+    }
+  }, [router, profile, profileIsLoading]);
 
   const faqItems = [
     {
