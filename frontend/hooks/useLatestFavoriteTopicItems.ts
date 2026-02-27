@@ -1,6 +1,6 @@
 import { SubscriptionItem } from "../entities/SubscriptionItem";
 import { Topic } from "../entities/Topic";
-import { getTopicItems } from "../services/topicService";
+import { getFavoriteTopicsItems } from "../services/topicService";
 import { useQuery } from "@tanstack/react-query";
 import { Filters } from "../entities/Filters";
 import { mapFiltersToInteractionParams } from "../services/common";
@@ -18,37 +18,16 @@ const useLatestFavoriteTopicItems = (
   filters: Filters
 ): UseLatestFavoriteTopicItems => {
   const { data, isLoading, error, refetch } = useQuery({
-    queryKey: ["latestFavoriteTopicItems", topics, limit, filters],
+    queryKey: ["latestFavoriteTopicItems", limit, filters],
     queryFn: async () => {
-      const favoriteTopics = topics.filter(topic => topic.is_favorite);
-
-      if (!favoriteTopics || favoriteTopics.length === 0) {
-        return [];
-      }
-
-      // Fetch items from all favorite topics in parallel
-      const itemPromises = favoriteTopics.map(async (topic) => {
-        try {
-          const response = await getTopicItems(
-            topic.uuid,
-            0, // min duration
-            Number.MAX_SAFE_INTEGER, // max duration
-            "", // no text search
-            mapFiltersToInteractionParams(filters),
-            [] // no excluded subscriptions
-          );
-          return response.elements;
-        } catch (error) {
-          console.error(`Error fetching items for topic ${topic.uuid}:`, error);
-          return [];
-        }
-      });
-
-      const allItemsArrays = await Promise.all(itemPromises);
-      const allItems = allItemsArrays.flat();
-
-      // Sort by publication date (newest first) and take the limit
-      return allItems
+      const response = await getFavoriteTopicsItems(
+        undefined,
+        undefined,
+        "",
+        mapFiltersToInteractionParams(filters),
+        []
+      );
+      return response.elements
         .sort((a, b) => new Date(b.published_at).getTime() - new Date(a.published_at).getTime())
         .slice(0, limit);
     },

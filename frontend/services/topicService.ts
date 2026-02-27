@@ -142,6 +142,35 @@ export async function getTopicItems(
   return {elements: items, nextPage: nextPage};
 }
 
+export async function getFavoriteTopicsItems(
+  minDuration: number | undefined,
+  maxDuration: number | undefined,
+  searchText: string = "",
+  interactionsToInclude: InteractionFilter[] = [],
+  excludedSubscriptions: string[] = []
+): Promise<TopicItemsResponse> {
+  let items: SubscriptionItem[] = []
+  let nextPage = undefined;
+  try {
+    const searchParam = searchText ? "&search=" + searchText : "";
+    const interactionsParam = interactionsToInclude.length > 0 ? "&include_interactions=" + interactionsToInclude.join(",") : "";
+    const minDurationParam = minDuration !== undefined ? "&min_duration=" + minDuration : "";
+    const maxDurationParam = maxDuration !== undefined ? "&max_duration=" + maxDuration : "";
+    const excludedSubscriptionsParam = excludedSubscriptions.length > 0 ? "&excluded_subscriptions=" + excludedSubscriptions.join(",") : "";
+    const url = configuration.TOPICS_URL + "favorites/items?page_size=" + ITEMS_PER_PAGE + searchParam +
+      interactionsParam + minDurationParam + maxDurationParam + excludedSubscriptionsParam;
+    const {data, status} = await axios.get(url, {withCredentials: true});
+    if (status === 200) {
+      const response = mapJsonToTopicItemsResponse(data);
+      items = response.elements;
+      nextPage = response.nextPage;
+    }
+  } catch (error: any) {
+    console.error("Error retrieving favorite topics items", error);
+  }
+  return {elements: items, nextPage: nextPage};
+}
+
 export async function getTopicItemsFromUrl(url: string): Promise<TopicItemsResponse> {
   let items: SubscriptionItem[] = []
   let nextPage = undefined;
