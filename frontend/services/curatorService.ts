@@ -127,6 +127,30 @@ export async function getCuratorItems(
   }
 }
 
+export async function getFollowedCuratorsItems(
+  minDuration: number | undefined,
+  maxDuration: number | undefined,
+  searchText: string = "",
+  pageSize: number = 10
+): Promise<CuratorItemsResponse> {
+  const searchParam = searchText ? "&search=" + searchText : "";
+  const minDurationParam = minDuration !== undefined ? "&min_duration=" + minDuration : "";
+  const maxDurationParam = maxDuration !== undefined ? "&max_duration=" + maxDuration : "";
+  const pageSizeParam = "&page_size=" + pageSize;
+  const url = configuration.CURATORS_URL + "items?" + searchParam + minDurationParam + maxDurationParam + pageSizeParam;
+
+  try {
+    const {data, status} = await axios.get<CuratorItemsResponse>(url, {withCredentials: true});
+    if (status === 200) {
+      return mapJsonToCuratorItemsResponse(data);
+    }
+    console.error("Error retrieving followed curators items", data);
+  } catch (error) {
+    console.error("Error retrieving followed curators items", error);
+  }
+  return {elements: [], nextPage: undefined};
+}
+
 export async function getCuratorItemsFromUrl(url: URL): Promise<CuratorItemsResponse> {
   const {
     data,

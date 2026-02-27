@@ -277,10 +277,22 @@ const CardSection = () => {
     hidden: false,
     duration: 0,
     recommended_by: [
-      {id: "1", username: "user1", avatar_url: "/logo_v1_medium.png", followed: false},
-      {id: "2", username: "user2", avatar_url: "/logo_v1_medium.png", followed: true},
-      {id: "3", username: "user3", avatar_url: "/logo_v1_medium.png", followed: false},
-      {id: "4", username: "user4", avatar_url: "/logo_v1_medium.png", followed: true}
+      {
+        curator: {id: "1", username: "user1", avatar_url: "/logo_v1_medium.png", followed: false},
+        created_at: new Date("2026-01-01T00:00:00Z")
+      },
+      {
+        curator: {id: "2", username: "user2", avatar_url: "/logo_v1_medium.png", followed: true},
+        created_at: new Date("2026-01-01T06:00:00Z")
+      },
+      {
+        curator: {id: "3", username: "user3", avatar_url: "/logo_v1_medium.png", followed: false},
+        created_at: new Date("2026-01-01T12:00:00Z")
+      },
+      {
+        curator: {id: "4", username: "user4", avatar_url: "/logo_v1_medium.png", followed: true},
+        created_at: new Date("2026-01-02T00:00:00Z")
+      }
     ]
   }
 

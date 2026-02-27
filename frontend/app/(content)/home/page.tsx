@@ -44,7 +44,7 @@ const HomePageComponent = () => {
     latestCuratorItems,
     isLoading: latestCuratorItemsLoading,
     refetch: refetchCuratorItems
-  } = useLatestFollowedCuratorItems(curators, 20, filters);
+  } = useLatestFollowedCuratorItems(20, filters);
 
   // Get favorite topics and followed curators
   const hasSubscriptions = subscriptions.length > 0;
