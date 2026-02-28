@@ -8,18 +8,18 @@ type subscriptionState = {
   refreshSubscriptions: () => void;
 }
 
-const useFindSubscriptions = (nameOrUrl: string): subscriptionState => {
+const useFindSubscriptions = (nameOrUrl: string, provider?: string): subscriptionState => {
   const fetchSubscriptions = () => {
     if (nameOrUrl === '') {
       return [];
     }
-    return getSubscriptionsByNameOrUrl(nameOrUrl).then(
+    return getSubscriptionsByNameOrUrl(nameOrUrl, provider).then(
       subscriptions => subscriptions.sort(subscriptionSorting)
     );
   };
 
   const {data: subscriptions = [], isLoading: subscriptionsAreLoading, refetch: refreshSubscriptions} = useQuery({
-    queryKey: ['subscriptions', nameOrUrl],
+    queryKey: ['subscriptions', nameOrUrl, provider ?? ''],
     queryFn: fetchSubscriptions,
     staleTime: 60000,
   });

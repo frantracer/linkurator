@@ -92,10 +92,13 @@ export async function getSubscriptions(): Promise<Subscription[]> {
   return subscriptions
 }
 
-export async function getSubscriptionsByNameOrUrl(nameOrUrl: string): Promise<Subscription[]> {
+export async function getSubscriptionsByNameOrUrl(nameOrUrl: string, provider?: string): Promise<Subscription[]> {
   let subscriptions: Subscription[] = []
-  const {data, status} = await axios.get(configuration.SUBSCRIPTIONS_URL + "search?name_or_url=" + nameOrUrl,
-    {withCredentials: true});
+  let url = configuration.SUBSCRIPTIONS_URL + "search?name_or_url=" + nameOrUrl;
+  if (provider) {
+    url += "&provider=" + provider;
+  }
+  const {data, status} = await axios.get(url, {withCredentials: true});
   if (status === 200) {
     const response = mapJsonToSubscriptionResponse(data);
     subscriptions = response.elements;

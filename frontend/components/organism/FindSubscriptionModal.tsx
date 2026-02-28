@@ -1,9 +1,7 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import Modal from "../atoms/Modal";
 import Box from "../atoms/Box";
 import FlexColumn from "../atoms/FlexColumn";
-import SearchBar from "../molecules/SearchBar";
-import {useDebounce} from "../../hooks/useDebounce";
 import useFindSubscriptions from "../../hooks/useFindSubscriptions";
 import FlexRow from "../atoms/FlexRow";
 import ALink from "../atoms/ALink";
@@ -19,6 +17,9 @@ import FlexItem from "../atoms/FlexItem";
 import {getProviderIcon} from "../../entities/Provider";
 import useProviders from "../../hooks/useProviders";
 import {useTranslations} from "next-intl";
+import Dropdown from "../atoms/Dropdown";
+import SearchBar from "../molecules/SearchBar";
+import {useDebounce} from "../../hooks/useDebounce";
 
 export const FindSubscriptionModalId = "find-subscription-modal";
 
@@ -30,14 +31,17 @@ const FindSubscriptionModal = (props: FindSubscriptionModalProps) => {
   const t = useTranslations("common");
   const {providers} = useProviders();
 
-  const [subscriptionSearch, setSubscriptionSearch] = useState("");
-  const debouncedSubscriptionSearch = useDebounce(subscriptionSearch, 500);
+  const [inputSearch, setInputSearch] = useState("");
+  const [selectedProviderKey, setSelectedProviderKey] = useState("");
+
+  const debouncedSearch = useDebounce(inputSearch, 500);
+  const debouncedProviderKey = useDebounce(selectedProviderKey, 500);
 
   const {
     subscriptions,
     subscriptionsAreLoading,
     refreshSubscriptions
-  } = useFindSubscriptions(debouncedSubscriptionSearch);
+  } = useFindSubscriptions(debouncedSearch, debouncedProviderKey || undefined);
 
   const handleFollow = (subscriptionUuid: string) => {
     followSubscription(subscriptionUuid).then(() => {
@@ -54,9 +58,17 @@ const FindSubscriptionModal = (props: FindSubscriptionModalProps) => {
   }
 
   const handleClose = () => {
-    setSubscriptionSearch("");
+    setInputSearch("");
     closeModal(FindSubscriptionModalId);
   }
+
+  useEffect(() => {
+    if (providers.length > 0) {
+      setSelectedProviderKey(providers[0].name);
+    }
+  }, [providers]);
+
+  const selectedProvider = providers.find(p => p.name === selectedProviderKey);
 
   const subItems = subscriptions.map((subscription) => {
     return (
@@ -95,10 +107,29 @@ const FindSubscriptionModal = (props: FindSubscriptionModalProps) => {
     <Modal id={FindSubscriptionModalId} onClose={handleClose}>
       <h1 className="font-bold text-xl w-full text-center pb-2">{t("find_subscriptions")}</h1>
       <FlexColumn>
-        <FlexItem grow={true}>
-          <SearchBar placeholder={t("search_subscription")} value={subscriptionSearch}
-                     handleChange={setSubscriptionSearch}/>
-        </FlexItem>
+        <div className={`flex flex-row gap-2 items-center h-fit w-full`}>
+          <Dropdown
+            button={
+              <div className={"flex flex-row gap-2 items-center justify-center h-fit w-24"}>
+                {selectedProvider && <Miniature src={selectedProvider.iconUrl} alt={selectedProvider.name}/>}
+                {selectedProvider && <span>{selectedProvider.prettyName}</span>}
+              </div>
+            }
+            closeOnClickInside={true}
+          >
+            {providers.map((p) => (
+              <MenuItem key={p.name} onClick={() => setSelectedProviderKey(p.name)}>
+                <div className={"flex flex-row gap-2 items-center h-fit w-24"}>
+                  <Miniature src={p.iconUrl} alt={p.name}/>
+                  <span>{p.prettyName}</span>
+                </div>
+              </MenuItem>
+            ))}
+          </Dropdown>
+          <SearchBar placeholder={t("search_subscription")}
+                     value={inputSearch}
+                     handleChange={setInputSearch}/>
+        </div>
         <Box title={""}>
           <div className={"h-72 overflow-y-auto"}>
             {subscriptionsAreLoading && <span>{t("loading_subscriptions")}</span>}
@@ -107,7 +138,7 @@ const FindSubscriptionModal = (props: FindSubscriptionModalProps) => {
                   {subItems}
                 </Menu>
             }
-            {subItems.length === 0 && !subscriptionsAreLoading && debouncedSubscriptionSearch !== "" &&
+            {subItems.length === 0 && !subscriptionsAreLoading && debouncedSearch !== "" &&
                 <FlexRow position={"center"}>{t("no_subscriptions_found")}</FlexRow>
             }
           </div>
