@@ -5,7 +5,8 @@ import FlexColumn from "../atoms/FlexColumn";
 import useFindSubscriptions from "../../hooks/useFindSubscriptions";
 import FlexRow from "../atoms/FlexRow";
 import ALink from "../atoms/ALink";
-import {paths} from "../../configuration";
+import {configuration, paths} from "../../configuration";
+import {useRouter} from "next/navigation";
 import Miniature from "../atoms/Miniature";
 import {MenuItem} from "../atoms/MenuItem";
 import Menu from "../atoms/Menu";
@@ -29,6 +30,7 @@ type FindSubscriptionModalProps = {
 
 const FindSubscriptionModal = (props: FindSubscriptionModalProps) => {
   const t = useTranslations("common");
+  const router = useRouter();
   const {providers} = useProviders();
 
   const [inputSearch, setInputSearch] = useState("");
@@ -60,6 +62,16 @@ const FindSubscriptionModal = (props: FindSubscriptionModalProps) => {
   const handleClose = () => {
     setInputSearch("");
     closeModal(FindSubscriptionModalId);
+  }
+
+  const handleYoutubeImport = () => {
+    router.push(configuration.SUBSCRIPTIONS_YOUTUBE_IMPORT_URL);
+    handleClose();
+  }
+
+  const handlePatreonImport = () => {
+    router.push(configuration.SUBSCRIPTIONS_PATREON_IMPORT_URL);
+    handleClose();
   }
 
   useEffect(() => {
@@ -143,6 +155,22 @@ const FindSubscriptionModal = (props: FindSubscriptionModalProps) => {
             }
           </div>
         </Box>
+        {selectedProviderKey === "youtube" && (
+          <div className={"flex flex-row items-center justify-center gap-4 w-full"}>
+            <Button clickAction={handleYoutubeImport}>
+              <Miniature src={getProviderIcon(providers, "youtube")} alt={"youtube logo"}/>
+              {t("import_from_youtube")}
+            </Button>
+          </div>
+        )}
+        {selectedProviderKey === "patreon" && (
+          <div className={"flex flex-row items-center justify-center gap-4 w-full"}>
+            <Button clickAction={handlePatreonImport}>
+              <Miniature src={getProviderIcon(providers, "patreon")} alt={"patreon logo"}/>
+              {t("import_from_patreon")}
+            </Button>
+          </div>
+        )}
       </FlexColumn>
     </Modal>
   )

@@ -173,6 +173,8 @@
         "loading_subscriptions": "Cargando subscripciones",
         "import_youtube": "Importar desde YouTube",
         "import": "Importar",
+        "import_from_youtube": "Importa tus suscripciones de YouTube",
+        "import_from_patreon": "Importa tus suscripciones de Patreon",
         "sync_youtube": "Importar desde YouTube",
         "sync": "Importar",
         "new_topic_tab": "Nueva",
