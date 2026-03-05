@@ -60,6 +60,7 @@ const Button = (
     if (stopPropagation) {
       e.stopPropagation();
     }
+    (e.currentTarget as HTMLElement).blur();
     if (clickAction) {
       clickAction();
     }
