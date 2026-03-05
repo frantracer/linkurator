@@ -85,12 +85,12 @@ const Drawer = (
   return (
     <div className={`drawer w-full h-full ${sideContentClass} ${alwaysOpenClass}`}>
       <input id={id} type="checkbox" className="drawer-toggle"/>
-      <div className="drawer-content flex flex-col z-20 w-full h-full overflow-y-auto"
+      <div className="drawer-content flex flex-col z-40 w-full h-full overflow-y-auto"
            onTouchStart={handleTouchStart}
            onTouchEndCapture={handleTouchEnd}>
         {mainContent}
       </div>
-      <div className="drawer-side z-20"
+      <div className="drawer-side z-40"
            onTouchStartCapture={handleTouchStart}
            onTouchEndCapture={handleTouchEnd}>
         <label aria-label="close sidebar" className="drawer-overlay"
