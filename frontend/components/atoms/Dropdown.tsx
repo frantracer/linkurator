@@ -3,6 +3,7 @@ import classNames from "classnames";
 
 type DropdownProps = {
   button: React.ReactNode
+  small?: boolean
   bottom?: boolean
   position?: "start" | "center" | "end"
   closeOnClickInside?: boolean
@@ -12,6 +13,7 @@ type DropdownProps = {
 const Dropdown = (
   {
     button,
+    small = false,
     bottom = true,
     position = "start",
     closeOnClickInside = false,
@@ -55,6 +57,11 @@ const Dropdown = (
     }
   );
 
+  const sizeClass = classNames({
+    "w-48": small,
+    "w-72": !small,
+  });
+
   return (
     <div className="flex-none flex justify-center">
       <div className="relative" ref={dropdownRef}>
@@ -69,7 +76,8 @@ const Dropdown = (
           tabIndex={0}
           className={classNames(
             contentPositionClass,
-            "bg-base-200 rounded-lg p-0 shadow-lg w-72 max-h-96 overflow-y-auto border border-neutral"
+            sizeClass,
+            "bg-base-200 rounded-lg p-0 shadow-lg max-h-96 overflow-y-auto border border-neutral"
           )}
           ref={menuContentRef}
         >
