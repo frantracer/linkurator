@@ -79,7 +79,7 @@ const LateralChatList = (props: LateralChatListProps) => {
       <Menu>
         <Button
           clickAction={handleNewChat}
-          primary={true}
+          primary={false}
           fitContent={false}
         >
           <AddIcon/>

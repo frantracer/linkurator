@@ -332,7 +332,17 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
             </div>
         }
         {profile && currentTab === 'topics' &&
-            <div className={"flex flex-col overflow-y-auto overflow-x-hidden gap-2"}>
+            <div className={"flex flex-col overflow-y-auto overflow-x-hidden"}>
+                <div className={"flex flex-row gap-2"}>
+                    <Button fitContent={false} clickAction={openFindTopicModal} primary={false}>
+                        <MagnifyingGlassIcon/>
+                      {t("search")}
+                    </Button>
+                    <Button fitContent={false} clickAction={openNewTopicModal} primary={false}>
+                        <AddIcon/>
+                      {t("create")}
+                    </Button>
+                </div>
                 <LateralTopicList
                     topics={topics}
                     subscriptions={subscriptions}
@@ -342,14 +352,15 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
                     openCreateTopicModal={openNewTopicModal}
                     openImportSubscriptionModal={openImportSubscriptionsModal}
                 />
-                <Button clickAction={openNewTopicModal} fitContent={false}>
-                    <AddIcon/>
-                  {t("create_topic")}
-                </Button>
+
             </div>
         }
         {profile && currentTab === 'subscriptions' &&
             <div className={"flex flex-col overflow-y-auto overflow-x-hidden gap-2"}>
+                <Button fitContent={false} clickAction={openFindSubscriptionModal} primary={false}>
+                    <MagnifyingGlassIcon/>
+                  {t("search")}
+                </Button>
                 <LateralSubscriptionList
                     subscriptions={subscriptions}
                     topics={topics}
@@ -363,6 +374,10 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
         }
         {profile && currentTab === 'curators' &&
             <div className={"flex flex-col overflow-y-auto overflow-x-hidden gap-2"}>
+                <Button fitContent={false} clickAction={openFindCuratorModal} primary={false}>
+                    <MagnifyingGlassIcon/>
+                  {t("search")}
+                </Button>
                 <LateralCuratorList
                     curators={curators}
                     isLoading={curatorsAreLoading}
@@ -370,10 +385,6 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
                     selectedCurator={selectedCurator}
                     openFindCuratorModal={openFindCuratorModal}
                 />
-                <Button fitContent={false} clickAction={openFindCuratorModal}>
-                    <MagnifyingGlassIcon/>
-                  {t("browse_curators")}
-                </Button>
             </div>
         }
         {profile && currentTab === 'chats' &&
