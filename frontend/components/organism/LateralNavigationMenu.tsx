@@ -15,7 +15,6 @@ import {
   BookmarkSquaredFilled,
   ChatBubbleFilledIcon,
   HomeIcon,
-  ImportIcon,
   MagnifyingGlassIcon,
   RectangleGroup,
   SettingsIcon,
@@ -41,7 +40,7 @@ import useChatConversations from "../../hooks/useChatConversations";
 import useProviders from "../../hooks/useProviders";
 import FindCuratorModal, {FindCuratorModalId} from "./FindCuratorModal";
 import FindSubscriptionModal, {FindSubscriptionModalId} from "./FindSubscriptionModal";
-import ImportSubscriptionsModal, {ImportSubscriptionsModalId} from "./ImportSubscriptionsModal";
+import {ImportSubscriptionsModalId} from "./ImportSubscriptionsModal";
 import FlexItem from "../atoms/FlexItem";
 import {useTranslations} from "next-intl";
 import QuickAccessesModal, {QuickAccessesModalId} from "./QuickAccessesModal";
@@ -360,10 +359,6 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
                     closeMenu={closeMenu}
                     openImportModal={openImportSubscriptionsModal}
                 />
-                <Button fitContent={false} clickAction={openImportSubscriptionsModal}>
-                    <ImportIcon/>
-                  {t("synchronize_subscriptions")}
-                </Button>
             </div>
         }
         {profile && currentTab === 'curators' &&
@@ -393,7 +388,6 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
       <NewTopicModal refreshTopics={refreshTopics} subscriptions={subscriptions} providers={providers}/>
       <FindTopicModal refreshTopics={refreshTopics}/>
       <FindSubscriptionModal refreshSubscriptions={refreshSubscriptions}/>
-      <ImportSubscriptionsModal/>
       <FindCuratorModal refreshCurators={refreshCurators} curators={curators}/>
       <QuickAccessesModal onClose={() => closeModal(QuickAccessesModalId)}/>
       {

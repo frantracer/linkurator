@@ -18,11 +18,12 @@ import useLatestFollowedCuratorItems from "../../../hooks/useLatestFollowedCurat
 import {useCurators} from "../../../hooks/useCurators";
 import {openModal} from "../../../utilities/modalAction";
 import {FindCuratorModalId} from "../../../components/organism/FindCuratorModal";
+import ImportSubscriptionsModal, {ImportSubscriptionsModalId} from "../../../components/organism/ImportSubscriptionsModal";
 import useProviders from "../../../hooks/useProviders";
 import Avatar from "../../../components/atoms/Avatar";
 import Dropdown from "../../../components/atoms/Dropdown";
 import {MenuItem} from "../../../components/atoms/MenuItem";
-import {HomeIcon, LogoutIcon, SettingsIcon, ThumbsUpFilledIcon, UserIconFilled} from "../../../components/atoms/Icons";
+import {HomeIcon, ImportIcon, LogoutIcon, SettingsIcon, ThumbsUpFilledIcon, UserIconFilled} from "../../../components/atoms/Icons";
 import Divider from "../../../components/atoms/Divider";
 import {configuration} from "../../../configuration";
 
@@ -93,6 +94,7 @@ const HomePageComponent = () => {
 
   return (
     <div className="flex flex-col h-full">
+      <ImportSubscriptionsModal/>
       <TopTitle>
         <div className="flex flex-row items-center h-full w-full px-4">
           <h1 className="text-xl font-bold flex-1 flex items-center justify-center gap-2">
@@ -117,16 +119,22 @@ const HomePageComponent = () => {
               </div>
             </li>
             <Divider/>
-            <MenuItem onClick={() => router.push(paths.CURATORS + "/" + profile.username)}>
-              <div className="flex flex-row items-center gap-2">
-                <ThumbsUpFilledIcon/>
-                {t("my_recommendations")}
-              </div>
-            </MenuItem>
             <MenuItem onClick={() => router.push(paths.PROFILE)}>
               <div className="flex flex-row items-center gap-2">
                 <UserIconFilled/>
                 {t("my_profile")}
+              </div>
+            </MenuItem>
+            <MenuItem onClick={() => openModal(ImportSubscriptionsModalId)}>
+              <div className="flex flex-row items-center gap-2">
+                <ImportIcon/>
+                {t("import_subscriptions")}
+              </div>
+            </MenuItem>
+            <MenuItem onClick={() => router.push(paths.CURATORS + "/" + profile.username)}>
+              <div className="flex flex-row items-center gap-2">
+                <ThumbsUpFilledIcon/>
+                {t("my_recommendations")}
               </div>
             </MenuItem>
             <MenuItem onClick={() => router.push(paths.SETTINGS)}>
