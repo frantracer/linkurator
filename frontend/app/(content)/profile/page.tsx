@@ -21,6 +21,7 @@ import {InfoBanner} from "../../../components/atoms/InfoBanner";
 import {useDebounce} from "../../../hooks/useDebounce";
 import FlexItem from "../../../components/atoms/FlexItem";
 import {useTranslations} from "next-intl";
+import {UserIconFilled} from "../../../components/atoms/Icons";
 
 const NOTIFICATION_TIMEOUT = 3000;
 const INPUT_DEBOUNCE_TIMEOUT = 500;
@@ -124,13 +125,12 @@ const ProfilePage: NextPage = () => {
   return (
     <main className="flex flex-col bg-base-100">
       <TopTitle>
-        <FlexRow position={'center'}>
-          <FlexItem grow={true}>
-            <h1 className="text-2xl font-bold text-center">
-              {t("my_profile")}
-            </h1>
-          </FlexItem>
-        </FlexRow>
+        <div className="flex flex-row items-center h-full w-full px-4">
+          <h1 className="text-xl font-bold flex-1 flex items-center justify-center gap-2">
+            <UserIconFilled/>
+            {t("my_profile")}
+          </h1>
+        </div>
       </TopTitle>
       <div className="h-full overflow-y-auto">
         <FlexRow position={"center"}>

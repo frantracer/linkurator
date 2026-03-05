@@ -22,7 +22,7 @@ import {Filters, durationOptions} from "../../../entities/Filters";
 import {
   ArchiveBoxFilledIcon,
   CheckCircleFilledIcon,
-  CheckCircleIcon,
+  CheckCircleIcon, SettingsIcon,
   ThumbsDownFilledIcon,
   ThumbsUpFilledIcon
 } from "../../../components/atoms/Icons";
@@ -97,13 +97,12 @@ const SettingsPage: NextPage = () => {
   return (
     <main className="flex flex-col bg-base-100">
       <TopTitle>
-        <FlexRow position={'center'}>
-          <FlexItem grow={true}>
-            <h1 className="text-2xl font-bold text-center">
-              {t("settings")}
-            </h1>
-          </FlexItem>
-        </FlexRow>
+        <div className="flex flex-row items-center h-full w-full px-4">
+          <h1 className="text-xl font-bold flex-1 flex items-center justify-center gap-2">
+            <SettingsIcon/>
+            {t("settings")}
+          </h1>
+        </div>
       </TopTitle>
       <div className="h-full overflow-y-auto">
         <FlexRow position={"center"}>

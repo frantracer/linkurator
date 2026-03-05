@@ -22,7 +22,7 @@ import useProviders from "../../../hooks/useProviders";
 import Avatar from "../../../components/atoms/Avatar";
 import Dropdown from "../../../components/atoms/Dropdown";
 import {MenuItem} from "../../../components/atoms/MenuItem";
-import {SettingsIcon, ThumbsUpFilledIcon, UserIconFilled} from "../../../components/atoms/Icons";
+import {HomeIcon, SettingsIcon, ThumbsUpFilledIcon, UserIconFilled} from "../../../components/atoms/Icons";
 import Divider from "../../../components/atoms/Divider";
 
 const HomePageComponent = () => {
@@ -94,7 +94,10 @@ const HomePageComponent = () => {
     <div className="flex flex-col h-full">
       <TopTitle>
         <div className="flex flex-row items-center h-full w-full px-4">
-          <h1 className="text-xl font-bold flex-1 text-center">{t("home")}</h1>
+          <h1 className="text-xl font-bold flex-1 flex items-center justify-center gap-2">
+            <HomeIcon/>
+            {t("home")}
+          </h1>
           <Dropdown
             button={
               <div className="w-fit h-fit border-transparent hover:border-primary border-2 rounded-full overflow-hidden p-0">
