@@ -122,10 +122,10 @@ const FindSubscriptionModal = (props: FindSubscriptionModalProps) => {
         <div className={`flex flex-row gap-2 items-center h-fit w-full`}>
           <Dropdown
             button={
-              <div className={"flex flex-row gap-2 items-center justify-center h-fit w-24"}>
+              <Button primary={false} fitContent={true} stopPropagation={false}>
                 {selectedProvider && <Miniature src={selectedProvider.iconUrl} alt={selectedProvider.name}/>}
                 {selectedProvider && <span>{selectedProvider.prettyName}</span>}
-              </div>
+              </Button>
             }
             closeOnClickInside={true}
           >

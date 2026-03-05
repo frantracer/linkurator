@@ -19,6 +19,11 @@ import {useCurators} from "../../../hooks/useCurators";
 import {openModal} from "../../../utilities/modalAction";
 import {FindCuratorModalId} from "../../../components/organism/FindCuratorModal";
 import useProviders from "../../../hooks/useProviders";
+import Avatar from "../../../components/atoms/Avatar";
+import Dropdown from "../../../components/atoms/Dropdown";
+import {MenuItem} from "../../../components/atoms/MenuItem";
+import {SettingsIcon, ThumbsUpFilledIcon, UserIconFilled} from "../../../components/atoms/Icons";
+import Divider from "../../../components/atoms/Divider";
 
 const HomePageComponent = () => {
   const t = useTranslations("common");
@@ -88,8 +93,45 @@ const HomePageComponent = () => {
   return (
     <div className="flex flex-col h-full">
       <TopTitle>
-        <div className="flex flex-row items-center justify-center h-full w-full">
-          <h1 className="text-xl font-bold">{t("home")}</h1>
+        <div className="flex flex-row items-center h-full w-full px-4">
+          <h1 className="text-xl font-bold flex-1 text-center">{t("home")}</h1>
+          <Dropdown
+            button={
+              <div className="w-fit h-fit border-transparent hover:border-primary border-2 rounded-full overflow-hidden p-0">
+                <Avatar src={profile.avatar_url} alt={profile.first_name}/>
+              </div>
+            }
+            bottom={true}
+            position="end"
+            closeOnClickInside={true}
+          >
+            <li className="flex flex-row items-center gap-3 p-4">
+              <Avatar src={profile.avatar_url} alt={profile.first_name}/>
+              <div className="flex flex-col">
+                <span className="font-semibold">{profile.first_name} {profile.last_name}</span>
+                <span className="text-sm text-base-content/60">@{profile.username}</span>
+              </div>
+            </li>
+            <Divider/>
+            <MenuItem onClick={() => router.push(paths.CURATORS + "/" + profile.username)}>
+              <div className="flex flex-row items-center gap-2">
+                <ThumbsUpFilledIcon/>
+                {t("my_recommendations")}
+              </div>
+            </MenuItem>
+            <MenuItem onClick={() => router.push(paths.PROFILE)}>
+              <div className="flex flex-row items-center gap-2">
+                <UserIconFilled/>
+                {t("my_profile")}
+              </div>
+            </MenuItem>
+            <MenuItem onClick={() => router.push(paths.SETTINGS)}>
+              <div className="flex flex-row items-center gap-2">
+                <SettingsIcon/>
+                {t("settings")}
+              </div>
+            </MenuItem>
+          </Dropdown>
         </div>
       </TopTitle>
 

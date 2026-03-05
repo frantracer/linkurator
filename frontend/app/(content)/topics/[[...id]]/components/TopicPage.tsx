@@ -283,10 +283,13 @@ const TopicPageComponent = ({topicId}: { topicId: string }) => {
           <div className="flex-grow"/>
           {selectedTopic &&
               <Dropdown
-                  button={<OptionsIcon/>}
+                  button={
+                    <Button primary={false} fitContent={true} stopPropagation={false}>
+                      <OptionsIcon/>
+                    </Button>
+                  }
                   position="end"
                   bottom={true}
-                  borderless={true}
                   closeOnClickInside={true}
               >
                   <Menu>

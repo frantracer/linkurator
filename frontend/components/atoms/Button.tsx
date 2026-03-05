@@ -14,6 +14,7 @@ type ButtonProps = {
   borderless?: boolean
   tooltip?: string
   children?: React.ReactNode
+  stopPropagation?: boolean
 }
 
 const noAction = () => {
@@ -31,6 +32,7 @@ const Button = (
     primary = true,
     borderless = false,
     tooltip = undefined,
+    stopPropagation = true,
     children
   }: ButtonProps
 ) => {
@@ -55,7 +57,9 @@ const Button = (
   }
 
   const handleClick = (e: React.MouseEvent<HTMLLabelElement>) => {
-    e.stopPropagation();
+    if (stopPropagation) {
+      e.stopPropagation();
+    }
     if (clickAction) {
       clickAction();
     }

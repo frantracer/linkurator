@@ -117,10 +117,10 @@ const NewTopicModal = ({ providers, ...props }: NewTopicModalProps) => {
             position={"center"}
             bottom={false}
             button={
-              <div className="flex flex-row justify-center items-center w-72">
+              <Button primary={false} fitContent={false} stopPropagation={false}>
                 <AddIcon/>
                 {t("add_subscriptions")}
-              </div>
+              </Button>
             }>
             <div className={"h-60"}>
               <Menu>

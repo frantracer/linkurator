@@ -5,7 +5,6 @@ type DropdownProps = {
   button: React.ReactNode
   bottom?: boolean
   position?: "start" | "center" | "end"
-  borderless?: boolean
   closeOnClickInside?: boolean
   children?: React.ReactNode
 }
@@ -15,7 +14,6 @@ const Dropdown = (
     button,
     bottom = true,
     position = "start",
-    borderless = false,
     closeOnClickInside = false,
     children
   }: DropdownProps) => {
@@ -45,14 +43,6 @@ const Dropdown = (
     };
   }, [closeOnClickInside]);
 
-  const buttonClass = classNames(
-    "btn btn-sm rounded px-1 btn-primary w-fit",
-    {
-      "btn-ghost": borderless,
-      "text-primary": borderless,
-    }
-  );
-
   const contentPositionClass = classNames(
     "absolute z-50 mt-1",
     {
@@ -71,7 +61,6 @@ const Dropdown = (
         <div
           tabIndex={0}
           role="button"
-          className={buttonClass}
           onClick={() => setIsOpen(!isOpen)}
         >
           {button}

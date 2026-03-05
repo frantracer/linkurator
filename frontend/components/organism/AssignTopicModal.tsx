@@ -147,10 +147,10 @@ const AssignTopicModal = (props: AssignTopicModalProps) => {
             position={"center"}
             bottom={false}
             button={
-              <FlexRow>
+              <Button primary={false} fitContent={true} stopPropagation={false}>
                 <AddIcon/>
                 {t("assign_topic")}
-              </FlexRow>
+              </Button>
             }>
             <div className={"h-60"}>
               <Menu>

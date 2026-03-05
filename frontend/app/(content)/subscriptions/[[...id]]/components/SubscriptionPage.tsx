@@ -211,7 +211,8 @@ const SubscriptionPageComponent = ({subscriptionId}: { subscriptionId: string })
                 <h1 className="text-xl font-bold whitespace-nowrap truncate">
                   {subscriptionName}
                 </h1>
-                <Button primary={false} fitContent={true} clickAction={handleShowFilters} tooltip={t("filter")} hideOnMobile={true}>
+                <Button primary={false} fitContent={true} clickAction={handleShowFilters} tooltip={t("filter")}
+                        hideOnMobile={true}>
                   <FunnelIcon/>
                 </Button>
               </div>
@@ -251,10 +252,13 @@ const SubscriptionPageComponent = ({subscriptionId}: { subscriptionId: string })
           <div className="flex-grow"/>
           {selectedSubscription &&
               <Dropdown
-                  button={<OptionsIcon/>}
+                  button={
+                    <Button primary={false} fitContent={true} stopPropagation={false}>
+                      <OptionsIcon/>
+                    </Button>
+                  }
                   position="end"
                   bottom={true}
-                  borderless={true}
                   closeOnClickInside={true}
               >
                   <Menu>
@@ -270,19 +274,19 @@ const SubscriptionPageComponent = ({subscriptionId}: { subscriptionId: string })
           </div>
       }
       {selectedSubscription &&
-        <VideoCardGrid
-          refreshItem={refreshSubscriptionItem}
-          fetchMoreItems={fetchMoreItems}
-          items={subscriptionsItems}
-          providers={providers}
-          filters={debouncedFilters}
-          showInteractions={isUserLogged}
-          isLoading={isLoading}
-          isFinished={isFinished}
-          isBeingScanned={selectedSubscription.isBeingScanned}
-          scanningEntityName={selectedSubscription.name}
-          withSubscription={false}
-        />
+          <VideoCardGrid
+              refreshItem={refreshSubscriptionItem}
+              fetchMoreItems={fetchMoreItems}
+              items={subscriptionsItems}
+              providers={providers}
+              filters={debouncedFilters}
+              showInteractions={isUserLogged}
+              isLoading={isLoading}
+              isFinished={isFinished}
+              isBeingScanned={selectedSubscription.isBeingScanned}
+              scanningEntityName={selectedSubscription.name}
+              withSubscription={false}
+          />
       }
       {selectedSubscription &&
           <AssignTopicModal topics={topics}

@@ -77,7 +77,6 @@ import {ErrorBanner} from "../../components/atoms/ErrorBanner";
 import {Tabs} from "../../components/atoms/Tabs";
 import Dropdown from "../../components/atoms/Dropdown";
 import FlexColumn from "../../components/atoms/FlexColumn";
-import FlexRow from "../../components/atoms/FlexRow";
 
 const SIDE_BAR_NAME = "main-menu";
 const ICONS_REF = "icons";
@@ -391,10 +390,10 @@ const SelectSection = () => {
 const DropdownSection = () => {
   const DropdownButton = ({text}: { text: string }) => {
     return (
-      <FlexRow>
+      <Button primary={false} fitContent={true} stopPropagation={false}>
         <MenuIcon/>
         <span>{text}</span>
-      </FlexRow>
+      </Button>
     )
   }
 

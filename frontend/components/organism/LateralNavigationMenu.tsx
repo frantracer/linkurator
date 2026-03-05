@@ -28,7 +28,6 @@ import {closeModal, openModal} from "../../utilities/modalAction";
 import NewTopicModal, {NewTopicModalId} from "./NewTopicModal";
 import FindTopicModal, {FindTopicModalId} from "./FindTopicModal";
 import Button from "../atoms/Button";
-import Avatar from "../atoms/Avatar";
 import ALink from "../atoms/ALink";
 import {LogoImage} from "../atoms/LogoImage";
 import {LogoTitle} from "../atoms/LogoTitle";
@@ -143,6 +142,16 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
     router.push(paths.CHATS + "/" + newChatId);
   }
 
+  const goToHome = () => {
+    setCurrentTab('home');
+    router.push(paths.HOME);
+    closeMenu();
+  }
+
+  const goToCurator = (curatorUsername: string) => {
+    router.push(paths.CURATORS + "/" + curatorUsername);
+    closeMenu();
+  }
 
   return (
     <Drawer id={LATERAL_NAVIGATION_MENU_ID}>
@@ -163,16 +172,6 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
               </FlexRow>
             </FlexColumn>
           </FlexRow>
-          <FlexItem>
-            {profile &&
-                <ALink href={paths.PROFILE} onClick={() => {
-                  setCurrentTab('profile');
-                  closeMenu()
-                }}>
-                    <Avatar src={profile.avatar_url} alt={profile.first_name}/>
-                </ALink>
-            }
-          </FlexItem>
         </FlexRow>
         <Divider/>
         {!profile && !profileIsLoading &&
@@ -194,7 +193,7 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
         {profile &&
             <Menu isFullHeight={false}>
                 <MenuItem onClick={() => {
-                  setCurrentTab('home');
+                  goToHome()
                 }} selected={currentTab === 'home'}>
                     <FlexRow position={"start"}>
                         <FlexItem>
@@ -292,22 +291,8 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
                   {t("quick_accesses")}
                 </Button>
                 <Menu>
-                    <MenuItem onClick={() => {
-                      router.push(paths.HOME);
-                      closeMenu();
-                    }} selected={pathname === paths.HOME}>
-                        <FlexRow position={"start"}>
-                            <FlexItem>
-                                <HomeIcon/>
-                            </FlexItem>
-                            <FlexItem grow={true}>
-                              {t("recommendations_for_you")}
-                            </FlexItem>
-                        </FlexRow>
-                    </MenuItem>
                     {profile && <MenuItem onClick={() => {
-                      router.push(paths.CURATORS + "/" + profile.username);
-                      closeMenu();
+                      goToCurator(profile.username);
                     }} selected={pathname === paths.CURATORS + "/" + profile.username}>
                         <FlexRow position={"start"}>
                             <FlexItem>

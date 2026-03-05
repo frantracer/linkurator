@@ -153,7 +153,8 @@ const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
                   <h1 className="text-xl font-bold whitespace-nowrap truncate">
                     {curatorName}
                   </h1>
-                  <Button primary={false} fitContent={true} clickAction={handleFilter} tooltip={t("filter")} hideOnMobile={true}>
+                  <Button primary={false} fitContent={true} clickAction={handleFilter} tooltip={t("filter")}
+                          hideOnMobile={true}>
                     <FunnelIcon/>
                   </Button>
                 </FlexRow>
@@ -197,8 +198,11 @@ const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
               <Dropdown
                   position="end"
                   bottom={true}
-                  button={<OptionsIcon/>}
-                  borderless={true}
+                  button={
+                    <Button primary={false} fitContent={true} stopPropagation={false}>
+                      <OptionsIcon/>
+                    </Button>
+                  }
                   closeOnClickInside={true}
               >
                   <Menu>
