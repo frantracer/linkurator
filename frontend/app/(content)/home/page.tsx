@@ -22,8 +22,9 @@ import useProviders from "../../../hooks/useProviders";
 import Avatar from "../../../components/atoms/Avatar";
 import Dropdown from "../../../components/atoms/Dropdown";
 import {MenuItem} from "../../../components/atoms/MenuItem";
-import {HomeIcon, SettingsIcon, ThumbsUpFilledIcon, UserIconFilled} from "../../../components/atoms/Icons";
+import {HomeIcon, LogoutIcon, SettingsIcon, ThumbsUpFilledIcon, UserIconFilled} from "../../../components/atoms/Icons";
 import Divider from "../../../components/atoms/Divider";
+import {configuration} from "../../../configuration";
 
 const HomePageComponent = () => {
   const t = useTranslations("common");
@@ -132,6 +133,13 @@ const HomePageComponent = () => {
               <div className="flex flex-row items-center gap-2">
                 <SettingsIcon/>
                 {t("settings")}
+              </div>
+            </MenuItem>
+            <Divider/>
+            <MenuItem onClick={() => window.open(configuration.LOGOUT_URL, '_self')}>
+              <div className="flex flex-row items-center gap-2">
+                <LogoutIcon/>
+                {t("logout")}
               </div>
             </MenuItem>
           </Dropdown>

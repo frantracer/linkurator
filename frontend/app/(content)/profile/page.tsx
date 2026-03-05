@@ -194,14 +194,6 @@ const ProfilePage: NextPage = () => {
                       </FlexColumn>
                     </Box>
                     <Divider/>
-                    <Box title={t("session")}>
-                      <Button fitContent={true} clickAction={() => {
-                        window.open(configuration.LOGOUT_URL, '_self')
-                      }}>
-                        <span>{t("logout")}</span>
-                      </Button>
-                    </Box>
-                    <Divider/>
                     <Box title={t("privacy")}>
                       <Button fitContent={true} clickAction={() => openModal(DeleteAccountModalId)}>
                         <span>{t("delete_account")}</span>
