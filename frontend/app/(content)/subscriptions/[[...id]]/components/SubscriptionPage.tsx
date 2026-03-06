@@ -200,71 +200,73 @@ const SubscriptionPageComponent = ({subscriptionId}: { subscriptionId: string })
                           resetFilters={resetFilters}/>
       <TopTitle>
         <div className="flex flex-row items-center h-full w-full">
-          <div className="w-10 shrink-0"/>
-          <div className="flex-1 flex flex-col items-center gap-2 overflow-hidden">
-            <div className="flex flex-row items-center justify-center gap-2 overflow-hidden">
-              {selectedSubscription &&
-                  <Miniature src={selectedSubscription.thumbnail} alt={selectedSubscription.name}/>
-              }
-              <h1 className="text-xl font-bold whitespace-nowrap truncate">
-                {subscriptionName}
-              </h1>
-              <Button primary={false} fitContent={true} clickAction={handleShowFilters} tooltip={t("filter")}
-                      hideOnMobile={true}>
-                <FunnelIcon/>
-              </Button>
+          {!profileIsLoading && <>
+            <div className="w-10 shrink-0"/>
+            <div className="flex-1 flex flex-col items-center gap-2 overflow-hidden">
+              <div className="flex flex-row items-center justify-center gap-2 overflow-hidden">
+                {selectedSubscription &&
+                    <Miniature src={selectedSubscription.thumbnail} alt={selectedSubscription.name}/>
+                }
+                <h1 className="text-xl font-bold whitespace-nowrap truncate">
+                  {subscriptionName}
+                </h1>
+                <Button primary={false} fitContent={true} clickAction={handleShowFilters} tooltip={t("filter")}
+                        hideOnMobile={true}>
+                  <FunnelIcon/>
+                </Button>
+              </div>
+              <div className="flex flex-row items-center justify-center gap-2">
+                {selectedSubscription &&
+                    <Button primary={false} clickAction={openSubscriptionUrl}>
+                        <Miniature src={getProviderIcon(providers, selectedSubscription.provider)}
+                                   alt={selectedSubscription.provider}/>
+                      {getProviderPrettyName(providers, selectedSubscription.provider)}
+                    </Button>
+                }
+                {selectedSubscription && selectedSubscription.followed &&
+                    <Tag>
+                      <span>
+                        {t("following")}
+                      </span>
+                        <div className="hover:cursor-pointer"
+                             onClick={() => handleUnfollowSubscription(selectedSubscription.uuid)}>
+                            <CrossIcon/>
+                        </div>
+                    </Tag>
+                }
+                {selectedSubscription && !selectedSubscription.followed && isUserLogged &&
+                    <Button primary={false}
+                            clickAction={() => handleFollowSubscription(selectedSubscription.uuid)}>
+                      {t("follow")}
+                    </Button>
+                }
+                {selectedSubscription && !selectedSubscription.followed && !isUserLogged &&
+                    <Button primary={false} href={paths.LOGIN}>
+                      {t("follow")}
+                    </Button>
+                }
+              </div>
             </div>
-            <div className="flex flex-row items-center justify-center gap-2">
+            <div className="w-10 shrink-0 flex items-center justify-end pr-2">
               {selectedSubscription &&
-                  <Button primary={false} clickAction={openSubscriptionUrl}>
-                      <Miniature src={getProviderIcon(providers, selectedSubscription.provider)}
-                                 alt={selectedSubscription.provider}/>
-                    {getProviderPrettyName(providers, selectedSubscription.provider)}
-                  </Button>
-              }
-              {selectedSubscription && selectedSubscription.followed &&
-                  <Tag>
-                    <span>
-                      {t("following")}
-                    </span>
-                      <div className="hover:cursor-pointer"
-                           onClick={() => handleUnfollowSubscription(selectedSubscription.uuid)}>
-                          <CrossIcon/>
-                      </div>
-                  </Tag>
-              }
-              {selectedSubscription && !selectedSubscription.followed && isUserLogged &&
-                  <Button primary={false}
-                          clickAction={() => handleFollowSubscription(selectedSubscription.uuid)}>
-                    {t("follow")}
-                  </Button>
-              }
-              {selectedSubscription && !selectedSubscription.followed && !isUserLogged &&
-                  <Button primary={false} href={paths.LOGIN}>
-                    {t("follow")}
-                  </Button>
+                  <Dropdown
+                      button={
+                        <Button primary={false} fitContent={true} stopPropagation={false}>
+                          <OptionsIcon/>
+                        </Button>
+                      }
+                      small={true}
+                      position="end"
+                      bottom={true}
+                      closeOnClickInside={true}
+                  >
+                      <Menu>
+                        {dropdownButtons}
+                      </Menu>
+                  </Dropdown>
               }
             </div>
-          </div>
-          <div className="w-10 shrink-0 flex items-center justify-end pr-2">
-            {selectedSubscription &&
-                <Dropdown
-                    button={
-                      <Button primary={false} fitContent={true} stopPropagation={false}>
-                        <OptionsIcon/>
-                      </Button>
-                    }
-                    small={true}
-                    position="end"
-                    bottom={true}
-                    closeOnClickInside={true}
-                >
-                    <Menu>
-                      {dropdownButtons}
-                    </Menu>
-                </Dropdown>
-            }
-          </div>
+          </>}
         </div>
       </TopTitle>
       {isSubscriptionError &&

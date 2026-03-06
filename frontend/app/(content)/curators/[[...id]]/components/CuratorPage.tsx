@@ -142,69 +142,71 @@ const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
       <CuratorFilter curator={curator} filters={filters} setFilters={setFilters} resetFilters={resetFilters}/>
       <TopTitle>
         <div className="flex flex-row items-center h-full w-full">
-          <div className="w-10 shrink-0"/>
-          <div className="flex-1 flex flex-col items-center gap-2 overflow-hidden">
-            <div className="flex flex-row gap-2 items-center justify-center overflow-hidden">
-              <Miniature src={curatorThumbnail} alt={curatorName}/>
-              <h1 className="text-xl font-bold whitespace-nowrap truncate">
-                {curatorName}
-              </h1>
-              <Button primary={false} fitContent={true} clickAction={handleFilter} tooltip={t("filter")}
-                      hideOnMobile={true}>
-                <FunnelIcon/>
-              </Button>
+          {!profileIsLoading && <>
+            <div className="w-10 shrink-0"/>
+            <div className="flex-1 flex flex-col items-center gap-2 overflow-hidden">
+              <div className="flex flex-row gap-2 items-center justify-center overflow-hidden">
+                <Miniature src={curatorThumbnail} alt={curatorName}/>
+                <h1 className="text-xl font-bold whitespace-nowrap truncate">
+                  {curatorName}
+                </h1>
+                <Button primary={false} fitContent={true} clickAction={handleFilter} tooltip={t("filter")}
+                        hideOnMobile={true}>
+                  <FunnelIcon/>
+                </Button>
+              </div>
+              <div className="flex flex-row gap-2 items-center justify-center">
+                {curator && curator.followed &&
+                    <Tag>
+                    <span>
+                    {t("following")}
+                    </span>
+                        <div className="hover:cursor-pointer" onClick={() => handleUnfollowCurator(curator.id)}>
+                            <CrossIcon/>
+                        </div>
+                    </Tag>
+                }
+                {curator && !curator.followed && isUserLogged && !isUserCurator &&
+                    <Button primary={false} clickAction={() => handleFollowCurator(curator.id)}>
+                      {t("follow")}
+                    </Button>
+                }
+                {curator && !curator.followed && !isUserLogged &&
+                    <Button primary={false} href={paths.LOGIN}>
+                      {t("follow")}
+                    </Button>
+                }
+                {isUserCurator &&
+                    <Button primary={false} clickAction={handleShareCurator}>
+                        <ShareIcon/>
+                      {t("share")}
+                    </Button>
+                }
+              </div>
             </div>
-            <div className="flex flex-row gap-2 items-center justify-center">
-              {curator && curator.followed &&
-                  <Tag>
-                  <span>
-                  {t("following")}
-                  </span>
-                      <div className="hover:cursor-pointer" onClick={() => handleUnfollowCurator(curator.id)}>
-                          <CrossIcon/>
-                      </div>
-                  </Tag>
+            <div className="w-10 shrink-0 flex items-center justify-end pr-2">
+              {isUserCurator && profile &&
+                <ProfileDropdown profile={profile}/>
               }
-              {curator && !curator.followed && isUserLogged && !isUserCurator &&
-                  <Button primary={false} clickAction={() => handleFollowCurator(curator.id)}>
-                    {t("follow")}
-                  </Button>
-              }
-              {curator && !curator.followed && !isUserLogged &&
-                  <Button primary={false} href={paths.LOGIN}>
-                    {t("follow")}
-                  </Button>
-              }
-              {isUserCurator &&
-                  <Button primary={false} clickAction={handleShareCurator}>
-                      <ShareIcon/>
-                    {t("share")}
-                  </Button>
+              {!isUserCurator && curator &&
+                  <Dropdown
+                      small={true}
+                      position="end"
+                      bottom={true}
+                      button={
+                        <Button primary={false} fitContent={true} stopPropagation={false}>
+                          <OptionsIcon/>
+                        </Button>
+                      }
+                      closeOnClickInside={true}
+                  >
+                      <Menu>
+                        {dropdownButtons}
+                      </Menu>
+                  </Dropdown>
               }
             </div>
-          </div>
-          <div className="w-10 shrink-0 flex items-center justify-end pr-2">
-            {isUserCurator && profile &&
-              <ProfileDropdown profile={profile}/>
-            }
-            {!isUserCurator && curator &&
-                <Dropdown
-                    small={true}
-                    position="end"
-                    bottom={true}
-                    button={
-                      <Button primary={false} fitContent={true} stopPropagation={false}>
-                        <OptionsIcon/>
-                      </Button>
-                    }
-                    closeOnClickInside={true}
-                >
-                    <Menu>
-                      {dropdownButtons}
-                    </Menu>
-                </Dropdown>
-            }
-          </div>
+          </>}
         </div>
       </TopTitle>
 

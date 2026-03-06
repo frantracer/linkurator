@@ -232,70 +232,72 @@ const TopicPageComponent = ({topicId}: { topicId: string }) => {
       />
       <TopTitle>
         <div className="flex flex-row items-center h-full w-full">
-          <div className="w-10 shrink-0"/>
-          <div className="flex-1 flex flex-col items-center gap-2 overflow-hidden">
-            <div className="flex flex-row items-center justify-center gap-2">
-              <h1 className="text-xl font-bold whitespace-nowrap truncate">
-                {topicName}
-              </h1>
-              <Button primary={false} fitContent={true} clickAction={handleShowFilters} tooltip={t("filter")} hideOnMobile={true}>
-                <FunnelIcon/>
-              </Button>
+          {!topicIsLoading && <>
+            <div className="w-10 shrink-0"/>
+            <div className="flex-1 flex flex-col items-center gap-2 overflow-hidden">
+              <div className="flex flex-row items-center justify-center gap-2">
+                <h1 className="text-xl font-bold whitespace-nowrap truncate">
+                  {topicName}
+                </h1>
+                <Button primary={false} fitContent={true} clickAction={handleShowFilters} tooltip={t("filter")} hideOnMobile={true}>
+                  <FunnelIcon/>
+                </Button>
+              </div>
+              <div className="flex flex-row gap-2 items-center justify-center">
+                {selectedTopic && !selectedTopic.is_owner &&
+                    <Button primary={false} href={paths.CURATORS + "/" + selectedTopic.curator.username}>
+                        <Miniature src={selectedTopic.curator.avatar_url} alt={selectedTopic.curator.username}/>
+                        <span>{selectedTopic.curator.username}</span>
+                    </Button>
+                }
+                {selectedTopic && selectedTopic.followed && !selectedTopic.is_owner &&
+                    <Tag>
+                      <span>
+                        {t("following")}
+                      </span>
+                        <div className="hover:cursor-pointer"
+                             onClick={() => handleUnfollowTopic(selectedTopic.uuid)}>
+                            <CrossIcon/>
+                        </div>
+                    </Tag>
+                }
+                {selectedTopic && !selectedTopic.followed && !selectedTopic.is_owner && isUserLogged &&
+                    <Button primary={false} clickAction={() => handleFollowTopic(selectedTopic.uuid)}>
+                      {t("follow")}
+                    </Button>
+                }
+                {selectedTopic && !selectedTopic.followed && !selectedTopic.is_owner && !isUserLogged &&
+                    <Button primary={false} href={paths.LOGIN}>
+                      {t("follow")}
+                    </Button>
+                }
+                {selectedTopic && selectedTopic.is_owner &&
+                    <Tag>
+                        <span className="whitespace-nowrap text-nowrap">{t("my_topics")}</span>
+                    </Tag>
+                }
+              </div>
             </div>
-            <div className="flex flex-row gap-2 items-center justify-center">
-              {selectedTopic && !selectedTopic.is_owner &&
-                  <Button primary={false} href={paths.CURATORS + "/" + selectedTopic.curator.username}>
-                      <Miniature src={selectedTopic.curator.avatar_url} alt={selectedTopic.curator.username}/>
-                      <span>{selectedTopic.curator.username}</span>
-                  </Button>
-              }
-              {selectedTopic && selectedTopic.followed && !selectedTopic.is_owner &&
-                  <Tag>
-                    <span>
-                      {t("following")}
-                    </span>
-                      <div className="hover:cursor-pointer"
-                           onClick={() => handleUnfollowTopic(selectedTopic.uuid)}>
-                          <CrossIcon/>
-                      </div>
-                  </Tag>
-              }
-              {selectedTopic && !selectedTopic.followed && !selectedTopic.is_owner && isUserLogged &&
-                  <Button primary={false} clickAction={() => handleFollowTopic(selectedTopic.uuid)}>
-                    {t("follow")}
-                  </Button>
-              }
-              {selectedTopic && !selectedTopic.followed && !selectedTopic.is_owner && !isUserLogged &&
-                  <Button primary={false} href={paths.LOGIN}>
-                    {t("follow")}
-                  </Button>
-              }
-              {selectedTopic && selectedTopic.is_owner &&
-                  <Tag>
-                      <span className="whitespace-nowrap text-nowrap">{t("my_topics")}</span>
-                  </Tag>
+            <div className="w-10 shrink-0 flex items-center justify-end pr-2">
+              {selectedTopic &&
+                  <Dropdown
+                      button={
+                        <Button primary={false} fitContent={true} stopPropagation={false}>
+                          <OptionsIcon/>
+                        </Button>
+                      }
+                      small={true}
+                      position="end"
+                      bottom={true}
+                      closeOnClickInside={true}
+                  >
+                      <Menu>
+                        {dropdownButtons}
+                      </Menu>
+                  </Dropdown>
               }
             </div>
-          </div>
-          <div className="w-10 shrink-0 flex items-center justify-end pr-2">
-            {selectedTopic &&
-                <Dropdown
-                    button={
-                      <Button primary={false} fitContent={true} stopPropagation={false}>
-                        <OptionsIcon/>
-                      </Button>
-                    }
-                    small={true}
-                    position="end"
-                    bottom={true}
-                    closeOnClickInside={true}
-                >
-                    <Menu>
-                      {dropdownButtons}
-                    </Menu>
-                </Dropdown>
-            }
-          </div>
+          </>}
         </div>
       </TopTitle>
       {
