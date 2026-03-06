@@ -89,6 +89,7 @@ export default function LandingPage() {
           <Button href={"/login"}>
             {t("log_in")}
           </Button>
+          <div className={"w-4"}/>
         </FlexRow>
       </div>
       <main className="flex-1">
