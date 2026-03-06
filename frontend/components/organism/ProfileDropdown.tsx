@@ -12,6 +12,7 @@ import {configuration, paths} from "../../configuration";
 import {openModal} from "../../utilities/modalAction";
 import ImportSubscriptionsModal, {ImportSubscriptionsModalId} from "./ImportSubscriptionsModal";
 import {Profile} from "../../services/profileService";
+import ProfileInfo from "./ProfileInfo";
 
 type ProfileDropdownProps = {
   profile: Profile;
@@ -34,13 +35,7 @@ const ProfileDropdown = ({profile}: ProfileDropdownProps) => {
         position="end"
         closeOnClickInside={true}
       >
-        <li className="flex flex-row items-center gap-3 p-4">
-          <Avatar src={profile.avatar_url} alt={profile.first_name}/>
-          <div className="flex flex-col">
-            <span className="font-semibold">{profile.first_name} {profile.last_name}</span>
-            <span className="text-sm text-base-content/60">@{profile.username}</span>
-          </div>
-        </li>
+        <ProfileInfo profile={profile}/>
         <Divider/>
         <MenuItem onClick={() => router.push(paths.PROFILE)}>
           <div className="flex flex-row items-center gap-2">

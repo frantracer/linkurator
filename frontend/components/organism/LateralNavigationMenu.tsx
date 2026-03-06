@@ -42,6 +42,7 @@ import FindCuratorModal, {FindCuratorModalId} from "./FindCuratorModal";
 import FindSubscriptionModal, {FindSubscriptionModalId} from "./FindSubscriptionModal";
 import {ImportSubscriptionsModalId} from "./ImportSubscriptionsModal";
 import FlexItem from "../atoms/FlexItem";
+import ProfileInfo from "./ProfileInfo";
 import {useTranslations} from "next-intl";
 import QuickAccessesModal, {QuickAccessesModalId} from "./QuickAccessesModal";
 import {v4 as uuidv4} from 'uuid';
@@ -284,7 +285,7 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
         }
         {profile && <Divider/>}
         {profile && currentTab === 'home' &&
-            <div className={"flex flex-col overflow-y-auto overflow-x-hidden gap-2"}>
+            <div className={"flex flex-col overflow-y-auto overflow-x-hidden gap-2 flex-1"}>
                 <Button primary={false} fitContent={false} clickAction={openQuickAccessesModal}>
                     <BoltIcon/>
                   {t("quick_accesses")}
@@ -329,6 +330,10 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
                       </FlexRow>
                   </MenuItem>
                 </Menu>
+                <div className="mt-auto">
+                    <Divider/>
+                    <ProfileInfo profile={profile}/>
+                </div>
             </div>
         }
         {profile && currentTab === 'topics' &&
