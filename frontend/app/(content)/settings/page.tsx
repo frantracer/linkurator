@@ -27,6 +27,7 @@ import {
   ThumbsUpFilledIcon
 } from "../../../components/atoms/Icons";
 import Divider from "../../../components/atoms/Divider";
+import ProfileDropdown from "../../../components/organism/ProfileDropdown";
 
 const NOTIFICATION_TIMEOUT = 3000;
 
@@ -102,6 +103,7 @@ const SettingsPage: NextPage = () => {
             <SettingsIcon/>
             {t("settings")}
           </h1>
+          <ProfileDropdown profile={profile}/>
         </div>
       </TopTitle>
       <div className="h-full overflow-y-auto">

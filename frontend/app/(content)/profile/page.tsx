@@ -22,6 +22,7 @@ import {useDebounce} from "../../../hooks/useDebounce";
 import FlexItem from "../../../components/atoms/FlexItem";
 import {useTranslations} from "next-intl";
 import {UserIconFilled} from "../../../components/atoms/Icons";
+import ProfileDropdown from "../../../components/organism/ProfileDropdown";
 
 const NOTIFICATION_TIMEOUT = 3000;
 const INPUT_DEBOUNCE_TIMEOUT = 500;
@@ -130,6 +131,7 @@ const ProfilePage: NextPage = () => {
             <UserIconFilled/>
             {t("my_profile")}
           </h1>
+          {profile && <ProfileDropdown profile={profile}/>}
         </div>
       </TopTitle>
       <div className="h-full overflow-y-auto">

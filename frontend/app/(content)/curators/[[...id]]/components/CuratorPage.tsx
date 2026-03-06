@@ -40,6 +40,7 @@ import Menu from "../../../../../components/atoms/Menu";
 import ShareCuratorModal, {ShareCuratorModalId} from "../../../../../components/organism/ShareCuratorModal";
 import {openModal} from "../../../../../utilities/modalAction";
 import useProviders from "../../../../../hooks/useProviders";
+import ProfileDropdown from "../../../../../components/organism/ProfileDropdown";
 
 const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
   const t = useTranslations("common");
@@ -194,7 +195,10 @@ const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
             </FlexItem>
           </FlexRow>
           <FlexItem grow={true}/>
-          {curator &&
+          {isUserCurator && profile &&
+            <ProfileDropdown profile={profile}/>
+          }
+          {!isUserCurator && curator &&
               <Dropdown
                   position="end"
                   bottom={true}
