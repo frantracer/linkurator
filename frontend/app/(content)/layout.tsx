@@ -11,7 +11,7 @@ export default function DashboardLayout(
   }) {
   return (
     <div className="flex flex-col h-dvh w-dvw overflow-y-hidden">
-      <div className="flex flex-grow overflow-y-hidden">
+      <div className="flex flex-grow overflow-y-hidden min-h-0">
         <LateralNavigationMenu>
           {children}
         </LateralNavigationMenu>
