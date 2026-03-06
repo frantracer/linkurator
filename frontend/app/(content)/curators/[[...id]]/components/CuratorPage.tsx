@@ -99,7 +99,7 @@ const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
       if (curator.followed) {
         dropdownButtons.push(
           <MenuItem key={"curators-unfollow"} onClick={() => handleUnfollowCurator(curator.id)} hideMenuOnClick={true}>
-            <div className="flex flex-row gap-2 items-center justify-center">
+            <div className="flex flex-row gap-2 items-center justify-left">
               <MinusIcon/>
               {t("unfollow")}
             </div>
@@ -108,7 +108,7 @@ const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
       } else {
         dropdownButtons.push(
           <MenuItem key={"curators-follow"} onClick={() => handleFollowCurator(curator.id)} hideMenuOnClick={true}>
-            <div className="flex flex-row gap-2 items-center justify-center">
+            <div className="flex flex-row gap-2 items-center justify-left">
               <AddIcon/>
               {t("follow")}
             </div>
@@ -118,7 +118,7 @@ const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
     }
     dropdownButtons.push(
       <MenuItem key={"curators-filter"} onClick={handleFilter} hideMenuOnClick={true}>
-        <div className="flex flex-row gap-2 items-center justify-center">
+        <div className="flex flex-row gap-2 items-center justify-left">
           <FunnelIcon/>
           {t("filter")}
         </div>
@@ -189,6 +189,7 @@ const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
             }
             {!isUserCurator && curator &&
                 <Dropdown
+                    small={true}
                     position="end"
                     bottom={true}
                     button={

@@ -150,7 +150,7 @@ const TopicPageComponent = ({topicId}: { topicId: string }) => {
     if (selectedTopic.is_owner) {
       dropdownButtons.push(
         <MenuItem key={"topics-edit-topic"} onClick={handleEditTopic} hideMenuOnClick={true}>
-          <div className="flex flex-row gap-2 items-center justify-center">
+          <div className="flex flex-row gap-2 items-center justify-left">
             <PencilIcon/>
             {t("edit")}
           </div>
@@ -158,7 +158,7 @@ const TopicPageComponent = ({topicId}: { topicId: string }) => {
       )
       dropdownButtons.push(
         <MenuItem key={"topics-delete-topic"} onClick={handleDeleteTopic} hideMenuOnClick={true}>
-          <div className="flex flex-row gap-2 items-center justify-center">
+          <div className="flex flex-row gap-2 items-center justify-left">
             <TrashIcon/>
             {t("delete")}
           </div>
@@ -169,7 +169,7 @@ const TopicPageComponent = ({topicId}: { topicId: string }) => {
       dropdownButtons.push(
         <MenuItem key={"topics-unfollow-topic"} onClick={() => handleUnfollowTopic(selectedTopic.uuid)}
                   hideMenuOnClick={true}>
-          <div className="flex flex-row gap-2 items-center justify-center">
+          <div className="flex flex-row gap-2 items-center justify-left">
             <MinusIcon/>
             {t("unfollow")}
           </div>
@@ -180,7 +180,7 @@ const TopicPageComponent = ({topicId}: { topicId: string }) => {
       dropdownButtons.push(
         <MenuItem key={"topics-follow-topic"} onClick={() => handleFollowTopic(selectedTopic.uuid)}
                   hideMenuOnClick={true}>
-          <div className="flex flex-row gap-2 items-center justify-center">
+          <div className="flex flex-row gap-2 items-center justify-left">
             <AddIcon/>
             {t("follow")}
           </div>
@@ -193,7 +193,7 @@ const TopicPageComponent = ({topicId}: { topicId: string }) => {
       dropdownButtons.push(
         <MenuItem key={"topics-unfavorite-topic"} onClick={() => handleFavoriteTopic(selectedTopic.uuid)}
                   hideMenuOnClick={true}>
-          <div className="flex flex-row gap-2 items-center justify-center">
+          <div className="flex flex-row gap-2 items-center justify-left">
             <StarFilledIcon/>
             {t("remove_from_favorites")}
           </div>
@@ -203,7 +203,7 @@ const TopicPageComponent = ({topicId}: { topicId: string }) => {
       dropdownButtons.push(
         <MenuItem key={"topics-favorite-topic"} onClick={() => handleFavoriteTopic(selectedTopic.uuid)}
                   hideMenuOnClick={true}>
-          <div className="flex flex-row gap-2 items-center justify-center">
+          <div className="flex flex-row gap-2 items-center justify-left">
             <StarIcon/>
             {t("add_to_favorites")}
           </div>
@@ -213,7 +213,7 @@ const TopicPageComponent = ({topicId}: { topicId: string }) => {
   }
   dropdownButtons.push(
     <MenuItem key={"topics-filter"} onClick={handleShowFilters} hideMenuOnClick={true}>
-      <div className="flex flex-row gap-2 items-center justify-center">
+      <div className="flex flex-row gap-2 items-center justify-left">
         <FunnelIcon/>
         {t("filter")}
       </div>
@@ -285,6 +285,7 @@ const TopicPageComponent = ({topicId}: { topicId: string }) => {
                         <OptionsIcon/>
                       </Button>
                     }
+                    small={true}
                     position="end"
                     bottom={true}
                     closeOnClickInside={true}
