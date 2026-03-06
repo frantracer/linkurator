@@ -4,7 +4,6 @@ import {useTranslations} from 'next-intl';
 import {useRouter} from "next/navigation";
 import React, {useEffect, useState} from "react";
 import Button from "../../../../../components/atoms/Button";
-import FlexRow from "../../../../../components/atoms/FlexRow";
 import {
   AddIcon,
   CrossIcon,
@@ -144,20 +143,20 @@ const SubscriptionPageComponent = ({subscriptionId}: { subscriptionId: string })
   if (selectedSubscription && isUserLogged) {
     dropdownButtons.push(
       <MenuItem key={"subscriptions-assign"} onClick={handleAssignSubscription} hideMenuOnClick={true}>
-        <FlexRow position="center">
+        <div className="flex flex-row gap-2 items-center justify-center">
           <PencilIcon/>
           {t("assign")}
-        </FlexRow>
+        </div>
       </MenuItem>
     )
     dropdownButtons.push(
       <MenuItem key={"subscriptions-refresh"} onClick={() => {
         handleRefreshSubscription(selectedSubscription.uuid, selectedSubscription.name)
       }} hideMenuOnClick={true}>
-        <FlexRow position="center">
+        <div className="flex flex-row gap-2 items-center justify-center">
           <RefreshIcon/>
           {t("refresh")}
-        </FlexRow>
+        </div>
       </MenuItem>
     )
   }
@@ -165,10 +164,10 @@ const SubscriptionPageComponent = ({subscriptionId}: { subscriptionId: string })
     dropdownButtons.push(
       <MenuItem key={"subscriptions-unfollow"} onClick={() => handleUnfollowSubscription(selectedSubscription.uuid)}
                 hideMenuOnClick={true}>
-        <FlexRow position="center">
+        <div className="flex flex-row gap-2 items-center justify-center">
           <MinusIcon/>
           {t("unfollow")}
-        </FlexRow>
+        </div>
       </MenuItem>
     )
   }
@@ -176,19 +175,19 @@ const SubscriptionPageComponent = ({subscriptionId}: { subscriptionId: string })
     dropdownButtons.push(
       <MenuItem key={"subscriptions-follow"} onClick={() => handleFollowSubscription(selectedSubscription.uuid)}
                 hideMenuOnClick={true}>
-        <FlexRow position="center">
+        <div className="flex flex-row gap-2 items-center justify-center">
           <AddIcon/>
           {t("follow")}
-        </FlexRow>
+        </div>
       </MenuItem>
     )
   }
   dropdownButtons.push(
     <MenuItem key={"subscriptions-filter"} onClick={handleShowFilters} hideMenuOnClick={true}>
-      <FlexRow position="center">
+      <div className="flex flex-row gap-2 items-center justify-center">
         <FunnelIcon/>
         {t("filter")}
-      </FlexRow>
+      </div>
     </MenuItem>
   )
 
