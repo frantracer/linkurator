@@ -3,7 +3,7 @@ import Avatar from "./Avatar";
 import {Profile} from "../../services/profileService";
 
 type ProfileMenuProps = {
-  profile: Profile | undefined
+  profile: Profile | null | undefined
 }
 
 const ProfileMenu = (props: ProfileMenuProps) => {

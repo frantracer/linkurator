@@ -9,7 +9,7 @@ type UseTopics = {
   refreshTopics: () => void;
 }
 
-const fetchTopics = async (profile: Profile | undefined) => {
+const fetchTopics = async (profile: Profile | null | undefined) => {
   if (profile) {
     const topics = await getTopics();
     topics.sort(topicSorting);
@@ -18,7 +18,7 @@ const fetchTopics = async (profile: Profile | undefined) => {
   return [];
 };
 
-export function useTopics(profile: Profile | undefined, profileIsLoading: boolean): UseTopics {
+export function useTopics(profile: Profile | null | undefined, profileIsLoading: boolean): UseTopics {
   const {data: topics = [], isLoading, refetch: refreshTopics} = useQuery({
     queryKey: ['topics', profile, profileIsLoading],
     queryFn: () => fetchTopics(profile),

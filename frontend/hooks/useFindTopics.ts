@@ -9,7 +9,7 @@ type findTopicsState = {
   refreshTopics: () => void;
 }
 
-const useFindTopics = (profile: Profile | undefined, name: string): findTopicsState => {
+const useFindTopics = (profile: Profile | null | undefined, name: string): findTopicsState => {
   const fetchTopics = () => {
     if (name === '') {
       return [];

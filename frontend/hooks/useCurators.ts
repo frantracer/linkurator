@@ -9,14 +9,14 @@ type UseCurators = {
   refreshCurators: () => void;
 }
 
-const fetchCurators = async (profile: Profile | undefined) => {
+const fetchCurators = async (profile: Profile | null | undefined) => {
   if (profile) {
     return await getCurators();
   }
   return [];
 };
 
-export function useCurators(profile: Profile | undefined, profileIsLoading: boolean): UseCurators {
+export function useCurators(profile: Profile | null | undefined, profileIsLoading: boolean): UseCurators {
   const {data: curators = [], isLoading, refetch: refreshCurators} = useQuery({
     queryKey: ['curators', profile, profileIsLoading],
     queryFn: () => fetchCurators(profile),

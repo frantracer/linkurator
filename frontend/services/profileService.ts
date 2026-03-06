@@ -10,16 +10,16 @@ export type Profile = {
   email: string
 }
 
-export async function getProfile(): Promise<Profile | undefined> {
+export async function getProfile(): Promise<Profile | null> {
   try {
     const {data, status} = await axios.get<Profile>(configuration.PROFILE_URL, {withCredentials: true});
     if (status === 200) {
       return data
     } else {
-      return undefined;
+      return null;
     }
   } catch (error) {
-    return undefined;
+    return null;
   }
 }
 

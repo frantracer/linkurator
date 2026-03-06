@@ -9,7 +9,7 @@ type subscriptionState = {
   refreshSubscriptions: () => void;
 }
 
-const useSubscriptions = (profile: Profile | undefined): subscriptionState => {
+const useSubscriptions = (profile: Profile | null | undefined): subscriptionState => {
   const fetchSubscriptions = () => {
     if (profile) {
       return getSubscriptions().then(

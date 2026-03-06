@@ -54,7 +54,7 @@ const ProfilePage: NextPage = () => {
   }, [refreshProfile]);
 
   useEffect(() => {
-    if (profile !== undefined && debouncedFirstName !== null && debouncedFirstName !== profile.first_name) {
+    if (profile != null && debouncedFirstName !== null && debouncedFirstName !== profile.first_name) {
       handleUpdateFirstName(debouncedFirstName);
     }
   }, [debouncedFirstName, profile, handleUpdateFirstName]);
@@ -79,7 +79,7 @@ const ProfilePage: NextPage = () => {
   }, [refreshProfile]);
 
   useEffect(() => {
-    if (profile !== undefined && debouncedLastName !== null && debouncedLastName !== profile.last_name) {
+    if (profile != null && debouncedLastName !== null && debouncedLastName !== profile.last_name) {
       handleUpdateLastName(debouncedLastName);
     }
   }, [debouncedLastName, profile, handleUpdateLastName]);
@@ -104,7 +104,7 @@ const ProfilePage: NextPage = () => {
   }, [refreshProfile]);
 
   useEffect(() => {
-    if (profile !== undefined && debouncedUsername !== null && debouncedUsername !== profile.username) {
+    if (profile != null && debouncedUsername !== null && debouncedUsername !== profile.username) {
       handleUpdateUsername(debouncedUsername);
     }
   }, [debouncedUsername, profile, handleUpdateUsername]);
