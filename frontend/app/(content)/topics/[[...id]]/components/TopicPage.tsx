@@ -5,7 +5,6 @@ import {useRouter} from "next/navigation";
 import React, {useEffect, useState} from "react";
 import Button from "../../../../../components/atoms/Button";
 import {ErrorBanner} from "../../../../../components/atoms/ErrorBanner";
-import FlexRow from "../../../../../components/atoms/FlexRow";
 import {
   AddIcon,
   CrossIcon,
@@ -151,18 +150,18 @@ const TopicPageComponent = ({topicId}: { topicId: string }) => {
     if (selectedTopic.is_owner) {
       dropdownButtons.push(
         <MenuItem key={"topics-edit-topic"} onClick={handleEditTopic} hideMenuOnClick={true}>
-          <FlexRow position="center">
+          <div className="flex flex-row gap-2 items-center justify-center">
             <PencilIcon/>
             {t("edit")}
-          </FlexRow>
+          </div>
         </MenuItem>
       )
       dropdownButtons.push(
         <MenuItem key={"topics-delete-topic"} onClick={handleDeleteTopic} hideMenuOnClick={true}>
-          <FlexRow position="center">
+          <div className="flex flex-row gap-2 items-center justify-center">
             <TrashIcon/>
             {t("delete")}
-          </FlexRow>
+          </div>
         </MenuItem>
       )
     }
@@ -170,10 +169,10 @@ const TopicPageComponent = ({topicId}: { topicId: string }) => {
       dropdownButtons.push(
         <MenuItem key={"topics-unfollow-topic"} onClick={() => handleUnfollowTopic(selectedTopic.uuid)}
                   hideMenuOnClick={true}>
-          <FlexRow position="center">
+          <div className="flex flex-row gap-2 items-center justify-center">
             <MinusIcon/>
             {t("unfollow")}
-          </FlexRow>
+          </div>
         </MenuItem>
       )
     }
@@ -181,10 +180,10 @@ const TopicPageComponent = ({topicId}: { topicId: string }) => {
       dropdownButtons.push(
         <MenuItem key={"topics-follow-topic"} onClick={() => handleFollowTopic(selectedTopic.uuid)}
                   hideMenuOnClick={true}>
-          <FlexRow position="center">
+          <div className="flex flex-row gap-2 items-center justify-center">
             <AddIcon/>
             {t("follow")}
-          </FlexRow>
+          </div>
         </MenuItem>
       )
     }
@@ -194,30 +193,30 @@ const TopicPageComponent = ({topicId}: { topicId: string }) => {
       dropdownButtons.push(
         <MenuItem key={"topics-unfavorite-topic"} onClick={() => handleFavoriteTopic(selectedTopic.uuid)}
                   hideMenuOnClick={true}>
-          <FlexRow position="center">
+          <div className="flex flex-row gap-2 items-center justify-center">
             <StarFilledIcon/>
             {t("remove_from_favorites")}
-          </FlexRow>
+          </div>
         </MenuItem>
       )
     } else {
       dropdownButtons.push(
         <MenuItem key={"topics-favorite-topic"} onClick={() => handleFavoriteTopic(selectedTopic.uuid)}
                   hideMenuOnClick={true}>
-          <FlexRow position="center">
+          <div className="flex flex-row gap-2 items-center justify-center">
             <StarIcon/>
             {t("add_to_favorites")}
-          </FlexRow>
+          </div>
         </MenuItem>
       )
     }
   }
   dropdownButtons.push(
     <MenuItem key={"topics-filter"} onClick={handleShowFilters} hideMenuOnClick={true}>
-      <FlexRow position="center">
+      <div className="flex flex-row gap-2 items-center justify-center">
         <FunnelIcon/>
         {t("filter")}
-      </FlexRow>
+      </div>
     </MenuItem>
   )
 
@@ -244,7 +243,7 @@ const TopicPageComponent = ({topicId}: { topicId: string }) => {
                   <FunnelIcon/>
                 </Button>
               </div>
-              <FlexRow>
+              <div className="flex flex-row gap-2 items-center h-fit w-full justify-center">
                 {selectedTopic && !selectedTopic.is_owner &&
                     <Button primary={false} href={paths.CURATORS + "/" + selectedTopic.curator.username}>
                         <Miniature src={selectedTopic.curator.avatar_url} alt={selectedTopic.curator.username}/>
@@ -277,7 +276,7 @@ const TopicPageComponent = ({topicId}: { topicId: string }) => {
                         <span className="whitespace-nowrap text-nowrap">{t("my_topics")}</span>
                     </Tag>
                 }
-              </FlexRow>
+              </div>
             </div>
           </div>
           <div className="flex-grow"/>
@@ -301,11 +300,11 @@ const TopicPageComponent = ({topicId}: { topicId: string }) => {
       </TopTitle>
       {
         topicIsError && !topicIsLoading &&
-          <FlexRow position={"center"}>
+          <div className="flex flex-row gap-2 items-center justify-center">
               <ErrorBanner>
                   <span>{t("topic_not_found")}</span>
               </ErrorBanner>
-          </FlexRow>
+          </div>
       }
       {
         selectedTopic &&
