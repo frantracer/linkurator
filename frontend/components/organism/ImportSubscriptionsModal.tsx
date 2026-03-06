@@ -1,7 +1,5 @@
 import React from "react";
 import Modal from "../atoms/Modal";
-import Box from "../atoms/Box";
-import FlexColumn from "../atoms/FlexColumn";
 import Miniature from "../atoms/Miniature";
 import Button from "../atoms/Button";
 import {getProviderIcon} from "../../entities/Provider";
@@ -10,6 +8,7 @@ import {configuration} from "../../configuration";
 import {closeModal} from "../../utilities/modalAction";
 import {useRouter} from "next/navigation";
 import {useTranslations} from "next-intl";
+import Box from "../atoms/Box";
 
 export const ImportSubscriptionsModalId = "import-subscriptions-modal";
 
@@ -37,38 +36,28 @@ const ImportSubscriptionsModal = () => {
   return (
     <Modal id={ImportSubscriptionsModalId} onClose={handleClose}>
       <h1 className="font-bold text-xl w-full text-center">{t("import_subscriptions")}</h1>
-      <FlexColumn>
-        <Box title={""}>
-          <div className={"h-72 overflow-y-auto"}>
-            {isProviderAvailable("youtube") && (
-              <Box title="">
-                <div className={"flex flex-row items-center justify-center gap-2"}>
-                  <Miniature src={getProviderIcon(providers, "youtube")} alt={"youtube logo"}/>
-                  <span className={"font-bold"}>{"YouTube"}</span>
-                </div>
-                <div className={"flex flex-row items-center justify-center gap-4"}>
-                  <Button clickAction={handleYoutubeImport}>
-                    {t("import")}
-                  </Button>
-                </div>
-              </Box>
-            )}
-            {isProviderAvailable("patreon") && (
-              <Box title="">
-                <div className={"flex flex-row items-center justify-center gap-2"}>
-                  <Miniature src={getProviderIcon(providers, "patreon")} alt={"patreon logo"}/>
-                  <span className={"font-bold"}>{"Patreon"}</span>
-                </div>
-                <div className={"flex flex-row items-center justify-center gap-4"}>
-                  <Button clickAction={handlePatreonImport}>
-                    {t("import")}
-                  </Button>
-                </div>
-              </Box>
-            )}
-          </div>
-        </Box>
-      </FlexColumn>
+      <Box title="">
+        <div className={"flex flex-col gap-5"}>
+          <div/>
+          {isProviderAvailable("youtube") && (
+            <div className={"flex flex-row items-center justify-center gap-4 w-full"}>
+              <Button clickAction={handleYoutubeImport}>
+                <Miniature src={getProviderIcon(providers, "youtube")} alt={"youtube logo"}/>
+                {t("import_from_youtube")}
+              </Button>
+            </div>
+          )}
+          {isProviderAvailable("patreon") && (
+            <div className={"flex flex-row items-center justify-center gap-4 w-full"}>
+              <Button clickAction={handlePatreonImport}>
+                <Miniature src={getProviderIcon(providers, "patreon")} alt={"patreon logo"}/>
+                {t("import_from_patreon")}
+              </Button>
+            </div>
+          )}
+          <div/>
+        </div>
+      </Box>
     </Modal>
   )
 }
