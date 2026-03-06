@@ -144,56 +144,53 @@ const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
     <Drawer id={CURATOR_FILTER_ID} right={true} alwaysOpenOnDesktop={false}>
       <CuratorFilter curator={curator} filters={filters} setFilters={setFilters} resetFilters={resetFilters}/>
       <TopTitle>
-        <FlexRow hideOverflow={true}>
+        <div className="flex flex-row items-center h-full w-full px-4">
+          <div className="w-10 shrink-0"/>
           <FlexItem grow={true}/>
-          <FlexRow>
-            <FlexItem>
-              <FlexColumn gap={0} position={"center"}>
-                <FlexRow>
-                  <Miniature src={curatorThumbnail} alt={curatorName}/>
-                  <h1 className="text-xl font-bold whitespace-nowrap truncate">
-                    {curatorName}
-                  </h1>
-                  <Button primary={false} fitContent={true} clickAction={handleFilter} tooltip={t("filter")}
-                          hideOnMobile={true}>
-                    <FunnelIcon/>
-                  </Button>
-                </FlexRow>
-                <FlexRow>
-                  {curator && curator.followed &&
-                      <Tag>
-                      <span>
-                      {t("following")}
-                      </span>
-                          <div className="hover:cursor-pointer" onClick={() => handleUnfollowCurator(curator.id)}>
-                              <CrossIcon/>
-                          </div>
-                      </Tag>
-                  }
-                  {curator && !curator.followed && isUserLogged && !isUserCurator &&
-                      <FlexRow>
-                          <Button primary={false} clickAction={() => handleFollowCurator(curator.id)}>
-                            {t("follow")}
-                          </Button>
-                      </FlexRow>
-                  }
-                  {curator && !curator.followed && !isUserLogged &&
-                      <FlexRow>
-                          <Button primary={false} href={paths.LOGIN}>
-                            {t("follow")}
-                          </Button>
-                      </FlexRow>
-                  }
-                  {isUserCurator &&
-                      <Button primary={false} clickAction={handleShareCurator}>
-                          <ShareIcon/>
-                        {t("share")}
+          <FlexColumn gap={0} position={"center"}>
+            <FlexRow>
+              <Miniature src={curatorThumbnail} alt={curatorName}/>
+              <h1 className="text-xl font-bold whitespace-nowrap truncate">
+                {curatorName}
+              </h1>
+              <Button primary={false} fitContent={true} clickAction={handleFilter} tooltip={t("filter")}
+                      hideOnMobile={true}>
+                <FunnelIcon/>
+              </Button>
+            </FlexRow>
+            <FlexRow>
+              {curator && curator.followed &&
+                  <Tag>
+                  <span>
+                  {t("following")}
+                  </span>
+                      <div className="hover:cursor-pointer" onClick={() => handleUnfollowCurator(curator.id)}>
+                          <CrossIcon/>
+                      </div>
+                  </Tag>
+              }
+              {curator && !curator.followed && isUserLogged && !isUserCurator &&
+                  <FlexRow>
+                      <Button primary={false} clickAction={() => handleFollowCurator(curator.id)}>
+                        {t("follow")}
                       </Button>
-                  }
-                </FlexRow>
-              </FlexColumn>
-            </FlexItem>
-          </FlexRow>
+                  </FlexRow>
+              }
+              {curator && !curator.followed && !isUserLogged &&
+                  <FlexRow>
+                      <Button primary={false} href={paths.LOGIN}>
+                        {t("follow")}
+                      </Button>
+                  </FlexRow>
+              }
+              {isUserCurator &&
+                  <Button primary={false} clickAction={handleShareCurator}>
+                      <ShareIcon/>
+                    {t("share")}
+                  </Button>
+              }
+            </FlexRow>
+          </FlexColumn>
           <FlexItem grow={true}/>
           {isUserCurator && profile &&
             <ProfileDropdown profile={profile}/>
@@ -214,7 +211,7 @@ const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
                   </Menu>
               </Dropdown>
           }
-        </FlexRow>
+        </div>
       </TopTitle>
 
       {/* Mobile tabs */}

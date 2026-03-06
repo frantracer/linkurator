@@ -91,6 +91,7 @@ const HomePageComponent = () => {
     <div className="flex flex-col h-full">
       <TopTitle>
         <div className="flex flex-row items-center h-full w-full px-4">
+          <div className="w-10 shrink-0"/>
           <h1 className="text-xl font-bold flex-1 flex items-center justify-center gap-2">
             <HomeIcon/>
             {t("home")}

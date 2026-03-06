@@ -127,6 +127,7 @@ const ProfilePage: NextPage = () => {
     <main className="flex flex-col bg-base-100">
       <TopTitle>
         <div className="flex flex-row items-center h-full w-full px-4">
+          <div className="w-10 shrink-0"/>
           <h1 className="text-xl font-bold flex-1 flex items-center justify-center gap-2">
             <UserIconFilled/>
             {t("my_profile")}

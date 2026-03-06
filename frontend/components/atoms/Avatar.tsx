@@ -3,11 +3,11 @@ type AvatarProps = {
   alt: string;
 }
 
-const Avatar = (props: AvatarProps) => {
+const Avatar = ({src, alt}: AvatarProps) => {
   return (
     <div className="avatar flex">
-      <div className="w-12 h-12 rounded-md bg-neutral">
-        {props.src && <img className="block" src={props.src} alt={props.alt}/>}
+      <div className={`w-10 h-10 rounded-md bg-neutral`}>
+        {src && <img className="block" src={src} alt={alt}/>}
       </div>
     </div>
   )
