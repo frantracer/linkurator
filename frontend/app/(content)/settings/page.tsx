@@ -85,7 +85,7 @@ const SettingsPage: NextPage = () => {
 
   if (profileIsLoading || isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
+      <div className="flex items-center justify-center h-full">
         <span className="loading loading-spinner loading-lg"></span>
       </div>
     );
