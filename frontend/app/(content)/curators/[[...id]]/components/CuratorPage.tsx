@@ -3,9 +3,6 @@
 import {useTranslations} from 'next-intl';
 import React, {useEffect, useState} from "react";
 import Button from "../../../../../components/atoms/Button";
-import FlexColumn from "../../../../../components/atoms/FlexColumn";
-import FlexItem from "../../../../../components/atoms/FlexItem";
-import FlexRow from "../../../../../components/atoms/FlexRow";
 import {
   AddIcon,
   CrossIcon,
@@ -102,29 +99,29 @@ const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
       if (curator.followed) {
         dropdownButtons.push(
           <MenuItem key={"curators-unfollow"} onClick={() => handleUnfollowCurator(curator.id)} hideMenuOnClick={true}>
-            <FlexRow position="center">
+            <div className="flex flex-row gap-2 items-center justify-center">
               <MinusIcon/>
               {t("unfollow")}
-            </FlexRow>
+            </div>
           </MenuItem>
         )
       } else {
         dropdownButtons.push(
           <MenuItem key={"curators-follow"} onClick={() => handleFollowCurator(curator.id)} hideMenuOnClick={true}>
-            <FlexRow position="center">
+            <div className="flex flex-row gap-2 items-center justify-center">
               <AddIcon/>
               {t("follow")}
-            </FlexRow>
+            </div>
           </MenuItem>
         )
       }
     }
     dropdownButtons.push(
       <MenuItem key={"curators-filter"} onClick={handleFilter} hideMenuOnClick={true}>
-        <FlexRow position="center">
+        <div className="flex flex-row gap-2 items-center justify-center">
           <FunnelIcon/>
           {t("filter")}
-        </FlexRow>
+        </div>
       </MenuItem>
     )
   }
@@ -146,9 +143,9 @@ const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
       <TopTitle>
         <div className="flex flex-row items-center h-full w-full px-4">
           <div className="w-10 shrink-0"/>
-          <FlexItem grow={true}/>
-          <FlexColumn gap={0} position={"center"}>
-            <FlexRow>
+          <div className="self-center basis-0 w-full shrink-0 grow"/>
+          <div className="flex flex-col h-full gap-0 items-center">
+            <div className="flex flex-row gap-2 items-center h-fit w-full justify-center">
               <Miniature src={curatorThumbnail} alt={curatorName}/>
               <h1 className="text-xl font-bold whitespace-nowrap truncate">
                 {curatorName}
@@ -157,8 +154,8 @@ const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
                       hideOnMobile={true}>
                 <FunnelIcon/>
               </Button>
-            </FlexRow>
-            <FlexRow>
+            </div>
+            <div className="flex flex-row gap-2 items-center h-fit w-full justify-center">
               {curator && curator.followed &&
                   <Tag>
                   <span>
@@ -170,18 +167,18 @@ const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
                   </Tag>
               }
               {curator && !curator.followed && isUserLogged && !isUserCurator &&
-                  <FlexRow>
+                  <div className="flex flex-row gap-2 items-center h-fit w-full justify-center">
                       <Button primary={false} clickAction={() => handleFollowCurator(curator.id)}>
                         {t("follow")}
                       </Button>
-                  </FlexRow>
+                  </div>
               }
               {curator && !curator.followed && !isUserLogged &&
-                  <FlexRow>
+                  <div className="flex flex-row gap-2 items-center h-fit w-full justify-center">
                       <Button primary={false} href={paths.LOGIN}>
                         {t("follow")}
                       </Button>
-                  </FlexRow>
+                  </div>
               }
               {isUserCurator &&
                   <Button primary={false} clickAction={handleShareCurator}>
@@ -189,9 +186,9 @@ const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
                     {t("share")}
                   </Button>
               }
-            </FlexRow>
-          </FlexColumn>
-          <FlexItem grow={true}/>
+            </div>
+          </div>
+          <div className="self-center basis-0 w-full shrink-0 grow"/>
           {isUserCurator && profile &&
             <ProfileDropdown profile={profile}/>
           }
@@ -244,11 +241,11 @@ const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
       {/* Desktop two-column layout */}
       <div className="hidden flex-col md:grid md:grid-cols-3 h-full overflow-auto">
         <div className="col-span-2 border-r border-neutral h-full overflow-y-auto">
-          <FlexColumn gap={4}>
-            <FlexRow>
+          <div className="flex flex-col h-full gap-4 items-start">
+            <div className="flex flex-row gap-2 items-center h-fit w-full justify-center">
               <ThumbsUpFilledIcon/>
               <h2 className={"text-xl text-balance"}>{t("recommendations")}</h2>
-            </FlexRow>
+            </div>
             <VideoCardGrid
               refreshItem={refreshCuratorItem}
               fetchMoreItems={fetchMoreItems}
@@ -258,18 +255,18 @@ const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
               isLoading={isLoading}
               isFinished={isFinished}
             />
-          </FlexColumn>
+          </div>
         </div>
 
         <div className="col-span-1 flex w-full h-full overflow-x-hidden overflow-y-auto">
           <div className="w-full items-center mx-4">
-            <FlexColumn gap={4}>
-              <FlexRow>
+            <div className="flex flex-col h-full gap-4 items-start">
+              <div className="flex flex-row gap-2 items-center h-fit w-full justify-center">
                 <RectangleGroup/>
                 <h2 className="text-xl text-balance">{t("topics")}</h2>
-              </FlexRow>
+              </div>
               <CuratorTopicsList topics={topics} isLoading={topicsIsLoading} refreshTopics={refreshAllTopics}/>
-            </FlexColumn>
+            </div>
           </div>
         </div>
       </div>
