@@ -5,6 +5,7 @@ import React, {Suspense, useEffect, useState} from "react";
 import useProfile from "../../hooks/useProfile";
 import {configuration, paths} from "../../configuration";
 import {useRouter, useSearchParams} from "next/navigation";
+import {useQueryClient} from "@tanstack/react-query";
 import Button from "../../components/atoms/Button";
 import ALink from "../../components/atoms/ALink";
 import {GoogleIcon} from "../../components/atoms/Icons";
@@ -39,6 +40,7 @@ const Home: NextPage = () => {
   const router = useRouter();
   const {profile, profileIsLoading} = useProfile();
 
+  const queryClient = useQueryClient();
   const [loginError, setLoginError] = useState<string | null>(null);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -51,6 +53,7 @@ const Home: NextPage = () => {
 
   const handleLogin = () => {
     login(email, password).then(() => {
+      queryClient.removeQueries({queryKey: ['profile']});
       router.push(paths.HOME);
     }).catch(() => {
       setLoginError(t("incorrect_email_or_password"));
