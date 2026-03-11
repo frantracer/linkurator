@@ -53,10 +53,13 @@ const useCuratorItems = (curatorId: OptionalCuratorId, filters: Filters): UseCur
     }
   }
 
+  const isLoading = isFetching || isFetchingNextPage;
+  const isFinished = !hasNextPage && !isLoading;
+
   return {
     curatorItems: data ? data.pages.map((page) => page.elements).flat() : [],
-    isLoading: isFetching || isFetchingNextPage,
-    isFinished: !hasNextPage,
+    isLoading: isLoading,
+    isFinished: isFinished,
     refreshCuratorItems: () => refetch(),
     refreshCuratorItem,
     fetchMoreItems: fetchNextPage

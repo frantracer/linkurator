@@ -42,36 +42,34 @@ import ProfileDropdown from "../../../../../components/organism/ProfileDropdown"
 const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
   const t = useTranslations("common");
   const {providers} = useProviders();
-
   const {filters, setFilters, resetFilters} = useFilters();
   const [debouncedFilters, setDebouncedFilters] = useState(filters);
   const [activeTab, setActiveTab] = useState<string>(t('recommendations'));
-  const {profile, profileIsLoading} = useProfile();
-  const {refreshTopics: refreshUserTopics} = useTopics(profile, profileIsLoading);
-  const {curators, refreshCurators} = useCurators(profile, profileIsLoading);
-  const {curator} = useCurator(curatorName, curators);
-
-  const isUserLogged = !!(profile)
-  const isUserCurator = isUserLogged && !!(curator) && profile.username === curator.username;
-
+  const {profile, profileIsLoading: isProfileLoading} = useProfile();
+  const {refreshTopics: refreshUserTopics} = useTopics(profile, isProfileLoading);
+  const {curators, refreshCurators, curatorsAreLoading: isCuratorsLoading} = useCurators(profile, isProfileLoading);
+  const {curator, curatorIsLoading: isCuratorLoading} = useCurator(curatorName, curators);
   const curatorId = curator ? curator.id : null;
   const {
     curatorItems,
     fetchMoreItems,
     refreshCuratorItem,
-    isLoading,
-    isFinished
+    isLoading: isCuratorItemsLoading,
+    isFinished: isCuratorItemsFinished
   } = useCuratorItems(curatorId, debouncedFilters);
+  const {topics, topicsIsLoading: isTopicsLoading, refetchTopics} = useCuratorTopics(curatorId);
 
-  const {topics, topicsIsLoading, refetchTopics} = useCuratorTopics(curatorId);
+  const isLoggedIn = !!(profile)
+  const isOwnCuratorProfile = isLoggedIn && !!(curator) && profile.username === curator.username;
+  const isMainDataLoading = isCuratorLoading || isCuratorsLoading || isProfileLoading || isTopicsLoading;
+  const isItemsLoading = isCuratorItemsLoading || isCuratorLoading;
+  const curatorThumbnail = curator ? curator.avatar_url : "";
 
   const refreshAllTopics = () => {
     refetchTopics().then(() => {
       refreshUserTopics();
     })
   }
-
-  const curatorThumbnail = curator ? curator.avatar_url : "";
 
   const handleFilter = () => {
     showLateralMenu(CURATOR_FILTER_ID);
@@ -95,7 +93,7 @@ const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
 
   const dropdownButtons = []
   if (curator) {
-    if (isUserLogged) {
+    if (isLoggedIn) {
       if (curator.followed) {
         dropdownButtons.push(
           <MenuItem key={"curators-unfollow"} onClick={() => handleUnfollowCurator(curator.id)} hideMenuOnClick={true}>
@@ -142,7 +140,8 @@ const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
       <CuratorFilter curator={curator} filters={filters} setFilters={setFilters} resetFilters={resetFilters}/>
       <TopTitle>
         <div className="flex flex-row items-center h-full w-full">
-          {!profileIsLoading && <>
+          {!isMainDataLoading && curator &&
+              <>
             <div className="w-10 shrink-0"/>
             <div className="flex-1 flex flex-col items-center gap-2 overflow-hidden">
               <div className="flex flex-row gap-2 items-center justify-center overflow-hidden">
@@ -166,17 +165,17 @@ const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
                         </div>
                     </Tag>
                 }
-                {curator && !curator.followed && isUserLogged && !isUserCurator &&
+                {curator && !curator.followed && isLoggedIn && !isOwnCuratorProfile &&
                     <Button primary={false} clickAction={() => handleFollowCurator(curator.id)}>
                       {t("follow")}
                     </Button>
                 }
-                {curator && !curator.followed && !isUserLogged &&
+                {curator && !curator.followed && !isLoggedIn &&
                     <Button primary={false} href={paths.LOGIN}>
                       {t("follow")}
                     </Button>
                 }
-                {isUserCurator &&
+                {isOwnCuratorProfile &&
                     <Button primary={false} clickAction={handleShareCurator}>
                         <ShareIcon/>
                       {t("share")}
@@ -185,10 +184,10 @@ const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
               </div>
             </div>
             <div className="w-10 shrink-0 flex items-center justify-end pr-2">
-              {isUserCurator && profile &&
+              {isOwnCuratorProfile && profile &&
                 <ProfileDropdown profile={profile}/>
               }
-              {!isUserCurator && curator &&
+              {!isOwnCuratorProfile && curator &&
                   <Dropdown
                       small={true}
                       position="end"
@@ -206,7 +205,8 @@ const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
                   </Dropdown>
               }
             </div>
-          </>}
+          </>
+          }
         </div>
       </TopTitle>
 
@@ -223,16 +223,16 @@ const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
               fetchMoreItems={fetchMoreItems}
               items={curatorItems}
               providers={providers}
-              showInteractions={isUserLogged}
-              isLoading={isLoading}
-              isFinished={isFinished}
+              showInteractions={isLoggedIn}
+              isLoading={isItemsLoading && isMainDataLoading}
+              isFinished={isCuratorItemsFinished}
             />
           </div>
         )}
 
         {activeTab === t('topics') && (
           <div className="p-2 flex w-full h-full overflow-x-hidden overflow-y-auto">
-            <CuratorTopicsList topics={topics} isLoading={topicsIsLoading} refreshTopics={refreshAllTopics}/>
+            <CuratorTopicsList topics={topics} isLoading={isMainDataLoading} refreshTopics={refreshAllTopics}/>
           </div>
         )}
       </div>
@@ -250,9 +250,9 @@ const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
               fetchMoreItems={fetchMoreItems}
               items={curatorItems}
               providers={providers}
-              showInteractions={isUserLogged}
-              isLoading={isLoading}
-              isFinished={isFinished}
+              showInteractions={isLoggedIn}
+              isLoading={isItemsLoading && isMainDataLoading}
+              isFinished={isCuratorItemsFinished}
             />
           </div>
         </div>
@@ -264,7 +264,7 @@ const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
                 <RectangleGroup/>
                 <h2 className="text-xl text-balance">{t("topics")}</h2>
               </div>
-              <CuratorTopicsList topics={topics} isLoading={topicsIsLoading} refreshTopics={refreshAllTopics}/>
+              <CuratorTopicsList topics={topics} isLoading={isMainDataLoading} refreshTopics={refreshAllTopics}/>
             </div>
           </div>
         </div>
