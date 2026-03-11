@@ -28,8 +28,8 @@ const HomePageComponent = () => {
   const {providers} = useProviders();
 
   const {profile, profileIsLoading} = useProfile();
-  const {subscriptions} = useSubscriptions(profile);
-  const {topics} = useTopics(profile, profileIsLoading);
+  const {subscriptions, subscriptionsAreLoading} = useSubscriptions(profile);
+  const {topics, topicsAreLoading} = useTopics(profile, profileIsLoading);
   const {filters} = useFilters();
   const {
     latestItems,
@@ -49,6 +49,7 @@ const HomePageComponent = () => {
   } = useLatestFollowedCuratorItems(20, filters);
 
   // Get favorite topics and followed curators
+  const isLoading = profileIsLoading || subscriptionsAreLoading || topicsAreLoading;
   const hasSubscriptions = subscriptions.length > 0;
   const hasTopics = topics.length > 0;
   const favoriteTopics = topics.filter(topic => topic.is_favorite);
@@ -75,14 +76,6 @@ const HomePageComponent = () => {
     }
   }, [router, profile, profileIsLoading]);
 
-  if (profileIsLoading) {
-    return (
-      <div className="flex items-center justify-center h-full">
-        <span className="loading loading-spinner loading-lg"></span>
-      </div>
-    );
-  }
-
   if (!profile) {
     return null;
   }
@@ -100,11 +93,17 @@ const HomePageComponent = () => {
         </div>
       </TopTitle>
 
-      {!hasSubscriptions &&
+      {isLoading &&
+          <div className="flex items-center justify-center h-full">
+              <span className="loading loading-spinner loading-lg"></span>
+          </div>
+      }
+
+      {!hasSubscriptions && !isLoading &&
           <ImportSubscriptionsHero/>
       }
 
-      {hasSubscriptions &&
+      {hasSubscriptions && !isLoading &&
           <div className="flex-1 overflow-y-auto p-4 space-y-8">
             {/* Curator Items Carousel */}
             {hasFollowedCurators &&
