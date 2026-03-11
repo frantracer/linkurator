@@ -15,6 +15,7 @@ import {
   BookmarkSquaredFilled,
   ChatBubbleFilledIcon,
   HomeIcon,
+  ImportIcon,
   MagnifyingGlassIcon,
   RectangleGroup,
   SettingsIcon,
@@ -291,18 +292,6 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
                   {t("quick_accesses")}
                 </Button>
                 <Menu>
-                    {profile && <MenuItem onClick={() => {
-                      goToCurator(profile.username);
-                    }} selected={pathname === paths.CURATORS + "/" + profile.username}>
-                        <FlexRow position={"start"}>
-                            <FlexItem>
-                                <ThumbsUpFilledIcon/>
-                            </FlexItem>
-                            <FlexItem grow={true}>
-                              {t("my_recommendations")}
-                            </FlexItem>
-                        </FlexRow>
-                    </MenuItem>}
                     <MenuItem onClick={() => {
                       router.push(paths.PROFILE);
                       closeMenu();
@@ -316,19 +305,43 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
                             </FlexItem>
                         </FlexRow>
                     </MenuItem>
-                  <MenuItem onClick={() => {
-                    router.push(paths.SETTINGS);
-                    closeMenu();
-                  }} selected={pathname === paths.SETTINGS}>
-                      <FlexRow position={"start"}>
-                          <FlexItem>
-                              <SettingsIcon/>
-                          </FlexItem>
-                          <FlexItem grow={true}>
-                            {t("settings")}
-                          </FlexItem>
-                      </FlexRow>
-                  </MenuItem>
+                    <MenuItem onClick={() => {
+                      openImportSubscriptionsModal();
+                    }}>
+                        <FlexRow position={"start"}>
+                            <FlexItem>
+                                <ImportIcon/>
+                            </FlexItem>
+                            <FlexItem grow={true}>
+                              {t("import_subscriptions")}
+                            </FlexItem>
+                        </FlexRow>
+                    </MenuItem>
+                    {profile && <MenuItem onClick={() => {
+                      goToCurator(profile.username);
+                    }} selected={pathname === paths.CURATORS + "/" + profile.username}>
+                        <FlexRow position={"start"}>
+                            <FlexItem>
+                                <ThumbsUpFilledIcon/>
+                            </FlexItem>
+                            <FlexItem grow={true}>
+                              {t("my_recommendations")}
+                            </FlexItem>
+                        </FlexRow>
+                    </MenuItem>}
+                    <MenuItem onClick={() => {
+                      router.push(paths.SETTINGS);
+                      closeMenu();
+                    }} selected={pathname === paths.SETTINGS}>
+                        <FlexRow position={"start"}>
+                            <FlexItem>
+                                <SettingsIcon/>
+                            </FlexItem>
+                            <FlexItem grow={true}>
+                              {t("settings")}
+                            </FlexItem>
+                        </FlexRow>
+                    </MenuItem>
                 </Menu>
                 <div className="mt-auto">
                     <Divider/>
