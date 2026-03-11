@@ -118,7 +118,9 @@ const EditTopicModal = ({ providers, ...props }: EditTopicModalProps) => {
   return (
     <Modal id={EditTopicModalId} onClose={handleCancel}>
       <h1 className="font-bold text-xl w-full text-center mb-4">{t("edit_topic")}</h1>
-      <FlexColumn>
+      <FlexColumn position={"center"}>
+        <InputText placeholder={t("new_topic_name")} value={newTopicName}
+                   onChange={(value) => setNewTopicName(value)}/>
         <Box title={t("subscriptions") + " (" + subscriptionsToAdd.length + ")"}>
           <div className={"h-60 flex flex-col overflow-auto mb-2"}>
             <FlexRow wrap={true}>
@@ -127,29 +129,27 @@ const EditTopicModal = ({ providers, ...props }: EditTopicModalProps) => {
               }
             </FlexRow>
           </div>
-          <Dropdown
-            position={"center"}
-            bottom={false}
-            button={
-              <Button primary={false} fitContent={true} stopPropagation={false}>
-                <AddIcon/>
-                {t("add_subscriptions")}
-              </Button>
-            }>
-            <div className={"h-60"}>
-              <Menu>
-                {subscriptionsMenuItems.length === 0 &&
-                    <MenuItem>{t("no_subscriptions")}</MenuItem>
-                }
-                {subscriptionsMenuItems.length > 0 && subscriptionsMenuItems}
-              </Menu>
-            </div>
-            <SearchBar value={searchValue} placeholder={t("search_placeholder")}
-                       handleChange={(value) => setSearchValue(value)}/>
-          </Dropdown>
         </Box>
-        <InputText placeholder={t("new_topic_name")} value={newTopicName}
-                   onChange={(value) => setNewTopicName(value)}/>
+        <Dropdown
+          position={"center"}
+          bottom={false}
+          button={
+            <Button primary={false} fitContent={true} stopPropagation={false}>
+              <AddIcon/>
+              {t("add_subscriptions")}
+            </Button>
+          }>
+          <div className={"h-60"}>
+            <Menu>
+              {subscriptionsMenuItems.length === 0 &&
+                  <MenuItem>{t("no_subscriptions")}</MenuItem>
+              }
+              {subscriptionsMenuItems.length > 0 && subscriptionsMenuItems}
+            </Menu>
+          </div>
+          <SearchBar value={searchValue} placeholder={t("search_placeholder")}
+                     handleChange={(value) => setSearchValue(value)}/>
+        </Dropdown>
         <FlexRow position={"center"}>
           <Button clickAction={handleCancel} primary={false}>
             <span>{t("cancel")}</span>

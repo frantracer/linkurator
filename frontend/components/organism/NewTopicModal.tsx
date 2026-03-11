@@ -104,7 +104,9 @@ const NewTopicModal = ({ providers, ...props }: NewTopicModalProps) => {
   return (
     <Modal id={NewTopicModalId} onClose={handleClose}>
       <h1 className="font-bold text-xl w-full text-center mb-4">{t("create_topic")}</h1>
-      <FlexColumn>
+      <FlexColumn position={"center"}>
+        <InputText placeholder={t("enter_new_topic_name")} value={newTopicName}
+                   onChange={(value) => setNewTopicName(value)}/>
         <Box title={t("subscriptions") + " (" + subscriptionsToAdd.length + ")"}>
           <div className={"h-60 flex flex-col overflow-auto mb-2"}>
             <FlexRow wrap={true}>
@@ -113,29 +115,27 @@ const NewTopicModal = ({ providers, ...props }: NewTopicModalProps) => {
               }
             </FlexRow>
           </div>
-          <Dropdown
-            position={"center"}
-            bottom={false}
-            button={
-              <Button primary={false} fitContent={false} stopPropagation={false}>
-                <AddIcon/>
-                {t("add_subscriptions")}
-              </Button>
-            }>
-            <div className={"h-60"}>
-              <Menu>
-                {subscriptionsMenuItems.length === 0 &&
-                    <MenuItem>{t("no_subscriptions")}</MenuItem>
-                }
-                {subscriptionsMenuItems.length > 0 && subscriptionsMenuItems}
-              </Menu>
-            </div>
-            <SearchBar value={searchValue} placeholder={t("search_placeholder")}
-                       handleChange={(value) => setSearchValue(value)}/>
-          </Dropdown>
         </Box>
-        <InputText placeholder={t("enter_new_topic_name")} value={newTopicName}
-                   onChange={(value) => setNewTopicName(value)}/>
+        <Dropdown
+          position={"center"}
+          bottom={false}
+          button={
+            <Button primary={false} fitContent={false} stopPropagation={false}>
+              <AddIcon/>
+              {t("add_subscriptions")}
+            </Button>
+          }>
+          <div className={"h-60"}>
+            <Menu>
+              {subscriptionsMenuItems.length === 0 &&
+                  <MenuItem>{t("no_subscriptions")}</MenuItem>
+              }
+              {subscriptionsMenuItems.length > 0 && subscriptionsMenuItems}
+            </Menu>
+          </div>
+          <SearchBar value={searchValue} placeholder={t("search_placeholder")}
+                     handleChange={(value) => setSearchValue(value)}/>
+        </Dropdown>
         <FlexRow hideOverflow={false} position={"center"}>
           <Button
             clickAction={handleClose}
