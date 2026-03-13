@@ -163,14 +163,18 @@ const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
             </div>
             <div className="flex-1 min-w-0 flex flex-col items-center gap-2 overflow-hidden">
               <div className="w-full flex flex-row gap-2 items-center justify-center overflow-hidden">
-                <Miniature src={curatorThumbnail} alt={curatorName}/>
+                <div className="shrink-0">
+                  <Miniature src={curatorThumbnail} alt={curatorName}/>
+                </div>
                 <h1 className="text-xl font-bold min-w-0 whitespace-nowrap truncate">
                   {curatorName}
                 </h1>
-                <Button primary={false} fitContent={true} clickAction={handleFilter} tooltip={t("filter")}
-                        hideOnMobile={true}>
-                  <FunnelIcon/>
-                </Button>
+                <div className="shrink-0">
+                  <Button primary={false} fitContent={true} clickAction={handleFilter} tooltip={t("filter")}
+                          hideOnMobile={true}>
+                    <FunnelIcon/>
+                  </Button>
+                </div>
               </div>
               <div className="flex flex-row gap-2 items-center justify-center">
                 {curator && curator.followed &&

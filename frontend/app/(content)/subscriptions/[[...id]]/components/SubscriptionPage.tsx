@@ -224,15 +224,19 @@ const SubscriptionPageComponent = ({subscriptionId}: { subscriptionId: string })
             <div className="flex-1 min-w-0 flex flex-col items-center gap-2 overflow-hidden">
               <div className="w-full flex flex-row items-center justify-center gap-2 overflow-hidden">
                 {selectedSubscription &&
-                    <Miniature src={selectedSubscription.thumbnail} alt={selectedSubscription.name}/>
+                    <div className="shrink-0">
+                      <Miniature src={selectedSubscription.thumbnail} alt={selectedSubscription.name}/>
+                    </div>
                 }
                 <h1 className="text-xl font-bold min-w-0 whitespace-nowrap truncate">
                   {subscriptionName}
                 </h1>
-                <Button primary={false} fitContent={true} clickAction={handleShowFilters} tooltip={t("filter")}
-                        hideOnMobile={true}>
-                  <FunnelIcon/>
-                </Button>
+                <div className="shrink-0">
+                  <Button primary={false} fitContent={true} clickAction={handleShowFilters} tooltip={t("filter")}
+                          hideOnMobile={true}>
+                    <FunnelIcon/>
+                  </Button>
+                </div>
               </div>
               <div className="flex flex-row items-center justify-center gap-2">
                 {selectedSubscription &&

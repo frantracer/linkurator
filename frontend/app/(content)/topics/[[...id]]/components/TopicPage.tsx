@@ -258,9 +258,11 @@ const TopicPageComponent = ({topicId}: { topicId: string }) => {
                 <h1 className="text-xl font-bold min-w-0 whitespace-nowrap truncate">
                   {topicName}
                 </h1>
-                <Button primary={false} fitContent={true} clickAction={handleShowFilters} tooltip={t("filter")} hideOnMobile={true}>
-                  <FunnelIcon/>
-                </Button>
+                <div className="shrink-0">
+                  <Button primary={false} fitContent={true} clickAction={handleShowFilters} tooltip={t("filter")} hideOnMobile={true}>
+                    <FunnelIcon/>
+                  </Button>
+                </div>
               </div>
               <div className="flex flex-row gap-2 items-center justify-center">
                 {selectedTopic && !selectedTopic.is_owner &&
