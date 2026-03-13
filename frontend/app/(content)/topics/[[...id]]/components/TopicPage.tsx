@@ -235,7 +235,7 @@ const TopicPageComponent = ({topicId}: { topicId: string }) => {
         <div className="flex flex-row items-center h-full w-full px-4">
           {!topicIsLoading && <>
             <div className="w-10 shrink-0 flex items-center justify-start">
-              {selectedTopic &&
+              {isUserLogged && selectedTopic &&
                   <Dropdown
                       button={
                         <Button primary={false} fitContent={true} stopPropagation={false}>

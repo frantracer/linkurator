@@ -143,7 +143,7 @@ const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
           {!isMainDataLoading && curator &&
               <>
             <div className="w-10 shrink-0 flex items-center justify-start">
-              {!isOwnCuratorProfile && curator &&
+              {isLoggedIn && !isOwnCuratorProfile && curator &&
                   <Dropdown
                       small={true}
                       position="start"

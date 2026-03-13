@@ -203,7 +203,7 @@ const SubscriptionPageComponent = ({subscriptionId}: { subscriptionId: string })
         <div className="flex flex-row items-center h-full w-full px-4">
           {!profileIsLoading && <>
             <div className="w-10 shrink-0 flex items-center justify-start">
-              {selectedSubscription &&
+              {isUserLogged && selectedSubscription &&
                   <Dropdown
                       button={
                         <Button primary={false} fitContent={true} stopPropagation={false}>
