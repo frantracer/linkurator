@@ -169,8 +169,8 @@ const ChatPageComponent = ({conversationId}: { conversationId: string }) => {
   return (
     <div className="flex flex-col h-full">
       <TopTitle>
-        <div className="flex flex-row items-center justify-between overflow-visible w-full h-full">
-          <div className="flex-shrink-0 w-12 flex justify-start items-center h-full">
+        <div className="flex flex-row items-center h-full w-full px-4">
+          <div className="w-10 shrink-0 flex items-center justify-start">
             {localMessages.length > 0 && (
               <Button
                 fitContent={true}
@@ -183,15 +183,15 @@ const ChatPageComponent = ({conversationId}: { conversationId: string }) => {
               </Button>
             )}
           </div>
-          <div className="flex-grow flex justify-center items-center overflow-hidden h-full">
-            <h1 className="text-xl font-bold whitespace-nowrap truncate">
+          <div className="flex-1 min-w-0 flex justify-center items-center overflow-hidden h-full">
+            <h1 className="text-xl font-bold min-w-0 whitespace-nowrap truncate">
               {conversationLoading
                 ? t('loading')
                 : conversation?.title || t('new_chat')
               }
             </h1>
           </div>
-          <div className="flex-shrink-0 w-12 flex justify-end items-center h-full">
+          <div className="w-10 shrink-0 flex items-center justify-end">
             {profile && <ProfileDropdown profile={profile}/>}
           </div>
         </div>

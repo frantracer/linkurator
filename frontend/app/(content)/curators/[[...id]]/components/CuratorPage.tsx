@@ -139,7 +139,7 @@ const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
     <Drawer id={CURATOR_FILTER_ID} right={true} alwaysOpenOnDesktop={false}>
       <CuratorFilter curator={curator} filters={filters} setFilters={setFilters} resetFilters={resetFilters}/>
       <TopTitle>
-        <div className="flex flex-row items-center h-full w-full">
+        <div className="flex flex-row items-center h-full w-full px-4">
           {!isMainDataLoading && curator &&
               <>
             <div className="w-10 shrink-0 flex items-center justify-start">
@@ -161,10 +161,10 @@ const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
                   </Dropdown>
               }
             </div>
-            <div className="flex-1 flex flex-col items-center gap-2 overflow-hidden">
-              <div className="flex flex-row gap-2 items-center justify-center overflow-hidden">
+            <div className="flex-1 min-w-0 flex flex-col items-center gap-2 overflow-hidden">
+              <div className="w-full flex flex-row gap-2 items-center justify-center overflow-hidden">
                 <Miniature src={curatorThumbnail} alt={curatorName}/>
-                <h1 className="text-xl font-bold whitespace-nowrap truncate">
+                <h1 className="text-xl font-bold min-w-0 whitespace-nowrap truncate">
                   {curatorName}
                 </h1>
                 <Button primary={false} fitContent={true} clickAction={handleFilter} tooltip={t("filter")}

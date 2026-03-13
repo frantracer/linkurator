@@ -232,9 +232,9 @@ const TopicPageComponent = ({topicId}: { topicId: string }) => {
                    resetFilters={resetFilters}
       />
       <TopTitle>
-        <div className="flex flex-row items-center h-full w-full">
+        <div className="flex flex-row items-center h-full w-full px-4">
           {!topicIsLoading && <>
-            <div className="w-10 shrink-0 flex items-center justify-start pl-2">
+            <div className="w-10 shrink-0 flex items-center justify-start">
               {selectedTopic &&
                   <Dropdown
                       button={
@@ -253,9 +253,9 @@ const TopicPageComponent = ({topicId}: { topicId: string }) => {
                   </Dropdown>
               }
             </div>
-            <div className="flex-1 flex flex-col items-center gap-2 overflow-hidden">
-              <div className="flex flex-row items-center justify-center gap-2">
-                <h1 className="text-xl font-bold whitespace-nowrap truncate">
+            <div className="flex-1 min-w-0 flex flex-col items-center gap-2 overflow-hidden">
+              <div className="w-full flex flex-row items-center justify-center gap-2 overflow-hidden">
+                <h1 className="text-xl font-bold min-w-0 whitespace-nowrap truncate">
                   {topicName}
                 </h1>
                 <Button primary={false} fitContent={true} clickAction={handleShowFilters} tooltip={t("filter")} hideOnMobile={true}>
@@ -297,7 +297,7 @@ const TopicPageComponent = ({topicId}: { topicId: string }) => {
                 }
               </div>
             </div>
-            <div className="w-10 shrink-0 flex items-center justify-end pr-2">
+            <div className="w-10 shrink-0 flex items-center justify-end">
               {profile && <ProfileDropdown profile={profile}/>}
             </div>
           </>}

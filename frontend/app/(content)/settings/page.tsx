@@ -99,12 +99,14 @@ const SettingsPage: NextPage = () => {
     <main className="flex flex-col bg-base-100">
       <TopTitle>
         <div className="flex flex-row items-center h-full w-full px-4">
-          <div className="w-10 shrink-0"/>
-          <h1 className="text-xl font-bold flex-1 flex items-center justify-center gap-2">
+          <div className="w-10 shrink-0 flex items-center justify-start"/>
+          <h1 className="text-xl font-bold flex-1 min-w-0 flex items-center justify-center gap-2">
             <SettingsIcon/>
             {t("settings")}
           </h1>
-          <ProfileDropdown profile={profile}/>
+          <div className="w-10 shrink-0 flex items-center justify-end">
+            <ProfileDropdown profile={profile}/>
+          </div>
         </div>
       </TopTitle>
       <div className="h-full overflow-y-auto">

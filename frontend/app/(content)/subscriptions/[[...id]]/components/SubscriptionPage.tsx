@@ -200,9 +200,9 @@ const SubscriptionPageComponent = ({subscriptionId}: { subscriptionId: string })
                           setFilters={setFilters}
                           resetFilters={resetFilters}/>
       <TopTitle>
-        <div className="flex flex-row items-center h-full w-full">
+        <div className="flex flex-row items-center h-full w-full px-4">
           {!profileIsLoading && <>
-            <div className="w-10 shrink-0 flex items-center justify-start pl-2">
+            <div className="w-10 shrink-0 flex items-center justify-start">
               {selectedSubscription &&
                   <Dropdown
                       button={
@@ -221,12 +221,12 @@ const SubscriptionPageComponent = ({subscriptionId}: { subscriptionId: string })
                   </Dropdown>
               }
             </div>
-            <div className="flex-1 flex flex-col items-center gap-2 overflow-hidden">
-              <div className="flex flex-row items-center justify-center gap-2 overflow-hidden">
+            <div className="flex-1 min-w-0 flex flex-col items-center gap-2 overflow-hidden">
+              <div className="w-full flex flex-row items-center justify-center gap-2 overflow-hidden">
                 {selectedSubscription &&
                     <Miniature src={selectedSubscription.thumbnail} alt={selectedSubscription.name}/>
                 }
-                <h1 className="text-xl font-bold whitespace-nowrap truncate">
+                <h1 className="text-xl font-bold min-w-0 whitespace-nowrap truncate">
                   {subscriptionName}
                 </h1>
                 <Button primary={false} fitContent={true} clickAction={handleShowFilters} tooltip={t("filter")}
@@ -266,7 +266,7 @@ const SubscriptionPageComponent = ({subscriptionId}: { subscriptionId: string })
                 }
               </div>
             </div>
-            <div className="w-10 shrink-0 flex items-center justify-end pr-2">
+            <div className="w-10 shrink-0 flex items-center justify-end">
               {profile && <ProfileDropdown profile={profile}/>}
             </div>
           </>}
