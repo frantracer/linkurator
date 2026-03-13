@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { ChatConversation } from '../entities/Chat';
 import { getChat } from '../services/chatService';
+import { shouldRetryQuery } from '../utilities/queryRetry';
 
 const useChat = (conversationId: string | undefined) => {
   const { data: conversation, isLoading, error, refetch } = useQuery({
@@ -27,7 +28,7 @@ const useChat = (conversationId: string | undefined) => {
       }
     },
     enabled: !!conversationId,
-    retry: 1,
+    retry: (failureCount, error) => shouldRetryQuery(failureCount, error, 1),
     staleTime: 60 * 1000, // 1 minute
     refetchInterval: (query) => query.state.data?.isWaitingForResponse ? 10 * 1000 : false, // Refetch every 10 seconds if waiting for response
   });

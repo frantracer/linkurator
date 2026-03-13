@@ -4,9 +4,11 @@ import {ChatConversation, ChatMessage} from "../entities/Chat";
 import {mapJsonItemToSubscriptionItem} from "./subscriptionService";
 
 export class ChatRateLimitError extends Error {
+  status: number;
   constructor(message: string) {
     super(message);
     this.name = "RateLimitError";
+    this.status = 429;
   }
 }
 
@@ -18,7 +20,9 @@ export const getChats = async (): Promise<ChatConversation[]> => {
     });
 
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      const error = new Error(`HTTP error! status: ${response.status}`);
+      (error as Error & { status: number }).status = response.status;
+      throw error;
     }
 
     const data = await response.json();
@@ -30,6 +34,9 @@ export const getChats = async (): Promise<ChatConversation[]> => {
       updatedAt: new Date(chat.updated_at),
     })) as ChatConversation[];
   } catch (error) {
+    if (error instanceof Error && 'status' in error) {
+      throw error;
+    }
     throw new Error('Failed to fetch chats' + (error instanceof Error ? `: ${error.message}` : ''));
   }
 }
@@ -46,7 +53,9 @@ export const getChat = async (conversationId: string): Promise<ChatConversation 
     }
 
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      const error = new Error(`HTTP error! status: ${response.status}`);
+      (error as Error & { status: number }).status = response.status;
+      throw error;
     }
 
     const data = await response.json();
@@ -71,6 +80,9 @@ export const getChat = async (conversationId: string): Promise<ChatConversation 
       isWaitingForResponse: data.is_waiting_for_response || false,
     } as ChatConversation;
   } catch (error) {
+    if (error instanceof Error && 'status' in error) {
+      throw error;
+    }
     console.error('Error fetching chat:', error);
     throw new Error('Failed to fetch chat');
   }
@@ -84,9 +96,14 @@ export const deleteChat = async (conversationId: string): Promise<void> => {
     });
 
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      const error = new Error(`HTTP error! status: ${response.status}`);
+      (error as Error & { status: number }).status = response.status;
+      throw error;
     }
   } catch (error) {
+    if (error instanceof Error && 'status' in error) {
+      throw error;
+    }
     console.error('Error deleting chat:', error);
     throw new Error('Failed to delete chat');
   }
@@ -110,7 +127,9 @@ export const queryAgent = async (conversationId: string, query: string): Promise
   }
 
   if (!response.ok) {
-    throw new Error(`HTTP error! status: ${response.status}`);
+    const error = new Error(`HTTP error! status: ${response.status}`);
+    (error as Error & { status: number }).status = response.status;
+    throw error;
   }
 
   const data = await response.json();
