@@ -43,6 +43,7 @@ import Dropdown from "../../../../../components/atoms/Dropdown";
 import Menu from "../../../../../components/atoms/Menu";
 import TopTitle from "../../../../../components/molecules/TopTitle";
 import useProviders from "../../../../../hooks/useProviders";
+import ProfileDropdown from "../../../../../components/organism/ProfileDropdown";
 
 const REFRESH_TOPICS_INTERVAL = 10000;
 
@@ -233,7 +234,25 @@ const TopicPageComponent = ({topicId}: { topicId: string }) => {
       <TopTitle>
         <div className="flex flex-row items-center h-full w-full">
           {!topicIsLoading && <>
-            <div className="w-10 shrink-0"/>
+            <div className="w-10 shrink-0 flex items-center justify-start pl-2">
+              {selectedTopic &&
+                  <Dropdown
+                      button={
+                        <Button primary={false} fitContent={true} stopPropagation={false}>
+                          <OptionsIcon/>
+                        </Button>
+                      }
+                      small={true}
+                      position="start"
+                      bottom={true}
+                      closeOnClickInside={true}
+                  >
+                      <Menu>
+                        {dropdownButtons}
+                      </Menu>
+                  </Dropdown>
+              }
+            </div>
             <div className="flex-1 flex flex-col items-center gap-2 overflow-hidden">
               <div className="flex flex-row items-center justify-center gap-2">
                 <h1 className="text-xl font-bold whitespace-nowrap truncate">
@@ -279,23 +298,7 @@ const TopicPageComponent = ({topicId}: { topicId: string }) => {
               </div>
             </div>
             <div className="w-10 shrink-0 flex items-center justify-end pr-2">
-              {selectedTopic &&
-                  <Dropdown
-                      button={
-                        <Button primary={false} fitContent={true} stopPropagation={false}>
-                          <OptionsIcon/>
-                        </Button>
-                      }
-                      small={true}
-                      position="end"
-                      bottom={true}
-                      closeOnClickInside={true}
-                  >
-                      <Menu>
-                        {dropdownButtons}
-                      </Menu>
-                  </Dropdown>
-              }
+              {profile && <ProfileDropdown profile={profile}/>}
             </div>
           </>}
         </div>

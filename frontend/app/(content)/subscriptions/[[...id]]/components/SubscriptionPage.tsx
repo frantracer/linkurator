@@ -40,6 +40,7 @@ import {openModal} from "../../../../../utilities/modalAction";
 import Dropdown from "../../../../../components/atoms/Dropdown";
 import Menu from "../../../../../components/atoms/Menu";
 import {useToast} from "../../../../../contexts/ToastContext";
+import ProfileDropdown from "../../../../../components/organism/ProfileDropdown";
 
 const REFRESH_SUBSCRIPTIONS_INTERVAL = 10000;
 
@@ -201,7 +202,25 @@ const SubscriptionPageComponent = ({subscriptionId}: { subscriptionId: string })
       <TopTitle>
         <div className="flex flex-row items-center h-full w-full">
           {!profileIsLoading && <>
-            <div className="w-10 shrink-0"/>
+            <div className="w-10 shrink-0 flex items-center justify-start pl-2">
+              {selectedSubscription &&
+                  <Dropdown
+                      button={
+                        <Button primary={false} fitContent={true} stopPropagation={false}>
+                          <OptionsIcon/>
+                        </Button>
+                      }
+                      small={true}
+                      position="start"
+                      bottom={true}
+                      closeOnClickInside={true}
+                  >
+                      <Menu>
+                        {dropdownButtons}
+                      </Menu>
+                  </Dropdown>
+              }
+            </div>
             <div className="flex-1 flex flex-col items-center gap-2 overflow-hidden">
               <div className="flex flex-row items-center justify-center gap-2 overflow-hidden">
                 {selectedSubscription &&
@@ -248,23 +267,7 @@ const SubscriptionPageComponent = ({subscriptionId}: { subscriptionId: string })
               </div>
             </div>
             <div className="w-10 shrink-0 flex items-center justify-end pr-2">
-              {selectedSubscription &&
-                  <Dropdown
-                      button={
-                        <Button primary={false} fitContent={true} stopPropagation={false}>
-                          <OptionsIcon/>
-                        </Button>
-                      }
-                      small={true}
-                      position="end"
-                      bottom={true}
-                      closeOnClickInside={true}
-                  >
-                      <Menu>
-                        {dropdownButtons}
-                      </Menu>
-                  </Dropdown>
-              }
+              {profile && <ProfileDropdown profile={profile}/>}
             </div>
           </>}
         </div>

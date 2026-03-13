@@ -24,6 +24,7 @@ import ReactMarkdown from 'react-markdown';
 import {invalidateTopicsCache} from "../../../../../hooks/useTopics";
 import {paths} from "../../../../../configuration";
 import useProviders from "../../../../../hooks/useProviders";
+import ProfileDropdown from "../../../../../components/organism/ProfileDropdown";
 
 const MESSAGE_LIMIT = 5;
 const CHARACTER_LIMIT = 500;
@@ -169,16 +170,7 @@ const ChatPageComponent = ({conversationId}: { conversationId: string }) => {
     <div className="flex flex-col h-full">
       <TopTitle>
         <div className="flex flex-row items-center justify-between overflow-visible w-full h-full">
-          <div className="flex-shrink-0 w-12"/>
-          <div className="flex-grow flex justify-center items-center overflow-hidden h-full">
-            <h1 className="text-xl font-bold whitespace-nowrap truncate">
-              {conversationLoading
-                ? t('loading')
-                : conversation?.title || t('new_chat')
-              }
-            </h1>
-          </div>
-          <div className="flex-shrink-0 w-12 flex justify-end items-center h-full">
+          <div className="flex-shrink-0 w-12 flex justify-start items-center h-full">
             {localMessages.length > 0 && (
               <Button
                 fitContent={true}
@@ -190,6 +182,17 @@ const ChatPageComponent = ({conversationId}: { conversationId: string }) => {
                 <TrashIcon/>
               </Button>
             )}
+          </div>
+          <div className="flex-grow flex justify-center items-center overflow-hidden h-full">
+            <h1 className="text-xl font-bold whitespace-nowrap truncate">
+              {conversationLoading
+                ? t('loading')
+                : conversation?.title || t('new_chat')
+              }
+            </h1>
+          </div>
+          <div className="flex-shrink-0 w-12 flex justify-end items-center h-full">
+            {profile && <ProfileDropdown profile={profile}/>}
           </div>
         </div>
       </TopTitle>

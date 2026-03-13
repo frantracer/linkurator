@@ -142,7 +142,25 @@ const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
         <div className="flex flex-row items-center h-full w-full">
           {!isMainDataLoading && curator &&
               <>
-            <div className="w-10 shrink-0"/>
+            <div className="w-10 shrink-0 flex items-center justify-start">
+              {!isOwnCuratorProfile && curator &&
+                  <Dropdown
+                      small={true}
+                      position="start"
+                      bottom={true}
+                      button={
+                        <Button primary={false} fitContent={true} stopPropagation={false}>
+                          <OptionsIcon/>
+                        </Button>
+                      }
+                      closeOnClickInside={true}
+                  >
+                      <Menu>
+                        {dropdownButtons}
+                      </Menu>
+                  </Dropdown>
+              }
+            </div>
             <div className="flex-1 flex flex-col items-center gap-2 overflow-hidden">
               <div className="flex flex-row gap-2 items-center justify-center overflow-hidden">
                 <Miniature src={curatorThumbnail} alt={curatorName}/>
@@ -183,27 +201,8 @@ const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
                 }
               </div>
             </div>
-            <div className="w-10 shrink-0 flex items-center justify-end pr-2">
-              {isOwnCuratorProfile && profile &&
-                <ProfileDropdown profile={profile}/>
-              }
-              {!isOwnCuratorProfile && curator &&
-                  <Dropdown
-                      small={true}
-                      position="end"
-                      bottom={true}
-                      button={
-                        <Button primary={false} fitContent={true} stopPropagation={false}>
-                          <OptionsIcon/>
-                        </Button>
-                      }
-                      closeOnClickInside={true}
-                  >
-                      <Menu>
-                        {dropdownButtons}
-                      </Menu>
-                  </Dropdown>
-              }
+            <div className="w-10 shrink-0 flex items-center justify-end">
+              {profile && <ProfileDropdown profile={profile}/>}
             </div>
           </>
           }
