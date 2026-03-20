@@ -235,7 +235,11 @@ const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
 
         {activeTab === t('topics') && (
           <div className="p-2 flex w-full h-full overflow-x-hidden overflow-y-auto">
-            <CuratorTopicsList topics={topics} isLoading={isMainDataLoading} refreshTopics={refreshAllTopics}/>
+            <CuratorTopicsList
+              topics={topics}
+              isUserLoggedIn={isLoggedIn}
+              isLoading={isMainDataLoading}
+              refreshTopics={refreshAllTopics}/>
           </div>
         )}
       </div>
@@ -267,7 +271,11 @@ const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
                 <RectangleGroup/>
                 <h2 className="text-xl text-balance">{t("topics")}</h2>
               </div>
-              <CuratorTopicsList topics={topics} isLoading={isMainDataLoading} refreshTopics={refreshAllTopics}/>
+              <CuratorTopicsList
+                topics={topics}
+                isUserLoggedIn={isLoggedIn}
+                isLoading={isMainDataLoading}
+                refreshTopics={refreshAllTopics}/>
             </div>
           </div>
         </div>

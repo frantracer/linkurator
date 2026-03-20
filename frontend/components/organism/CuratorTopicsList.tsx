@@ -16,11 +16,19 @@ import {Spinner} from "../atoms/Spinner";
 
 type CuratorTopicsListProps = {
   topics: Topic[];
+  isUserLoggedIn: boolean;
   isLoading: boolean;
   refreshTopics: () => void;
 }
 
-const CuratorTopicsList = ({topics, isLoading, refreshTopics}: CuratorTopicsListProps) => {
+const CuratorTopicsList = (
+  {
+    topics,
+    isUserLoggedIn,
+    isLoading,
+    refreshTopics
+  }: CuratorTopicsListProps
+) => {
   const router = useRouter()
   const t = useTranslations("common");
 
@@ -71,7 +79,7 @@ const CuratorTopicsList = ({topics, isLoading, refreshTopics}: CuratorTopicsList
                     </div>
                   </Tag>
                 )}
-                {!topic.followed && !topic.is_owner && (
+                {!topic.followed && !topic.is_owner && isUserLoggedIn && (
                   <Button
                     primary={true}
                     clickAction={() => handleFollowTopic(topic.uuid)}
