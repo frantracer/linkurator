@@ -12,15 +12,16 @@ import FlexRow from "../atoms/FlexRow";
 import {
   AddIcon,
   BoltIcon,
-  BookmarkSquaredFilled,
-  ChatBubbleFilledIcon,
+  ChatBubbleIcon,
+  CuratorIcon,
   HomeIcon,
   ImportIcon,
   MagnifyingGlassIcon,
+  ProfileIcon,
   RectangleGroup,
   SettingsIcon,
-  ThumbsUpFilledIcon,
-  UserIconFilled
+  SubscriptionIcon,
+  ThumbsUpIcon
 } from "../atoms/Icons";
 import LateralSubscriptionList from "./LateralSubscriptionList";
 import LateralTopicList from "./LateralTopicList";
@@ -234,7 +235,7 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
                 }} selected={currentTab === 'subscriptions'}>
                     <FlexRow position={"start"}>
                         <FlexItem>
-                            <BookmarkSquaredFilled/>
+                            <SubscriptionIcon/>
                         </FlexItem>
                         <FlexItem grow={true}>
                           {t("subscriptions")}
@@ -252,7 +253,7 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
                 }} selected={currentTab === 'curators'}>
                     <FlexRow position={"start"}>
                         <FlexItem>
-                            <UserIconFilled/>
+                            <CuratorIcon/>
                         </FlexItem>
                         <FlexItem grow={true}>
                           {t("curators")}
@@ -270,7 +271,7 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
                 }} selected={currentTab === 'chats'}>
                     <FlexRow position={"start"}>
                         <FlexItem>
-                            <ChatBubbleFilledIcon/>
+                            <ChatBubbleIcon/>
                         </FlexItem>
                         <FlexItem grow={true}>
                           {t("chats")}
@@ -298,7 +299,7 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
                     }} selected={pathname === paths.PROFILE}>
                         <FlexRow position={"start"}>
                             <FlexItem>
-                                <UserIconFilled/>
+                                <ProfileIcon/>
                             </FlexItem>
                             <FlexItem grow={true}>
                               {t("my_profile")}
@@ -317,18 +318,18 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
                             </FlexItem>
                         </FlexRow>
                     </MenuItem>
-                    {profile && <MenuItem onClick={() => {
-                      goToCurator(profile.username);
-                    }} selected={pathname === paths.CURATORS + "/" + profile.username}>
-                        <FlexRow position={"start"}>
-                            <FlexItem>
-                                <ThumbsUpFilledIcon/>
-                            </FlexItem>
-                            <FlexItem grow={true}>
-                              {t("my_recommendations")}
-                            </FlexItem>
-                        </FlexRow>
-                    </MenuItem>}
+                  {profile && <MenuItem onClick={() => {
+                    goToCurator(profile.username);
+                  }} selected={pathname === paths.CURATORS + "/" + profile.username}>
+                      <FlexRow position={"start"}>
+                          <FlexItem>
+                              <ThumbsUpIcon/>
+                          </FlexItem>
+                          <FlexItem grow={true}>
+                            {t("my_recommendations")}
+                          </FlexItem>
+                      </FlexRow>
+                  </MenuItem>}
                     <MenuItem onClick={() => {
                       router.push(paths.SETTINGS);
                       closeMenu();

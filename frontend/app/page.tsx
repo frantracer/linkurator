@@ -12,7 +12,7 @@ import {LogoImage} from "../components/atoms/LogoImage";
 import FlexRow from "../components/atoms/FlexRow";
 import FlexItem from "../components/atoms/FlexItem";
 import {useTranslations} from "next-intl";
-import {BookmarkSquared, ChatBubbleIcon, LinkedinIcon, RectangleGroup, ThumbsUpIcon, UserIconFilled} from "../components/atoms/Icons";
+import {SubscriptionIcon, ChatBubbleIcon, LinkedinIcon, RectangleGroup, ThumbsUpIcon, CuratorIcon} from "../components/atoms/Icons";
 import {useEffect} from "react";
 import useProfile from "../hooks/useProfile";
 import {paths} from "../configuration";
@@ -306,7 +306,7 @@ export default function LandingPage() {
                     {
                       title: t("features_list.feature_1_title"),
                       description: t("features_list.feature_1_subtitle"),
-                      icon: <BookmarkSquared/>,
+                      icon: <SubscriptionIcon/>,
                     },
                     {
                       title: t("features_list.feature_2_title"),
@@ -316,7 +316,7 @@ export default function LandingPage() {
                     {
                       title: t("features_list.feature_3_title"),
                       description: t("features_list.feature_3_subtitle"),
-                      icon: <UserIconFilled/>,
+                      icon: <CuratorIcon/>,
                     },
                     {
                       title: t("features_list.feature_4_title"),

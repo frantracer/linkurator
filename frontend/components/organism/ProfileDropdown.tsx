@@ -6,7 +6,7 @@ import {useRouter} from "next/navigation";
 import Avatar from "../atoms/Avatar";
 import Dropdown from "../atoms/Dropdown";
 import {MenuItem} from "../atoms/MenuItem";
-import {ImportIcon, LogoutIcon, SettingsIcon, ThumbsUpFilledIcon, UserIconFilled} from "../atoms/Icons";
+import {ImportIcon, LogoutIcon, ProfileIcon, SettingsIcon, ThumbsUpIcon} from "../atoms/Icons";
 import Divider from "../atoms/Divider";
 import {configuration, paths} from "../../configuration";
 import {openModal} from "../../utilities/modalAction";
@@ -27,7 +27,8 @@ const ProfileDropdown = ({profile}: ProfileDropdownProps) => {
       <ImportSubscriptionsModal/>
       <Dropdown
         button={
-          <div className="w-fit h-fit border-transparent hover:border-primary border-2 rounded-full overflow-hidden p-0">
+          <div
+            className="w-fit h-fit border-transparent hover:border-primary border-2 rounded-full overflow-hidden p-0">
             <Avatar src={profile.avatar_url} alt={profile.first_name}/>
           </div>
         }
@@ -39,7 +40,7 @@ const ProfileDropdown = ({profile}: ProfileDropdownProps) => {
         <Divider/>
         <MenuItem onClick={() => router.push(paths.PROFILE)}>
           <div className="flex flex-row items-center gap-2">
-            <UserIconFilled/>
+            <ProfileIcon/>
             {t("my_profile")}
           </div>
         </MenuItem>
@@ -51,7 +52,7 @@ const ProfileDropdown = ({profile}: ProfileDropdownProps) => {
         </MenuItem>
         <MenuItem onClick={() => router.push(paths.CURATORS + "/" + profile.username)}>
           <div className="flex flex-row items-center gap-2">
-            <ThumbsUpFilledIcon/>
+            <ThumbsUpIcon/>
             {t("my_recommendations")}
           </div>
         </MenuItem>

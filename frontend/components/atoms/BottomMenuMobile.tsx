@@ -3,13 +3,13 @@ import {usePathname, useRouter} from "next/navigation";
 import Button from "./Button";
 import {
   BoltIcon,
-  BookmarkSquaredFilled,
+  CuratorIcon,
   FunnelIcon,
   HomeIcon,
   MagnifyingGlassIcon,
   MenuIcon,
   RectangleGroup,
-  UserIconFilled
+  SubscriptionIcon
 } from "./Icons";
 import {showLateralMenu} from "../../utilities/lateralMenuAction";
 import {openModal} from "../../utilities/modalAction";
@@ -149,13 +149,13 @@ const BottomMenuMobile = () => {
         </MenuItem>
         <MenuItem onClick={openFindSubscriptionModal}>
           <div className="flex flex-row items-center gap-2">
-            <BookmarkSquaredFilled/>
+            <SubscriptionIcon/>
             {t("subscriptions")}
           </div>
         </MenuItem>
         <MenuItem onClick={openFindCuratorModal}>
           <div className="flex flex-row items-center gap-2">
-            <UserIconFilled/>
+            <CuratorIcon/>
             {t("curators")}
           </div>
         </MenuItem>

@@ -11,7 +11,7 @@ import {
   OptionsIcon,
   RectangleGroup,
   ShareIcon,
-  ThumbsUpFilledIcon
+  ThumbsUpIcon
 } from "../../../../../components/atoms/Icons";
 import {MenuItem} from "../../../../../components/atoms/MenuItem";
 import Miniature from "../../../../../components/atoms/Miniature";
@@ -142,73 +142,73 @@ const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
         <div className="flex flex-row items-center h-full w-full px-4">
           {!isMainDataLoading && curator &&
               <>
-            <div className="w-10 shrink-0 flex items-center justify-start">
-              {isLoggedIn && !isOwnCuratorProfile && curator &&
-                  <Dropdown
-                      small={true}
-                      position="start"
-                      bottom={true}
-                      button={
-                        <Button primary={false} fitContent={true} stopPropagation={false}>
-                          <OptionsIcon/>
-                        </Button>
-                      }
-                      closeOnClickInside={true}
-                  >
-                      <Menu>
-                        {dropdownButtons}
-                      </Menu>
-                  </Dropdown>
-              }
-            </div>
-            <div className="flex-1 min-w-0 flex flex-col items-center gap-2 overflow-hidden">
-              <div className="w-full flex flex-row gap-2 items-center justify-center overflow-hidden">
-                <div className="shrink-0">
-                  <Miniature src={curatorThumbnail} alt={curatorName}/>
-                </div>
-                <h1 className="text-xl font-bold min-w-0 whitespace-nowrap truncate">
-                  {curatorName}
-                </h1>
-                <div className="shrink-0">
-                  <Button primary={false} fitContent={true} clickAction={handleFilter} tooltip={t("filter")}
-                          hideOnMobile={true}>
-                    <FunnelIcon/>
-                  </Button>
-                </div>
-              </div>
-              <div className="flex flex-row gap-2 items-center justify-center">
-                {curator && curator.followed &&
-                    <Tag>
+                  <div className="w-10 shrink-0 flex items-center justify-start">
+                    {isLoggedIn && !isOwnCuratorProfile && curator &&
+                        <Dropdown
+                            small={true}
+                            position="start"
+                            bottom={true}
+                            button={
+                              <Button primary={false} fitContent={true} stopPropagation={false}>
+                                <OptionsIcon/>
+                              </Button>
+                            }
+                            closeOnClickInside={true}
+                        >
+                            <Menu>
+                              {dropdownButtons}
+                            </Menu>
+                        </Dropdown>
+                    }
+                  </div>
+                  <div className="flex-1 min-w-0 flex flex-col items-center gap-2 overflow-hidden">
+                      <div className="w-full flex flex-row gap-2 items-center justify-center overflow-hidden">
+                          <div className="shrink-0">
+                              <Miniature src={curatorThumbnail} alt={curatorName}/>
+                          </div>
+                          <h1 className="text-xl font-bold min-w-0 whitespace-nowrap truncate">
+                            {curatorName}
+                          </h1>
+                          <div className="shrink-0">
+                              <Button primary={false} fitContent={true} clickAction={handleFilter} tooltip={t("filter")}
+                                      hideOnMobile={true}>
+                                  <FunnelIcon/>
+                              </Button>
+                          </div>
+                      </div>
+                      <div className="flex flex-row gap-2 items-center justify-center">
+                        {curator && curator.followed &&
+                            <Tag>
                     <span>
                     {t("following")}
                     </span>
-                        <div className="hover:cursor-pointer" onClick={() => handleUnfollowCurator(curator.id)}>
-                            <CrossIcon/>
-                        </div>
-                    </Tag>
-                }
-                {curator && !curator.followed && isLoggedIn && !isOwnCuratorProfile &&
-                    <Button primary={false} clickAction={() => handleFollowCurator(curator.id)}>
-                      {t("follow")}
-                    </Button>
-                }
-                {curator && !curator.followed && !isLoggedIn &&
-                    <Button primary={false} href={paths.LOGIN}>
-                      {t("follow")}
-                    </Button>
-                }
-                {isOwnCuratorProfile &&
-                    <Button primary={false} clickAction={handleShareCurator}>
-                        <ShareIcon/>
-                      {t("share")}
-                    </Button>
-                }
-              </div>
-            </div>
-            <div className="w-10 shrink-0 flex items-center justify-end">
-              {profile && <ProfileDropdown profile={profile}/>}
-            </div>
-          </>
+                                <div className="hover:cursor-pointer" onClick={() => handleUnfollowCurator(curator.id)}>
+                                    <CrossIcon/>
+                                </div>
+                            </Tag>
+                        }
+                        {curator && !curator.followed && isLoggedIn && !isOwnCuratorProfile &&
+                            <Button primary={false} clickAction={() => handleFollowCurator(curator.id)}>
+                              {t("follow")}
+                            </Button>
+                        }
+                        {curator && !curator.followed && !isLoggedIn &&
+                            <Button primary={false} href={paths.LOGIN}>
+                              {t("follow")}
+                            </Button>
+                        }
+                        {isOwnCuratorProfile &&
+                            <Button primary={false} clickAction={handleShareCurator}>
+                                <ShareIcon/>
+                              {t("share")}
+                            </Button>
+                        }
+                      </div>
+                  </div>
+                  <div className="w-10 shrink-0 flex items-center justify-end">
+                    {profile && <ProfileDropdown profile={profile}/>}
+                  </div>
+              </>
           }
         </div>
       </TopTitle>
@@ -249,7 +249,7 @@ const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
         <div className="col-span-2 border-r border-neutral h-full overflow-y-auto">
           <div className="flex flex-col h-full gap-4 items-start">
             <div className="flex flex-row gap-2 items-center h-fit w-full justify-center">
-              <ThumbsUpFilledIcon/>
+              <ThumbsUpIcon/>
               <h2 className={"text-xl text-balance"}>{t("recommendations")}</h2>
             </div>
             <VideoCardGrid

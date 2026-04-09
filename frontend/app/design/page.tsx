@@ -17,9 +17,6 @@ import {
   ArchiveBoxIcon,
   ArrowUturnLeft,
   BoltIcon,
-  BookmarkSquared,
-  BookmarkSquaredFilled,
-  ChatBubbleFilledIcon,
   ChatBubbleIcon,
   CheckCircleFilledIcon,
   CheckCircleIcon,
@@ -28,6 +25,7 @@ import {
   ChevronUpIcon,
   CircleIcon,
   CrossIcon,
+  CuratorIcon,
   DownloadIcon,
   ExclamationCircle,
   EyeSlashFilledIcon,
@@ -45,6 +43,7 @@ import {
   MoonIcon,
   OptionsIcon,
   PencilIcon,
+  ProfileIcon,
   RectangleGroup,
   RectangleGroupFilled,
   RefreshIcon,
@@ -52,14 +51,14 @@ import {
   ShareIcon,
   StarFilledIcon,
   StarIcon,
+  SubscriptionIcon,
   SunIcon,
   ThumbsDownFilledIcon,
   ThumbsDownIcon,
   ThumbsUpFilledIcon,
   ThumbsUpIcon,
   TrashIcon,
-  TwitterIcon,
-  UserIconFilled
+  TwitterIcon
 } from "../../components/atoms/Icons";
 import React, {useEffect} from "react";
 import ItemCardSkeleton from "../../components/organism/ItemCardSkeleton";
@@ -176,14 +175,14 @@ const IconsSection = () => {
         <CheckIcon/>
         <RectangleGroup/>
         <RectangleGroupFilled/>
-        <BookmarkSquared/>
-        <BookmarkSquaredFilled/>
+        <SubscriptionIcon/>
         <ArrowUturnLeft/>
         <ExclamationCircle/>
         <GoogleIcon/>
         <ArchiveBoxIcon/>
         <ArchiveBoxFilledIcon/>
-        <UserIconFilled/>
+        <CuratorIcon/>
+        <ProfileIcon/>
         <InfoCircleIcon/>
         <CircleIcon/>
         <BoltIcon/>
@@ -193,7 +192,6 @@ const IconsSection = () => {
         <StarIcon/>
         <StarFilledIcon/>
         <ChatBubbleIcon/>
-        <ChatBubbleFilledIcon/>
         <ChevronDownIcon/>
         <ChevronUpIcon/>
         <HomeIcon/>
