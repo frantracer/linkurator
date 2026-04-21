@@ -37,7 +37,7 @@ const Button = (
   }: ButtonProps
 ) => {
   const className = classNames(
-    "btn btn-sm rounded px-1 btn-primary",
+    "btn btn-sm rounded px-1 text-base-content border-neutral",
     {
       "btn-outline": !primary && !borderless,
       "w-fit": fitContent,
@@ -46,8 +46,11 @@ const Button = (
       "lg:hidden": showOnlyOnMobile,
       "hidden lg:flex": hideOnMobile,
       "opacity-50 cursor-not-allowed": disabled,
-      "btn-ghost": borderless,
-      "text-primary": borderless,
+      "bg-primary hover:!bg-primary hover:brightness-110": primary,
+      "btn-ghost": borderless && !primary,
+      "border-0": borderless,
+      "text-white": primary,
+      "hover:!text-primary hover:!bg-base-300 hover:!border-primary": borderless || !primary,
     }
   );
 

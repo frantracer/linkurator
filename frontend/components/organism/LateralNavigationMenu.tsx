@@ -205,7 +205,8 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
                           {t("home")}
                         </FlexItem>
                         <FlexItem grow={false}>
-                            <Button primary={false} fitContent={true} clickAction={openQuickAccessesModal}
+                            <Button primary={false} fitContent={true} borderless={true}
+                                    clickAction={openQuickAccessesModal}
                                     tooltip={t("quick_accesses")}>
                                 <BoltIcon/>
                             </Button>
@@ -223,7 +224,8 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
                           {t("topics")}
                         </FlexItem>
                         <FlexItem grow={false}>
-                            <Button primary={false} fitContent={true} clickAction={openFindTopicModal}
+                            <Button primary={false} fitContent={true} borderless={true}
+                                    clickAction={openFindTopicModal}
                                     tooltip={t("find_topics")}>
                                 <MagnifyingGlassIcon/>
                             </Button>
@@ -241,7 +243,8 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
                           {t("subscriptions")}
                         </FlexItem>
                         <FlexItem grow={false}>
-                            <Button primary={false} fitContent={true} clickAction={openFindSubscriptionModal}
+                            <Button primary={false} fitContent={true} borderless={true}
+                                    clickAction={openFindSubscriptionModal}
                                     tooltip={t("find_subscriptions")}>
                                 <MagnifyingGlassIcon/>
                             </Button>
@@ -259,7 +262,8 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
                           {t("curators")}
                         </FlexItem>
                         <FlexItem grow={false}>
-                            <Button primary={false} fitContent={true} clickAction={openFindCuratorModal}
+                            <Button primary={false} fitContent={true} borderless={true}
+                                    clickAction={openFindCuratorModal}
                                     tooltip={t("find_curators")}>
                                 <MagnifyingGlassIcon/>
                             </Button>
@@ -277,7 +281,9 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
                           {t("chats")}
                         </FlexItem>
                         <FlexItem grow={false}>
-                            <Button primary={false} fitContent={true} clickAction={goToNewChat} tooltip={t("new_chat")}>
+                            <Button primary={false} fitContent={true} borderless={true}
+                                    clickAction={goToNewChat}
+                                    tooltip={t("new_chat")}>
                                 <AddIcon/>
                             </Button>
                         </FlexItem>
