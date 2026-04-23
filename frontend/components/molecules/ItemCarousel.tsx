@@ -5,6 +5,7 @@ import VideoCard from '../organism/VideoCard';
 import { SubscriptionItem } from '../../entities/SubscriptionItem';
 import { Provider } from '../../entities/Provider';
 import { ChevronDownIcon, ChevronUpIcon } from '../atoms/Icons';
+import ItemCardSkeleton from "../organism/ItemCardSkeleton";
 
 type ItemCarouselProps = {
   items: SubscriptionItem[];
@@ -43,10 +44,7 @@ const ItemCarousel = ({
         <h2 className={`${titleClass}`}>{title}</h2>
         <div className={`flex gap-3 overflow-x-auto`}>
           {Array.from({ length: skeletonCount }).map((_, index) => (
-            <div
-              key={index}
-              className="flex-shrink-0 w-80 h-96 bg-base-300 rounded-lg animate-pulse"
-            />
+            <ItemCardSkeleton key={index} />
           ))}
         </div>
       </div>
