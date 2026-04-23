@@ -99,7 +99,7 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
 
   const selectedSubscription = subscriptions.find(subscription => subscription.uuid === selectedId);
   const selectedTopic = topics.find(topic => topic.uuid === selectedId);
-  const selectedCurator = curators.find(curator => curator.id === selectedId);
+  const selectedCurator = curators.find(curator => curator.username === selectedId);
   const selectedConversation = conversations.find(conversation => conversation.id === selectedId);
 
   const closeMenu = () => {
