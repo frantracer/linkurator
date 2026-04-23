@@ -102,8 +102,6 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
   const selectedCurator = curators.find(curator => curator.id === selectedId);
   const selectedConversation = conversations.find(conversation => conversation.id === selectedId);
 
-  console.log(providers)
-
   const closeMenu = () => {
     hideLateralMenu(LATERAL_NAVIGATION_MENU_ID)
   }

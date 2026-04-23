@@ -43,7 +43,7 @@ const AssignTopicModal = (props: AssignTopicModalProps) => {
         // Invalidate topic items cache
         queryClient.invalidateQueries({ queryKey: ['topicItems', topicId] });
       })
-      .catch(err => console.log(err));
+      .catch(err => console.error(err));
   }
 
   function unassignButtonAction(topicId: string) {
@@ -53,7 +53,7 @@ const AssignTopicModal = (props: AssignTopicModalProps) => {
         // Invalidate topic items cache
         queryClient.invalidateQueries({ queryKey: ['topicItems', topicId] });
       })
-      .catch(err => console.log(err));
+      .catch(err => console.error(err));
   }
 
   function newTopicButtonAction(topic_name: string) {
@@ -66,7 +66,7 @@ const AssignTopicModal = (props: AssignTopicModalProps) => {
           // Invalidate topic items cache
           queryClient.invalidateQueries({ queryKey: ['topicItems', new_uuid] });
         })
-        .catch(err => console.log(err));
+        .catch(err => console.error(err));
       setTopicName("");
     }
   }

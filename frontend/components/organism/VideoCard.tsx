@@ -88,7 +88,6 @@ const VideoCard = (
   };
 
   const handleOpenItem = (itemUrl: string) => {
-    console.log(navigator.userAgent);
     const isIOS = /iPad|iPhone/.test(navigator.userAgent);
     if (isIOS) {
       window.location.href = itemUrl;
