@@ -40,7 +40,7 @@ const InputText = (
 
   return (
     <input
-      className={"input input-sm border-2 border-neutral bg-base-300 w-full " + padding}
+      className={"input input-sm border-2 border-neutral focus:border-primary bg-base-300 w-full " + padding}
       type={inputType?.toString()}
       placeholder={placeholder}
       value={searchValue}

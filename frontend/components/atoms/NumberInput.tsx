@@ -19,7 +19,7 @@ const NumberInput = (
   return (
     <input type="number"
            placeholder={placeholder}
-           className="input input-sm border-2 border-neutral bg-base-300 w-full"
+           className="input input-sm border-2 border-neutral focus:border-primary bg-base-300 w-full"
            value={value ?? ""}
            onChange={(event) => {
              const parsed = parseInt(event.target.value);
