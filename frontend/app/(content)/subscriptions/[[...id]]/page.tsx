@@ -1,5 +1,5 @@
-import type { Metadata } from 'next';
-import { getSubscription } from '../../../../services/subscriptionService';
+import type {Metadata} from 'next';
+import {getSubscription} from '../../../../services/subscriptionService';
 import SubscriptionPageComponent from './components/SubscriptionPage';
 
 type SubscriptionPageParams = {
@@ -7,7 +7,7 @@ type SubscriptionPageParams = {
 };
 
 export async function generateMetadata(
-  { params }: SubscriptionPageParams,
+  {params}: SubscriptionPageParams,
 ): Promise<Metadata> {
   const id = (await params).id;
   const defaultTitle = 'Linkurator';
@@ -23,7 +23,7 @@ export async function generateMetadata(
   }
 }
 
-export default async function TopicPage({ params }: SubscriptionPageParams) {
-  const { id } = await params;
-  return <SubscriptionPageComponent subscriptionId={id} />
+export default async function TopicPage({params}: SubscriptionPageParams) {
+  const {id} = await params;
+  return <SubscriptionPageComponent subscriptionId={id}/>
 }

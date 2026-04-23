@@ -1,3 +1,5 @@
+import classNames from "classnames";
+
 type MenuItemProps = {
   onClick?: () => void;
   hideMenuOnClick?: boolean;
@@ -6,13 +8,18 @@ type MenuItemProps = {
 };
 
 export const MenuItem = (props: MenuItemProps) => {
-  const background = props.selected ? "bg-base-100" : "bg-transparent";
-  const hideMenuOnClick = props.hideMenuOnClick ?? false;
+  const itemClassNames = classNames(
+    "block p-2 text-sm w-full text-left rounded rounded-lg min-h-10",
+    "hover:text-primary focus:outline-none focus:shadow-outline",
+    {
+      "bg-base-200 text-primary": props.selected,
+    }
+  );
 
   const handleClick = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    if (hideMenuOnClick) {
+    if (props.hideMenuOnClick) {
       (e.currentTarget as HTMLButtonElement).blur();
     }
     if (props.onClick) {
@@ -23,8 +30,8 @@ export const MenuItem = (props: MenuItemProps) => {
   return (
     <button
       onClick={handleClick}
-      className={`block p-2 text-sm w-full text-left rounded min-h-10
-    hover:bg-base-100/80 focus:outline-none focus:shadow-outline ${background}`}>
+      className={itemClassNames}
+    >
       {props.children}
     </button>
   )

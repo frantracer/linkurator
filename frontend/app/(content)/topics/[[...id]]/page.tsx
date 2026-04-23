@@ -1,5 +1,5 @@
-import type { Metadata } from 'next';
-import { getTopic } from '../../../../services/topicService';
+import type {Metadata} from 'next';
+import {getTopic} from '../../../../services/topicService';
 import TopicPageComponent from './components/TopicPage';
 
 type TopicPageParams = {
@@ -7,7 +7,7 @@ type TopicPageParams = {
 };
 
 export async function generateMetadata(
-  { params }: TopicPageParams,
+  {params}: TopicPageParams,
 ): Promise<Metadata> {
   const id = (await params).id;
   const defaultTitle = 'Linkurator';
@@ -23,7 +23,7 @@ export async function generateMetadata(
   }
 }
 
-export default async function TopicPage({ params }: TopicPageParams) {
-  const { id } = await params;
-  return <TopicPageComponent topicId={id} />
+export default async function TopicPage({params}: TopicPageParams) {
+  const {id} = await params;
+  return <TopicPageComponent topicId={id}/>
 }

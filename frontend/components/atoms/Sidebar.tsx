@@ -11,8 +11,8 @@ const Sidebar = ({
 }: SidebarProps) => {
   return (
     <div className={classNames(
-      "flex flex-col px-2 py-4 h-full w-80 bg-base-200 text-base-content gap-y-2 overflow-auto border-neutral",
-      { 'border-r-2': left, 'border-l-2': !left }
+      "flex flex-col px-2 py-4 h-full w-80 bg-base-100 text-base-content gap-y-4 overflow-auto border-neutral",
+      { 'border-r-[1px]': left, 'border-l-[1px]': !left }
     )}>
       {children}
     </div>

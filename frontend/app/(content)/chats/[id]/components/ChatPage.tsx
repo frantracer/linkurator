@@ -25,6 +25,7 @@ import {invalidateTopicsCache} from "../../../../../hooks/useTopics";
 import {paths} from "../../../../../configuration";
 import useProviders from "../../../../../hooks/useProviders";
 import ProfileDropdown from "../../../../../components/organism/ProfileDropdown";
+import Divider from "../../../../../components/atoms/Divider";
 
 const MESSAGE_LIMIT = 5;
 const CHARACTER_LIMIT = 500;
@@ -197,7 +198,7 @@ const ChatPageComponent = ({conversationId}: { conversationId: string }) => {
         </div>
       </TopTitle>
 
-      <div className="flex flex-col flex-1 overflow-hidden">
+      <div className="flex flex-col flex-1 h-full bg-base-300 overflow-hidden">
         {/* Messages Area */}
         <div className="flex-1 overflow-y-auto p-4 space-y-4">
           {localMessages.length === 0 && !conversationLoading && (
@@ -241,7 +242,7 @@ const ChatPageComponent = ({conversationId}: { conversationId: string }) => {
                 className={`max-w-[80%] p-3 rounded-lg ${
                   message.sender === 'user'
                     ? 'bg-primary text-primary-content'
-                    : 'bg-base-200 text-base-content'
+                    : 'bg-base-200 text-base-content border border-neutral'
                 }`}
               >
                 <div className="markdown-content">
@@ -256,6 +257,9 @@ const ChatPageComponent = ({conversationId}: { conversationId: string }) => {
                     </Button>
                   </div>
                 )}
+                {message.items && message.items.length > 0 &&
+                    <Divider />
+                }
                 {message.items && message.items.length > 0 && (
                   <ItemCarousel
                     items={message.items}
@@ -274,7 +278,7 @@ const ChatPageComponent = ({conversationId}: { conversationId: string }) => {
 
           {(isLoading || conversation?.isWaitingForResponse) && (
             <div className="flex justify-start">
-              <div className="bg-base-200 text-base-content max-w-[80%] p-3 rounded-lg">
+              <div className="bg-base-200 text-base-content max-w-[80%] p-3 rounded-lg border border-neutral">
                 <div className="flex space-x-1">
                   <div className="w-2 h-2 bg-current rounded-full animate-bounce"></div>
                   <div className="w-2 h-2 bg-current rounded-full animate-bounce"

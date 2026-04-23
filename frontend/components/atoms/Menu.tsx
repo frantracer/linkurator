@@ -9,7 +9,7 @@ const Menu = (
     children
   }: MenuProps) => {
   const heightClass = isFullHeight ? 'h-full overflow-auto' : 'h-fit';
-  const className = "bg-base-200 rounded " + heightClass;
+  const className = "bg-base-100 rounded " + heightClass;
 
   return (
     <nav className={className}>

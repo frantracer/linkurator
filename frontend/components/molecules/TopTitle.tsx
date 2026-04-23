@@ -11,7 +11,7 @@ const TopTitle = (
 ) => {
   return (
     <div className="sticky top-0 z-10 bg-base-100 text-base-content flex-none
-        m-1 items-center h-20 border-b-2 border-neutral">
+        items-center h-20 border-b-[1px] border-neutral">
       {children}
     </div>
   );

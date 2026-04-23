@@ -124,7 +124,7 @@ const ProfilePage: NextPage = () => {
   }, [profileIsLoading, router, profile]);
 
   return (
-    <main className="flex flex-col bg-base-100">
+    <main className="flex flex-col h-full bg-base-200">
       <TopTitle>
         <div className="flex flex-row items-center h-full w-full px-4">
           <div className="w-10 shrink-0 flex items-center justify-start"/>

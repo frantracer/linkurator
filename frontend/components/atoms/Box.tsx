@@ -12,11 +12,13 @@ const Box = (
   }: BoxProps) => {
 
   return (
-    <div id={"my-box"} className={"border w-full rounded mt-2 border-primary"}>
-      <div className={"-my-4 mx-2 px-2 w-fit rounded"}>
-        {title}
-      </div>
-      <div className="mt-6 mb-4 px-4">
+    <div id={"my-box"} className={"border w-full rounded mt-2 border-primary bg-base-100"}>
+      {title && (
+        <div className={"-my-4 mx-2 px-2 w-fit rounded bg-base-300 border border-primary"}>
+          {title}
+        </div>
+      )}
+      <div className="mt-8 mb-4 px-4">
         {children}
       </div>
     </div>

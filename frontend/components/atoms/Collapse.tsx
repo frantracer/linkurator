@@ -8,7 +8,7 @@ type CollapseProps = {
 
 const Collapse = ({ isOpen, title, content }: CollapseProps) => {
   return (
-    <details className="collapse collapse-arrow rounded-lg" open={isOpen}>
+    <details className="collapse collapse-arrow rounded-lg bg-transparent" open={isOpen}>
       <summary className="collapse-title">
         {title}
       </summary>

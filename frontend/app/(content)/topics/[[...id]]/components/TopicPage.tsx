@@ -234,114 +234,117 @@ const TopicPageComponent = ({topicId}: { topicId: string }) => {
       <TopTitle>
         <div className="flex flex-row items-center h-full w-full px-4">
           {!topicIsLoading && <>
-            <div className="w-10 shrink-0 flex items-center justify-start">
-              {isUserLogged && selectedTopic &&
-                  <Dropdown
-                      button={
-                        <Button primary={false} fitContent={true} stopPropagation={false}>
-                          <OptionsIcon/>
-                        </Button>
-                      }
-                      small={true}
-                      position="start"
-                      bottom={true}
-                      closeOnClickInside={true}
-                  >
-                      <Menu>
-                        {dropdownButtons}
-                      </Menu>
-                  </Dropdown>
-              }
-            </div>
-            <div className="flex-1 min-w-0 flex flex-col items-center gap-2 overflow-hidden">
-              <div className="w-full flex flex-row items-center justify-center gap-2 overflow-hidden">
-                <h1 className="text-xl font-bold min-w-0 whitespace-nowrap truncate">
-                  {topicName}
-                </h1>
-                <div className="shrink-0">
-                  <Button primary={false} fitContent={true} clickAction={handleShowFilters} tooltip={t("filter")} hideOnMobile={true}>
-                    <FunnelIcon/>
-                  </Button>
-                </div>
-              </div>
-              <div className="flex flex-row gap-2 items-center justify-center">
-                {selectedTopic && !selectedTopic.is_owner &&
-                    <Button primary={false} href={paths.CURATORS + "/" + selectedTopic.curator.username}>
-                        <Miniature src={selectedTopic.curator.avatar_url} alt={selectedTopic.curator.username}/>
-                        <span>{selectedTopic.curator.username}</span>
-                    </Button>
+              <div className="w-10 shrink-0 flex items-center justify-start">
+                {isUserLogged && selectedTopic &&
+                    <Dropdown
+                        button={
+                          <Button primary={false} fitContent={true} stopPropagation={false}>
+                            <OptionsIcon/>
+                          </Button>
+                        }
+                        small={true}
+                        position="start"
+                        bottom={true}
+                        closeOnClickInside={true}
+                    >
+                        <Menu>
+                          {dropdownButtons}
+                        </Menu>
+                    </Dropdown>
                 }
-                {selectedTopic && selectedTopic.followed && !selectedTopic.is_owner &&
-                    <Tag>
+              </div>
+              <div className="flex-1 min-w-0 flex flex-col items-center gap-2 overflow-hidden">
+                  <div className="w-full flex flex-row items-center justify-center gap-2 overflow-hidden">
+                      <h1 className="text-xl font-bold min-w-0 whitespace-nowrap truncate">
+                        {topicName}
+                      </h1>
+                      <div className="shrink-0">
+                          <Button primary={false} fitContent={true} clickAction={handleShowFilters}
+                                  tooltip={t("filter")} hideOnMobile={true}>
+                              <FunnelIcon/>
+                          </Button>
+                      </div>
+                  </div>
+                  <div className="flex flex-row gap-2 items-center justify-center">
+                    {selectedTopic && !selectedTopic.is_owner &&
+                        <Button primary={false} href={paths.CURATORS + "/" + selectedTopic.curator.username}>
+                            <Miniature src={selectedTopic.curator.avatar_url} alt={selectedTopic.curator.username}/>
+                            <span>{selectedTopic.curator.username}</span>
+                        </Button>
+                    }
+                    {selectedTopic && selectedTopic.followed && !selectedTopic.is_owner &&
+                        <Tag>
                       <span>
                         {t("following")}
                       </span>
-                        <div className="hover:cursor-pointer"
-                             onClick={() => handleUnfollowTopic(selectedTopic.uuid)}>
-                            <CrossIcon/>
-                        </div>
-                    </Tag>
-                }
-                {selectedTopic && !selectedTopic.followed && !selectedTopic.is_owner && isUserLogged &&
-                    <Button primary={false} clickAction={() => handleFollowTopic(selectedTopic.uuid)}>
-                      {t("follow")}
-                    </Button>
-                }
-                {selectedTopic && !selectedTopic.followed && !selectedTopic.is_owner && !isUserLogged &&
-                    <Button primary={false} href={paths.LOGIN}>
-                      {t("follow")}
-                    </Button>
-                }
-                {selectedTopic && selectedTopic.is_owner &&
-                    <Tag>
-                        <span className="whitespace-nowrap text-nowrap">{t("my_topics")}</span>
-                    </Tag>
-                }
+                            <div className="hover:cursor-pointer hover:text-primary"
+                                 onClick={() => handleUnfollowTopic(selectedTopic.uuid)}>
+                                <CrossIcon/>
+                            </div>
+                        </Tag>
+                    }
+                    {selectedTopic && !selectedTopic.followed && !selectedTopic.is_owner && isUserLogged &&
+                        <Button primary={false} clickAction={() => handleFollowTopic(selectedTopic.uuid)}>
+                          {t("follow")}
+                        </Button>
+                    }
+                    {selectedTopic && !selectedTopic.followed && !selectedTopic.is_owner && !isUserLogged &&
+                        <Button primary={false} href={paths.LOGIN}>
+                          {t("follow")}
+                        </Button>
+                    }
+                    {selectedTopic && selectedTopic.is_owner &&
+                        <Tag>
+                            <span className="whitespace-nowrap text-nowrap">{t("my_topics")}</span>
+                        </Tag>
+                    }
+                  </div>
               </div>
-            </div>
-            <div className="w-10 shrink-0 flex items-center justify-end">
-              {profile && <ProfileDropdown profile={profile}/>}
-            </div>
+              <div className="w-10 shrink-0 flex items-center justify-end">
+                {profile && <ProfileDropdown profile={profile}/>}
+              </div>
           </>}
         </div>
       </TopTitle>
-      {
-        topicIsError && !topicIsLoading &&
-          <div className="flex flex-row gap-2 items-center justify-center">
-              <ErrorBanner>
-                  <span>{t("topic_not_found")}</span>
-              </ErrorBanner>
-          </div>
-      }
-      {
-        selectedTopic &&
-          <VideoCardGrid
-              items={topicItems}
-              providers={providers}
-              fetchMoreItems={fetchMoreItems}
-              refreshItem={refreshTopicItem}
-              filters={debouncedFilters}
-              isLoading={isLoading}
-              isFinished={isFinished}
-              isBeingScanned={isTopicBeingScanned}
-              scanningEntityName={selectedTopic.name}
-              showInteractions={isUserLogged}
-          />
-      }
-      {
-        selectedTopic &&
-          <EditTopicModal refreshTopics={refreshTopics}
-                          subscriptions={combinedSubscriptions}
-                          providers={providers}
-                          topic={selectedTopic}
-                          refreshTopicItems={refreshTopicItems}
-                          refreshSubscriptions={refreshSubscriptions}
-          />
-      }
-      {
-        selectedTopic &&
-          <DeleteTopicConfirmationModal onDeleteTopic={() => deleteTopicAction(selectedTopic.uuid)}/>
-      }
+      <div className="flex flex-col h-full bg-base-300 overflow-auto">
+        {
+          topicIsError && !topicIsLoading &&
+            <div className="flex flex-row gap-2 items-center justify-center">
+                <ErrorBanner>
+                    <span>{t("topic_not_found")}</span>
+                </ErrorBanner>
+            </div>
+        }
+        {
+          selectedTopic &&
+            <VideoCardGrid
+                items={topicItems}
+                providers={providers}
+                fetchMoreItems={fetchMoreItems}
+                refreshItem={refreshTopicItem}
+                filters={debouncedFilters}
+                isLoading={isLoading}
+                isFinished={isFinished}
+                isBeingScanned={isTopicBeingScanned}
+                scanningEntityName={selectedTopic.name}
+                showInteractions={isUserLogged}
+            />
+        }
+        {
+          selectedTopic &&
+            <EditTopicModal refreshTopics={refreshTopics}
+                            subscriptions={combinedSubscriptions}
+                            providers={providers}
+                            topic={selectedTopic}
+                            refreshTopicItems={refreshTopicItems}
+                            refreshSubscriptions={refreshSubscriptions}
+            />
+        }
+        {
+          selectedTopic &&
+            <DeleteTopicConfirmationModal onDeleteTopic={() => deleteTopicAction(selectedTopic.uuid)}/>
+        }
+      </div>
     </Drawer>
   )
     ;

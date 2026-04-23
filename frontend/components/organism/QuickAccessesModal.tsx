@@ -72,7 +72,7 @@ const QuickAccessesModal: React.FC<QuickAccessesModalProps> = ({ onClose }) => {
           handleChange={setSearchValue}
           autofocus={true}
         />
-        <div className={"h-96 w-full overflow-y-auto p-1"}>
+        <div className={"h-96 w-full overflow-y-auto p-2"}>
           {filteredTopics.length === 0 && filteredSubscriptions.length === 0 && filteredCurators.length === 0 ? (
             <div className="flex items-center justify-center h-full">
               {debouncedSearch !== '' ? (

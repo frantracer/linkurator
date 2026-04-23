@@ -16,6 +16,7 @@ import useUserFilter from "../../../hooks/useUserFilter";
 import LanguageSelector from "../../../components/molecules/LanguageSelector";
 import ThemeToggleButton from "../../../components/molecules/ThemeToggleButton";
 import Checkbox from "../../../components/atoms/Checkbox";
+import NumberInput from "../../../components/atoms/NumberInput";
 import {InfoBanner} from "../../../components/atoms/InfoBanner";
 import {ErrorBanner} from "../../../components/atoms/ErrorBanner";
 import {Filters, durationOptions} from "../../../entities/Filters";
@@ -96,7 +97,7 @@ const SettingsPage: NextPage = () => {
   }
 
   return (
-    <main className="flex flex-col bg-base-100">
+    <main className="flex flex-col h-full overflow-hidden">
       <TopTitle>
         <div className="flex flex-row items-center h-full w-full px-4">
           <div className="w-10 shrink-0 flex items-center justify-start"/>
@@ -109,7 +110,7 @@ const SettingsPage: NextPage = () => {
           </div>
         </div>
       </TopTitle>
-      <div className="h-full overflow-y-auto">
+      <div className="h-full bg-base-200 overflow-y-auto">
         <FlexRow position={"center"}>
           <FlexItem grow={true}>
             <FlexRow>
@@ -145,35 +146,27 @@ const SettingsPage: NextPage = () => {
                               <>
                                 <FlexRow>
                                   <p>{t("min")}</p>
-                                  <input
-                                    className={"input input-sm input-bordered input-primary w-full"}
-                                    type="number"
-                                    value={localFilter.minDuration ?? ""}
-                                    onChange={(e) => {
-                                      const newMin = e.target.value ? parseInt(e.target.value) : undefined;
+                                  <NumberInput
+                                    value={localFilter.minDuration}
+                                    onChange={(newMin) => {
                                       setLocalFilter({
                                         ...localFilter,
                                         minDuration: newMin,
                                       });
                                     }}
-                                    min={0}
                                     placeholder={t("min_placeholder")}
                                   />
                                 </FlexRow>
                                 <FlexRow>
                                   <p>{t("max")}</p>
-                                  <input
-                                    className={"input input-sm input-bordered input-primary w-full"}
-                                    type="number"
-                                    value={localFilter.maxDuration ?? ""}
-                                    onChange={(e) => {
-                                      const newMax = e.target.value ? parseInt(e.target.value) : undefined;
+                                  <NumberInput
+                                    value={localFilter.maxDuration}
+                                    onChange={(newMax) => {
                                       setLocalFilter({
                                         ...localFilter,
                                         maxDuration: newMax,
                                       });
                                     }}
-                                    min={0}
                                     placeholder={t("max_placeholder")}
                                   />
                                 </FlexRow>

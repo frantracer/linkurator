@@ -102,8 +102,10 @@ const AssignTopicModal = (props: AssignTopicModalProps) => {
       return (
         <ALink href={paths.TOPICS + "/" + topic.uuid} key={topic.uuid}>
           <Tag>
-            {topic.name}
-            <div onClick={
+            <span className={"hover:text-primary"}>
+              {topic.name}
+            </span>
+            <div className={"hover:text-primary"} onClick={
               (e) => {
                 e.preventDefault();
                 e.stopPropagation();

@@ -89,9 +89,9 @@ const VideoCardGrid = (
   }
 
   return (
-    <main ref={containerRef} onScroll={handleGridScroll} className="flex flex-col w-full overflow-auto">
+    <main ref={containerRef} onScroll={handleGridScroll} className="flex flex-col h-full w-full overflow-auto bg-base-300">
       {isBeingScanned &&
-          <div className="flex items-center justify-center h-dvh">
+          <div className="flex items-center justify-center h-full">
               <FlexRow position={"center"}>
                   <Spinner/>
                   <span>{t("downloading_content", {title: scanningEntityName})}</span>
@@ -105,15 +105,15 @@ const VideoCardGrid = (
           </div>
       }
       {!isBeingScanned && isLoading &&
-          <FlexRow position={"center"}>
+          <div className={"flex items-center justify-center h-full"}>
               <Spinner/>
               <span>{t("loading")}</span>
-          </FlexRow>
+          </div>
       }
       {!isBeingScanned && isFinished && !isLoading &&
-          <FlexRow position={"center"}>
+          <div className={"flex items-center justify-center h-full"}>
               <InfoBanner>{t("no_more_content")}</InfoBanner>
-          </FlexRow>
+          </div>
       }
     </main>
   );

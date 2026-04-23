@@ -182,7 +182,7 @@ const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
                     <span>
                     {t("following")}
                     </span>
-                                <div className="hover:cursor-pointer" onClick={() => handleUnfollowCurator(curator.id)}>
+                                <div className="hover:cursor-pointer hover:text-primary" onClick={() => handleUnfollowCurator(curator.id)}>
                                     <CrossIcon/>
                                 </div>
                             </Tag>
@@ -214,7 +214,7 @@ const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
       </TopTitle>
 
       {/* Mobile tabs */}
-      <div className="flex flex-col md:hidden overflow-y-hidden">
+      <div className="flex flex-col h-full bg-base-300 md:hidden overflow-y-hidden">
         <Tabs tabsText={[t("recommendations"), t("topics")]}
               selectedTab={activeTab}
               onTabSelected={(tab) => setActiveTab(tab)}/>
@@ -245,7 +245,7 @@ const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
       </div>
 
       {/* Desktop two-column layout */}
-      <div className="hidden flex-col md:grid md:grid-cols-3 h-full overflow-auto">
+      <div className="hidden flex-col h-full bg-base-300 md:grid md:grid-cols-3 overflow-auto">
         <div className="col-span-2 border-r border-neutral h-full overflow-y-auto">
           <div className="flex flex-col h-full gap-4 items-start">
             <div className="flex flex-row gap-2 items-center h-fit w-full justify-center">
