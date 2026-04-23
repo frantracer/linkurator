@@ -29,8 +29,10 @@ export default async function RootLayout(
   const theme = await getUserTheme();
 
   return (
-    <html lang="es" className={"scroll-smooth"} data-theme={theme}>
+    <html lang="es" className="scroll-smooth" data-theme={theme}>
       <head>
+        <link rel="preconnect" href="https://fonts.bunny.net" />
+        <link href="https://fonts.bunny.net/css?family=inter:400,500,600,700&display=swap" rel="stylesheet" />
         <link rel="manifest" href="/manifest.json" />
         <meta name="apple-mobile-web-app-title" content="Linkurator" />
         <title>Linkurator</title>
