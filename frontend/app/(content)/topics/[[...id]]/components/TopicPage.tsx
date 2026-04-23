@@ -5,9 +5,9 @@ import {useRouter} from "next/navigation";
 import React, {useEffect, useState} from "react";
 import Button from "../../../../../components/atoms/Button";
 import {ErrorBanner} from "../../../../../components/atoms/ErrorBanner";
+import CrossButton from "../../../../../components/atoms/CrossButton";
 import {
   AddIcon,
-  CrossIcon,
   FunnelIcon,
   MinusIcon,
   OptionsIcon,
@@ -277,10 +277,7 @@ const TopicPageComponent = ({topicId}: { topicId: string }) => {
                       <span>
                         {t("following")}
                       </span>
-                            <div className="hover:cursor-pointer hover:text-primary"
-                                 onClick={() => handleUnfollowTopic(selectedTopic.uuid)}>
-                                <CrossIcon/>
-                            </div>
+                            <CrossButton onClick={() => handleUnfollowTopic(selectedTopic.uuid)}/>
                         </Tag>
                     }
                     {selectedTopic && !selectedTopic.followed && !selectedTopic.is_owner && isUserLogged &&

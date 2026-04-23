@@ -14,7 +14,8 @@ import Dropdown from "../atoms/Dropdown";
 import FlexColumn from "../atoms/FlexColumn";
 import FlexItem from "../atoms/FlexItem";
 import FlexRow from "../atoms/FlexRow";
-import {AddIcon, CheckCircleIcon, CircleIcon, CrossIcon} from "../atoms/Icons";
+import CrossButton from "../atoms/CrossButton";
+import {AddIcon, CheckCircleIcon, CircleIcon} from "../atoms/Icons";
 import InputText from "../atoms/InputText";
 import Menu from "../atoms/Menu";
 import {MenuItem} from "../atoms/MenuItem";
@@ -32,7 +33,7 @@ type NewTopicModalProps = {
   refreshTopics: () => void;
 }
 
-const NewTopicModal = ({ providers, ...props }: NewTopicModalProps) => {
+const NewTopicModal = ({providers, ...props}: NewTopicModalProps) => {
   const router = useRouter();
   const t = useTranslations("common");
 
@@ -82,23 +83,17 @@ const NewTopicModal = ({ providers, ...props }: NewTopicModalProps) => {
     .sort(subscriptionSorting)
     .map(subscription => {
       return (
-        <ALink key={subscription.uuid} href={paths.SUBSCRIPTIONS + "/" + subscription.uuid}
-               onClick={handleClose}>
-          <Tag>
-            <Miniature src={subscription.thumbnail} alt={subscription.name}
-                       badgeImage={getProviderIcon(providers, subscription.provider)}/>
-            {subscription.name}
-            <div onClick={
-              (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                removeSubscription(subscription);
-              }
-            }>
-              <CrossIcon/>
+        <Tag key={subscription.uuid}>
+          <ALink href={paths.SUBSCRIPTIONS + "/" + subscription.uuid}
+                 onClick={handleClose}>
+            <div className={"flex flex-row gap-2 items-center justify-center"}>
+              <Miniature src={subscription.thumbnail} alt={subscription.name}
+                         badgeImage={getProviderIcon(providers, subscription.provider)}/>
+              {subscription.name}
             </div>
-          </Tag>
-        </ALink>)
+          </ALink>
+          <CrossButton onClick={() => removeSubscription(subscription)}/>
+        </Tag>)
     })
 
   return (

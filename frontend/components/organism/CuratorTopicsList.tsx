@@ -4,7 +4,7 @@ import {useTranslations} from "next-intl";
 import {paths} from "../../configuration";
 import FlexRow from "../atoms/FlexRow";
 import {InfoBanner} from "../atoms/InfoBanner";
-import {CrossIcon} from "../atoms/Icons";
+import CrossButton from "../atoms/CrossButton";
 import Button from "../atoms/Button";
 import {followTopic, unfollowTopic} from "../../services/topicService";
 import {MenuItem} from "../atoms/MenuItem";
@@ -70,13 +70,7 @@ const CuratorTopicsList = (
                 {topic.followed && !topic.is_owner && (
                   <Tag>
                     <span>{t("following")}</span>
-                    <div className="hover:cursor-pointer"
-                         onClick={(event) => {
-                           handleUnfollowTopic(topic.uuid);
-                           event.stopPropagation();
-                         }}>
-                      <CrossIcon/>
-                    </div>
+                    <CrossButton onClick={() => handleUnfollowTopic(topic.uuid)}/>
                   </Tag>
                 )}
                 {!topic.followed && !topic.is_owner && isUserLoggedIn && (

@@ -12,7 +12,8 @@ import Dropdown from "../atoms/Dropdown";
 import FlexColumn from "../atoms/FlexColumn";
 import FlexItem from "../atoms/FlexItem";
 import FlexRow from "../atoms/FlexRow";
-import {AddIcon, CheckCircleIcon, CircleIcon, CrossIcon} from "../atoms/Icons";
+import CrossButton from "../atoms/CrossButton";
+import {AddIcon, CheckCircleIcon, CircleIcon} from "../atoms/Icons";
 import InputText from "../atoms/InputText";
 import Menu from "../atoms/Menu";
 import {MenuItem} from "../atoms/MenuItem";
@@ -105,15 +106,7 @@ const AssignTopicModal = (props: AssignTopicModalProps) => {
             <span className={"hover:text-primary"}>
               {topic.name}
             </span>
-            <div className={"hover:text-primary"} onClick={
-              (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                unassignButtonAction(topic.uuid);
-              }
-            }>
-              <CrossIcon/>
-            </div>
+            <CrossButton onClick={() => unassignButtonAction(topic.uuid)}/>
           </Tag>
         </ALink>
       )

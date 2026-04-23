@@ -1,13 +1,13 @@
-import { useState } from "react";
-import { useTranslations } from "next-intl";
-import { useQueryClient } from '@tanstack/react-query';
-import { paths } from "../../configuration";
-import { getProviderIcon, Provider } from "../../entities/Provider";
-import { Subscription } from "../../entities/Subscription";
-import { Topic } from "../../entities/Topic";
+import {useState} from "react";
+import {useTranslations} from "next-intl";
+import {useQueryClient} from '@tanstack/react-query';
+import {paths} from "../../configuration";
+import {getProviderIcon, Provider} from "../../entities/Provider";
+import {Subscription} from "../../entities/Subscription";
+import {Topic} from "../../entities/Topic";
 import useSubscriptionsToAdd from "../../hooks/useSubscriptionsToAdd";
-import { updateTopic } from "../../services/topicService";
-import { closeModal } from "../../utilities/modalAction";
+import {updateTopic} from "../../services/topicService";
+import {closeModal} from "../../utilities/modalAction";
 import ALink from "../atoms/ALink";
 import Box from "../atoms/Box";
 import Button from "../atoms/Button";
@@ -15,10 +15,11 @@ import Dropdown from "../atoms/Dropdown";
 import FlexColumn from "../atoms/FlexColumn";
 import FlexItem from "../atoms/FlexItem";
 import FlexRow from "../atoms/FlexRow";
-import { AddIcon, CheckCircleIcon, CircleIcon, CrossIcon } from "../atoms/Icons";
+import CrossButton from "../atoms/CrossButton";
+import {AddIcon, CheckCircleIcon, CircleIcon} from "../atoms/Icons";
 import InputText from "../atoms/InputText";
 import Menu from "../atoms/Menu";
-import { MenuItem } from "../atoms/MenuItem";
+import {MenuItem} from "../atoms/MenuItem";
 import Miniature from "../atoms/Miniature";
 import Modal from "../atoms/Modal";
 import Tag from "../atoms/Tag";
@@ -35,7 +36,7 @@ type EditTopicModalProps = {
   refreshSubscriptions: () => void;
 }
 
-const EditTopicModal = ({ providers, ...props }: EditTopicModalProps) => {
+const EditTopicModal = ({providers, ...props}: EditTopicModalProps) => {
   const t = useTranslations("common");
   const queryClient = useQueryClient();
   const [searchValue, setSearchValue] = useState("");
@@ -54,7 +55,7 @@ const EditTopicModal = ({ providers, ...props }: EditTopicModalProps) => {
         props.refreshTopicItems();
         props.refreshSubscriptions();
         // Invalidate topic items cache
-        queryClient.invalidateQueries({ queryKey: ['topicItems', props.topic.uuid] });
+        queryClient.invalidateQueries({queryKey: ['topicItems', props.topic.uuid]});
         closeModal(EditTopicModalId);
       }
     )
@@ -96,23 +97,17 @@ const EditTopicModal = ({ providers, ...props }: EditTopicModalProps) => {
     .sort((a, b) => a.name.localeCompare(b.name))
     .map(subscription => {
       return (
-        <ALink key={subscription.uuid} href={paths.SUBSCRIPTIONS + "/" + subscription.uuid}
-               onClick={handleCancel}>
-          <Tag>
-            <Miniature src={subscription.thumbnail} alt={subscription.name}
-                       badgeImage={getProviderIcon(providers, subscription.provider)}/>
-            {subscription.name}
-            <div onClick={
-              (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                removeSubscription(subscription);
-              }
-            }>
-              <CrossIcon/>
+        <Tag key={subscription.uuid}>
+          <ALink href={paths.SUBSCRIPTIONS + "/" + subscription.uuid}
+                 onClick={handleCancel}>
+            <div className={"flex flex-row gap-2 items-center justify-center"}>
+              <Miniature src={subscription.thumbnail} alt={subscription.name}
+                         badgeImage={getProviderIcon(providers, subscription.provider)}/>
+              {subscription.name}
             </div>
-          </Tag>
-        </ALink>)
+          </ALink>
+          <CrossButton onClick={() => removeSubscription(subscription)}/>
+        </Tag>)
     })
 
   return (

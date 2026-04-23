@@ -4,9 +4,9 @@ import {useTranslations} from 'next-intl';
 import {useRouter} from "next/navigation";
 import React, {useEffect, useState} from "react";
 import Button from "../../../../../components/atoms/Button";
+import CrossButton from "../../../../../components/atoms/CrossButton";
 import {
   AddIcon,
-  CrossIcon,
   FunnelIcon,
   MinusIcon,
   OptionsIcon,
@@ -252,10 +252,7 @@ const SubscriptionPageComponent = ({subscriptionId}: { subscriptionId: string })
                       <span>
                         {t("following")}
                       </span>
-                            <div className="hover:cursor-pointer hover:text-primary"
-                                 onClick={() => handleUnfollowSubscription(selectedSubscription.uuid)}>
-                                <CrossIcon/>
-                            </div>
+                            <CrossButton onClick={() => handleUnfollowSubscription(selectedSubscription.uuid)}/>
                         </Tag>
                     }
                     {selectedSubscription && !selectedSubscription.followed && isUserLogged &&

@@ -3,9 +3,9 @@
 import {useTranslations} from 'next-intl';
 import React, {useEffect, useState} from "react";
 import Button from "../../../../../components/atoms/Button";
+import CrossButton from "../../../../../components/atoms/CrossButton";
 import {
   AddIcon,
-  CrossIcon,
   FunnelIcon,
   MinusIcon,
   OptionsIcon,
@@ -182,9 +182,7 @@ const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
                     <span>
                     {t("following")}
                     </span>
-                                <div className="hover:cursor-pointer hover:text-primary" onClick={() => handleUnfollowCurator(curator.id)}>
-                                    <CrossIcon/>
-                                </div>
+                                <CrossButton onClick={() => handleUnfollowCurator(curator.id)}/>
                             </Tag>
                         }
                         {curator && !curator.followed && isLoggedIn && !isOwnCuratorProfile &&
