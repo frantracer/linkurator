@@ -110,6 +110,8 @@
     "assign_subscription": "Assign subscription",
     "new_topic_name": "New topic name",
     "create": "Create",
+    "discover": "Discover",
+    "filter_topics_placeholder": "Filter topics",
     "topics": "Topics",
     "home": "Home",
     "latest_from_subscriptions": "Latest from your subscriptions",

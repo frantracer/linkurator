@@ -24,10 +24,9 @@ import {
   ThumbsUpIcon
 } from "../atoms/Icons";
 import LateralSubscriptionList from "./LateralSubscriptionList";
-import LateralTopicList from "./LateralTopicList";
 import {closeModal, openModal} from "../../utilities/modalAction";
-import NewTopicModal, {NewTopicModalId} from "./NewTopicModal";
-import FindTopicModal, {FindTopicModalId} from "./FindTopicModal";
+import NewTopicModal from "./NewTopicModal";
+import FindTopicModal from "./FindTopicModal";
 import Button from "../atoms/Button";
 import ALink from "../atoms/ALink";
 import {LogoImage} from "../atoms/LogoImage";
@@ -98,22 +97,11 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
   const [currentTab, setCurrentTab] = useState<CurrentPage>(initialPage);
 
   const selectedSubscription = subscriptions.find(subscription => subscription.uuid === selectedId);
-  const selectedTopic = topics.find(topic => topic.uuid === selectedId);
   const selectedCurator = curators.find(curator => curator.username === selectedId);
   const selectedConversation = conversations.find(conversation => conversation.id === selectedId);
 
   const closeMenu = () => {
     hideLateralMenu(LATERAL_NAVIGATION_MENU_ID)
-  }
-
-  const openNewTopicModal = () => {
-    openModal(NewTopicModalId);
-    closeMenu();
-  }
-
-  const openFindTopicModal = () => {
-    openModal(FindTopicModalId);
-    closeMenu();
   }
 
   const openFindSubscriptionModal = () => {
@@ -213,6 +201,8 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
                 </MenuItem>
                 <MenuItem onClick={() => {
                   setCurrentTab('topics');
+                  router.push(paths.TOPICS);
+                  closeMenu();
                 }} selected={currentTab === 'topics'}>
                     <FlexRow position={"start"}>
                         <FlexItem>
@@ -220,13 +210,6 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
                         </FlexItem>
                         <FlexItem grow={true}>
                           {t("topics")}
-                        </FlexItem>
-                        <FlexItem grow={false}>
-                            <Button primary={false} fitContent={true} borderless={true}
-                                    clickAction={openFindTopicModal}
-                                    tooltip={t("find_topics")}>
-                                <MagnifyingGlassIcon/>
-                            </Button>
                         </FlexItem>
                     </FlexRow>
                 </MenuItem>
@@ -352,30 +335,6 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
                     <Divider/>
                     <ProfileInfo profile={profile}/>
                 </div>
-            </div>
-        }
-        {profile && currentTab === 'topics' &&
-            <div className={"flex flex-col overflow-y-auto overflow-x-hidden"}>
-                <div className={"flex flex-row gap-2"}>
-                    <Button fitContent={false} clickAction={openFindTopicModal} primary={false}>
-                        <MagnifyingGlassIcon/>
-                      {t("search")}
-                    </Button>
-                    <Button fitContent={false} clickAction={openNewTopicModal} primary={false}>
-                        <AddIcon/>
-                      {t("create")}
-                    </Button>
-                </div>
-                <LateralTopicList
-                    topics={topics}
-                    subscriptions={subscriptions}
-                    isLoading={topicsAreLoading || subscriptionsAreLoading}
-                    closeMenu={closeMenu}
-                    selectedTopic={selectedTopic}
-                    openCreateTopicModal={openNewTopicModal}
-                    openImportSubscriptionModal={openImportSubscriptionsModal}
-                />
-
             </div>
         }
         {profile && currentTab === 'subscriptions' &&

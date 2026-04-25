@@ -110,6 +110,8 @@
         "assign_subscription": "Asignar subscripción",
         "new_topic_name": "Nombre de la nueva categoría",
         "create": "Crear",
+        "discover": "Descubrir",
+        "filter_topics_placeholder": "Filtrar categorías",
         "topics": "Categorías",
         "home": "Inicio",
         "latest_from_subscriptions": "Novedades de tus subscripciones",
