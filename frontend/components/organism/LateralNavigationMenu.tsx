@@ -15,11 +15,8 @@ import {
   ChatBubbleIcon,
   CuratorIcon,
   HomeIcon,
-  ProfileIcon,
   RectangleGroup,
-  SettingsIcon,
-  SubscriptionIcon,
-  ThumbsUpIcon
+  SubscriptionIcon
 } from "../atoms/Icons";
 import {closeModal, openModal} from "../../utilities/modalAction";
 import NewTopicModal from "./NewTopicModal";
@@ -36,11 +33,12 @@ import useProviders from "../../hooks/useProviders";
 import FindCuratorModal from "./FindCuratorModal";
 import FindSubscriptionModal from "./FindSubscriptionModal";
 import FlexItem from "../atoms/FlexItem";
-import ProfileInfo from "./ProfileInfo";
+import ProfileDropdown from "./ProfileDropdown";
 import {useTranslations} from "next-intl";
 import QuickAccessesModal, {QuickAccessesModalId} from "./QuickAccessesModal";
 import LateralTopicList from "./LateralTopicList";
 import {v4 as uuidv4} from 'uuid';
+import ImportSubscriptionsModal from "./ImportSubscriptionsModal";
 
 export const LATERAL_NAVIGATION_MENU_ID = 'lateral-navigation-menu';
 
@@ -106,11 +104,6 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
   const goToHome = () => {
     setCurrentTab('home');
     router.push(paths.HOME);
-    closeMenu();
-  }
-
-  const goToCurator = (curatorUsername: string) => {
-    router.push(paths.CURATORS + "/" + curatorUsername);
     closeMenu();
   }
 
@@ -232,51 +225,6 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
         }
         {profile && <Divider/>}
         {profile &&
-            <div className={"flex flex-col"}>
-                <Menu isFullHeight={false}>
-                    <MenuItem onClick={() => {
-                      router.push(paths.PROFILE);
-                      closeMenu();
-                    }} selected={pathname === paths.PROFILE}>
-                        <FlexRow position={"start"}>
-                            <FlexItem>
-                                <ProfileIcon/>
-                            </FlexItem>
-                            <FlexItem grow={true}>
-                              {t("my_profile")}
-                            </FlexItem>
-                        </FlexRow>
-                    </MenuItem>
-                  {profile && <MenuItem onClick={() => {
-                    goToCurator(profile.username);
-                  }} selected={pathname === paths.CURATORS + "/" + profile.username}>
-                      <FlexRow position={"start"}>
-                          <FlexItem>
-                              <ThumbsUpIcon/>
-                          </FlexItem>
-                          <FlexItem grow={true}>
-                            {t("my_recommendations")}
-                          </FlexItem>
-                      </FlexRow>
-                  </MenuItem>}
-                    <MenuItem onClick={() => {
-                      router.push(paths.SETTINGS);
-                      closeMenu();
-                    }} selected={pathname === paths.SETTINGS}>
-                        <FlexRow position={"start"}>
-                            <FlexItem>
-                                <SettingsIcon/>
-                            </FlexItem>
-                            <FlexItem grow={true}>
-                              {t("settings")}
-                            </FlexItem>
-                        </FlexRow>
-                    </MenuItem>
-                </Menu>
-            </div>
-        }
-        {profile && <Divider/>}
-        {profile &&
             <div className={"flex flex-col overflow-y-auto overflow-x-hidden gap-2 mb-auto"}>
                 <Button primary={false} fitContent={false} clickAction={openQuickAccessesModal}>
                     <BoltIcon/>
@@ -292,9 +240,13 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
         }
         {profile &&
             <div className={"flex flex-col gap-2"}>
-                <div className="mt-auto">
-                    <Divider/>
-                    <ProfileInfo profile={profile}/>
+                <Divider/>
+                <div className="flex flex-row items-center gap-3 p-4">
+                    <ProfileDropdown profile={profile} bottom={false} position="start"/>
+                    <div className="flex flex-col">
+                        <span className="font-semibold">{profile.first_name} {profile.last_name}</span>
+                        <span className="text-sm text-base-content/60">@{profile.username}</span>
+                    </div>
                 </div>
             </div>
         }
@@ -304,6 +256,7 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
       <FindSubscriptionModal refreshSubscriptions={refreshSubscriptions}/>
       <FindCuratorModal refreshCurators={refreshCurators} curators={curators}/>
       <QuickAccessesModal onClose={() => closeModal(QuickAccessesModalId)}/>
+      <ImportSubscriptionsModal/>
       {
         children
       }

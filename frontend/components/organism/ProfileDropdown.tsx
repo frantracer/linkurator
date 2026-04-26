@@ -6,25 +6,24 @@ import {useRouter} from "next/navigation";
 import Avatar from "../atoms/Avatar";
 import Dropdown from "../atoms/Dropdown";
 import {MenuItem} from "../atoms/MenuItem";
-import {ImportIcon, LogoutIcon, ProfileIcon, SettingsIcon, ThumbsUpIcon} from "../atoms/Icons";
+import {LogoutIcon, ProfileIcon, SettingsIcon, ThumbsUpIcon} from "../atoms/Icons";
 import Divider from "../atoms/Divider";
 import {configuration, paths} from "../../configuration";
-import {openModal} from "../../utilities/modalAction";
-import ImportSubscriptionsModal, {ImportSubscriptionsModalId} from "./ImportSubscriptionsModal";
 import {Profile} from "../../services/profileService";
 import ProfileInfo from "./ProfileInfo";
 
 type ProfileDropdownProps = {
   profile: Profile;
+  bottom?: boolean;
+  position?: "start" | "center" | "end";
 };
 
-const ProfileDropdown = ({profile}: ProfileDropdownProps) => {
+const ProfileDropdown = ({profile, bottom = true, position = "end"}: ProfileDropdownProps) => {
   const t = useTranslations("common");
   const router = useRouter();
 
   return (
     <>
-      <ImportSubscriptionsModal/>
       <Dropdown
         button={
           <div
@@ -32,8 +31,8 @@ const ProfileDropdown = ({profile}: ProfileDropdownProps) => {
             <Avatar src={profile.avatar_url} alt={profile.first_name}/>
           </div>
         }
-        bottom={true}
-        position="end"
+        bottom={bottom}
+        position={position}
         closeOnClickInside={true}
       >
         <ProfileInfo profile={profile}/>
@@ -42,12 +41,6 @@ const ProfileDropdown = ({profile}: ProfileDropdownProps) => {
           <div className="flex flex-row items-center gap-2">
             <ProfileIcon/>
             {t("my_profile")}
-          </div>
-        </MenuItem>
-        <MenuItem onClick={() => openModal(ImportSubscriptionsModalId)}>
-          <div className="flex flex-row items-center gap-2">
-            <ImportIcon/>
-            {t("import_subscriptions")}
           </div>
         </MenuItem>
         <MenuItem onClick={() => router.push(paths.CURATORS + "/" + profile.username)}>
