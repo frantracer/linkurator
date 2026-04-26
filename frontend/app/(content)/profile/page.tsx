@@ -21,7 +21,6 @@ import {InfoBanner} from "../../../components/atoms/InfoBanner";
 import {useDebounce} from "../../../hooks/useDebounce";
 import FlexItem from "../../../components/atoms/FlexItem";
 import {useTranslations} from "next-intl";
-import ProfileDropdown from "../../../components/organism/ProfileDropdown";
 import {ProfileIcon} from "../../../components/atoms/Icons";
 
 const NOTIFICATION_TIMEOUT = 3000;
@@ -132,9 +131,7 @@ const ProfilePage: NextPage = () => {
             <ProfileIcon/>
             {t("my_profile")}
           </h1>
-          <div className="w-10 shrink-0 flex items-center justify-end">
-            {profile && <ProfileDropdown profile={profile}/>}
-          </div>
+          <div className="w-10 shrink-0"/>
         </div>
       </TopTitle>
       <div className="h-full overflow-y-auto">

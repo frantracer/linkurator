@@ -43,7 +43,6 @@ import Dropdown from "../../../../../components/atoms/Dropdown";
 import Menu from "../../../../../components/atoms/Menu";
 import TopTitle from "../../../../../components/molecules/TopTitle";
 import useProviders from "../../../../../hooks/useProviders";
-import ProfileDropdown from "../../../../../components/organism/ProfileDropdown";
 
 const REFRESH_TOPICS_INTERVAL = 10000;
 
@@ -249,12 +248,6 @@ const TopicPageComponent = ({topicId}: { topicId: string }) => {
                       <h1 className="text-xl font-bold min-w-0 whitespace-nowrap truncate">
                         {topicName}
                       </h1>
-                      <div className="shrink-0">
-                          <Button primary={false} fitContent={true} clickAction={handleShowFilters}
-                                  tooltip={t("filter")} hideOnMobile={true}>
-                              <FunnelIcon/>
-                          </Button>
-                      </div>
                   </div>
                   <div className="flex flex-row gap-2 items-center justify-center">
                     {selectedTopic && !selectedTopic.is_owner &&
@@ -289,7 +282,9 @@ const TopicPageComponent = ({topicId}: { topicId: string }) => {
                   </div>
               </div>
               <div className="w-10 shrink-0 flex items-center justify-end">
-                {profile && <ProfileDropdown profile={profile}/>}
+                <Button primary={false} fitContent={true} clickAction={handleShowFilters} tooltip={t("filter")}>
+                  <FunnelIcon/>
+                </Button>
               </div>
           </>}
         </div>

@@ -37,7 +37,6 @@ import Menu from "../../../../../components/atoms/Menu";
 import ShareCuratorModal, {ShareCuratorModalId} from "../../../../../components/organism/ShareCuratorModal";
 import {openModal} from "../../../../../utilities/modalAction";
 import useProviders from "../../../../../hooks/useProviders";
-import ProfileDropdown from "../../../../../components/organism/ProfileDropdown";
 
 const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
   const t = useTranslations("common");
@@ -169,12 +168,6 @@ const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
                           <h1 className="text-xl font-bold min-w-0 whitespace-nowrap truncate">
                             {curatorName}
                           </h1>
-                          <div className="shrink-0">
-                              <Button primary={false} fitContent={true} clickAction={handleFilter} tooltip={t("filter")}
-                                      hideOnMobile={true}>
-                                  <FunnelIcon/>
-                              </Button>
-                          </div>
                       </div>
                       <div className="flex flex-row gap-2 items-center justify-center">
                         {curator && curator.followed &&
@@ -204,7 +197,9 @@ const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
                       </div>
                   </div>
                   <div className="w-10 shrink-0 flex items-center justify-end">
-                    {profile && <ProfileDropdown profile={profile}/>}
+                    <Button primary={false} fitContent={true} clickAction={handleFilter} tooltip={t("filter")}>
+                      <FunnelIcon/>
+                    </Button>
                   </div>
               </>
           }

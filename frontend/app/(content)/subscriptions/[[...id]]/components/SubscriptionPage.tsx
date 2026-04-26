@@ -39,7 +39,6 @@ import {openModal} from "../../../../../utilities/modalAction";
 import Dropdown from "../../../../../components/atoms/Dropdown";
 import Menu from "../../../../../components/atoms/Menu";
 import {useToast} from "../../../../../contexts/ToastContext";
-import ProfileDropdown from "../../../../../components/organism/ProfileDropdown";
 
 const REFRESH_SUBSCRIPTIONS_INTERVAL = 10000;
 
@@ -215,13 +214,6 @@ const SubscriptionPageComponent = ({subscriptionId}: { subscriptionId: string })
                       <h1 className="text-xl font-bold min-w-0 whitespace-nowrap truncate">
                         {subscriptionName}
                       </h1>
-                      <div className="shrink-0">
-                          <Button primary={false} fitContent={true} clickAction={handleShowFilters}
-                                  tooltip={t("filter")}
-                                  hideOnMobile={true}>
-                              <FunnelIcon/>
-                          </Button>
-                      </div>
                   </div>
                   <div className="flex flex-row items-center justify-center gap-2">
                     {selectedSubscription &&
@@ -253,7 +245,9 @@ const SubscriptionPageComponent = ({subscriptionId}: { subscriptionId: string })
                   </div>
               </div>
               <div className="w-10 shrink-0 flex items-center justify-end">
-                {profile && <ProfileDropdown profile={profile}/>}
+                <Button primary={false} fitContent={true} clickAction={handleShowFilters} tooltip={t("filter")}>
+                  <FunnelIcon/>
+                </Button>
               </div>
           </>}
         </div>

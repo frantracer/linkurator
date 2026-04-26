@@ -10,7 +10,6 @@ import Miniature from "../../../../../components/atoms/Miniature";
 import SearchBar from "../../../../../components/molecules/SearchBar";
 import TopTitle from "../../../../../components/molecules/TopTitle";
 import FindCuratorModal, {FindCuratorModalId} from "../../../../../components/organism/FindCuratorModal";
-import ProfileDropdown from "../../../../../components/organism/ProfileDropdown";
 import {paths} from "../../../../../configuration";
 import {Curator, curatorSorting} from "../../../../../entities/Curators";
 import {useCurators} from "../../../../../hooks/useCurators";
@@ -113,9 +112,7 @@ const CuratorsListPageComponent = () => {
             <CuratorIcon/>
             <h1 className="text-xl font-bold truncate">{t("curators")}</h1>
           </div>
-          <div className="w-10 shrink-0 flex items-center justify-end">
-            {profile && <ProfileDropdown profile={profile}/>}
-          </div>
+          <div className="w-10 shrink-0"/>
         </div>
       </TopTitle>
       <div className="flex flex-col h-full bg-base-300 overflow-y-auto overflow-x-hidden">

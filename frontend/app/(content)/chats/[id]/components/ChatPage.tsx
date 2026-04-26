@@ -24,7 +24,6 @@ import ReactMarkdown from 'react-markdown';
 import {invalidateTopicsCache} from "../../../../../hooks/useTopics";
 import {paths} from "../../../../../configuration";
 import useProviders from "../../../../../hooks/useProviders";
-import ProfileDropdown from "../../../../../components/organism/ProfileDropdown";
 import Divider from "../../../../../components/atoms/Divider";
 
 const MESSAGE_LIMIT = 5;
@@ -192,9 +191,7 @@ const ChatPageComponent = ({conversationId}: { conversationId: string }) => {
               }
             </h1>
           </div>
-          <div className="w-10 shrink-0 flex items-center justify-end">
-            {profile && <ProfileDropdown profile={profile}/>}
-          </div>
+          <div className="w-10 shrink-0"/>
         </div>
       </TopTitle>
 

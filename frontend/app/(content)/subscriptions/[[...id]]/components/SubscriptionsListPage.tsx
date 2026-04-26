@@ -14,7 +14,6 @@ import TopTitle from "../../../../../components/molecules/TopTitle";
 import AssignTopicModal, {AssignTopicModalId} from "../../../../../components/organism/AssignTopicModal";
 import {FindSubscriptionModalId} from "../../../../../components/organism/FindSubscriptionModal";
 import {ImportSubscriptionsModalId} from "../../../../../components/organism/ImportSubscriptionsModal";
-import ProfileDropdown from "../../../../../components/organism/ProfileDropdown";
 import {paths} from "../../../../../configuration";
 import {getProviderIcon, getProviderPrettyName} from "../../../../../entities/Provider";
 import {Subscription, subscriptionFiltering, subscriptionSorting} from "../../../../../entities/Subscription";
@@ -78,9 +77,7 @@ const SubscriptionsListPageComponent = () => {
             <SubscriptionIcon/>
             <h1 className="text-xl font-bold truncate">{t("subscriptions")}</h1>
           </div>
-          <div className="w-10 shrink-0 flex items-center justify-end">
-            {profile && <ProfileDropdown profile={profile}/>}
-          </div>
+          <div className="w-10 shrink-0"/>
         </div>
       </TopTitle>
       <div className="flex flex-col h-full bg-base-300 overflow-y-auto overflow-x-hidden">

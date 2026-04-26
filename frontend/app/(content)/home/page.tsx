@@ -20,7 +20,6 @@ import {openModal} from "../../../utilities/modalAction";
 import {FindCuratorModalId} from "../../../components/organism/FindCuratorModal";
 import useProviders from "../../../hooks/useProviders";
 import {HomeIcon} from "../../../components/atoms/Icons";
-import ProfileDropdown from "../../../components/organism/ProfileDropdown";
 
 const HomePageComponent = () => {
   const t = useTranslations("common");
@@ -89,9 +88,7 @@ const HomePageComponent = () => {
             <HomeIcon/>
             {t("home")}
           </h1>
-          <div className="w-10 shrink-0 flex items-center justify-end">
-            <ProfileDropdown profile={profile}/>
-          </div>
+          <div className="w-10 shrink-0"/>
         </div>
       </TopTitle>
 

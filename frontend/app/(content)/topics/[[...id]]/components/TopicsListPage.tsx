@@ -10,7 +10,6 @@ import TopTitle from "../../../../../components/molecules/TopTitle";
 import EditTopicModal, {EditTopicModalId} from "../../../../../components/organism/EditTopicModal";
 import {FindTopicModalId} from "../../../../../components/organism/FindTopicModal";
 import {NewTopicModalId} from "../../../../../components/organism/NewTopicModal";
-import ProfileDropdown from "../../../../../components/organism/ProfileDropdown";
 import TopicCard from "../../../../../components/organism/TopicCard";
 import {Topic} from "../../../../../entities/Topic";
 import {useFavoriteTopics} from "../../../../../hooks/useFavoriteTopics";
@@ -85,9 +84,7 @@ const TopicsListPageComponent = () => {
             <RectangleGroup/>
             <h1 className="text-xl font-bold truncate">{t("topics")}</h1>
           </div>
-          <div className="w-10 shrink-0 flex items-center justify-end">
-            {profile && <ProfileDropdown profile={profile}/>}
-          </div>
+          <div className="w-10 shrink-0"/>
         </div>
       </TopTitle>
       <div className="flex flex-col h-full bg-base-300 overflow-y-auto overflow-x-hidden">
