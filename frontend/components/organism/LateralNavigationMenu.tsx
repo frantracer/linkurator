@@ -15,7 +15,6 @@ import {
   ChatBubbleIcon,
   CuratorIcon,
   HomeIcon,
-  ImportIcon,
   ProfileIcon,
   RectangleGroup,
   SettingsIcon,
@@ -36,11 +35,11 @@ import {useCurators} from "../../hooks/useCurators";
 import useProviders from "../../hooks/useProviders";
 import FindCuratorModal from "./FindCuratorModal";
 import FindSubscriptionModal from "./FindSubscriptionModal";
-import {ImportSubscriptionsModalId} from "./ImportSubscriptionsModal";
 import FlexItem from "../atoms/FlexItem";
 import ProfileInfo from "./ProfileInfo";
 import {useTranslations} from "next-intl";
 import QuickAccessesModal, {QuickAccessesModalId} from "./QuickAccessesModal";
+import LateralTopicList from "./LateralTopicList";
 import {v4 as uuidv4} from 'uuid';
 
 export const LATERAL_NAVIGATION_MENU_ID = 'lateral-navigation-menu';
@@ -82,17 +81,15 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
   const {profile, profileIsLoading} = useProfile();
   const {subscriptions, refreshSubscriptions} = useSubscriptions(profile);
   const {curators, refreshCurators} = useCurators(profile, profileIsLoading);
-  const {refreshTopics} = useTopics(profile, profileIsLoading);
+  const {topics, topicsAreLoading, refreshTopics} = useTopics(profile, profileIsLoading);
   const {providers} = useProviders();
   const [currentTab, setCurrentTab] = useState<CurrentPage>(initialPage);
 
+  const selectedTopicId = pathnameArray[0] === 'topics' ? pathnameArray[1] : undefined;
+  const selectedTopic = selectedTopicId ? topics.find((topic) => topic.uuid === selectedTopicId) : undefined;
+
   const closeMenu = () => {
     hideLateralMenu(LATERAL_NAVIGATION_MENU_ID)
-  }
-
-  const openImportSubscriptionsModal = () => {
-    openModal(ImportSubscriptionsModalId);
-    closeMenu();
   }
 
   const openQuickAccessesModal = () => {
@@ -166,13 +163,6 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
                         <FlexItem grow={true}>
                           {t("home")}
                         </FlexItem>
-                        <FlexItem grow={false}>
-                            <Button primary={false} fitContent={true} borderless={true}
-                                    clickAction={openQuickAccessesModal}
-                                    tooltip={t("quick_accesses")}>
-                                <BoltIcon/>
-                            </Button>
-                        </FlexItem>
                     </FlexRow>
                 </MenuItem>
                 <MenuItem onClick={() => {
@@ -241,13 +231,9 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
             </Menu>
         }
         {profile && <Divider/>}
-        {profile && currentTab === 'home' &&
-            <div className={"flex flex-col overflow-y-auto overflow-x-hidden gap-2 flex-1"}>
-                <Button primary={false} fitContent={false} clickAction={openQuickAccessesModal}>
-                    <BoltIcon/>
-                  {t("quick_accesses")}
-                </Button>
-                <Menu>
+        {profile &&
+            <div className={"flex flex-col"}>
+                <Menu isFullHeight={false}>
                     <MenuItem onClick={() => {
                       router.push(paths.PROFILE);
                       closeMenu();
@@ -258,18 +244,6 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
                             </FlexItem>
                             <FlexItem grow={true}>
                               {t("my_profile")}
-                            </FlexItem>
-                        </FlexRow>
-                    </MenuItem>
-                    <MenuItem onClick={() => {
-                      openImportSubscriptionsModal();
-                    }}>
-                        <FlexRow position={"start"}>
-                            <FlexItem>
-                                <ImportIcon/>
-                            </FlexItem>
-                            <FlexItem grow={true}>
-                              {t("import_subscriptions")}
                             </FlexItem>
                         </FlexRow>
                     </MenuItem>
@@ -299,6 +273,25 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
                         </FlexRow>
                     </MenuItem>
                 </Menu>
+            </div>
+        }
+        {profile && <Divider/>}
+        {profile &&
+            <div className={"flex flex-col overflow-y-auto overflow-x-hidden gap-2 mb-auto"}>
+                <Button primary={false} fitContent={false} clickAction={openQuickAccessesModal}>
+                    <BoltIcon/>
+                  {t("quick_accesses")}
+                </Button>
+                <LateralTopicList
+                    topics={topics}
+                    selectedTopic={selectedTopic}
+                    isLoading={topicsAreLoading}
+                    closeMenu={closeMenu}
+                />
+            </div>
+        }
+        {profile &&
+            <div className={"flex flex-col gap-2"}>
                 <div className="mt-auto">
                     <Divider/>
                     <ProfileInfo profile={profile}/>

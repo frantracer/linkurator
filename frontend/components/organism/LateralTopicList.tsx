@@ -9,28 +9,18 @@ import Miniature from "../atoms/Miniature";
 import {InfoBanner} from "../atoms/InfoBanner";
 import FlexItem from "../atoms/FlexItem";
 import {useTranslations} from "next-intl";
-import Collapse from "../atoms/Collapse";
 import React from "react";
-import {Subscription} from "../../entities/Subscription";
 
 type LateralTopicListProps = {
   topics: Topic[];
   selectedTopic: Topic | undefined;
-  subscriptions: Subscription[];
   isLoading: boolean;
   closeMenu: () => void;
-  openCreateTopicModal: () => void;
-  openImportSubscriptionModal: () => void;
 }
 
 const LateralTopicList = (props: LateralTopicListProps) => {
   const t = useTranslations("common");
   const router = useRouter();
-  const isArenaSectionOpen = {
-    favorites: true,
-    myTopics: true,
-    otherTopics: true
-  };
 
   const handleClick = (topicId: string) => {
     const topic = props.topics.find((topic) => topic.uuid === topicId);
@@ -41,10 +31,7 @@ const LateralTopicList = (props: LateralTopicListProps) => {
     }
   }
 
-  // Group topics into categories
   const favoriteTopics = props.topics.filter(topic => topic.is_favorite);
-  const myTopics = props.topics.filter(topic => topic.is_owner && !topic.is_favorite);
-  const otherTopics = props.topics.filter(topic => !topic.is_owner && !topic.is_favorite);
 
   const renderTopicItem = (topic: Topic) => (
     <MenuItem
@@ -62,27 +49,6 @@ const LateralTopicList = (props: LateralTopicListProps) => {
     </MenuItem>
   );
 
-  const renderSection = (title: string, topics: Topic[], sectionKey: keyof typeof isArenaSectionOpen) => {
-    if (topics.length === 0) return null;
-
-    return (
-      <Collapse
-        key={title}
-        isOpen={isArenaSectionOpen[sectionKey]}
-        title={
-          <span className="text-sm font-semibold text-base-content/70 uppercase tracking-wide">
-            {title} ({topics.length})
-          </span>
-        }
-        content={
-          <div className="space-y-1">
-            {topics.map(renderTopicItem)}
-          </div>
-        }
-      />
-    );
-  };
-
   const noItems = (
     <div className="flex flex-col items-center h-fit gap-2 p-1">
       <InfoBanner>
@@ -91,16 +57,14 @@ const LateralTopicList = (props: LateralTopicListProps) => {
     </div>
   )
 
-  const sections = [
-    renderSection(t("favorites"), favoriteTopics, "favorites"),
-    renderSection(t("my_topics"), myTopics, "myTopics"),
-    renderSection(t("other_topics"), otherTopics, "otherTopics")
-  ].filter(s => s !== null);
-
   return (
     <Menu>
-      {sections.length > 0 && sections}
-      {sections.length === 0 && !props.isLoading && noItems}
+      {favoriteTopics.length > 0 &&
+          <div className="space-y-1">
+            {favoriteTopics.map(renderTopicItem)}
+          </div>
+      }
+      {favoriteTopics.length === 0 && !props.isLoading && noItems}
     </Menu>
   )
 }
