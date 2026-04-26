@@ -114,6 +114,8 @@
         "filter_topics_placeholder": "Filtrar categorías",
         "filter_subscriptions_placeholder": "Filtrar subscripciones",
         "filter_curators_placeholder": "Filtrar curadores",
+        "filter_chats_placeholder": "Filtrar chats",
+        "chat_initiated_at": "Chat iniciado el {datetime}",
         "topics": "Categorías",
         "home": "Inicio",
         "latest_from_subscriptions": "Novedades de tus subscripciones",

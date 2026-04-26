@@ -114,6 +114,8 @@
     "filter_topics_placeholder": "Filter topics",
     "filter_subscriptions_placeholder": "Filter subscriptions",
     "filter_curators_placeholder": "Filter curators",
+    "filter_chats_placeholder": "Filter chats",
+    "chat_initiated_at": "Chat initiated at {datetime}",
     "topics": "Topics",
     "home": "Home",
     "latest_from_subscriptions": "Latest from your subscriptions",

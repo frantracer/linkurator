@@ -3,7 +3,7 @@ import Drawer from "../molecules/Drawer";
 import useProfile from "../../hooks/useProfile";
 import useSubscriptions from "../../hooks/useSubscriptions";
 import {useTopics} from "../../hooks/useTopics";
-import {useParams, usePathname, useRouter} from "next/navigation";
+import {usePathname, useRouter} from "next/navigation";
 import Sidebar from "../atoms/Sidebar";
 import Divider from "../atoms/Divider";
 import Menu from "../atoms/Menu";
@@ -33,8 +33,6 @@ import {hideLateralMenu} from "../../utilities/lateralMenuAction";
 import {paths} from "../../configuration";
 import FlexColumn from "../atoms/FlexColumn";
 import {useCurators} from "../../hooks/useCurators";
-import LateralChatList from "./LateralChatList";
-import useChatConversations from "../../hooks/useChatConversations";
 import useProviders from "../../hooks/useProviders";
 import FindCuratorModal from "./FindCuratorModal";
 import FindSubscriptionModal from "./FindSubscriptionModal";
@@ -81,19 +79,12 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
   const pathnameArray = pathname.split('/').filter((path) => path !== '');
   const initialPage: CurrentPage = mapStringToPage(pathnameArray[0]);
 
-  const pathParams = useParams<{ id: string[] | string }>();
-  const pathParamsArray = Array.isArray(pathParams.id) ? pathParams.id : [pathParams.id];
-  const selectedId: string | undefined = pathParamsArray.length > 0 ? pathParamsArray[0] : undefined;
-
   const {profile, profileIsLoading} = useProfile();
   const {subscriptions, refreshSubscriptions} = useSubscriptions(profile);
   const {curators, refreshCurators} = useCurators(profile, profileIsLoading);
   const {refreshTopics} = useTopics(profile, profileIsLoading);
-  const {conversations, isLoading: conversationsLoading} = useChatConversations();
   const {providers} = useProviders();
   const [currentTab, setCurrentTab] = useState<CurrentPage>(initialPage);
-
-  const selectedConversation = conversations.find(conversation => conversation.id === selectedId);
 
   const closeMenu = () => {
     hideLateralMenu(LATERAL_NAVIGATION_MENU_ID)
@@ -228,6 +219,8 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
                 </MenuItem>
                 <MenuItem onClick={() => {
                   setCurrentTab('chats');
+                  router.push(paths.CHATS);
+                  closeMenu();
                 }} selected={currentTab === 'chats'}>
                     <FlexRow position={"start"}>
                         <FlexItem>
@@ -311,14 +304,6 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
                     <ProfileInfo profile={profile}/>
                 </div>
             </div>
-        }
-        {profile && currentTab === 'chats' &&
-            <LateralChatList
-                conversations={conversations}
-                closeMenu={closeMenu}
-                selectedConversation={selectedConversation}
-                isLoading={conversationsLoading}
-            />
         }
       </Sidebar>
       <NewTopicModal refreshTopics={refreshTopics} subscriptions={subscriptions} providers={providers}/>

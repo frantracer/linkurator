@@ -1,11 +1,10 @@
-'use client';
+import type {Metadata} from 'next';
+import ChatsListPageComponent from './components/ChatsListPage';
 
-import {useRouter} from "next/navigation";
-import {paths} from "../../../configuration";
-import {v4 as uuidv4} from 'uuid';
+export const metadata: Metadata = {
+  title: 'Linkurator',
+};
 
-export default function ChatPage() {
-  const router = useRouter()
-  const newChatId = uuidv4()
-  router.push(paths.CHATS + "/" + newChatId)
+export default function ChatsPage() {
+  return <ChatsListPageComponent/>
 }
