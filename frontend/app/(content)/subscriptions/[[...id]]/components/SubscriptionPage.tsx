@@ -1,7 +1,6 @@
 'use client';
 
 import {useTranslations} from 'next-intl';
-import {useRouter} from "next/navigation";
 import React, {useEffect, useState} from "react";
 import Button from "../../../../../components/atoms/Button";
 import CrossButton from "../../../../../components/atoms/CrossButton";
@@ -46,7 +45,6 @@ const REFRESH_SUBSCRIPTIONS_INTERVAL = 10000;
 
 const SubscriptionPageComponent = ({subscriptionId}: { subscriptionId: string }) => {
   const t = useTranslations("common");
-  const router = useRouter();
   const {showToast} = useToast();
   const {providers} = useProviders();
 
@@ -105,14 +103,6 @@ const SubscriptionPageComponent = ({subscriptionId}: { subscriptionId: string })
   }
 
   useEffect(() => {
-    if (!profileIsLoading) {
-      if (profile && subscriptions.length > 0 && selectedSubscription === undefined) {
-        router.push(paths.SUBSCRIPTIONS + "/" + subscriptions[0].uuid)
-      }
-    }
-  }, [profile, profileIsLoading, router, selectedSubscription, subscriptions]);
-
-  useEffect(() => {
     const interval = setInterval(() => {
       if (selectedSubscription && selectedSubscription.isBeingScanned) {
         refreshSubscriptions();
@@ -133,12 +123,6 @@ const SubscriptionPageComponent = ({subscriptionId}: { subscriptionId: string })
       return () => clearTimeout(timer)
     }
   }, [debouncedFilters.textSearch, filters]);
-
-  useEffect(() => {
-    if (!subscriptionId && subscriptions.length > 0) {
-      router.push(paths.SUBSCRIPTIONS + "/" + subscriptions[0].uuid)
-    }
-  }, [router, subscriptionId, subscriptions]);
 
   const dropdownButtons = []
   if (selectedSubscription && isUserLogged) {

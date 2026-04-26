@@ -23,7 +23,6 @@ import {
   SubscriptionIcon,
   ThumbsUpIcon
 } from "../atoms/Icons";
-import LateralSubscriptionList from "./LateralSubscriptionList";
 import {closeModal, openModal} from "../../utilities/modalAction";
 import NewTopicModal from "./NewTopicModal";
 import FindTopicModal from "./FindTopicModal";
@@ -40,7 +39,7 @@ import LateralChatList from "./LateralChatList";
 import useChatConversations from "../../hooks/useChatConversations";
 import useProviders from "../../hooks/useProviders";
 import FindCuratorModal, {FindCuratorModalId} from "./FindCuratorModal";
-import FindSubscriptionModal, {FindSubscriptionModalId} from "./FindSubscriptionModal";
+import FindSubscriptionModal from "./FindSubscriptionModal";
 import {ImportSubscriptionsModalId} from "./ImportSubscriptionsModal";
 import FlexItem from "../atoms/FlexItem";
 import ProfileInfo from "./ProfileInfo";
@@ -89,24 +88,18 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
   const selectedId: string | undefined = pathParamsArray.length > 0 ? pathParamsArray[0] : undefined;
 
   const {profile, profileIsLoading} = useProfile();
-  const {subscriptions, subscriptionsAreLoading, refreshSubscriptions} = useSubscriptions(profile);
+  const {subscriptions, refreshSubscriptions} = useSubscriptions(profile);
   const {curators, curatorsAreLoading, refreshCurators} = useCurators(profile, profileIsLoading);
-  const {topics, topicsAreLoading, refreshTopics} = useTopics(profile, profileIsLoading);
+  const {refreshTopics} = useTopics(profile, profileIsLoading);
   const {conversations, isLoading: conversationsLoading} = useChatConversations();
   const {providers} = useProviders();
   const [currentTab, setCurrentTab] = useState<CurrentPage>(initialPage);
 
-  const selectedSubscription = subscriptions.find(subscription => subscription.uuid === selectedId);
   const selectedCurator = curators.find(curator => curator.username === selectedId);
   const selectedConversation = conversations.find(conversation => conversation.id === selectedId);
 
   const closeMenu = () => {
     hideLateralMenu(LATERAL_NAVIGATION_MENU_ID)
-  }
-
-  const openFindSubscriptionModal = () => {
-    openModal(FindSubscriptionModalId);
-    closeMenu();
   }
 
   const openImportSubscriptionsModal = () => {
@@ -215,6 +208,8 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
                 </MenuItem>
                 <MenuItem onClick={() => {
                   setCurrentTab('subscriptions');
+                  router.push(paths.SUBSCRIPTIONS);
+                  closeMenu();
                 }} selected={currentTab === 'subscriptions'}>
                     <FlexRow position={"start"}>
                         <FlexItem>
@@ -222,13 +217,6 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
                         </FlexItem>
                         <FlexItem grow={true}>
                           {t("subscriptions")}
-                        </FlexItem>
-                        <FlexItem grow={false}>
-                            <Button primary={false} fitContent={true} borderless={true}
-                                    clickAction={openFindSubscriptionModal}
-                                    tooltip={t("find_subscriptions")}>
-                                <MagnifyingGlassIcon/>
-                            </Button>
                         </FlexItem>
                     </FlexRow>
                 </MenuItem>
@@ -335,23 +323,6 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
                     <Divider/>
                     <ProfileInfo profile={profile}/>
                 </div>
-            </div>
-        }
-        {profile && currentTab === 'subscriptions' &&
-            <div className={"flex flex-col overflow-y-auto overflow-x-hidden gap-2"}>
-                <Button fitContent={false} clickAction={openFindSubscriptionModal} primary={false}>
-                    <MagnifyingGlassIcon/>
-                  {t("search")}
-                </Button>
-                <LateralSubscriptionList
-                    subscriptions={subscriptions}
-                    topics={topics}
-                    providers={providers}
-                    isLoading={subscriptionsAreLoading || topicsAreLoading}
-                    selectedSubscription={selectedSubscription}
-                    closeMenu={closeMenu}
-                    openImportModal={openImportSubscriptionsModal}
-                />
             </div>
         }
         {profile && currentTab === 'curators' &&

@@ -112,6 +112,7 @@
     "create": "Create",
     "discover": "Discover",
     "filter_topics_placeholder": "Filter topics",
+    "filter_subscriptions_placeholder": "Filter subscriptions",
     "topics": "Topics",
     "home": "Home",
     "latest_from_subscriptions": "Latest from your subscriptions",

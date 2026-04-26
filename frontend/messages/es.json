@@ -112,6 +112,7 @@
         "create": "Crear",
         "discover": "Descubrir",
         "filter_topics_placeholder": "Filtrar categorías",
+        "filter_subscriptions_placeholder": "Filtrar subscripciones",
         "topics": "Categorías",
         "home": "Inicio",
         "latest_from_subscriptions": "Novedades de tus subscripciones",
