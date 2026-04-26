@@ -1,5 +1,6 @@
 import type {Metadata} from 'next';
 import CuratorPageComponent from './components/CuratorPage';
+import CuratorsListPageComponent from './components/CuratorsListPage';
 
 type CuratorPageParams = {
   params: Promise<{ id: string }>
@@ -27,7 +28,10 @@ export async function generateMetadata(
   }
 }
 
-export default async function TopicPage({params}: CuratorPageParams) {
+export default async function CuratorPage({params}: CuratorPageParams) {
   const {id} = await params;
+  if (!id) {
+    return <CuratorsListPageComponent/>
+  }
   return <CuratorPageComponent curatorName={id}/>
 }

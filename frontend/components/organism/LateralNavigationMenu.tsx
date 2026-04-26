@@ -16,7 +16,6 @@ import {
   CuratorIcon,
   HomeIcon,
   ImportIcon,
-  MagnifyingGlassIcon,
   ProfileIcon,
   RectangleGroup,
   SettingsIcon,
@@ -34,11 +33,10 @@ import {hideLateralMenu} from "../../utilities/lateralMenuAction";
 import {paths} from "../../configuration";
 import FlexColumn from "../atoms/FlexColumn";
 import {useCurators} from "../../hooks/useCurators";
-import LateralCuratorList from "./LateralCuratorList";
 import LateralChatList from "./LateralChatList";
 import useChatConversations from "../../hooks/useChatConversations";
 import useProviders from "../../hooks/useProviders";
-import FindCuratorModal, {FindCuratorModalId} from "./FindCuratorModal";
+import FindCuratorModal from "./FindCuratorModal";
 import FindSubscriptionModal from "./FindSubscriptionModal";
 import {ImportSubscriptionsModalId} from "./ImportSubscriptionsModal";
 import FlexItem from "../atoms/FlexItem";
@@ -89,13 +87,12 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
 
   const {profile, profileIsLoading} = useProfile();
   const {subscriptions, refreshSubscriptions} = useSubscriptions(profile);
-  const {curators, curatorsAreLoading, refreshCurators} = useCurators(profile, profileIsLoading);
+  const {curators, refreshCurators} = useCurators(profile, profileIsLoading);
   const {refreshTopics} = useTopics(profile, profileIsLoading);
   const {conversations, isLoading: conversationsLoading} = useChatConversations();
   const {providers} = useProviders();
   const [currentTab, setCurrentTab] = useState<CurrentPage>(initialPage);
 
-  const selectedCurator = curators.find(curator => curator.username === selectedId);
   const selectedConversation = conversations.find(conversation => conversation.id === selectedId);
 
   const closeMenu = () => {
@@ -104,11 +101,6 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
 
   const openImportSubscriptionsModal = () => {
     openModal(ImportSubscriptionsModalId);
-    closeMenu();
-  }
-
-  const openFindCuratorModal = () => {
-    openModal(FindCuratorModalId);
     closeMenu();
   }
 
@@ -222,6 +214,8 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
                 </MenuItem>
                 <MenuItem onClick={() => {
                   setCurrentTab('curators');
+                  router.push(paths.CURATORS);
+                  closeMenu();
                 }} selected={currentTab === 'curators'}>
                     <FlexRow position={"start"}>
                         <FlexItem>
@@ -229,13 +223,6 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
                         </FlexItem>
                         <FlexItem grow={true}>
                           {t("curators")}
-                        </FlexItem>
-                        <FlexItem grow={false}>
-                            <Button primary={false} fitContent={true} borderless={true}
-                                    clickAction={openFindCuratorModal}
-                                    tooltip={t("find_curators")}>
-                                <MagnifyingGlassIcon/>
-                            </Button>
                         </FlexItem>
                     </FlexRow>
                 </MenuItem>
@@ -323,21 +310,6 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
                     <Divider/>
                     <ProfileInfo profile={profile}/>
                 </div>
-            </div>
-        }
-        {profile && currentTab === 'curators' &&
-            <div className={"flex flex-col overflow-y-auto overflow-x-hidden gap-2"}>
-                <Button fitContent={false} clickAction={openFindCuratorModal} primary={false}>
-                    <MagnifyingGlassIcon/>
-                  {t("search")}
-                </Button>
-                <LateralCuratorList
-                    curators={curators}
-                    isLoading={curatorsAreLoading}
-                    closeMenu={closeMenu}
-                    selectedCurator={selectedCurator}
-                    openFindCuratorModal={openFindCuratorModal}
-                />
             </div>
         }
         {profile && currentTab === 'chats' &&
