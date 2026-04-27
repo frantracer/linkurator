@@ -4,7 +4,6 @@ import {useTranslations} from "next-intl";
 import {useRouter} from "next/navigation";
 import React, {useEffect} from "react";
 import TopTitle from "../../../components/molecules/TopTitle";
-import Button from "../../../components/atoms/Button";
 import {paths} from "../../../configuration";
 import useProfile from "../../../hooks/useProfile";
 import useSubscriptions from "../../../hooks/useSubscriptions";
@@ -17,9 +16,10 @@ import useLatestFollowedCuratorItems from "../../../hooks/useLatestFollowedCurat
 import {useCurators} from "../../../hooks/useCurators";
 import useProviders from "../../../hooks/useProviders";
 import {HomeIcon} from "../../../components/atoms/Icons";
+import EmptyStateNoFavoriteTopics from "../../../components/organism/EmptyStateNoFavoriteTopics";
 import EmptyStateNoFollowedCurators from "../../../components/organism/EmptyStateNoFollowedCurators";
 import EmptyStateNoSubscriptions from "../../../components/organism/EmptyStateNoSubscriptions";
-import EmptyStateBox from "../../../components/atoms/EmptyStateBox";
+import EmptyStateOrganizeSubscriptions from "../../../components/organism/EmptyStateOrganizeSubscriptions";
 
 const HomePageComponent = () => {
   const t = useTranslations("common");
@@ -54,14 +54,6 @@ const HomePageComponent = () => {
   const favoriteTopics = topics.filter(topic => topic.is_favorite);
   const hasFavoriteTopics = favoriteTopics.length > 0;
   const hasFollowedCurators = curators.length > 0;
-
-  const goToTopics = () => {
-    window.location.href = paths.TOPICS;
-  }
-
-  const goToChats = () => {
-    window.location.href = paths.CHATS;
-  }
 
   const refreshAllItems = () => {
     refetchSubscriptionItems();
@@ -143,20 +135,8 @@ const HomePageComponent = () => {
                   refreshItem={refreshAllItems}
               />
 
-            {/* Suggestions when no followed curators or no topics */}
             {!hasTopics && hasSubscriptions && (
-              <EmptyStateBox
-                title={t("organize_subscriptions_title")}
-                message={t("organize_subscriptions_description")}
-              >
-                <Button
-                  clickAction={() => goToChats()}
-                  primary={false}
-                  fitContent={true}
-                >
-                  {t("try_chatbot")}
-                </Button>
-              </EmptyStateBox>
+              <EmptyStateOrganizeSubscriptions/>
             )}
 
             {!hasFollowedCurators &&
@@ -164,18 +144,7 @@ const HomePageComponent = () => {
             }
 
             {hasTopics && !hasFavoriteTopics && (
-              <EmptyStateBox
-                title={t("no_favorite_topics_title")}
-                message={t("no_favorite_topics_message")}
-              >
-                <Button
-                  clickAction={() => goToTopics()}
-                  primary={false}
-                  fitContent={true}
-                >
-                  {t("browse_topics")}
-                </Button>
-              </EmptyStateBox>
+              <EmptyStateNoFavoriteTopics/>
             )}
           </div>
       }
