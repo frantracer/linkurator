@@ -3,11 +3,12 @@
 import React, {useState} from "react";
 import {useTranslations} from "next-intl";
 import Button from "../../../../../components/atoms/Button";
-import {InfoBanner} from "../../../../../components/atoms/InfoBanner";
 import {AddIcon, MagnifyingGlassIcon, RectangleGroup, StarIcon} from "../../../../../components/atoms/Icons";
 import SearchBar from "../../../../../components/molecules/SearchBar";
 import TopTitle from "../../../../../components/molecules/TopTitle";
 import EditTopicModal, {EditTopicModalId} from "../../../../../components/organism/EditTopicModal";
+import EmptyStateNoMatches from "../../../../../components/organism/EmptyStateNoMatches";
+import EmptyStateNoTopics from "../../../../../components/organism/EmptyStateNoTopics";
 import {FindTopicModalId} from "../../../../../components/organism/FindTopicModal";
 import {NewTopicModalId} from "../../../../../components/organism/NewTopicModal";
 import TopicCard from "../../../../../components/organism/TopicCard";
@@ -74,6 +75,8 @@ const TopicsListPageComponent = () => {
   }
 
   const hasAnyTopics = topics.length > 0;
+  const hasFilter = filterText.trim() !== "";
+  const hasNoMatches = hasAnyTopics && hasFilter && filteredTopics.length === 0;
 
   return (
     <>
@@ -89,17 +92,19 @@ const TopicsListPageComponent = () => {
       </TopTitle>
       <div className="flex flex-col h-full bg-base-300 overflow-y-auto overflow-x-hidden">
         <div className="flex flex-col gap-6 p-4 max-w-7xl w-full mx-auto">
-          <div className="flex flex-row gap-2 w-full items-center">
+          <div className="flex flex-row gap-2 w-full items-center justify-center">
             <Button fitContent={true} clickAction={openDiscoverModal} primary={false}>
               <MagnifyingGlassIcon/>
               {t("discover")}
             </Button>
-            <SearchBar
-              placeholder={t("filter_topics_placeholder")}
-              value={filterText}
-              handleChange={setFilterText}
-              icon="filter"
-            />
+            <div className="w-full max-w-sm">
+              <SearchBar
+                placeholder={t("filter_topics_placeholder")}
+                value={filterText}
+                handleChange={setFilterText}
+                icon="filter"
+              />
+            </div>
             {profile && (
               <Button fitContent={true} clickAction={openNewModal} primary={false}>
                 <AddIcon/>
@@ -108,10 +113,12 @@ const TopicsListPageComponent = () => {
             )}
           </div>
 
-          {!topicsAreLoading && !hasAnyTopics && (
-            <InfoBanner>
-              <span>{t("no_topics_found")}</span>
-            </InfoBanner>
+          {!topicsAreLoading && profile && !hasAnyTopics && (
+            <EmptyStateNoTopics/>
+          )}
+
+          {!topicsAreLoading && hasNoMatches && (
+            <EmptyStateNoMatches/>
           )}
 
           {renderSection(t("favorites"), <StarIcon/>, favoriteTopics)}
