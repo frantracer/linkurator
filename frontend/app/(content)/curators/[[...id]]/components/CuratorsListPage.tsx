@@ -4,12 +4,13 @@ import React, {useState} from "react";
 import {useRouter} from "next/navigation";
 import {useTranslations} from "next-intl";
 import Button from "../../../../../components/atoms/Button";
-import {InfoBanner} from "../../../../../components/atoms/InfoBanner";
 import {AddIcon, CuratorIcon, MagnifyingGlassIcon, MinusIcon} from "../../../../../components/atoms/Icons";
 import Miniature from "../../../../../components/atoms/Miniature";
 import SearchBar from "../../../../../components/molecules/SearchBar";
 import TopTitle from "../../../../../components/molecules/TopTitle";
 import FindCuratorModal, {FindCuratorModalId} from "../../../../../components/organism/FindCuratorModal";
+import EmptyStateNoFollowedCurators from "../../../../../components/organism/EmptyStateNoFollowedCurators";
+import EmptyStateNoMatches from "../../../../../components/organism/EmptyStateNoMatches";
 import {paths} from "../../../../../configuration";
 import {Curator, curatorSorting} from "../../../../../entities/Curators";
 import {useCurators} from "../../../../../hooks/useCurators";
@@ -54,7 +55,8 @@ const CuratorsListPageComponent = () => {
           <CuratorIcon/>
           <h2 className="text-xl">{title} ({items.length})</h2>
         </div>
-        <div className="grid grid-cols-[repeat(auto-fill,minmax(230px,1fr))] gap-4 justify-items-center justify-content-center">
+        <div
+          className="grid grid-cols-[repeat(auto-fill,minmax(230px,1fr))] gap-4 justify-items-center justify-content-center">
           {items.map(curator => (
             <div
               key={curator.id}
@@ -102,6 +104,8 @@ const CuratorsListPageComponent = () => {
   }
 
   const hasAnyCurators = curators.length > 0;
+  const hasFilter = normalizedFilter !== "";
+  const hasNoMatches = hasAnyCurators && hasFilter && filteredCurators.length === 0;
 
   return (
     <>
@@ -117,27 +121,31 @@ const CuratorsListPageComponent = () => {
       </TopTitle>
       <div className="flex flex-col h-full bg-base-300 overflow-y-auto overflow-x-hidden">
         <div className="flex flex-col gap-6 p-4 max-w-7xl w-full mx-auto">
-          <div className="flex flex-row gap-2 w-full items-center">
+          <div className="flex flex-row gap-2 w-full items-center justify-center">
             <Button fitContent={true} clickAction={openDiscoverModal} primary={false}>
               <MagnifyingGlassIcon/>
               {t("discover")}
             </Button>
-            <SearchBar
-              placeholder={t("filter_curators_placeholder")}
-              value={filterText}
-              handleChange={setFilterText}
-              icon="filter"
-            />
+            <div className="w-full max-w-sm">
+              <SearchBar
+                placeholder={t("filter_curators_placeholder")}
+                value={filterText}
+                handleChange={setFilterText}
+                icon="filter"
+              />
+            </div>
           </div>
 
-          {!curatorsAreLoading && !hasAnyCurators && (
-            <InfoBanner>
-              <span>{t("no_curators_found")}</span>
-            </InfoBanner>
+          {!curatorsAreLoading && profile && !hasAnyCurators && (
+            <EmptyStateNoFollowedCurators/>
+          )}
+
+          {!curatorsAreLoading && hasNoMatches && (
+            <EmptyStateNoMatches/>
           )}
 
           {renderSection(t("following"), followedCurators)}
-          {renderSection(t("browse_curators"), otherCurators)}
+          {renderSection(t("discover_curators"), otherCurators)}
         </div>
       </div>
 

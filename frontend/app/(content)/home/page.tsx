@@ -16,10 +16,10 @@ import useLatestSubscriptionItems from "../../../hooks/useLatestSubscriptionItem
 import useLatestFavoriteTopicItems from "../../../hooks/useLatestFavoriteTopicItems";
 import useLatestFollowedCuratorItems from "../../../hooks/useLatestFollowedCuratorItems";
 import {useCurators} from "../../../hooks/useCurators";
-import {openModal} from "../../../utilities/modalAction";
-import {FindCuratorModalId} from "../../../components/organism/FindCuratorModal";
 import useProviders from "../../../hooks/useProviders";
 import {HomeIcon} from "../../../components/atoms/Icons";
+import EmptyStateNoFollowedCurators from "../../../components/organism/EmptyStateNoFollowedCurators";
+import EmptyStateBox from "../../../components/atoms/EmptyStateBox";
 
 const HomePageComponent = () => {
   const t = useTranslations("common");
@@ -143,9 +143,10 @@ const HomePageComponent = () => {
 
             {/* Suggestions when no followed curators or no topics */}
             {!hasTopics && hasSubscriptions && (
-              <div className="bg-base-200 rounded-lg p-6 text-center">
-                <h3 className="text-lg font-semibold mb-2">{t("organize_subscriptions_title")}</h3>
-                <p className="text-base-content/70 mb-4">{t("organize_subscriptions_description")}</p>
+              <EmptyStateBox
+                title={t("organize_subscriptions_title")}
+                message={t("organize_subscriptions_description")}
+              >
                 <Button
                   clickAction={() => goToChats()}
                   primary={false}
@@ -153,27 +154,18 @@ const HomePageComponent = () => {
                 >
                   {t("try_chatbot")}
                 </Button>
-              </div>
+              </EmptyStateBox>
             )}
 
             {!hasFollowedCurators &&
-                <div className="bg-base-200 rounded-lg p-6 text-center">
-                    <h3 className="text-lg font-semibold mb-2">{t("no_followed_curators_title")}</h3>
-                    <p className="text-base-content/70 mb-4">{t("no_followed_curators_message")}</p>
-                    <Button
-                        clickAction={() => openModal(FindCuratorModalId)}
-                        primary={false}
-                        fitContent={true}
-                    >
-                      {t("browse_curators")}
-                    </Button>
-                </div>
+                <EmptyStateNoFollowedCurators/>
             }
 
             {hasTopics && !hasFavoriteTopics && (
-              <div className="bg-base-200 rounded-lg p-6 text-center">
-                <h3 className="text-lg font-semibold mb-2">{t("no_favorite_topics_title")}</h3>
-                <p className="text-base-content/70 mb-4">{t("no_favorite_topics_message")}</p>
+              <EmptyStateBox
+                title={t("no_favorite_topics_title")}
+                message={t("no_favorite_topics_message")}
+              >
                 <Button
                   clickAction={() => goToTopics()}
                   primary={false}
@@ -181,7 +173,7 @@ const HomePageComponent = () => {
                 >
                   {t("browse_topics")}
                 </Button>
-              </div>
+              </EmptyStateBox>
             )}
           </div>
       }
