@@ -241,7 +241,7 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
         {profile &&
             <div className={"flex flex-col gap-2"}>
                 <Divider/>
-                <div className="flex flex-row items-center gap-3 p-4">
+                <div className="flex flex-row items-center gap-3 px-1">
                     <ProfileDropdown profile={profile} bottom={false} position="start"/>
                     <div className="flex flex-col">
                         <span className="font-semibold">{profile.first_name} {profile.last_name}</span>

@@ -6,9 +6,7 @@ import {scrollToDrawerTop} from "../../utilities/scrollToDrawerTop";
 import Menu from "../atoms/Menu";
 import FlexRow from "../atoms/FlexRow";
 import Miniature from "../atoms/Miniature";
-import {InfoBanner} from "../atoms/InfoBanner";
 import FlexItem from "../atoms/FlexItem";
-import {useTranslations} from "next-intl";
 import React from "react";
 
 type LateralTopicListProps = {
@@ -19,7 +17,6 @@ type LateralTopicListProps = {
 }
 
 const LateralTopicList = (props: LateralTopicListProps) => {
-  const t = useTranslations("common");
   const router = useRouter();
 
   const handleClick = (topicId: string) => {
@@ -49,22 +46,11 @@ const LateralTopicList = (props: LateralTopicListProps) => {
     </MenuItem>
   );
 
-  const noItems = (
-    <div className="flex flex-col items-center h-fit gap-2 p-1">
-      <InfoBanner>
-        <span className={"text-sm"}>{t("no_topics_found")}</span>
-      </InfoBanner>
-    </div>
-  )
-
   return (
     <Menu>
-      {favoriteTopics.length > 0 &&
-          <div className="space-y-1">
-            {favoriteTopics.map(renderTopicItem)}
-          </div>
-      }
-      {favoriteTopics.length === 0 && !props.isLoading && noItems}
+      <div className="space-y-1">
+        {favoriteTopics.map(renderTopicItem)}
+      </div>
     </Menu>
   )
 }
