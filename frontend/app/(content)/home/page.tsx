@@ -3,7 +3,6 @@
 import {useTranslations} from "next-intl";
 import {useRouter} from "next/navigation";
 import React, {useEffect} from "react";
-import ImportSubscriptionsHero from "../../../components/organism/ImportSubscriptionsHero";
 import TopTitle from "../../../components/molecules/TopTitle";
 import Button from "../../../components/atoms/Button";
 import {paths} from "../../../configuration";
@@ -19,6 +18,7 @@ import {useCurators} from "../../../hooks/useCurators";
 import useProviders from "../../../hooks/useProviders";
 import {HomeIcon} from "../../../components/atoms/Icons";
 import EmptyStateNoFollowedCurators from "../../../components/organism/EmptyStateNoFollowedCurators";
+import EmptyStateNoSubscriptions from "../../../components/organism/EmptyStateNoSubscriptions";
 import EmptyStateBox from "../../../components/atoms/EmptyStateBox";
 
 const HomePageComponent = () => {
@@ -99,7 +99,9 @@ const HomePageComponent = () => {
       }
 
       {!hasSubscriptions && !isLoading &&
-          <ImportSubscriptionsHero/>
+          <div className="flex flex-col p-4 my-auto">
+              <EmptyStateNoSubscriptions/>
+          </div>
       }
 
       {hasSubscriptions && !isLoading &&

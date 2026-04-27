@@ -5,8 +5,9 @@ import {flushSync} from "react-dom";
 import {useRouter} from "next/navigation";
 import {useTranslations} from "next-intl";
 import Button from "../../../../../components/atoms/Button";
-import {InfoBanner} from "../../../../../components/atoms/InfoBanner";
 import {ImportIcon, MagnifyingGlassIcon, PencilIcon, SubscriptionIcon} from "../../../../../components/atoms/Icons";
+import EmptyStateNoSubscriptions from "../../../../../components/organism/EmptyStateNoSubscriptions";
+import EmptyStateNoMatches from "../../../../../components/organism/EmptyStateNoMatches";
 import Miniature from "../../../../../components/atoms/Miniature";
 import Tag from "../../../../../components/atoms/Tag";
 import SearchBar from "../../../../../components/molecules/SearchBar";
@@ -67,6 +68,8 @@ const SubscriptionsListPageComponent = () => {
   })).filter(group => group.items.length > 0);
 
   const hasAnySubscriptions = subscriptions.length > 0;
+  const hasFilter = filterText.trim() !== "";
+  const hasNoMatches = hasAnySubscriptions && hasFilter && filteredSubscriptions.length === 0;
 
   return (
     <>
@@ -82,17 +85,19 @@ const SubscriptionsListPageComponent = () => {
       </TopTitle>
       <div className="flex flex-col h-full bg-base-300 overflow-y-auto overflow-x-hidden">
         <div className="flex flex-col gap-6 p-4 max-w-7xl w-full mx-auto">
-          <div className="flex flex-row gap-2 w-full items-center">
+          <div className="flex flex-row gap-2 w-full items-center justify-center">
             <Button fitContent={true} clickAction={openDiscoverModal} primary={false}>
               <MagnifyingGlassIcon/>
               {t("discover")}
             </Button>
-            <SearchBar
-              placeholder={t("filter_subscriptions_placeholder")}
-              value={filterText}
-              handleChange={setFilterText}
-              icon="filter"
-            />
+            <div className="w-full max-w-sm">
+              <SearchBar
+                placeholder={t("filter_subscriptions_placeholder")}
+                value={filterText}
+                handleChange={setFilterText}
+                icon="filter"
+              />
+            </div>
             {profile && (
               <Button fitContent={true} clickAction={openImportModal} primary={false}>
                 <ImportIcon/>
@@ -101,10 +106,12 @@ const SubscriptionsListPageComponent = () => {
             )}
           </div>
 
-          {!subscriptionsAreLoading && !hasAnySubscriptions && (
-            <InfoBanner>
-              <span>{t("no_subscriptions_found")}</span>
-            </InfoBanner>
+          {!subscriptionsAreLoading && profile && !hasAnySubscriptions && (
+            <EmptyStateNoSubscriptions/>
+          )}
+
+          {!subscriptionsAreLoading && hasNoMatches && (
+            <EmptyStateNoMatches/>
           )}
 
           {subscriptionsByProvider.map(({provider, items}) => (
