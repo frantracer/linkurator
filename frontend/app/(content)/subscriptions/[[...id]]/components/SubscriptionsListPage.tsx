@@ -2,20 +2,18 @@
 
 import React, {useState} from "react";
 import {flushSync} from "react-dom";
-import {useRouter} from "next/navigation";
 import {useTranslations} from "next-intl";
 import Button from "../../../../../components/atoms/Button";
-import {ImportIcon, MagnifyingGlassIcon, MinusIcon, PencilIcon, SubscriptionIcon} from "../../../../../components/atoms/Icons";
+import {ImportIcon, MagnifyingGlassIcon, SubscriptionIcon} from "../../../../../components/atoms/Icons";
 import EmptyStateNoSubscriptions from "../../../../../components/organism/EmptyStateNoSubscriptions";
 import EmptyStateNoMatches from "../../../../../components/organism/EmptyStateNoMatches";
 import Miniature from "../../../../../components/atoms/Miniature";
-import Tag from "../../../../../components/atoms/Tag";
 import SearchBar from "../../../../../components/molecules/SearchBar";
 import TopTitle from "../../../../../components/molecules/TopTitle";
 import AssignTopicModal, {AssignTopicModalId} from "../../../../../components/organism/AssignTopicModal";
 import {FindSubscriptionModalId} from "../../../../../components/organism/FindSubscriptionModal";
 import {ImportSubscriptionsModalId} from "../../../../../components/organism/ImportSubscriptionsModal";
-import {paths} from "../../../../../configuration";
+import SubscriptionCard from "../../../../../components/organism/SubscriptionCard";
 import {getProviderIcon, getProviderPrettyName} from "../../../../../entities/Provider";
 import {Subscription, subscriptionFiltering, subscriptionSorting} from "../../../../../entities/Subscription";
 import useProfile from "../../../../../hooks/useProfile";
@@ -28,7 +26,6 @@ import {useToast} from "../../../../../contexts/ToastContext";
 
 const SubscriptionsListPageComponent = () => {
   const t = useTranslations("common");
-  const router = useRouter();
   const {showToast} = useToast();
   const {profile, profileIsLoading} = useProfile();
   const {subscriptions, subscriptionsAreLoading, refreshSubscriptions} = useSubscriptions(profile);
@@ -53,10 +50,6 @@ const SubscriptionsListPageComponent = () => {
 
   const openDiscoverModal = () => openModal(FindSubscriptionModalId);
   const openImportModal = () => openModal(ImportSubscriptionsModalId);
-
-  const goToSubscription = (subscription: Subscription) => {
-    router.push(paths.SUBSCRIPTIONS + "/" + subscription.uuid);
-  }
 
   const handleAssign = (subscription: Subscription) => {
     flushSync(() => setAssigningSubscription(subscription));
@@ -136,55 +129,16 @@ const SubscriptionsListPageComponent = () => {
                   {getProviderPrettyName(providers, provider.name)} ({items.length})
                 </h2>
               </div>
-              <div className="grid grid-cols-[repeat(auto-fill,minmax(230px,1fr))] gap-4 justify-items-center justify-content-center">
-                {items.map(subscription => {
-                  const topicsCount = topicsCountBySubscription.get(subscription.uuid) ?? 0;
-                  return (
-                    <div
-                      key={subscription.uuid}
-                      onClick={() => goToSubscription(subscription)}
-                      className="card rounded-lg w-60 h-full bg-base-200 hover:scale-105 shadow-md border border-neutral hover:shadow-xl hover:border-primary duration-200 cursor-pointer"
-                    >
-                      <div className="card-body m-1 p-2 gap-3">
-                        <div className="flex flex-row items-center gap-2 min-w-0">
-                          <Miniature src={subscription.thumbnail} alt={subscription.name}/>
-                          <h3 className="card-title text-sm flex-1 hover:text-primary line-clamp-2">
-                            {subscription.name}
-                          </h3>
-                        </div>
-                        <div className="flex flex-row items-center justify-between gap-2 mt-auto">
-                          <Tag>
-                            <span className="text-xs">
-                              {topicsCount} {t("topics").toLowerCase()}
-                            </span>
-                          </Tag>
-                          {profile && (
-                            <div className="card-actions flex justify-end gap-1">
-                              {subscription.followed && (
-                                <Button
-                                  primary={false}
-                                  fitContent={true}
-                                  clickAction={() => handleUnfollow(subscription)}
-                                  tooltip={t("unfollow")}
-                                >
-                                  <MinusIcon/>
-                                </Button>
-                              )}
-                              <Button
-                                primary={false}
-                                fitContent={true}
-                                clickAction={() => handleAssign(subscription)}
-                                tooltip={t("assign")}
-                              >
-                                <PencilIcon/>
-                              </Button>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
+              <div className="grid grid-cols-[repeat(auto-fill,minmax(275px,1fr))] gap-4 justify-items-center justify-content-center">
+                {items.map(subscription => (
+                  <SubscriptionCard
+                    key={subscription.uuid}
+                    subscription={subscription}
+                    topicsCount={topicsCountBySubscription.get(subscription.uuid) ?? 0}
+                    onAssign={profile ? handleAssign : undefined}
+                    onUnfollow={profile ? handleUnfollow : undefined}
+                  />
+                ))}
               </div>
             </section>
           ))}

@@ -78,7 +78,7 @@ const TopicsListPageComponent = () => {
           {icon}
           <h2 className="text-xl">{title} ({sectionTopics.length})</h2>
         </div>
-        <div className="grid grid-cols-[repeat(auto-fill,minmax(230px,1fr))] gap-4 justify-items-center justify-content-center">
+        <div className="grid grid-cols-[repeat(auto-fill,minmax(275px,1fr))] gap-4 justify-items-center justify-content-center">
           {sectionTopics.map(topic => (
             <TopicCard
               key={topic.uuid}

@@ -8,15 +8,18 @@ import {PencilIcon, StarFilledIcon, StarIcon, TrashIcon} from "../atoms/Icons";
 import Miniature from "../atoms/Miniature";
 import Tag from "../atoms/Tag";
 import ALink from "../atoms/ALink";
+import CrossButton from "../atoms/CrossButton";
 
 type TopicCardProps = {
   topic: Topic;
   onEdit?: (topic: Topic) => void;
   onDelete?: (topic: Topic) => void;
   onToggleFavorite: (topic: Topic) => void;
+  onFollow?: (topic: Topic) => void;
+  onUnfollow?: (topic: Topic) => void;
 }
 
-const TopicCard = ({topic, onEdit, onDelete, onToggleFavorite}: TopicCardProps) => {
+const TopicCard = ({topic, onEdit, onDelete, onToggleFavorite, onFollow, onUnfollow}: TopicCardProps) => {
   const router = useRouter();
   const t = useTranslations("common");
 
@@ -40,9 +43,21 @@ const TopicCard = ({topic, onEdit, onDelete, onToggleFavorite}: TopicCardProps) 
     }
   }
 
+  const handleFollow = () => {
+    if (onFollow) {
+      onFollow(topic);
+    }
+  }
+
+  const handleUnfollow = () => {
+    if (onUnfollow) {
+      onUnfollow(topic);
+    }
+  }
+
   return (
     <div
-      className="card rounded-lg w-60 h-full bg-base-200 hover:scale-105 shadow-md border border-neutral hover:shadow-xl hover:border-primary duration-200 cursor-pointer"
+      className="card rounded-lg w-72 h-full bg-base-200 hover:scale-105 shadow-md border border-neutral hover:shadow-xl hover:border-primary duration-200 cursor-pointer"
       onClick={handleCardClick}
     >
       <div className="card-body m-1 p-2 gap-3">
@@ -60,7 +75,7 @@ const TopicCard = ({topic, onEdit, onDelete, onToggleFavorite}: TopicCardProps) 
         </div>
         {!topic.is_owner && (
           <div className="flex flex-row items-center gap-1 min-w-0 text-xs text-base-content/70">
-            <ALink href={paths.CURATORS + "/" + topic.curator.username} onClick={(e) => e.stopPropagation()}>
+            <ALink href={paths.CURATORS + "/" + topic.curator.username}>
               <div className={"flex flex-row items-center gap-1"}>
                 <Miniature src={topic.curator.avatar_url} alt={topic.curator.username}/>
                 <span className="truncate">{topic.curator.username}</span>
@@ -87,6 +102,17 @@ const TopicCard = ({topic, onEdit, onDelete, onToggleFavorite}: TopicCardProps) 
                 </Button>
               )}
             </div>
+          )}
+          {!topic.is_owner && topic.followed && onUnfollow && (
+            <Tag>
+              <span className="text-xs">{t("following")}</span>
+              <CrossButton onClick={handleUnfollow}/>
+            </Tag>
+          )}
+          {!topic.is_owner && !topic.followed && onFollow && (
+            <Button primary={true} fitContent={true} clickAction={handleFollow}>
+              {t("follow")}
+            </Button>
           )}
         </div>
       </div>

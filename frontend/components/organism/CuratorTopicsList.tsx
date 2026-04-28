@@ -1,18 +1,12 @@
 import React from "react";
 import {Topic} from "../../entities/Topic";
 import {useTranslations} from "next-intl";
-import {paths} from "../../configuration";
 import FlexRow from "../atoms/FlexRow";
 import {InfoBanner} from "../atoms/InfoBanner";
-import CrossButton from "../atoms/CrossButton";
-import Button from "../atoms/Button";
-import {followTopic, unfollowTopic} from "../../services/topicService";
-import {MenuItem} from "../atoms/MenuItem";
-import Menu from "../atoms/Menu";
-import FlexItem from "../atoms/FlexItem";
-import {useRouter} from "next/navigation";
-import Tag from "../atoms/Tag";
 import {Spinner} from "../atoms/Spinner";
+import TopicCard from "./TopicCard";
+import {useFavoriteTopics} from "../../hooks/useFavoriteTopics";
+import {followTopic, unfollowTopic} from "../../services/topicService";
 
 type CuratorTopicsListProps = {
   topics: Topic[];
@@ -26,26 +20,26 @@ const CuratorTopicsList = (
     topics,
     isUserLoggedIn,
     isLoading,
-    refreshTopics
+    refreshTopics,
   }: CuratorTopicsListProps
 ) => {
-  const router = useRouter()
   const t = useTranslations("common");
+  const {toggleFavorite} = useFavoriteTopics();
 
-  const handleFollowTopic = (topicId: string) => {
-    followTopic(topicId).then(() => {
-      refreshTopics();
-    });
+  const handleToggleFavorite = (topic: Topic) => {
+    toggleFavorite(topic.uuid, topic.is_favorite).then(() => refreshTopics());
   }
 
-  const handleUnfollowTopic = (topicId: string) => {
-    unfollowTopic(topicId).then(() => {
-      refreshTopics();
-    });
+  const handleFollow = (topic: Topic) => {
+    followTopic(topic.uuid).then(() => refreshTopics());
+  }
+
+  const handleUnfollow = (topic: Topic) => {
+    unfollowTopic(topic.uuid).then(() => refreshTopics());
   }
 
   return (
-    <div className="space-y-2 w-full">
+    <div className="w-full">
       {isLoading && (
         <FlexRow position={"center"}>
           <Spinner/>
@@ -60,31 +54,17 @@ const CuratorTopicsList = (
         </div>
       )}
       {!isLoading && topics.length > 0 && (
-        <Menu>
+        <div className="grid grid-cols-[repeat(auto-fill,minmax(275px,1fr))] gap-4 justify-items-center">
           {topics.map((topic) => (
-            <MenuItem key={topic.uuid} onClick={() => router.push(paths.TOPICS + "/" + topic.uuid)}
-                      hideMenuOnClick={true}>
-              <FlexRow position={"start"}>
-                <span className="flex w-full">{topic.name}</span>
-                <FlexItem/>
-                {topic.followed && !topic.is_owner && (
-                  <Tag>
-                    <span>{t("following")}</span>
-                    <CrossButton onClick={() => handleUnfollowTopic(topic.uuid)}/>
-                  </Tag>
-                )}
-                {!topic.followed && !topic.is_owner && isUserLoggedIn && (
-                  <Button
-                    primary={true}
-                    clickAction={() => handleFollowTopic(topic.uuid)}
-                  >
-                    {t("follow")}
-                  </Button>
-                )}
-              </FlexRow>
-            </MenuItem>
+            <TopicCard
+              key={topic.uuid}
+              topic={topic}
+              onToggleFavorite={handleToggleFavorite}
+              onFollow={isUserLoggedIn ? handleFollow : undefined}
+              onUnfollow={isUserLoggedIn ? handleUnfollow : undefined}
+            />
           ))}
-        </Menu>
+        </div>
       )}
     </div>
   );

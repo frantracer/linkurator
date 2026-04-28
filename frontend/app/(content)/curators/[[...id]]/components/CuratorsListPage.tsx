@@ -1,17 +1,15 @@
 'use client';
 
 import React, {useState} from "react";
-import {useRouter} from "next/navigation";
 import {useTranslations} from "next-intl";
 import Button from "../../../../../components/atoms/Button";
-import {AddIcon, CuratorIcon, MagnifyingGlassIcon, MinusIcon} from "../../../../../components/atoms/Icons";
-import Miniature from "../../../../../components/atoms/Miniature";
+import {CuratorIcon, MagnifyingGlassIcon} from "../../../../../components/atoms/Icons";
 import SearchBar from "../../../../../components/molecules/SearchBar";
 import TopTitle from "../../../../../components/molecules/TopTitle";
+import CuratorCard from "../../../../../components/organism/CuratorCard";
 import FindCuratorModal, {FindCuratorModalId} from "../../../../../components/organism/FindCuratorModal";
 import EmptyStateNoFollowedCurators from "../../../../../components/organism/EmptyStateNoFollowedCurators";
 import EmptyStateNoMatches from "../../../../../components/organism/EmptyStateNoMatches";
-import {paths} from "../../../../../configuration";
 import {Curator, curatorSorting} from "../../../../../entities/Curators";
 import {useCurators} from "../../../../../hooks/useCurators";
 import useProfile from "../../../../../hooks/useProfile";
@@ -20,7 +18,6 @@ import {openModal} from "../../../../../utilities/modalAction";
 
 const CuratorsListPageComponent = () => {
   const t = useTranslations("common");
-  const router = useRouter();
   const {profile, profileIsLoading} = useProfile();
   const {curators, curatorsAreLoading, refreshCurators} = useCurators(profile, profileIsLoading);
   const [filterText, setFilterText] = useState("");
@@ -35,16 +32,12 @@ const CuratorsListPageComponent = () => {
 
   const openDiscoverModal = () => openModal(FindCuratorModalId);
 
-  const goToCurator = (curator: Curator) => {
-    router.push(paths.CURATORS + "/" + curator.username);
+  const handleFollow = (curator: Curator) => {
+    followCurator(curator.id).then(() => refreshCurators());
   }
 
-  const handleFollow = (curatorId: string) => {
-    followCurator(curatorId).then(() => refreshCurators());
-  }
-
-  const handleUnfollow = (curatorId: string) => {
-    unfollowCurator(curatorId).then(() => refreshCurators());
+  const handleUnfollow = (curator: Curator) => {
+    unfollowCurator(curator.id).then(() => refreshCurators());
   }
 
   const renderSection = (title: string, items: Curator[]) => {
@@ -56,47 +49,14 @@ const CuratorsListPageComponent = () => {
           <h2 className="text-xl">{title} ({items.length})</h2>
         </div>
         <div
-          className="grid grid-cols-[repeat(auto-fill,minmax(230px,1fr))] gap-4 justify-items-center justify-content-center">
+          className="grid grid-cols-[repeat(auto-fill,minmax(275px,1fr))] gap-4 justify-items-center justify-content-center">
           {items.map(curator => (
-            <div
+            <CuratorCard
               key={curator.id}
-              onClick={() => goToCurator(curator)}
-              className="card rounded-lg w-60 h-full bg-base-200 hover:scale-105 shadow-md border border-neutral hover:shadow-xl hover:border-primary duration-200 cursor-pointer"
-            >
-              <div className="card-body m-1 p-2 gap-3">
-                <div className="flex flex-row items-center gap-2 min-w-0">
-                  <Miniature src={curator.avatar_url} alt={curator.username}/>
-                  <h3 className="card-title text-sm flex-1 hover:text-primary line-clamp-2">
-                    {curator.username}
-                  </h3>
-                </div>
-                {profile && (
-                  <div className="card-actions flex justify-end mt-auto">
-                    {curator.followed ? (
-                      <Button
-                        primary={false}
-                        fitContent={true}
-                        clickAction={() => handleUnfollow(curator.id)}
-                        tooltip={t("unfollow")}
-                      >
-                        <MinusIcon/>
-                        {t("unfollow")}
-                      </Button>
-                    ) : (
-                      <Button
-                        primary={false}
-                        fitContent={true}
-                        clickAction={() => handleFollow(curator.id)}
-                        tooltip={t("follow")}
-                      >
-                        <AddIcon/>
-                        {t("follow")}
-                      </Button>
-                    )}
-                  </div>
-                )}
-              </div>
-            </div>
+              curator={curator}
+              onFollow={profile ? handleFollow : undefined}
+              onUnfollow={profile ? handleUnfollow : undefined}
+            />
           ))}
         </div>
       </section>
