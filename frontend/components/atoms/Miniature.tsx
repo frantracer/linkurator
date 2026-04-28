@@ -15,7 +15,7 @@ const Miniature = (props: MiniatureProps) => {
           <img
             src={props.badgeImage}
             alt="Badge"
-            className="rounded-full object-cover w-full h-full border border-gray-300 bg-white"
+            className="rounded-full object-cover w-full h-full bg-transparent"
           />
         </div>
       )}
