@@ -106,6 +106,7 @@
     "assign": "Assign",
     "refresh": "Refresh",
     "subscription_updated": "Subscription updated",
+    "subscription_unfollowed": "Subscription unfollowed",
     "subscription_not_exist": "Subscription does not exist",
     "assign_subscription": "Assign subscription",
     "new_topic_name": "New topic name",

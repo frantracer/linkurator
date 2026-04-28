@@ -106,6 +106,7 @@
         "assign": "Asignar",
         "refresh": "Actualizar",
         "subscription_updated": "Subscripción actualizada",
+        "subscription_unfollowed": "Has dejado de seguir la subscripción",
         "subscription_not_exist": "La subscripción no existe",
         "assign_subscription": "Asignar subscripción",
         "new_topic_name": "Nombre de la nueva categoría",

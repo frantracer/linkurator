@@ -5,7 +5,7 @@ import {flushSync} from "react-dom";
 import {useRouter} from "next/navigation";
 import {useTranslations} from "next-intl";
 import Button from "../../../../../components/atoms/Button";
-import {ImportIcon, MagnifyingGlassIcon, PencilIcon, SubscriptionIcon} from "../../../../../components/atoms/Icons";
+import {ImportIcon, MagnifyingGlassIcon, MinusIcon, PencilIcon, SubscriptionIcon} from "../../../../../components/atoms/Icons";
 import EmptyStateNoSubscriptions from "../../../../../components/organism/EmptyStateNoSubscriptions";
 import EmptyStateNoMatches from "../../../../../components/organism/EmptyStateNoMatches";
 import Miniature from "../../../../../components/atoms/Miniature";
@@ -22,13 +22,16 @@ import useProfile from "../../../../../hooks/useProfile";
 import useProviders from "../../../../../hooks/useProviders";
 import useSubscriptions from "../../../../../hooks/useSubscriptions";
 import {useTopics} from "../../../../../hooks/useTopics";
+import {followSubscription, unfollowSubscription} from "../../../../../services/subscriptionService";
 import {openModal} from "../../../../../utilities/modalAction";
+import {useToast} from "../../../../../contexts/ToastContext";
 
 const SubscriptionsListPageComponent = () => {
   const t = useTranslations("common");
   const router = useRouter();
+  const {showToast} = useToast();
   const {profile, profileIsLoading} = useProfile();
-  const {subscriptions, subscriptionsAreLoading} = useSubscriptions(profile);
+  const {subscriptions, subscriptionsAreLoading, refreshSubscriptions} = useSubscriptions(profile);
   const {topics, refreshTopics} = useTopics(profile, profileIsLoading);
   const {providers} = useProviders();
   const [filterText, setFilterText] = useState("");
@@ -58,6 +61,17 @@ const SubscriptionsListPageComponent = () => {
   const handleAssign = (subscription: Subscription) => {
     flushSync(() => setAssigningSubscription(subscription));
     openModal(AssignTopicModalId);
+  }
+
+  const handleUnfollow = (subscription: Subscription) => {
+    unfollowSubscription(subscription.uuid).then(() => {
+      refreshSubscriptions();
+      showToast(t("subscription_unfollowed"), subscription.name, () => {
+        followSubscription(subscription.uuid).then(() => {
+          refreshSubscriptions();
+        });
+      });
+    });
   }
 
   const subscriptionsByProvider = providers.map(provider => ({
@@ -145,7 +159,17 @@ const SubscriptionsListPageComponent = () => {
                             </span>
                           </Tag>
                           {profile && (
-                            <div className="card-actions flex justify-end">
+                            <div className="card-actions flex justify-end gap-1">
+                              {subscription.followed && (
+                                <Button
+                                  primary={false}
+                                  fitContent={true}
+                                  clickAction={() => handleUnfollow(subscription)}
+                                  tooltip={t("unfollow")}
+                                >
+                                  <MinusIcon/>
+                                </Button>
+                              )}
                               <Button
                                 primary={false}
                                 fitContent={true}
