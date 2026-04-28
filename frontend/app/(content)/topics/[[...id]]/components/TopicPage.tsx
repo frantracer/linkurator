@@ -25,7 +25,7 @@ import DeleteTopicConfirmationModal, {
 } from "../../../../../components/organism/DeleteTopicConfirmationModal";
 import EditTopicModal, {EditTopicModalId} from "../../../../../components/organism/EditTopicModal";
 import TopicFilter, {TOPIC_FILTER_ID} from "../../../../../components/organism/TopicFilter";
-import VideoCardGrid from "../../../../../components/organism/VideoCardGrid";
+import ContentItemCardGrid from "../../../../../components/organism/ContentItemCardGrid";
 import {paths} from "../../../../../configuration";
 import {isTopicScanned} from "../../../../../entities/Topic";
 import useFilters from "../../../../../hooks/useFilters";
@@ -300,7 +300,7 @@ const TopicPageComponent = ({topicId}: { topicId: string }) => {
         }
         {
           selectedTopic &&
-            <VideoCardGrid
+            <ContentItemCardGrid
                 items={topicItems}
                 providers={providers}
                 fetchMoreItems={fetchMoreItems}

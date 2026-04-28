@@ -1,4 +1,4 @@
-import VideoCard from "./VideoCard";
+import ContentItemCard from "./ContentItemCard";
 import {SubscriptionItem} from "../../entities/SubscriptionItem";
 import {getProviderIcon, Provider} from "../../entities/Provider";
 import {Subscription, subscriptionSorting} from "../../entities/Subscription";
@@ -16,7 +16,7 @@ import useSet from "../../hooks/useSet";
 import {useTranslations} from "next-intl";
 import useItemInteraction from "../../hooks/useItemInteraction";
 
-type VideoCardGridProps = {
+type ContentItemCardGridProps = {
   refreshItem: (itemId: string) => void;
   fetchMoreItems: () => void;
   items: SubscriptionItem[];
@@ -32,7 +32,7 @@ type VideoCardGridProps = {
   topics?: Topic[] | null;
 }
 
-const VideoCardGrid = (
+const ContentItemCardGrid = (
   {
     refreshItem,
     fetchMoreItems,
@@ -47,7 +47,7 @@ const VideoCardGrid = (
     withSubscription = true,
     subscriptions = null,
     topics = null
-  }: VideoCardGridProps
+  }: ContentItemCardGridProps
 ) => {
   const {set: invalidCards, add: addInvalidCard} = useSet<string>();
   const t = useTranslations("common");
@@ -84,7 +84,7 @@ const VideoCardGrid = (
     if (shouldShowItem && !invalidCards.has(item.uuid)) {
       cards.push(
         <div className="m-4" key={item.uuid}>
-          <VideoCard
+          <ContentItemCard
             item={item}
             providers={providers}
             withSubscription={withSubscription}
@@ -159,4 +159,4 @@ const VideoCardGrid = (
   );
 }
 
-export default VideoCardGrid;
+export default ContentItemCardGrid;

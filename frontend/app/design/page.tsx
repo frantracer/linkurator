@@ -10,7 +10,7 @@ import Section from "../../components/atoms/Section";
 import SearchBar from "../../components/molecules/SearchBar";
 import InputText from "../../components/atoms/InputText";
 import {SwapButton} from "../../components/atoms/SwapButton";
-import VideoCard from "../../components/organism/VideoCard";
+import ContentItemCard from "../../components/organism/ContentItemCard";
 import {
   AddIcon,
   ArchiveBoxFilledIcon,
@@ -299,9 +299,9 @@ const CardSection = () => {
       <div className="flex flex-col md:flex-row gap-12 m-auto p-4 w-full
       border-base-100 border-solid border-2 rounded justify-center items-center">
         <ItemCardSkeleton/>
-        <VideoCard item={item} providers={[]} onChange={undefined} onChangeSwapButton={async () => {
+        <ContentItemCard item={item} providers={[]} onChange={undefined} onChangeSwapButton={async () => {
         }}/>
-        <VideoCard item={item} providers={[]} withInteractions={false}/>
+        <ContentItemCard item={item} providers={[]} withInteractions={false}/>
       </div>
     </Section>
   );

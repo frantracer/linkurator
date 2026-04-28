@@ -19,7 +19,7 @@ import Tag from "../../../../../components/atoms/Tag";
 import Drawer from "../../../../../components/molecules/Drawer";
 import TopTitle from "../../../../../components/molecules/TopTitle";
 import CuratorFilter, {CURATOR_FILTER_ID} from "../../../../../components/organism/CuratorFilter";
-import VideoCardGrid from "../../../../../components/organism/VideoCardGrid";
+import ContentItemCardGrid from "../../../../../components/organism/ContentItemCardGrid";
 import {paths} from "../../../../../configuration";
 import {useCurator} from "../../../../../hooks/useCurator";
 import useCuratorItems from "../../../../../hooks/useCuratorItems";
@@ -214,7 +214,7 @@ const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
 
         {activeTab === t('recommendations') && (
           <div className="p-2 flex w-full h-full overflow-x-hidden overflow-y-auto">
-            <VideoCardGrid
+            <ContentItemCardGrid
               refreshItem={refreshCuratorItem}
               fetchMoreItems={fetchMoreItems}
               items={curatorItems}
@@ -245,7 +245,7 @@ const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
               <ThumbsUpIcon/>
               <h2 className={"text-xl text-balance"}>{t("recommendations")}</h2>
             </div>
-            <VideoCardGrid
+            <ContentItemCardGrid
               refreshItem={refreshCuratorItem}
               fetchMoreItems={fetchMoreItems}
               items={curatorItems}

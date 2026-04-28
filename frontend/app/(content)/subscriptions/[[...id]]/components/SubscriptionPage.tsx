@@ -19,7 +19,7 @@ import Drawer from "../../../../../components/molecules/Drawer";
 import TopTitle from "../../../../../components/molecules/TopTitle";
 import AssignTopicModal, {AssignTopicModalId} from "../../../../../components/organism/AssignTopicModal";
 import SubscriptionFilter, {SUBSCRIPTION_FILTER_ID} from "../../../../../components/organism/SubscriptionFilter";
-import VideoCardGrid from "../../../../../components/organism/VideoCardGrid";
+import ContentItemCardGrid from "../../../../../components/organism/ContentItemCardGrid";
 import {paths} from "../../../../../configuration";
 import {getProviderIcon, getProviderPrettyName} from "../../../../../entities/Provider";
 import useProviders from "../../../../../hooks/useProviders";
@@ -259,7 +259,7 @@ const SubscriptionPageComponent = ({subscriptionId}: { subscriptionId: string })
             </div>
         }
         {selectedSubscription &&
-            <VideoCardGrid
+            <ContentItemCardGrid
                 refreshItem={refreshSubscriptionItem}
                 fetchMoreItems={fetchMoreItems}
                 items={subscriptionsItems}

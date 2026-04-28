@@ -23,7 +23,7 @@ import AvatarGroup from "../atoms/AvatarGroup";
 import {useRouter} from "next/navigation";
 import {useToast} from "../../contexts/ToastContext";
 
-type VideoCardProps = {
+type ContentItemCardProps = {
   item: SubscriptionItem;
   providers: Provider[];
   addInvalidCard?: (uuid: string) => void;
@@ -57,7 +57,7 @@ async function defaultOnChangeSwapButton(itemUuid: string, interactionType: Inte
   }
 }
 
-const VideoCard = (
+const ContentItemCard = (
   {
     item,
     providers,
@@ -67,7 +67,7 @@ const VideoCard = (
     onChange = undefined,
     onChangeSwapButton = defaultOnChangeSwapButton,
     limitTitleLength = false
-  }: VideoCardProps) => {
+  }: ContentItemCardProps) => {
   const {ref, inView} = useInView({threshold: 0});
   const t = useTranslations("common");
   const router = useRouter();
@@ -292,4 +292,4 @@ const VideoCard = (
   }
 };
 
-export default VideoCard;
+export default ContentItemCard;

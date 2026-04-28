@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import VideoCard from '../organism/VideoCard';
+import ContentItemCard from '../organism/ContentItemCard';
 import { SubscriptionItem } from '../../entities/SubscriptionItem';
 import { Provider } from '../../entities/Provider';
 import { ChevronDownIcon, ChevronUpIcon } from '../atoms/Icons';
@@ -84,7 +84,7 @@ const ItemCarousel = ({
           >
             {items.map((item) => (
               <div key={item.uuid} className="flex-shrink-0">
-                <VideoCard
+                <ContentItemCard
                   item={item}
                   providers={providers}
                   withSubscription={true}
