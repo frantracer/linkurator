@@ -7,6 +7,7 @@ import Button from "../atoms/Button";
 import {PencilIcon, StarFilledIcon, StarIcon, TrashIcon} from "../atoms/Icons";
 import Miniature from "../atoms/Miniature";
 import Tag from "../atoms/Tag";
+import ALink from "../atoms/ALink";
 
 type TopicCardProps = {
   topic: Topic;
@@ -59,8 +60,12 @@ const TopicCard = ({topic, onEdit, onDelete, onToggleFavorite}: TopicCardProps) 
         </div>
         {!topic.is_owner && (
           <div className="flex flex-row items-center gap-1 min-w-0 text-xs text-base-content/70">
-            <Miniature src={topic.curator.avatar_url} alt={topic.curator.username}/>
-            <span className="truncate">{topic.curator.username}</span>
+            <ALink href={paths.CURATORS + "/" + topic.curator.username} onClick={(e) => e.stopPropagation()}>
+              <div className={"flex flex-row items-center gap-1"}>
+                <Miniature src={topic.curator.avatar_url} alt={topic.curator.username}/>
+                <span className="truncate">{topic.curator.username}</span>
+              </div>
+            </ALink>
           </div>
         )}
         <div className="flex flex-row items-center justify-between gap-2 mt-auto">
