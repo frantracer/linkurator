@@ -4,17 +4,18 @@ import {useTranslations} from "next-intl";
 import {paths} from "../../configuration";
 import {Topic} from "../../entities/Topic";
 import Button from "../atoms/Button";
-import {PencilIcon, StarFilledIcon, StarIcon} from "../atoms/Icons";
+import {PencilIcon, StarFilledIcon, StarIcon, TrashIcon} from "../atoms/Icons";
 import Miniature from "../atoms/Miniature";
 import Tag from "../atoms/Tag";
 
 type TopicCardProps = {
   topic: Topic;
   onEdit?: (topic: Topic) => void;
+  onDelete?: (topic: Topic) => void;
   onToggleFavorite: (topic: Topic) => void;
 }
 
-const TopicCard = ({topic, onEdit, onToggleFavorite}: TopicCardProps) => {
+const TopicCard = ({topic, onEdit, onDelete, onToggleFavorite}: TopicCardProps) => {
   const router = useRouter();
   const t = useTranslations("common");
 
@@ -29,6 +30,12 @@ const TopicCard = ({topic, onEdit, onToggleFavorite}: TopicCardProps) => {
   const handleEdit = () => {
     if (onEdit) {
       onEdit(topic);
+    }
+  }
+
+  const handleDelete = () => {
+    if (onDelete) {
+      onDelete(topic);
     }
   }
 
@@ -62,11 +69,18 @@ const TopicCard = ({topic, onEdit, onToggleFavorite}: TopicCardProps) => {
               {topic.subscriptions_ids.length} {t("subscriptions").toLowerCase()}
             </span>
           </Tag>
-          {onEdit && topic.is_owner && (
+          {topic.is_owner && (onEdit || onDelete) && (
             <div className="card-actions flex justify-end">
-              <Button primary={false} fitContent={true} clickAction={handleEdit} tooltip={t("edit")}>
-                <PencilIcon/>
-              </Button>
+              {onDelete && (
+                <Button primary={false} fitContent={true} clickAction={handleDelete} tooltip={t("delete")}>
+                  <TrashIcon/>
+                </Button>
+              )}
+              {onEdit && (
+                <Button primary={false} fitContent={true} clickAction={handleEdit} tooltip={t("edit")}>
+                  <PencilIcon/>
+                </Button>
+              )}
             </div>
           )}
         </div>

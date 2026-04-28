@@ -6,6 +6,9 @@ import Button from "../../../../../components/atoms/Button";
 import {AddIcon, MagnifyingGlassIcon, RectangleGroup, StarIcon} from "../../../../../components/atoms/Icons";
 import SearchBar from "../../../../../components/molecules/SearchBar";
 import TopTitle from "../../../../../components/molecules/TopTitle";
+import DeleteTopicConfirmationModal, {
+  DeleteTopicConfirmationModalId
+} from "../../../../../components/organism/DeleteTopicConfirmationModal";
 import EditTopicModal, {EditTopicModalId} from "../../../../../components/organism/EditTopicModal";
 import EmptyStateNoMatches from "../../../../../components/organism/EmptyStateNoMatches";
 import EmptyStateNoTopics from "../../../../../components/organism/EmptyStateNoTopics";
@@ -18,6 +21,7 @@ import useProfile from "../../../../../hooks/useProfile";
 import useProviders from "../../../../../hooks/useProviders";
 import useSubscriptions from "../../../../../hooks/useSubscriptions";
 import {useTopics} from "../../../../../hooks/useTopics";
+import {deleteTopic} from "../../../../../services/topicService";
 import {openModal} from "../../../../../utilities/modalAction";
 import {flushSync} from "react-dom";
 
@@ -29,6 +33,7 @@ const TopicsListPageComponent = () => {
   const {providers} = useProviders();
   const {toggleFavorite} = useFavoriteTopics();
   const [editingTopic, setEditingTopic] = useState<Topic | null>(null);
+  const [deletingTopic, setDeletingTopic] = useState<Topic | null>(null);
   const [filterText, setFilterText] = useState("");
 
   const normalizedFilter = filterText.trim().toLowerCase();
@@ -49,6 +54,19 @@ const TopicsListPageComponent = () => {
     openModal(EditTopicModalId);
   }
 
+  const handleDeleteTopic = (topic: Topic) => {
+    setDeletingTopic(topic);
+    openModal(DeleteTopicConfirmationModalId);
+  }
+
+  const confirmDeleteTopic = () => {
+    if (deletingTopic) {
+      const topicId = deletingTopic.uuid;
+      setDeletingTopic(null);
+      deleteTopic(topicId).then(() => refreshTopics());
+    }
+  }
+
   const openDiscoverModal = () => openModal(FindTopicModalId);
   const openNewModal = () => openModal(NewTopicModalId);
 
@@ -67,6 +85,7 @@ const TopicsListPageComponent = () => {
               topic={topic}
               onToggleFavorite={handleToggleFavorite}
               onEdit={topic.is_owner ? handleEditTopic : undefined}
+              onDelete={topic.is_owner ? handleDeleteTopic : undefined}
             />
           ))}
         </div>
@@ -137,6 +156,8 @@ const TopicsListPageComponent = () => {
           refreshSubscriptions={refreshSubscriptions}
         />
       )}
+
+      <DeleteTopicConfirmationModal onDeleteTopic={confirmDeleteTopic}/>
     </>
   );
 }
