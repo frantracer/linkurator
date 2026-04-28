@@ -282,9 +282,9 @@ const TopicPageComponent = ({topicId}: { topicId: string }) => {
                   </div>
               </div>
               <div className="w-10 shrink-0 flex items-center justify-end">
-                <Button primary={false} fitContent={true} clickAction={handleShowFilters} tooltip={t("filter")}>
-                  <FunnelIcon/>
-                </Button>
+                  <Button primary={false} fitContent={true} clickAction={handleShowFilters} tooltip={t("filter")}>
+                      <FunnelIcon/>
+                  </Button>
               </div>
           </>}
         </div>
@@ -311,6 +311,7 @@ const TopicPageComponent = ({topicId}: { topicId: string }) => {
                 isBeingScanned={isTopicBeingScanned}
                 scanningEntityName={selectedTopic.name}
                 showInteractions={isUserLogged}
+                subscriptions={topicSubscriptions}
             />
         }
         {

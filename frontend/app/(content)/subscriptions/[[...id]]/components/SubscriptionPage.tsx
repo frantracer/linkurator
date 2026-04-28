@@ -271,6 +271,7 @@ const SubscriptionPageComponent = ({subscriptionId}: { subscriptionId: string })
                 isBeingScanned={selectedSubscription.isBeingScanned}
                 scanningEntityName={selectedSubscription.name}
                 withSubscription={false}
+                topics={topics.filter(topic => topic.subscriptions_ids.includes(selectedSubscription.uuid))}
             />
         }
         {selectedSubscription &&
