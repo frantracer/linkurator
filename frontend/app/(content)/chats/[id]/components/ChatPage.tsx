@@ -2,9 +2,8 @@
 
 import React, {useEffect, useRef, useState} from "react";
 import Button from "../../../../../components/atoms/Button";
-import FlexRow from "../../../../../components/atoms/FlexRow";
-import FlexItem from "../../../../../components/atoms/FlexItem";
 import {TrashIcon} from "../../../../../components/atoms/Icons";
+import ChatInput from "./ChatInput";
 import TopTitle from "../../../../../components/molecules/TopTitle";
 import {ChatMessage, newTopicsWereCreated} from "../../../../../entities/Chat";
 import {ChatRateLimitError, deleteChat, queryAgent} from "../../../../../services/chatService";
@@ -108,13 +107,6 @@ const ChatPageComponent = ({conversationId}: { conversationId: string }) => {
       };
       setLocalMessages(prev => [...prev, errorMessage]);
       setIsLoading(false);
-    }
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      handleSendMessage();
     }
   };
 
@@ -289,54 +281,16 @@ const ChatPageComponent = ({conversationId}: { conversationId: string }) => {
           <div ref={messagesEndRef}/>
         </div>
 
-        {/* Input Area */}
-        <div className="border-t border-base-300 p-4">
-          <FlexRow>
-            <FlexItem grow={true}>
-              <textarea
-                value={inputMessage}
-                onChange={(e) => {
-                  if (e.target.value.length <= CHARACTER_LIMIT) {
-                    setInputMessage(e.target.value);
-                  }
-                }}
-                onKeyDown={handleKeyDown}
-                placeholder={t('type_message')}
-                className="textarea textarea-bordered w-full resize-none"
-                rows={2}
-                disabled={isLoading || isMessageLimitReached}
-              />
-            </FlexItem>
-            <FlexItem>
-              <Button
-                clickAction={handleSendMessage}
-                disabled={!inputMessage.trim() || isLoading || isMessageLimitReached || inputMessage.length > CHARACTER_LIMIT}
-                primary={true}
-                fitContent={true}
-              >
-                {t('send')}
-              </Button>
-            </FlexItem>
-          </FlexRow>
-
-          {/* Character and message counters */}
-          <div className="mt-2 text-center space-y-1">
-            <div className="grid grid-cols-4">
-              <p className={`text-left text-sm ${inputMessage.length > CHARACTER_LIMIT - 50 ? 'text-warning' : 'text-base-content/60'}`}>
-                {inputMessage.length}/{CHARACTER_LIMIT}
-              </p>
-              {isMessageLimitReached ? (
-                <p className="col-span-2 text-sm text-error">{t('message_limit_reached')}</p>
-              ) : (
-                <p
-                  className={`col-span-2 text-sm ${userMessageCount >= MESSAGE_LIMIT - 2 ? 'text-warning' : 'text-base-content/60'}`}>
-                  {t('messages_remaining', {remaining: MESSAGE_LIMIT - userMessageCount})}
-                </p>
-              )}
-              <p></p>
-            </div>
-          </div>
-        </div>
+        <ChatInput
+          value={inputMessage}
+          onChange={setInputMessage}
+          onSend={handleSendMessage}
+          disabled={isLoading}
+          characterLimit={CHARACTER_LIMIT}
+          messageLimit={MESSAGE_LIMIT}
+          userMessageCount={userMessageCount}
+          isMessageLimitReached={isMessageLimitReached}
+        />
       </div>
 
       {/* Modals */}
