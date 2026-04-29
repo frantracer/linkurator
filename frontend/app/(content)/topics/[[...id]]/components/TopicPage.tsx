@@ -43,6 +43,7 @@ import Dropdown from "../../../../../components/atoms/Dropdown";
 import Menu from "../../../../../components/atoms/Menu";
 import TopTitle from "../../../../../components/molecules/TopTitle";
 import useProviders from "../../../../../hooks/useProviders";
+import ALink from "../../../../../components/atoms/ALink";
 
 const REFRESH_TOPICS_INTERVAL = 10000;
 
@@ -276,7 +277,9 @@ const TopicPageComponent = ({topicId}: { topicId: string }) => {
                     }
                     {selectedTopic && selectedTopic.is_owner &&
                         <Tag>
-                            <span className="whitespace-nowrap text-nowrap">{t("my_topics")}</span>
+                            <ALink href={paths.TOPICS}>
+                                <span className="whitespace-nowrap text-nowrap">{t("my_topics")}</span>
+                            </ALink>
                         </Tag>
                     }
                   </div>
