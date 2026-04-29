@@ -16,9 +16,10 @@ type ProfileDropdownProps = {
   profile: Profile;
   bottom?: boolean;
   position?: "start" | "center" | "end";
+  showProfileInfo?: boolean;
 };
 
-const ProfileDropdown = ({profile, bottom = true, position = "end"}: ProfileDropdownProps) => {
+const ProfileDropdown = ({profile, bottom = true, position = "end", showProfileInfo = true}: ProfileDropdownProps) => {
   const t = useTranslations("common");
   const router = useRouter();
 
@@ -35,8 +36,12 @@ const ProfileDropdown = ({profile, bottom = true, position = "end"}: ProfileDrop
         position={position}
         closeOnClickInside={true}
       >
-        <ProfileInfo profile={profile}/>
-        <Divider/>
+        {showProfileInfo && (
+          <>
+            <ProfileInfo profile={profile}/>
+            <Divider/>
+          </>
+        )}
         <MenuItem onClick={() => router.push(paths.PROFILE)}>
           <div className="flex flex-row items-center gap-2">
             <ProfileIcon/>
