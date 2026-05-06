@@ -21,9 +21,10 @@ import useProfile from "../../../../../hooks/useProfile";
 import useProviders from "../../../../../hooks/useProviders";
 import useSubscriptions from "../../../../../hooks/useSubscriptions";
 import {useTopics} from "../../../../../hooks/useTopics";
-import {deleteTopic} from "../../../../../services/topicService";
+import {deleteTopic, followTopic, unfollowTopic} from "../../../../../services/topicService";
 import {openModal} from "../../../../../utilities/modalAction";
 import {flushSync} from "react-dom";
+import {useToast} from "../../../../../contexts/ToastContext";
 
 const TopicsListPageComponent = () => {
   const t = useTranslations("common");
@@ -35,6 +36,7 @@ const TopicsListPageComponent = () => {
   const [editingTopic, setEditingTopic] = useState<Topic | null>(null);
   const [deletingTopic, setDeletingTopic] = useState<Topic | null>(null);
   const [filterText, setFilterText] = useState("");
+  const {showToast} = useToast();
 
   const normalizedFilter = filterText.trim().toLowerCase();
   const filteredTopics = normalizedFilter === ""
@@ -57,6 +59,17 @@ const TopicsListPageComponent = () => {
   const handleDeleteTopic = (topic: Topic) => {
     setDeletingTopic(topic);
     openModal(DeleteTopicConfirmationModalId);
+  }
+
+  const handleFollowTopic = (topic: Topic) => {
+    followTopic(topic.uuid).then(() => refreshTopics());
+  }
+
+  const handleUnfollowTopic = (topic: Topic) => {
+    unfollowTopic(topic.uuid).then(() => refreshTopics());
+    showToast(t("topic_unfollowed"), topic.name, () => {
+      followTopic(topic.uuid).then(() => refreshTopics());
+    });
   }
 
   const confirmDeleteTopic = () => {
@@ -86,6 +99,8 @@ const TopicsListPageComponent = () => {
               onToggleFavorite={handleToggleFavorite}
               onEdit={topic.is_owner ? handleEditTopic : undefined}
               onDelete={topic.is_owner ? handleDeleteTopic : undefined}
+              onFollow={!topic.is_owner ? handleFollowTopic : undefined}
+              onUnfollow={!topic.is_owner ? handleUnfollowTopic : undefined}
             />
           ))}
         </div>

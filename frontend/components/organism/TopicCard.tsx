@@ -1,5 +1,4 @@
 import React from "react";
-import {useRouter} from "next/navigation";
 import {useTranslations} from "next-intl";
 import {paths} from "../../configuration";
 import {Topic} from "../../entities/Topic";
@@ -20,12 +19,7 @@ type TopicCardProps = {
 }
 
 const TopicCard = ({topic, onEdit, onDelete, onToggleFavorite, onFollow, onUnfollow}: TopicCardProps) => {
-  const router = useRouter();
   const t = useTranslations("common");
-
-  const handleCardClick = () => {
-    router.push(paths.TOPICS + "/" + topic.uuid);
-  }
 
   const handleFavorite = () => {
     onToggleFavorite(topic);
@@ -57,24 +51,29 @@ const TopicCard = ({topic, onEdit, onDelete, onToggleFavorite, onFollow, onUnfol
 
   return (
     <div
-      className="card rounded-lg w-72 h-full bg-base-200 hover:scale-105 shadow-md border border-neutral hover:shadow-xl hover:border-primary duration-200 cursor-pointer"
-      onClick={handleCardClick}
+      className="card relative rounded-lg w-72 h-full bg-base-200 hover:scale-105 shadow-md border border-neutral hover:shadow-xl hover:border-primary duration-200 cursor-pointer"
     >
+      <ALink href={paths.TOPICS + "/" + topic.uuid}>
+        <span className="absolute inset-0"/>
+        <span className="sr-only">{topic.name}</span>
+      </ALink>
       <div className="card-body m-1 p-2 gap-3">
         <div className="flex flex-row items-center gap-1">
           <h2 className="card-title text-sm flex-1 hover:text-primary line-clamp-2">{topic.name}</h2>
-          <Button
-            primary={false}
-            borderless={true}
-            fitContent={true}
-            clickAction={handleFavorite}
-            tooltip={topic.is_favorite ? t("remove_from_favorites") : t("add_to_favorites")}
-          >
-            {topic.is_favorite ? <StarFilledIcon/> : <StarIcon/>}
-          </Button>
+          <div className="relative z-10">
+            <Button
+              primary={false}
+              borderless={true}
+              fitContent={true}
+              clickAction={handleFavorite}
+              tooltip={topic.is_favorite ? t("remove_from_favorites") : t("add_to_favorites")}
+            >
+              {topic.is_favorite ? <StarFilledIcon/> : <StarIcon/>}
+            </Button>
+          </div>
         </div>
         {!topic.is_owner && (
-          <div className="flex flex-row items-center gap-1 min-w-0 text-xs text-base-content/70">
+          <div className="relative z-10 flex flex-row items-center gap-1 min-w-0 text-xs text-base-content/70">
             <ALink href={paths.CURATORS + "/" + topic.curator.username}>
               <div className={"flex flex-row items-center gap-1"}>
                 <Miniature src={topic.curator.avatar_url} alt={topic.curator.username}/>
@@ -90,7 +89,7 @@ const TopicCard = ({topic, onEdit, onDelete, onToggleFavorite, onFollow, onUnfol
             </span>
           </Tag>
           {topic.is_owner && (onEdit || onDelete) && (
-            <div className="card-actions flex justify-end">
+            <div className="card-actions flex justify-end relative z-10">
               {onDelete && (
                 <Button primary={false} fitContent={true} clickAction={handleDelete} tooltip={t("delete")}>
                   <TrashIcon/>
@@ -104,15 +103,19 @@ const TopicCard = ({topic, onEdit, onDelete, onToggleFavorite, onFollow, onUnfol
             </div>
           )}
           {!topic.is_owner && topic.followed && onUnfollow && (
-            <Tag>
-              <span className="text-xs">{t("following")}</span>
-              <CrossButton onClick={handleUnfollow}/>
-            </Tag>
+            <div className="relative z-10">
+              <Tag>
+                <span className="text-xs">{t("following")}</span>
+                <CrossButton onClick={handleUnfollow}/>
+              </Tag>
+            </div>
           )}
           {!topic.is_owner && !topic.followed && onFollow && (
-            <Button primary={true} fitContent={true} clickAction={handleFollow}>
-              {t("follow")}
-            </Button>
+            <div className="relative z-10">
+              <Button primary={true} fitContent={true} clickAction={handleFollow}>
+                {t("follow")}
+              </Button>
+            </div>
           )}
         </div>
       </div>
