@@ -47,20 +47,24 @@ const CuratorCard = ({curator, onFollow, onUnfollow}: CuratorCardProps) => {
           </h3>
         </div>
         {showActions && (
-          <div className="card-actions flex justify-end mt-auto relative z-10">
+          <div className="card-actions flex justify-end mt-auto">
             {curator.followed ? (
-              <Tag>
-                <span className="text-xs">{t("following")}</span>
-                <CrossButton onClick={handleUnfollow}/>
-              </Tag>
+              <div className="relative z-10">
+                <Tag>
+                  <span className="text-xs">{t("following")}</span>
+                  <CrossButton onClick={handleUnfollow}/>
+                </Tag>
+              </div>
             ) : (
-              <Button
-                primary={true}
-                fitContent={true}
-                clickAction={handleFollow}
-              >
-                {t("follow")}
-              </Button>
+              <div className="relative z-10">
+                <Button
+                  primary={true}
+                  fitContent={true}
+                  clickAction={handleFollow}
+                >
+                  {t("follow")}
+                </Button>
+              </div>
             )}
           </div>
         )}
