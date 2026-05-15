@@ -13,7 +13,7 @@ import NumberInput from "../atoms/NumberInput";
 import Select from "../atoms/Select";
 import FlexItem from "../atoms/FlexItem";
 import Avatar from "../atoms/Avatar";
-import { useTranslations } from "next-intl";
+import {useTranslations} from "next-intl";
 
 export const CURATOR_FILTER_ID = "curator-filter";
 
@@ -80,35 +80,34 @@ const CuratorFilter = (
           </Button>
         </FlexItem>
       </FlexRow>
-      <Box title={t("filters")}>
-        <FlexColumn>
-          <SearchBar handleChange={(value) => setFilters({...filters, textSearch: value})}
-                     value={filters.textSearch}
-                     placeholder={t("search_placeholder")}/>
-          <Box title={t("duration")}>
-            <FlexColumn>
-              <Select selected={filters.durationGroup} options={translatedDurationOptions} onChange={handleDurationChange}/>
-              {showCustomDuration &&
-                  <FlexColumn>
-                      <FlexRow>
-                          <p>{t("min")}</p>
-                          <NumberInput placeholder={t("min_placeholder")}
-                                       value={filters.minDuration}
-                                       onChange={(value) => setFilters({...filters, minDuration: value})}/>
+      <FlexColumn>
+        <SearchBar handleChange={(value) => setFilters({...filters, textSearch: value})}
+                   value={filters.textSearch}
+                   placeholder={t("search_placeholder")}/>
+        <Box title={t("duration")}>
+          <FlexColumn>
+            <Select selected={filters.durationGroup} options={translatedDurationOptions}
+                    onChange={handleDurationChange}/>
+            {showCustomDuration &&
+                <FlexColumn>
+                    <FlexRow>
+                        <p>{t("min")}</p>
+                        <NumberInput placeholder={t("min_placeholder")}
+                                     value={filters.minDuration}
+                                     onChange={(value) => setFilters({...filters, minDuration: value})}/>
 
-                      </FlexRow>
-                      <FlexRow>
-                          <p>{t("max")}</p>
-                          <NumberInput placeholder={t("max_placeholder")}
-                                       value={filters.maxDuration}
-                                       onChange={(value) => setFilters({...filters, maxDuration: value})}/>
-                      </FlexRow>
-                  </FlexColumn>
-              }
-            </FlexColumn>
-          </Box>
-        </FlexColumn>
-      </Box>
+                    </FlexRow>
+                    <FlexRow>
+                        <p>{t("max")}</p>
+                        <NumberInput placeholder={t("max_placeholder")}
+                                     value={filters.maxDuration}
+                                     onChange={(value) => setFilters({...filters, maxDuration: value})}/>
+                    </FlexRow>
+                </FlexColumn>
+            }
+          </FlexColumn>
+        </Box>
+      </FlexColumn>
     </Sidebar>
   );
 };

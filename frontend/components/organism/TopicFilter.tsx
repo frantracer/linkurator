@@ -60,23 +60,23 @@ const TopicFilter = (
   const subsTags = relatedSubs
     .sort(subscriptionSorting)
     .map(subscription => (
-    <FlexRow key={subscription.uuid} position={"start"}>
-      <Checkbox checked={!filters.excludedSubscriptions.includes(subscription.uuid)}
-                onChange={(checked) => setFilters({
-                  ...filters,
-                  excludedSubscriptions: checked ?
-                    filters.excludedSubscriptions.filter(uuid => uuid !== subscription.uuid) :
-                    filters.excludedSubscriptions.concat(subscription.uuid)
-                })}/>
-      <ALink href={paths.SUBSCRIPTIONS + "/" + subscription.uuid}>
-        <Tag>
-          <Miniature src={subscription.thumbnail} alt={subscription.name}
-                     badgeImage={getProviderIcon(providers, subscription.provider)}/>
-          {subscription.name}
-        </Tag>
-      </ALink>
-    </FlexRow>
-  ));
+      <FlexRow key={subscription.uuid} position={"start"}>
+        <Checkbox checked={!filters.excludedSubscriptions.includes(subscription.uuid)}
+                  onChange={(checked) => setFilters({
+                    ...filters,
+                    excludedSubscriptions: checked ?
+                      filters.excludedSubscriptions.filter(uuid => uuid !== subscription.uuid) :
+                      filters.excludedSubscriptions.concat(subscription.uuid)
+                  })}/>
+        <ALink href={paths.SUBSCRIPTIONS + "/" + subscription.uuid}>
+          <Tag>
+            <Miniature src={subscription.thumbnail} alt={subscription.name}
+                       badgeImage={getProviderIcon(providers, subscription.provider)}/>
+            {subscription.name}
+          </Tag>
+        </ALink>
+      </FlexRow>
+    ));
 
   const showCustomDuration = filters.durationGroup == "custom";
 
@@ -121,85 +121,84 @@ const TopicFilter = (
           </Button>
         </FlexItem>
       </FlexRow>
-      <Box title={t("filters")}>
-        <FlexColumn>
-          <SearchBar handleChange={(value) => setFilters({...filters, textSearch: value})}
-                     value={filters.textSearch}
-                     placeholder={t("search_placeholder")}/>
-          <Box title={t("duration")}>
-            <FlexColumn>
-              <Select selected={filters.durationGroup} options={translatedDurationOptions} onChange={handleDurationChange}/>
-              {showCustomDuration &&
-                  <FlexColumn>
-                      <FlexRow>
-                          <p>{t("min")}</p>
-                          <NumberInput placeholder={t("min_placeholder")}
-                                       value={filters.minDuration}
-                                       onChange={(value) => setFilters({...filters, minDuration: value})}/>
+      <FlexColumn>
+        <SearchBar handleChange={(value) => setFilters({...filters, textSearch: value})}
+                   value={filters.textSearch}
+                   placeholder={t("search_placeholder")}/>
+        <Box title={t("duration")}>
+          <FlexColumn>
+            <Select selected={filters.durationGroup} options={translatedDurationOptions}
+                    onChange={handleDurationChange}/>
+            {showCustomDuration &&
+                <FlexColumn>
+                    <FlexRow>
+                        <p>{t("min")}</p>
+                        <NumberInput placeholder={t("min_placeholder")}
+                                     value={filters.minDuration}
+                                     onChange={(value) => setFilters({...filters, minDuration: value})}/>
 
-                      </FlexRow>
-                      <FlexRow>
-                          <p>{t("max")}</p>
-                          <NumberInput placeholder={t("max_placeholder")}
-                                       value={filters.maxDuration}
-                                       onChange={(value) => setFilters({...filters, maxDuration: value})}/>
-                      </FlexRow>
-                  </FlexColumn>
-              }
-            </FlexColumn>
-          </Box>
-          {showInteractions &&
-              <Box title={t("interactions")}>
-                  <FlexColumn>
-                      <FlexRow position={"start"}>
-                          <Checkbox checked={filters.displayWithoutInteraction}
-                                    onChange={(checked) => setFilters({
-                                      ...filters,
-                                      displayWithoutInteraction: checked
-                                    })}/>
-                          <CheckCircleIcon/>
-                          <label>{t("not_viewed")}</label>
-                      </FlexRow>
-                      <FlexRow position={"start"}>
-                          <Checkbox checked={filters.displayViewed}
-                                    onChange={(checked) => setFilters({...filters, displayViewed: checked})}/>
-                          <CheckCircleFilledIcon/>
-                          <label>{t("viewed")}</label>
-                      </FlexRow>
-                      <FlexRow position={"start"}>
-                          <Checkbox checked={filters.displayRecommended}
-                                    onChange={(checked) => setFilters({
-                                      ...filters,
-                                      displayRecommended: checked
-                                    })}/>
-                          <ThumbsUpFilledIcon/>
-                          <label>{t("recommended")}</label>
-                      </FlexRow>
-                      <FlexRow position={"start"}>
-                          <Checkbox checked={filters.displayDiscouraged}
-                                    onChange={(checked) => setFilters({
-                                      ...filters,
-                                      displayDiscouraged: checked
-                                    })}/>
-                          <ThumbsDownFilledIcon/>
-                          <label>{t("not_recommended")}</label>
-                      </FlexRow>
-                      <FlexRow position={"start"}>
-                          <Checkbox checked={filters.displayHidden}
-                                    onChange={(checked) => setFilters({...filters, displayHidden: checked})}/>
-                          <ArchiveBoxFilledIcon/>
-                          <label>{t("archived")}</label>
-                      </FlexRow>
-                  </FlexColumn>
-              </Box>
-          }
-        </FlexColumn>
-      </Box>
-      <Box title={t("subscriptions")}>
-        <FlexColumn>
-          {subsTags}
-        </FlexColumn>
-      </Box>
+                    </FlexRow>
+                    <FlexRow>
+                        <p>{t("max")}</p>
+                        <NumberInput placeholder={t("max_placeholder")}
+                                     value={filters.maxDuration}
+                                     onChange={(value) => setFilters({...filters, maxDuration: value})}/>
+                    </FlexRow>
+                </FlexColumn>
+            }
+          </FlexColumn>
+        </Box>
+        {showInteractions &&
+            <Box title={t("interactions")}>
+                <FlexColumn>
+                    <FlexRow position={"start"}>
+                        <Checkbox checked={filters.displayWithoutInteraction}
+                                  onChange={(checked) => setFilters({
+                                    ...filters,
+                                    displayWithoutInteraction: checked
+                                  })}/>
+                        <CheckCircleIcon/>
+                        <label>{t("not_viewed")}</label>
+                    </FlexRow>
+                    <FlexRow position={"start"}>
+                        <Checkbox checked={filters.displayViewed}
+                                  onChange={(checked) => setFilters({...filters, displayViewed: checked})}/>
+                        <CheckCircleFilledIcon/>
+                        <label>{t("viewed")}</label>
+                    </FlexRow>
+                    <FlexRow position={"start"}>
+                        <Checkbox checked={filters.displayRecommended}
+                                  onChange={(checked) => setFilters({
+                                    ...filters,
+                                    displayRecommended: checked
+                                  })}/>
+                        <ThumbsUpFilledIcon/>
+                        <label>{t("recommended")}</label>
+                    </FlexRow>
+                    <FlexRow position={"start"}>
+                        <Checkbox checked={filters.displayDiscouraged}
+                                  onChange={(checked) => setFilters({
+                                    ...filters,
+                                    displayDiscouraged: checked
+                                  })}/>
+                        <ThumbsDownFilledIcon/>
+                        <label>{t("not_recommended")}</label>
+                    </FlexRow>
+                    <FlexRow position={"start"}>
+                        <Checkbox checked={filters.displayHidden}
+                                  onChange={(checked) => setFilters({...filters, displayHidden: checked})}/>
+                        <ArchiveBoxFilledIcon/>
+                        <label>{t("archived")}</label>
+                    </FlexRow>
+                </FlexColumn>
+            </Box>
+        }
+        <Box title={t("subscriptions")}>
+          <FlexColumn>
+            {subsTags}
+          </FlexColumn>
+        </Box>
+      </FlexColumn>
     </Sidebar>
   );
 };
