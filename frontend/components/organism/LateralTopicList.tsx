@@ -1,8 +1,5 @@
 import {MenuItem} from "../atoms/MenuItem";
 import {Topic} from "../../entities/Topic";
-import {paths} from "../../configuration";
-import {useRouter} from "next/navigation";
-import {scrollToDrawerTop} from "../../utilities/scrollToDrawerTop";
 import Menu from "../atoms/Menu";
 import FlexRow from "../atoms/FlexRow";
 import Miniature from "../atoms/Miniature";
@@ -13,18 +10,15 @@ type LateralTopicListProps = {
   topics: Topic[];
   selectedTopic: Topic | undefined;
   isLoading: boolean;
-  closeMenu: () => void;
+  openTopic: (topic: Topic) => void;
 }
 
 const LateralTopicList = (props: LateralTopicListProps) => {
-  const router = useRouter();
 
   const handleClick = (topicId: string) => {
     const topic = props.topics.find((topic) => topic.uuid === topicId);
     if (topic) {
-      props.closeMenu();
-      scrollToDrawerTop()
-      router.push(paths.TOPICS + "/" + topic.uuid)
+      props.openTopic(topic);
     }
   }
 

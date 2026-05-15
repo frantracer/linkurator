@@ -39,6 +39,8 @@ import QuickAccessesModal, {QuickAccessesModalId} from "./QuickAccessesModal";
 import LateralTopicList from "./LateralTopicList";
 import {v4 as uuidv4} from 'uuid';
 import ImportSubscriptionsModal from "./ImportSubscriptionsModal";
+import {scrollToDrawerTop} from "../../utilities/scrollToDrawerTop";
+import {Topic} from "../../entities/Topic";
 
 export const LATERAL_NAVIGATION_MENU_ID = 'lateral-navigation-menu';
 
@@ -105,6 +107,13 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
     setCurrentTab('home');
     router.push(paths.HOME);
     closeMenu();
+  }
+
+  const goToTopic = (topic: Topic) => {
+    setCurrentTab('topics');
+    closeMenu();
+    scrollToDrawerTop()
+    router.push(paths.TOPICS + "/" + topic.uuid);
   }
 
   return (
@@ -234,7 +243,7 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
                     topics={topics}
                     selectedTopic={selectedTopic}
                     isLoading={topicsAreLoading}
-                    closeMenu={closeMenu}
+                    openTopic={goToTopic}
                 />
             </div>
         }
