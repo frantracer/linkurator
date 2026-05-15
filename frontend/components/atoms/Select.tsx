@@ -34,7 +34,7 @@ const Select = (
   }
 
   return (
-    <select className="select select-sm select-bordered w-full border-primary"
+    <select className="select select-sm select-bordered w-full border-neutral focus:border-primary"
             value={currentSelected} onChange={e => {
       setSelectedOption(e.target.value);
       if (onChange) {
