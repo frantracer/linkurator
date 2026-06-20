@@ -2,7 +2,7 @@ import { SubscriptionItem } from "../entities/SubscriptionItem";
 import { Topic } from "../entities/Topic";
 import { getFavoriteTopicsItems, getTopicItemsFromUrl, TopicItemsResponse } from "../services/topicService";
 import { InfiniteData, useInfiniteQuery } from "@tanstack/react-query";
-import { Filters } from "../entities/Filters";
+import { Filters, getFilterDuration } from "../entities/Filters";
 import { mapFiltersToInteractionParams } from "../services/common";
 
 type UseLatestFavoriteTopicItems = {
@@ -33,12 +33,13 @@ const useLatestFavoriteTopicItems = (
         return { elements: [], nextPage: undefined };
       }
       if (pageParam === undefined) {
+        const filterDuration = getFilterDuration(filters);
         return await getFavoriteTopicsItems(
-          undefined,
-          undefined,
-          "",
+          filterDuration.min,
+          filterDuration.max,
+          filters.textSearch,
           mapFiltersToInteractionParams(filters),
-          []
+          filters.excludedSubscriptions
         );
       }
       return await getTopicItemsFromUrl(pageParam);

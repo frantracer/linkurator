@@ -6,7 +6,7 @@ import {
   SubscriptionItemsResponse
 } from "../services/subscriptionService";
 import { InfiniteData, useInfiniteQuery } from "@tanstack/react-query";
-import { Filters } from "../entities/Filters";
+import { Filters, getFilterDuration } from "../entities/Filters";
 import { mapFiltersToInteractionParams } from "../services/common";
 
 type UseLatestSubscriptionItems = {
@@ -38,10 +38,11 @@ const useLatestSubscriptionItems = (
         return { elements: [], nextPage: undefined };
       }
       if (pageParam === undefined) {
+        const filterDuration = getFilterDuration(filters);
         return await getFollowedSubscriptionsItems(
-          0, // min duration
-          Number.MAX_SAFE_INTEGER, // max duration
-          "", // no text search
+          filterDuration.min,
+          filterDuration.max,
+          filters.textSearch,
           mapFiltersToInteractionParams(filters),
           pageSize
         );

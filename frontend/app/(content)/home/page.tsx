@@ -14,9 +14,13 @@ import useLatestFavoriteTopicItems from "../../../hooks/useLatestFavoriteTopicIt
 import useLatestFollowedCuratorItems from "../../../hooks/useLatestFollowedCuratorItems";
 import {useCurators} from "../../../hooks/useCurators";
 import useProviders from "../../../hooks/useProviders";
-import {CuratorIcon, HomeIcon, StarIcon, SubscriptionIcon} from "../../../components/atoms/Icons";
+import {CuratorIcon, FunnelIcon, HomeIcon, StarIcon, SubscriptionIcon} from "../../../components/atoms/Icons";
+import Button from "../../../components/atoms/Button";
 import Tag from "../../../components/atoms/Tag";
+import Drawer from "../../../components/molecules/Drawer";
 import ContentItemCardGrid from "../../../components/organism/ContentItemCardGrid";
+import HomeFilter, {HOME_FILTER_ID} from "../../../components/organism/HomeFilter";
+import {showLateralMenu} from "../../../utilities/lateralMenuAction";
 import EmptyStateNoFavoriteTopics from "../../../components/organism/EmptyStateNoFavoriteTopics";
 import EmptyStateNoFollowedCurators from "../../../components/organism/EmptyStateNoFollowedCurators";
 import EmptyStateNoMatches from "../../../components/organism/EmptyStateNoMatches";
@@ -53,24 +57,29 @@ const HomePageComponent = () => {
     router.push(`${paths.HOME}?section=${key}`);
   };
 
+  const handleShowFilters = () => {
+    showLateralMenu(HOME_FILTER_ID);
+  };
+
   const {profile, profileIsLoading} = useProfile();
   const {subscriptions, subscriptionsAreLoading} = useSubscriptions(profile);
   const {topics, topicsAreLoading} = useTopics(profile, profileIsLoading);
-  const {filters} = useFilters();
+  const {filters, setFilters, resetFilters} = useFilters();
+  const [debouncedFilters, setDebouncedFilters] = useState(filters);
   const {
     latestItems,
     isLoading: latestItemsLoading,
     isFinished: latestItemsFinished,
     refetch: refetchSubscriptionItems,
     fetchMoreItems: fetchMoreSubscriptionItems
-  } = useLatestSubscriptionItems(subscriptions, 20, filters);
+  } = useLatestSubscriptionItems(subscriptions, 20, debouncedFilters);
   const {
     latestFavoriteItems,
     isLoading: latestFavoriteItemsLoading,
     isFinished: latestFavoriteItemsFinished,
     refetch: refetchFavoriteTopicItems,
     fetchMoreItems: fetchMoreFavoriteTopicItems
-  } = useLatestFavoriteTopicItems(topics, filters);
+  } = useLatestFavoriteTopicItems(topics, debouncedFilters);
   const {curators} = useCurators(profile, profileIsLoading);
   const {
     latestCuratorItems,
@@ -78,7 +87,7 @@ const HomePageComponent = () => {
     isFinished: latestCuratorItemsFinished,
     refetch: refetchCuratorItems,
     fetchMoreItems: fetchMoreCuratorItems
-  } = useLatestFollowedCuratorItems(20, filters);
+  } = useLatestFollowedCuratorItems(20, debouncedFilters);
 
   const isLoading = profileIsLoading || subscriptionsAreLoading || topicsAreLoading;
   const hasSubscriptions = subscriptions.length > 0;
@@ -141,6 +150,17 @@ const HomePageComponent = () => {
   const showEmptyState = !activeSection.isLoading && activeSection.items.length === 0;
 
   useEffect(() => {
+    if (filters.textSearch === debouncedFilters.textSearch) {
+      setDebouncedFilters(filters)
+    } else {
+      const timer = setTimeout(() => {
+        setDebouncedFilters(filters)
+      }, 500)
+      return () => clearTimeout(timer)
+    }
+  }, [debouncedFilters.textSearch, filters]);
+
+  useEffect(() => {
     if (!profileIsLoading && !profile) {
       router.push(paths.LOGIN);
     }
@@ -151,7 +171,14 @@ const HomePageComponent = () => {
   }
 
   return (
-    <div className="flex flex-col h-full bg-base-300">
+    <Drawer id={HOME_FILTER_ID} right={true} alwaysOpenOnDesktop={false}>
+      <HomeFilter title={activeSection.title}
+                  icon={activeSection.icon}
+                  filters={filters}
+                  showInteractions={true}
+                  setFilters={setFilters}
+                  resetFilters={resetFilters}/>
+      <div className="flex flex-col h-full bg-base-300">
       <TopTitle>
         <div className="flex flex-row items-center h-full w-full px-4">
           <div className="w-10 shrink-0 flex items-center justify-start"/>
@@ -159,7 +186,11 @@ const HomePageComponent = () => {
             <HomeIcon/>
             {t("home")}
           </h1>
-          <div className="w-10 shrink-0"/>
+          <div className="w-10 shrink-0 flex items-center justify-end">
+            <Button primary={false} fitContent={true} clickAction={handleShowFilters} tooltip={t("filter")}>
+              <FunnelIcon/>
+            </Button>
+          </div>
         </div>
       </TopTitle>
 
@@ -197,7 +228,7 @@ const HomePageComponent = () => {
                   providers={providers}
                   fetchMoreItems={activeSection.fetchMoreItems}
                   refreshItem={() => activeSection.refetch()}
-                  filters={filters}
+                  filters={debouncedFilters}
                   isLoading={activeSection.isLoading}
                   isFinished={activeSection.isFinished}
                   showInteractions={true}
@@ -206,7 +237,8 @@ const HomePageComponent = () => {
             }
           </>
       }
-    </div>
+      </div>
+    </Drawer>
   );
 };
 

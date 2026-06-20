@@ -1,7 +1,7 @@
 import { SubscriptionItem } from "../entities/SubscriptionItem";
 import { CuratorItemsResponse, getCuratorItemsFromUrl, getFollowedCuratorsItems } from "../services/curatorService";
 import { InfiniteData, useInfiniteQuery } from "@tanstack/react-query";
-import { Filters } from "../entities/Filters";
+import { Filters, getFilterDuration } from "../entities/Filters";
 
 type UseLatestFollowedCuratorItems = {
   latestCuratorItems: SubscriptionItem[];
@@ -28,9 +28,10 @@ const useLatestFollowedCuratorItems = (
     queryKey: ["latestFollowedCuratorItems", pageSize, filters],
     queryFn: async ({ pageParam }) => {
       if (pageParam === undefined) {
+        const filterDuration = getFilterDuration(filters);
         return await getFollowedCuratorsItems(
-          filters.minDuration,
-          filters.maxDuration,
+          filterDuration.min,
+          filterDuration.max,
           filters.textSearch || "",
           pageSize
         );
