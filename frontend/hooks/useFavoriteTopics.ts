@@ -23,10 +23,11 @@ export function useFavoriteTopics(): UseFavoriteTopics {
       } else {
         await favoriteTopic(topicId);
       }
-      
+
       // Invalidate and refetch topic-related queries
       await queryClient.invalidateQueries({ queryKey: ['topics'] });
       await queryClient.invalidateQueries({ queryKey: ['topic', topicId] });
+      await queryClient.invalidateQueries({ queryKey: ['latestFavoriteTopicItems'] });
     } catch (err) {
       const errorMessage = typeof err === 'string' ? err : 'An error occurred while updating favorite status';
       setError(errorMessage);

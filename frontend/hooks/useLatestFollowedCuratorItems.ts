@@ -1,38 +1,54 @@
 import { SubscriptionItem } from "../entities/SubscriptionItem";
-import { getFollowedCuratorsItems } from "../services/curatorService";
-import { useQuery } from "@tanstack/react-query";
+import { CuratorItemsResponse, getCuratorItemsFromUrl, getFollowedCuratorsItems } from "../services/curatorService";
+import { InfiniteData, useInfiniteQuery } from "@tanstack/react-query";
 import { Filters } from "../entities/Filters";
 
 type UseLatestFollowedCuratorItems = {
   latestCuratorItems: SubscriptionItem[];
   isLoading: boolean;
+  isFinished: boolean;
   error: Error | null;
   refetch: () => void;
+  fetchMoreItems: () => void;
 }
 
 const useLatestFollowedCuratorItems = (
-  limit: number,
+  pageSize: number,
   filters: Filters
 ): UseLatestFollowedCuratorItems => {
-  const { data, isLoading, error, refetch } = useQuery({
-    queryKey: ["latestFollowedCuratorItems", limit, filters],
-    queryFn: async () => {
-      const response = await getFollowedCuratorsItems(
-        filters.minDuration,
-        filters.maxDuration,
-        filters.textSearch || "",
-        limit
-      );
-      return response.elements;
+  const {
+    data,
+    error,
+    refetch,
+    fetchNextPage,
+    hasNextPage,
+    isFetching,
+    isFetchingNextPage
+  } = useInfiniteQuery<CuratorItemsResponse, Error, InfiniteData<CuratorItemsResponse>, readonly unknown[], URL | undefined>({
+    queryKey: ["latestFollowedCuratorItems", pageSize, filters],
+    queryFn: async ({ pageParam }) => {
+      if (pageParam === undefined) {
+        return await getFollowedCuratorsItems(
+          filters.minDuration,
+          filters.maxDuration,
+          filters.textSearch || "",
+          pageSize
+        );
+      }
+      return await getCuratorItemsFromUrl(pageParam);
     },
+    initialPageParam: undefined,
+    getNextPageParam: (lastPage) => lastPage.nextPage,
     staleTime: 5 * 60 * 1000,
   });
 
   return {
-    latestCuratorItems: data || [],
-    isLoading,
+    latestCuratorItems: data ? data.pages.flatMap((page) => page.elements) : [],
+    isLoading: isFetching || isFetchingNextPage,
+    isFinished: !hasNextPage,
     error: error as Error | null,
-    refetch
+    refetch,
+    fetchMoreItems: fetchNextPage
   };
 };
 

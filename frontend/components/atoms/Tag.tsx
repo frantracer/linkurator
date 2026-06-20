@@ -2,13 +2,21 @@ import React from "react";
 
 type TagProps = {
   children?: React.ReactNode;
+  selected?: boolean;
+  onClick?: () => void;
 }
 
-const Tag = (props: TagProps) => {
+const Tag = ({children, selected = false, onClick}: TagProps) => {
+  const interactive = onClick !== undefined;
+  const colorClasses = selected ? "badge-primary" : "badge-neutral badge-outline";
   return (
-    <div className="badge badge-neutral badge-outline h-fit w-fit py-1 justify-start items-center text-wrap text-sm">
-      <div className="flex flex-row gap-2 items-center justify-center font-semibold text-base-content">
-        {props.children}
+    <div
+      className={`badge ${colorClasses} h-fit w-fit py-1 justify-start items-center text-wrap text-sm ${interactive ? "cursor-pointer" : ""}`}
+      onClick={onClick}
+      role={interactive ? "button" : undefined}
+    >
+      <div className={`flex flex-row gap-2 items-center justify-center font-semibold ${selected ? "text-primary-content" : "text-base-content"}`}>
+        {children}
       </div>
     </div>
   )
