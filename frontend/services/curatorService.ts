@@ -4,7 +4,7 @@ import {configuration} from "../configuration";
 import {Topic} from "../entities/Topic";
 import {SubscriptionItem} from "../entities/SubscriptionItem";
 import {replaceBaseUrl} from "../utilities/replaceBaseUrl";
-import {isBeingScanned} from "../entities/Subscription";
+import {isBeingScanned, Subscription} from "../entities/Subscription";
 
 export type CuratorItemsResponse = {
   elements: SubscriptionItem[];
@@ -95,6 +95,32 @@ export async function getCuratorTopics(curatorId: string | null): Promise<Topic[
     return data
   } else {
     console.error("Error retrieving curator topics", data);
+    return [];
+  }
+}
+
+export async function getCuratorSubscriptions(curatorId: string | null): Promise<Subscription[]> {
+  if (curatorId === null) {
+    return [];
+  }
+
+  const {
+    data,
+    status
+  } = await axios.get(configuration.CURATORS_URL + curatorId + "/subscriptions", {withCredentials: true});
+  if (status === 200) {
+    return (data.elements || []).map((element: Record<string, any>) => ({
+      uuid: element.uuid,
+      name: element.name,
+      url: element.url,
+      thumbnail: element.thumbnail,
+      provider: element.provider,
+      topicUuid: element.topic_uuid,
+      followed: element.followed,
+      isBeingScanned: isBeingScanned(element.scanned_at),
+    }));
+  } else {
+    console.error("Error retrieving curator subscriptions", data);
     return [];
   }
 }

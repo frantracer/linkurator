@@ -12,6 +12,7 @@ import {
   OptionsIcon,
   RectangleGroup,
   ShareIcon,
+  SubscriptionIcon,
   ThumbsUpIcon
 } from "../../../../../components/atoms/Icons";
 import {MenuItem} from "../../../../../components/atoms/MenuItem";
@@ -31,6 +32,8 @@ import useProfile from "../../../../../hooks/useProfile";
 import {followCurator, unfollowCurator} from "../../../../../services/curatorService";
 import {showLateralMenu} from "../../../../../utilities/lateralMenuAction";
 import CuratorTopicsList from "../../../../../components/organism/CuratorTopicsList";
+import CuratorSubscriptionsList from "../../../../../components/organism/CuratorSubscriptionsList";
+import {useCuratorSubscriptions} from "../../../../../hooks/useCuratorSubscriptions";
 import {useTopics} from "../../../../../hooks/useTopics";
 import Dropdown from "../../../../../components/atoms/Dropdown";
 import Menu from "../../../../../components/atoms/Menu";
@@ -38,9 +41,9 @@ import ShareCuratorModal, {ShareCuratorModalId} from "../../../../../components/
 import {openModal} from "../../../../../utilities/modalAction";
 import useProviders from "../../../../../hooks/useProviders";
 
-type SectionKey = "recommendations" | "topics";
+type SectionKey = "recommendations" | "topics" | "subscriptions";
 
-const SECTION_KEYS: SectionKey[] = ["recommendations", "topics"];
+const SECTION_KEYS: SectionKey[] = ["recommendations", "topics", "subscriptions"];
 const DEFAULT_SECTION: SectionKey = "recommendations";
 
 const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
@@ -81,6 +84,11 @@ const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
     isFinished: isCuratorItemsFinished
   } = useCuratorItems(curatorId, debouncedFilters);
   const {topics, topicsIsLoading: isTopicsLoading, refetchTopics} = useCuratorTopics(curatorId);
+  const {
+    subscriptions,
+    subscriptionsIsLoading: isSubscriptionsLoading,
+    refetchSubscriptions
+  } = useCuratorSubscriptions(curatorId);
 
   const isLoggedIn = !!(profile)
   const isOwnCuratorProfile = isLoggedIn && !!(curator) && profile.username === curator.username;
@@ -161,6 +169,7 @@ const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
   const sections: { key: SectionKey; title: string; icon: React.ReactNode }[] = [
     {key: "recommendations", title: t("recommendations"), icon: <ThumbsUpIcon/>},
     {key: "topics", title: t("topics"), icon: <RectangleGroup/>},
+    {key: "subscriptions", title: t("subscriptions"), icon: <SubscriptionIcon/>},
   ];
 
   return (
@@ -252,8 +261,8 @@ const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
           ))}
         </div>
 
-        {selectedSection === "recommendations"
-          ? <div className="flex-1 min-h-0">
+        {selectedSection === "recommendations" && (
+          <div className="flex-1 min-h-0">
             <ContentItemCardGrid
               refreshItem={refreshCuratorItem}
               fetchMoreItems={fetchMoreItems}
@@ -264,7 +273,10 @@ const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
               isFinished={isCuratorItemsFinished}
             />
           </div>
-          : <div className="flex-1 min-h-0 overflow-x-hidden overflow-y-auto">
+        )}
+
+        {selectedSection === "topics" && (
+          <div className="flex-1 min-h-0 overflow-x-hidden overflow-y-auto">
             <div className="flex flex-col gap-6 p-4 max-w-7xl w-full mx-auto">
               <CuratorTopicsList
                 topics={topics}
@@ -273,7 +285,18 @@ const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
                 refreshTopics={refreshAllTopics}/>
             </div>
           </div>
-        }
+        )}
+
+        {selectedSection === "subscriptions" && (
+          <div className="flex-1 min-h-0 overflow-x-hidden overflow-y-auto">
+            <div className="flex flex-col gap-6 p-4 max-w-7xl w-full mx-auto">
+              <CuratorSubscriptionsList
+                subscriptions={subscriptions}
+                isLoading={isMainDataLoading || isSubscriptionsLoading}
+                refreshSubscriptions={() => refetchSubscriptions()}/>
+            </div>
+          </div>
+        )}
       </div>
       {curator && (
         <ShareCuratorModal
