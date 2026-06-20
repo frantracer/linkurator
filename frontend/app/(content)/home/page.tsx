@@ -1,8 +1,8 @@
 'use client';
 
 import {useTranslations} from "next-intl";
-import {useRouter} from "next/navigation";
-import React, {useEffect, useState} from "react";
+import {useRouter, useSearchParams} from "next/navigation";
+import React, {Suspense, useEffect, useState} from "react";
 import TopTitle from "../../../components/molecules/TopTitle";
 import {paths} from "../../../configuration";
 import useProfile from "../../../hooks/useProfile";
@@ -26,12 +26,32 @@ import {SubscriptionItem} from "../../../entities/SubscriptionItem";
 
 type SectionKey = "curators" | "favorites" | "subscriptions";
 
+const SECTION_KEYS: SectionKey[] = ["curators", "favorites", "subscriptions"];
+const DEFAULT_SECTION: SectionKey = "favorites";
+
 const HomePageComponent = () => {
   const t = useTranslations("common");
   const router = useRouter();
+  const searchParams = useSearchParams();
   const {providers} = useProviders();
 
-  const [selectedSection, setSelectedSection] = useState<SectionKey>("favorites");
+  const [selectedSection, setSelectedSection] = useState<SectionKey>(DEFAULT_SECTION);
+
+  const sectionParam = searchParams.get("section");
+
+  useEffect(() => {
+    const nextSection = sectionParam && SECTION_KEYS.includes(sectionParam as SectionKey)
+      ? sectionParam as SectionKey
+      : DEFAULT_SECTION;
+    setSelectedSection(nextSection);
+  }, [sectionParam]);
+
+  const selectSection = (key: SectionKey) => {
+    if (key === selectedSection) {
+      return;
+    }
+    router.push(`${paths.HOME}?section=${key}`);
+  };
 
   const {profile, profileIsLoading} = useProfile();
   const {subscriptions, subscriptionsAreLoading} = useSubscriptions(profile);
@@ -151,12 +171,13 @@ const HomePageComponent = () => {
 
       {!isLoading &&
           <>
-              <div className="shrink-0 flex flex-row flex-nowrap md:flex-wrap gap-2 p-2 overflow-x-auto md:overflow-visible scrollbar-hide border-b-[1px] border-neutral">
+              <div
+                  className="shrink-0 flex flex-row flex-nowrap md:flex-wrap gap-2 p-2 overflow-x-auto md:overflow-visible scrollbar-hide border-b-[1px] border-neutral">
                 {sections.map(section => (
                   <Tag
                     key={section.key}
                     selected={section.key === selectedSection}
-                    onClick={() => setSelectedSection(section.key)}
+                    onClick={() => selectSection(section.key)}
                   >
                     <div className="flex flex-row items-center gap-1 whitespace-nowrap">
                       {section.icon}
@@ -189,4 +210,10 @@ const HomePageComponent = () => {
   );
 };
 
-export default HomePageComponent;
+const HomePage = () => (
+  <Suspense>
+    <HomePageComponent/>
+  </Suspense>
+);
+
+export default HomePage;
