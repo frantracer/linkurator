@@ -19,7 +19,7 @@ import Button from "../../../components/atoms/Button";
 import Tag from "../../../components/atoms/Tag";
 import Drawer from "../../../components/molecules/Drawer";
 import ContentItemCardGrid from "../../../components/organism/ContentItemCardGrid";
-import HomeFilter, {HOME_FILTER_ID} from "../../../components/organism/HomeFilter";
+import ContentFilter, {CONTENT_FILTER_ID} from "../../../components/organism/ContentFilter";
 import {showLateralMenu} from "../../../utilities/lateralMenuAction";
 import EmptyStateNoFavoriteTopics from "../../../components/organism/EmptyStateNoFavoriteTopics";
 import EmptyStateNoFollowedCurators from "../../../components/organism/EmptyStateNoFollowedCurators";
@@ -58,7 +58,7 @@ const HomePageComponent = () => {
   };
 
   const handleShowFilters = () => {
-    showLateralMenu(HOME_FILTER_ID);
+    showLateralMenu(CONTENT_FILTER_ID);
   };
 
   const {profile, profileIsLoading} = useProfile();
@@ -171,13 +171,13 @@ const HomePageComponent = () => {
   }
 
   return (
-    <Drawer id={HOME_FILTER_ID} right={true} alwaysOpenOnDesktop={false}>
-      <HomeFilter title={activeSection.title}
-                  icon={activeSection.icon}
-                  filters={filters}
-                  showInteractions={true}
-                  setFilters={setFilters}
-                  resetFilters={resetFilters}/>
+    <Drawer id={CONTENT_FILTER_ID} right={true} alwaysOpenOnDesktop={false}>
+      <ContentFilter title={activeSection.title}
+                     icon={activeSection.icon}
+                     filters={filters}
+                     showInteractions={true}
+                     setFilters={setFilters}
+                     resetFilters={resetFilters}/>
       <div className="flex flex-col h-full bg-base-300">
       <TopTitle>
         <div className="flex flex-row items-center h-full w-full px-4">

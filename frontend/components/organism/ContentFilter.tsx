@@ -1,7 +1,9 @@
 import React from "react";
-import {Subscription} from "../../entities/Subscription";
+import {Subscription, subscriptionSorting} from "../../entities/Subscription";
+import {getProviderIcon, Provider} from "../../entities/Provider";
 import Sidebar from "../atoms/Sidebar";
 import FlexRow from "../atoms/FlexRow";
+import {paths} from "../../configuration";
 import Divider from "../atoms/Divider";
 import {
   ArchiveBoxFilledIcon,
@@ -19,32 +21,41 @@ import FlexColumn from "../atoms/FlexColumn";
 import {durationOptions, Filters} from "../../entities/Filters";
 import Checkbox from "../atoms/Checkbox";
 import NumberInput from "../atoms/NumberInput";
+import Miniature from "../atoms/Miniature";
+import ALink from "../atoms/ALink";
+import Tag from "../atoms/Tag";
 import Select from "../atoms/Select";
 import FlexItem from "../atoms/FlexItem";
 import {useTranslations} from "next-intl";
 
-export const SUBSCRIPTION_FILTER_ID = "subscription-filter";
+export const CONTENT_FILTER_ID = "content-filter";
 
-type SubscriptionFilterProps = {
-  subscription: Subscription | null;
+type ContentFilterProps = {
+  title: string;
   filters: Filters,
-  showInteractions: boolean,
   setFilters: (filters: Filters) => void;
   resetFilters: () => void;
+  avatarSrc?: string;
+  icon?: React.ReactNode;
+  showInteractions?: boolean;
+  subscriptions?: Subscription[];
+  providers?: Provider[];
 };
 
-const SubscriptionFilter = (
+const ContentFilter = (
   {
-    subscription,
+    title,
     filters,
-    showInteractions,
     setFilters,
     resetFilters,
-  }: SubscriptionFilterProps
+    avatarSrc,
+    icon,
+    showInteractions = false,
+    subscriptions,
+    providers = [],
+  }: ContentFilterProps
 ) => {
   const t = useTranslations("common");
-  const subscriptionName = subscription ? subscription.name : "";
-  const subscriptionThumbnail = subscription ? subscription.thumbnail : "";
 
   const showCustomDuration = filters.durationGroup == "custom";
 
@@ -75,11 +86,36 @@ const SubscriptionFilter = (
     }
   }
 
+  const subsTags = subscriptions
+    ? subscriptions
+      .slice()
+      .sort(subscriptionSorting)
+      .map(subscription => (
+        <FlexRow key={subscription.uuid} position={"start"}>
+          <Checkbox checked={!filters.excludedSubscriptions.includes(subscription.uuid)}
+                    onChange={(checked) => setFilters({
+                      ...filters,
+                      excludedSubscriptions: checked ?
+                        filters.excludedSubscriptions.filter(uuid => uuid !== subscription.uuid) :
+                        filters.excludedSubscriptions.concat(subscription.uuid)
+                    })}/>
+          <ALink href={paths.SUBSCRIPTIONS + "/" + subscription.uuid}>
+            <Tag>
+              <Miniature src={subscription.thumbnail} alt={subscription.name}
+                         badgeImage={getProviderIcon(providers, subscription.provider)}/>
+              {subscription.name}
+            </Tag>
+          </ALink>
+        </FlexRow>
+      ))
+    : [];
+
   return (
     <Sidebar left={false}>
       <FlexRow position={"center"}>
-        <Avatar src={subscriptionThumbnail} alt={subscriptionName}/>
-        <span>{subscriptionName}</span>
+        {avatarSrc !== undefined && <Avatar src={avatarSrc} alt={title}/>}
+        {icon}
+        <span className="min-w-0 whitespace-nowrap truncate">{title}</span>
       </FlexRow>
       <Divider/>
       <FlexRow position={"between"}>
@@ -162,9 +198,16 @@ const SubscriptionFilter = (
                 </FlexColumn>
             </Box>
         }
+        {subscriptions &&
+            <Box title={t("subscriptions")}>
+                <FlexColumn>
+                  {subsTags}
+                </FlexColumn>
+            </Box>
+        }
       </FlexColumn>
     </Sidebar>
   );
 };
 
-export default SubscriptionFilter;
+export default ContentFilter;

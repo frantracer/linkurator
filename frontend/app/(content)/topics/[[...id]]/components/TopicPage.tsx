@@ -24,7 +24,7 @@ import DeleteTopicConfirmationModal, {
   DeleteTopicConfirmationModalId
 } from "../../../../../components/organism/DeleteTopicConfirmationModal";
 import EditTopicModal, {EditTopicModalId} from "../../../../../components/organism/EditTopicModal";
-import TopicFilter, {TOPIC_FILTER_ID} from "../../../../../components/organism/TopicFilter";
+import ContentFilter, {CONTENT_FILTER_ID} from "../../../../../components/organism/ContentFilter";
 import ContentItemCardGrid from "../../../../../components/organism/ContentItemCardGrid";
 import {paths} from "../../../../../configuration";
 import {isTopicScanned} from "../../../../../entities/Topic";
@@ -80,7 +80,7 @@ const TopicPageComponent = ({topicId}: { topicId: string }) => {
   const isUserLogged = !!profile
 
   const handleShowFilters = () => {
-    showLateralMenu(TOPIC_FILTER_ID);
+    showLateralMenu(CONTENT_FILTER_ID);
   }
 
   const handleEditTopic = () => {
@@ -213,14 +213,14 @@ const TopicPageComponent = ({topicId}: { topicId: string }) => {
   )
 
   return (
-    <Drawer id={TOPIC_FILTER_ID} right={true} alwaysOpenOnDesktop={false}>
-      <TopicFilter topic={selectedTopic}
-                   subscriptions={topicSubscriptions}
-                   providers={providers}
-                   filters={filters}
-                   showInteractions={isUserLogged}
-                   setFilters={setFilters}
-                   resetFilters={resetFilters}
+    <Drawer id={CONTENT_FILTER_ID} right={true} alwaysOpenOnDesktop={false}>
+      <ContentFilter title={topicName}
+                     subscriptions={topicSubscriptions}
+                     providers={providers}
+                     filters={filters}
+                     showInteractions={isUserLogged}
+                     setFilters={setFilters}
+                     resetFilters={resetFilters}
       />
       <TopTitle>
         <div className="flex flex-row items-center h-full w-full px-4">

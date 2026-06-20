@@ -20,7 +20,7 @@ import Miniature from "../../../../../components/atoms/Miniature";
 import Tag from "../../../../../components/atoms/Tag";
 import Drawer from "../../../../../components/molecules/Drawer";
 import TopTitle from "../../../../../components/molecules/TopTitle";
-import CuratorFilter, {CURATOR_FILTER_ID} from "../../../../../components/organism/CuratorFilter";
+import ContentFilter, {CONTENT_FILTER_ID} from "../../../../../components/organism/ContentFilter";
 import ContentItemCardGrid from "../../../../../components/organism/ContentItemCardGrid";
 import {paths} from "../../../../../configuration";
 import {useCurator} from "../../../../../hooks/useCurator";
@@ -103,7 +103,7 @@ const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
   }
 
   const handleFilter = () => {
-    showLateralMenu(CURATOR_FILTER_ID);
+    showLateralMenu(CONTENT_FILTER_ID);
   }
 
   const handleFollowCurator = (curatorId: string) => {
@@ -173,8 +173,10 @@ const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
   ];
 
   return (
-    <Drawer id={CURATOR_FILTER_ID} right={true} alwaysOpenOnDesktop={false}>
-      <CuratorFilter curator={curator} filters={filters} setFilters={setFilters} resetFilters={resetFilters}/>
+    <Drawer id={CONTENT_FILTER_ID} right={true} alwaysOpenOnDesktop={false}>
+      <ContentFilter title={curator ? curator.username : ""}
+                     avatarSrc={curator ? curator.avatar_url : ""}
+                     filters={filters} setFilters={setFilters} resetFilters={resetFilters}/>
       <TopTitle>
         <div className="flex flex-row items-center h-full w-full px-4">
           {!isMainDataLoading && curator &&

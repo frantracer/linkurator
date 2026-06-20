@@ -18,7 +18,7 @@ import Tag from "../../../../../components/atoms/Tag";
 import Drawer from "../../../../../components/molecules/Drawer";
 import TopTitle from "../../../../../components/molecules/TopTitle";
 import AssignTopicModal, {AssignTopicModalId} from "../../../../../components/organism/AssignTopicModal";
-import SubscriptionFilter, {SUBSCRIPTION_FILTER_ID} from "../../../../../components/organism/SubscriptionFilter";
+import ContentFilter, {CONTENT_FILTER_ID} from "../../../../../components/organism/ContentFilter";
 import ContentItemCardGrid from "../../../../../components/organism/ContentItemCardGrid";
 import {paths} from "../../../../../configuration";
 import {getProviderIcon, getProviderPrettyName} from "../../../../../entities/Provider";
@@ -75,7 +75,7 @@ const SubscriptionPageComponent = ({subscriptionId}: { subscriptionId: string })
   } = useSubscriptionItems(selectedSubscription, debouncedFilters);
 
   const handleShowFilters = () => {
-    showLateralMenu(SUBSCRIPTION_FILTER_ID);
+    showLateralMenu(CONTENT_FILTER_ID);
   }
 
   const handleAssignSubscription = () => {
@@ -176,12 +176,13 @@ const SubscriptionPageComponent = ({subscriptionId}: { subscriptionId: string })
   )
 
   return (
-    <Drawer id={SUBSCRIPTION_FILTER_ID} right={true} alwaysOpenOnDesktop={false}>
-      <SubscriptionFilter subscription={selectedSubscription}
-                          filters={filters}
-                          showInteractions={isUserLogged}
-                          setFilters={setFilters}
-                          resetFilters={resetFilters}/>
+    <Drawer id={CONTENT_FILTER_ID} right={true} alwaysOpenOnDesktop={false}>
+      <ContentFilter title={subscriptionName}
+                     avatarSrc={selectedSubscription ? selectedSubscription.thumbnail : ""}
+                     filters={filters}
+                     showInteractions={isUserLogged}
+                     setFilters={setFilters}
+                     resetFilters={resetFilters}/>
       <TopTitle>
         <div className="flex flex-row items-center h-full w-full px-4">
           {!profileIsLoading && <>
