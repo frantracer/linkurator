@@ -1,7 +1,8 @@
 'use client';
 
 import {useTranslations} from 'next-intl';
-import React, {useEffect, useState} from "react";
+import {useRouter, useSearchParams} from "next/navigation";
+import React, {Suspense, useEffect, useState} from "react";
 import Button from "../../../../../components/atoms/Button";
 import CrossButton from "../../../../../components/atoms/CrossButton";
 import {
@@ -30,7 +31,6 @@ import useProfile from "../../../../../hooks/useProfile";
 import {followCurator, unfollowCurator} from "../../../../../services/curatorService";
 import {showLateralMenu} from "../../../../../utilities/lateralMenuAction";
 import CuratorTopicsList from "../../../../../components/organism/CuratorTopicsList";
-import {Tabs} from "../../../../../components/atoms/Tabs";
 import {useTopics} from "../../../../../hooks/useTopics";
 import Dropdown from "../../../../../components/atoms/Dropdown";
 import Menu from "../../../../../components/atoms/Menu";
@@ -38,12 +38,36 @@ import ShareCuratorModal, {ShareCuratorModalId} from "../../../../../components/
 import {openModal} from "../../../../../utilities/modalAction";
 import useProviders from "../../../../../hooks/useProviders";
 
+type SectionKey = "recommendations" | "topics";
+
+const SECTION_KEYS: SectionKey[] = ["recommendations", "topics"];
+const DEFAULT_SECTION: SectionKey = "recommendations";
+
 const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
   const t = useTranslations("common");
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const {providers} = useProviders();
   const {filters, setFilters, resetFilters} = useFilters();
   const [debouncedFilters, setDebouncedFilters] = useState(filters);
-  const [activeTab, setActiveTab] = useState<string>(t('recommendations'));
+  const [selectedSection, setSelectedSection] = useState<SectionKey>(DEFAULT_SECTION);
+
+  const sectionParam = searchParams.get("section");
+
+  useEffect(() => {
+    const nextSection = sectionParam && SECTION_KEYS.includes(sectionParam as SectionKey)
+      ? sectionParam as SectionKey
+      : DEFAULT_SECTION;
+    setSelectedSection(nextSection);
+  }, [sectionParam]);
+
+  const selectSection = (key: SectionKey) => {
+    if (key === selectedSection) {
+      return;
+    }
+    router.push(`${paths.CURATORS}/${encodeURIComponent(curatorName)}?section=${key}`);
+  };
+
   const {profile, profileIsLoading: isProfileLoading} = useProfile();
   const {refreshTopics: refreshUserTopics} = useTopics(profile, isProfileLoading);
   const {curators, refreshCurators, curatorsAreLoading: isCuratorsLoading} = useCurators(profile, isProfileLoading);
@@ -134,6 +158,11 @@ const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
     }
   }, [debouncedFilters.textSearch, filters]);
 
+  const sections: { key: SectionKey; title: string; icon: React.ReactNode }[] = [
+    {key: "recommendations", title: t("recommendations"), icon: <ThumbsUpIcon/>},
+    {key: "topics", title: t("topics"), icon: <RectangleGroup/>},
+  ];
+
   return (
     <Drawer id={CURATOR_FILTER_ID} right={true} alwaysOpenOnDesktop={false}>
       <CuratorFilter curator={curator} filters={filters} setFilters={setFilters} resetFilters={resetFilters}/>
@@ -206,64 +235,37 @@ const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
         </div>
       </TopTitle>
 
-      {/* Mobile tabs */}
-      <div className="flex flex-col h-full bg-base-300 md:hidden overflow-y-hidden">
-        <Tabs tabsText={[t("recommendations"), t("topics")]}
-              selectedTab={activeTab}
-              onTabSelected={(tab) => setActiveTab(tab)}/>
-
-        {activeTab === t('recommendations') && (
-          <div className="p-2 flex w-full h-full overflow-x-hidden overflow-y-auto">
-            <ContentItemCardGrid
-              refreshItem={refreshCuratorItem}
-              fetchMoreItems={fetchMoreItems}
-              items={curatorItems}
-              providers={providers}
-              showInteractions={isLoggedIn}
-              isLoading={isItemsLoading && isMainDataLoading}
-              isFinished={isCuratorItemsFinished}
-            />
-          </div>
-        )}
-
-        {activeTab === t('topics') && (
-          <div className="p-2 flex w-full h-full overflow-x-hidden overflow-y-auto">
-            <CuratorTopicsList
-              topics={topics}
-              isUserLoggedIn={isLoggedIn}
-              isLoading={isMainDataLoading}
-              refreshTopics={refreshAllTopics}/>
-          </div>
-        )}
-      </div>
-
-      {/* Desktop two-column layout */}
-      <div className="hidden flex-col h-full bg-base-300 md:grid md:grid-cols-3 overflow-auto">
-        <div className="col-span-2 border-r border-neutral h-full overflow-y-auto">
-          <div className="flex flex-col h-full gap-4 items-start">
-            <div className="flex flex-row gap-2 items-center h-fit w-full justify-center">
-              <ThumbsUpIcon/>
-              <h2 className={"text-xl text-balance"}>{t("recommendations")}</h2>
-            </div>
-            <ContentItemCardGrid
-              refreshItem={refreshCuratorItem}
-              fetchMoreItems={fetchMoreItems}
-              items={curatorItems}
-              providers={providers}
-              showInteractions={isLoggedIn}
-              isLoading={isItemsLoading && isMainDataLoading}
-              isFinished={isCuratorItemsFinished}
-            />
-          </div>
+      <div className="flex flex-col h-full bg-base-300 overflow-hidden">
+        <div
+          className="shrink-0 flex flex-row flex-nowrap md:flex-wrap gap-2 p-2 overflow-x-auto md:overflow-visible scrollbar-hide border-b-[1px] border-neutral">
+          {sections.map(section => (
+            <Tag
+              key={section.key}
+              selected={section.key === selectedSection}
+              onClick={() => selectSection(section.key)}
+            >
+              <div className="flex flex-row items-center gap-1 whitespace-nowrap">
+                {section.icon}
+                {section.title}
+              </div>
+            </Tag>
+          ))}
         </div>
 
-        <div className="col-span-1 flex w-full h-full overflow-x-hidden overflow-y-auto">
-          <div className="w-full items-center mx-4">
-            <div className="flex flex-col h-full gap-4 items-start">
-              <div className="flex flex-row gap-2 items-center h-fit w-full justify-center">
-                <RectangleGroup/>
-                <h2 className="text-xl text-balance">{t("topics")}</h2>
-              </div>
+        {selectedSection === "recommendations"
+          ? <div className="flex-1 min-h-0">
+            <ContentItemCardGrid
+              refreshItem={refreshCuratorItem}
+              fetchMoreItems={fetchMoreItems}
+              items={curatorItems}
+              providers={providers}
+              showInteractions={isLoggedIn}
+              isLoading={isItemsLoading && isMainDataLoading}
+              isFinished={isCuratorItemsFinished}
+            />
+          </div>
+          : <div className="flex-1 min-h-0 overflow-x-hidden overflow-y-auto">
+            <div className="flex flex-col gap-6 p-4 max-w-7xl w-full mx-auto">
               <CuratorTopicsList
                 topics={topics}
                 isUserLoggedIn={isLoggedIn}
@@ -271,7 +273,7 @@ const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
                 refreshTopics={refreshAllTopics}/>
             </div>
           </div>
-        </div>
+        }
       </div>
       {curator && (
         <ShareCuratorModal
@@ -283,4 +285,10 @@ const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
   );
 };
 
-export default CuratorPageComponent;
+const CuratorPage = ({curatorName}: { curatorName: string }) => (
+  <Suspense>
+    <CuratorPageComponent curatorName={curatorName}/>
+  </Suspense>
+);
+
+export default CuratorPage;
