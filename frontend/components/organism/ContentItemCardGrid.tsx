@@ -11,6 +11,7 @@ import {InfoBanner} from "../atoms/InfoBanner";
 import ALink from "../atoms/ALink";
 import Miniature from "../atoms/Miniature";
 import Tag from "../atoms/Tag";
+import TagsRow from "../atoms/TagsRow";
 import {paths} from "../../configuration";
 import useSet from "../../hooks/useSet";
 import {useTranslations} from "next-intl";
@@ -52,10 +53,10 @@ const ContentItemCardGrid = (
   const {set: invalidCards, add: addInvalidCard} = useSet<string>();
   const t = useTranslations("common");
   const {onChangeSwapButton} = useItemInteraction();
-  const containerRef = useRef<HTMLElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
   const cards = [];
 
-  const handleGridScroll = (event: React.UIEvent<HTMLElement>) => {
+  const handleGridScroll = (event: React.UIEvent<HTMLDivElement>) => {
     const element = event.currentTarget;
     if (isFinished || isLoading) {
       return;
@@ -103,9 +104,9 @@ const ContentItemCardGrid = (
   const showTagsRow = sortedSubscriptions.length > 0 || sortedTopics.length > 0;
 
   return (
-    <main ref={containerRef} onScroll={handleGridScroll} className="flex flex-col h-full w-full overflow-auto bg-base-300">
+    <div className="flex flex-col h-full w-full bg-base-300">
       {showTagsRow &&
-          <div className="shrink-0 flex flex-row flex-nowrap md:flex-wrap gap-2 p-2 overflow-x-auto md:overflow-visible scrollbar-hide border-b-[1px] border-neutral">
+          <TagsRow>
             {sortedSubscriptions.map(subscription => (
               <Tag key={subscription.uuid}>
                 <ALink href={paths.SUBSCRIPTIONS + "/" + subscription.uuid}>
@@ -128,34 +129,36 @@ const ContentItemCardGrid = (
                 </ALink>
               </Tag>
             ))}
-          </div>
+          </TagsRow>
       }
-      {isBeingScanned &&
-          <div className="flex items-center justify-center h-full">
-              <FlexRow position={"center"}>
-                  <Spinner/>
-                  <span>{t("downloading_content", {title: scanningEntityName})}</span>
-              </FlexRow>
-          </div>
-      }
-      {!isBeingScanned &&
-          <div className="grid grid-cols-[repeat(auto-fill,minmax(320px,1fr))] gap-4
-          justify-items-center justify-content-center">
-            {cards}
-          </div>
-      }
-      {!isBeingScanned && isLoading &&
-          <div className={"flex items-center justify-center h-full"}>
-              <Spinner/>
-              <span>{t("loading")}</span>
-          </div>
-      }
-      {!isBeingScanned && isFinished && !isLoading &&
-          <div className={"flex items-center justify-center h-full"}>
-              <InfoBanner>{t("no_more_content")}</InfoBanner>
-          </div>
-      }
-    </main>
+      <div ref={containerRef} onScroll={handleGridScroll} className="flex-1 min-h-0 overflow-auto flex flex-col">
+        {isBeingScanned &&
+            <div className="flex items-center justify-center h-full">
+                <FlexRow position={"center"}>
+                    <Spinner/>
+                    <span>{t("downloading_content", {title: scanningEntityName})}</span>
+                </FlexRow>
+            </div>
+        }
+        {!isBeingScanned &&
+            <div className="grid grid-cols-[repeat(auto-fill,minmax(320px,1fr))] gap-4
+            justify-items-center justify-content-center">
+              {cards}
+            </div>
+        }
+        {!isBeingScanned && isLoading &&
+            <div className={"flex items-center justify-center h-full"}>
+                <Spinner/>
+                <span>{t("loading")}</span>
+            </div>
+        }
+        {!isBeingScanned && isFinished && !isLoading &&
+            <div className={"flex items-center justify-center h-full"}>
+                <InfoBanner>{t("no_more_content")}</InfoBanner>
+            </div>
+        }
+      </div>
+    </div>
   );
 }
 

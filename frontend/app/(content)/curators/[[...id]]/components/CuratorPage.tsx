@@ -18,6 +18,7 @@ import {
 import {MenuItem} from "../../../../../components/atoms/MenuItem";
 import Miniature from "../../../../../components/atoms/Miniature";
 import Tag from "../../../../../components/atoms/Tag";
+import TagsRow from "../../../../../components/atoms/TagsRow";
 import Drawer from "../../../../../components/molecules/Drawer";
 import TopTitle from "../../../../../components/molecules/TopTitle";
 import ContentFilter, {CONTENT_FILTER_ID} from "../../../../../components/organism/ContentFilter";
@@ -247,8 +248,7 @@ const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
       </TopTitle>
 
       <div className="flex flex-col h-full bg-base-300 overflow-hidden">
-        <div
-          className="shrink-0 flex flex-row flex-nowrap md:flex-wrap gap-2 p-2 overflow-x-auto md:overflow-visible scrollbar-hide border-b-[1px] border-neutral">
+        <TagsRow>
           {sections.map(section => (
             <Tag
               key={section.key}
@@ -261,7 +261,7 @@ const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
               </div>
             </Tag>
           ))}
-        </div>
+        </TagsRow>
 
         {selectedSection === "recommendations" && (
           <div className="flex-1 min-h-0">

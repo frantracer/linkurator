@@ -17,6 +17,7 @@ import useProviders from "../../../hooks/useProviders";
 import {CuratorIcon, FunnelIcon, HomeIcon, StarIcon, SubscriptionIcon} from "../../../components/atoms/Icons";
 import Button from "../../../components/atoms/Button";
 import Tag from "../../../components/atoms/Tag";
+import TagsRow from "../../../components/atoms/TagsRow";
 import Drawer from "../../../components/molecules/Drawer";
 import ContentItemCardGrid from "../../../components/organism/ContentItemCardGrid";
 import ContentFilter, {CONTENT_FILTER_ID} from "../../../components/organism/ContentFilter";
@@ -202,8 +203,7 @@ const HomePageComponent = () => {
 
       {!isLoading &&
           <>
-              <div
-                  className="shrink-0 flex flex-row flex-nowrap md:flex-wrap gap-2 p-2 overflow-x-auto md:overflow-visible scrollbar-hide border-b-[1px] border-neutral">
+              <TagsRow>
                 {sections.map(section => (
                   <Tag
                     key={section.key}
@@ -216,7 +216,7 @@ const HomePageComponent = () => {
                     </div>
                   </Tag>
                 ))}
-              </div>
+              </TagsRow>
 
             {showEmptyState
               ? <div className="flex-1 overflow-y-auto p-4 flex items-center justify-center">
