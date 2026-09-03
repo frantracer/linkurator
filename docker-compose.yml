@@ -1,0 +1,89 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: linkurator-postgres
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=develop
+      - POSTGRES_PASSWORD=develop
+      - POSTGRES_DB=main
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U develop"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  queue:
+    image: rabbitmq:3.13.0-management
+    container_name: linkurator-queue
+    hostname: linkurator-queue
+    restart: unless-stopped
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      - RABBITMQ_DEFAULT_USER=develop
+      - RABBITMQ_DEFAULT_PASS=develop
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build:
+      context: ./backend
+    image: linkurator-backend:local
+    container_name: linkurator-api
+    network_mode: host
+    volumes:
+      - ./.config.json:/app/.config.json:ro
+    command: ["make", "run-api"]
+    depends_on:
+      postgres:
+        condition: service_healthy
+      queue:
+        condition: service_healthy
+
+  processor:
+    build:
+      context: ./backend
+    image: linkurator-backend:local
+    container_name: linkurator-processor
+    network_mode: host
+    volumes:
+      - ./.config.json:/app/.config.json:ro
+    command: ["make", "run-processor"]
+    depends_on:
+      postgres:
+        condition: service_healthy
+      queue:
+        condition: service_healthy
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile_inline: |
+        FROM node:20-alpine
+        WORKDIR /app
+        COPY package.json yarn.lock ./
+        RUN yarn install --frozen-lockfile
+        COPY . .
+        CMD ["yarn", "dev"]
+    image: linkurator-frontend:local
+    container_name: linkurator-frontend
+    network_mode: host
+    environment:
+      - NODE_ENV=development
+    depends_on:
+      - api
+
+volumes:
+  postgres_data:
+  rabbitmq_data:
