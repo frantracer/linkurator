@@ -1,0 +1,56 @@
+import InputText from "../atoms/InputText";
+import {CrossIcon, FunnelIcon, MagnifyingGlassIcon} from "../atoms/Icons";
+import {useEffect, useState} from "react";
+
+export type SearchBarIcon = "search" | "filter";
+
+type SearchBarProps = {
+  placeholder: string;
+  handleChange?: (value: string) => void;
+  handleClick?: () => void;
+  value?: string;
+  autofocus?: boolean;
+  icon?: SearchBarIcon;
+};
+
+const SearchBar = (
+  {
+    placeholder,
+    handleChange = undefined,
+    handleClick = undefined,
+    value = "",
+    autofocus = false,
+    icon = "search"
+  }: SearchBarProps
+) => {
+  const [searchValue, setSearchValue] = useState(value);
+
+  useEffect(() => {
+    setSearchValue(value);
+  }, [value]);
+
+  const setValue = (value: string) => {
+    setSearchValue(value);
+    if (handleChange) {
+      handleChange(value);
+    }
+  }
+
+  return (
+    <div className="relative flex flex-column w-full">
+      <div className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 bg-transparent">
+        {icon === "filter" ? <FunnelIcon/> : <MagnifyingGlassIcon/>}
+      </div>
+      <InputText placeholder={placeholder} onClick={handleClick} onChange={setValue} withLeftPadding={true} value={searchValue} autofocus={autofocus}/>
+      {searchValue !== "" &&
+          <div
+              className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 cursor-pointer bg-base-200 hover:bg-secondary rounded-full"
+              onClick={() => setValue("")}>
+              <CrossIcon/>
+          </div>
+      }
+    </div>
+  );
+}
+
+export default SearchBar;

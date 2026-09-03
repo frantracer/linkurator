@@ -1,0 +1,180 @@
+'use client';
+
+import React, {useState} from "react";
+import {useTranslations} from "next-intl";
+import Button from "../../../../../components/atoms/Button";
+import {AddIcon, MagnifyingGlassIcon, RectangleGroup, StarIcon} from "../../../../../components/atoms/Icons";
+import SearchBar from "../../../../../components/molecules/SearchBar";
+import TopTitle from "../../../../../components/molecules/TopTitle";
+import DeleteTopicConfirmationModal, {
+  DeleteTopicConfirmationModalId
+} from "../../../../../components/organism/DeleteTopicConfirmationModal";
+import EditTopicModal, {EditTopicModalId} from "../../../../../components/organism/EditTopicModal";
+import EmptyStateNoMatches from "../../../../../components/organism/EmptyStateNoMatches";
+import EmptyStateNoTopics from "../../../../../components/organism/EmptyStateNoTopics";
+import {FindTopicModalId} from "../../../../../components/organism/FindTopicModal";
+import {NewTopicModalId} from "../../../../../components/organism/NewTopicModal";
+import TopicCard from "../../../../../components/organism/TopicCard";
+import {Topic} from "../../../../../entities/Topic";
+import {useFavoriteTopics} from "../../../../../hooks/useFavoriteTopics";
+import useProfile from "../../../../../hooks/useProfile";
+import useProviders from "../../../../../hooks/useProviders";
+import useSubscriptions from "../../../../../hooks/useSubscriptions";
+import {useTopics} from "../../../../../hooks/useTopics";
+import {deleteTopic, followTopic, unfollowTopic} from "../../../../../services/topicService";
+import {openModal} from "../../../../../utilities/modalAction";
+import {flushSync} from "react-dom";
+import {useToast} from "../../../../../contexts/ToastContext";
+
+const TopicsListPageComponent = () => {
+  const t = useTranslations("common");
+  const {profile, profileIsLoading} = useProfile();
+  const {topics, topicsAreLoading, refreshTopics} = useTopics(profile, profileIsLoading);
+  const {subscriptions, refreshSubscriptions} = useSubscriptions(profile);
+  const {providers} = useProviders();
+  const {toggleFavorite} = useFavoriteTopics();
+  const [editingTopic, setEditingTopic] = useState<Topic | null>(null);
+  const [deletingTopic, setDeletingTopic] = useState<Topic | null>(null);
+  const [filterText, setFilterText] = useState("");
+  const {showToast} = useToast();
+
+  const normalizedFilter = filterText.trim().toLowerCase();
+  const filteredTopics = normalizedFilter === ""
+    ? topics
+    : topics.filter(topic => topic.name.toLowerCase().includes(normalizedFilter));
+
+  const favoriteTopics = filteredTopics.filter(topic => topic.is_favorite);
+  const myTopics = filteredTopics.filter(topic => topic.is_owner && !topic.is_favorite);
+  const otherTopics = filteredTopics.filter(topic => !topic.is_owner && !topic.is_favorite);
+
+  const handleToggleFavorite = (topic: Topic) => {
+    toggleFavorite(topic.uuid, topic.is_favorite);
+  }
+
+  const handleEditTopic = (topic: Topic) => {
+    flushSync(() => setEditingTopic(topic));
+    openModal(EditTopicModalId);
+  }
+
+  const handleDeleteTopic = (topic: Topic) => {
+    setDeletingTopic(topic);
+    openModal(DeleteTopicConfirmationModalId);
+  }
+
+  const handleFollowTopic = (topic: Topic) => {
+    followTopic(topic.uuid).then(() => refreshTopics());
+  }
+
+  const handleUnfollowTopic = (topic: Topic) => {
+    unfollowTopic(topic.uuid).then(() => refreshTopics());
+    showToast(t("topic_unfollowed"), topic.name, () => {
+      followTopic(topic.uuid).then(() => refreshTopics());
+    });
+  }
+
+  const confirmDeleteTopic = () => {
+    if (deletingTopic) {
+      const topicId = deletingTopic.uuid;
+      setDeletingTopic(null);
+      deleteTopic(topicId).then(() => refreshTopics());
+    }
+  }
+
+  const openDiscoverModal = () => openModal(FindTopicModalId);
+  const openNewModal = () => openModal(NewTopicModalId);
+
+  const renderSection = (title: string, icon: React.ReactNode, sectionTopics: Topic[]) => {
+    if (sectionTopics.length === 0) return null;
+    return (
+      <section className="flex flex-col gap-3">
+        <div className="flex flex-row gap-2 items-center">
+          {icon}
+          <h2 className="text-xl">{title} ({sectionTopics.length})</h2>
+        </div>
+        <div className="grid grid-cols-[repeat(auto-fill,minmax(275px,1fr))] gap-4 justify-items-center justify-content-center">
+          {sectionTopics.map(topic => (
+            <TopicCard
+              key={topic.uuid}
+              topic={topic}
+              onToggleFavorite={handleToggleFavorite}
+              onEdit={topic.is_owner ? handleEditTopic : undefined}
+              onDelete={topic.is_owner ? handleDeleteTopic : undefined}
+              onFollow={!topic.is_owner ? handleFollowTopic : undefined}
+              onUnfollow={!topic.is_owner ? handleUnfollowTopic : undefined}
+            />
+          ))}
+        </div>
+      </section>
+    );
+  }
+
+  const hasAnyTopics = topics.length > 0;
+  const hasFilter = filterText.trim() !== "";
+  const hasNoMatches = hasAnyTopics && hasFilter && filteredTopics.length === 0;
+
+  return (
+    <>
+      <TopTitle>
+        <div className="flex flex-row items-center h-full w-full px-4">
+          <div className="w-10 shrink-0"/>
+          <div className="flex-1 min-w-0 flex flex-row items-center justify-center gap-2">
+            <RectangleGroup/>
+            <h1 className="text-xl font-bold truncate">{t("topics")}</h1>
+          </div>
+          <div className="w-10 shrink-0"/>
+        </div>
+      </TopTitle>
+      <div className="flex flex-col h-full bg-base-300 overflow-y-auto overflow-x-hidden">
+        <div className="flex flex-col gap-6 p-4 max-w-7xl w-full mx-auto">
+          <div className="flex flex-row gap-2 w-full items-center justify-center">
+            <Button fitContent={true} clickAction={openDiscoverModal} primary={false}>
+              <MagnifyingGlassIcon/>
+              {t("discover")}
+            </Button>
+            <div className="w-full max-w-sm">
+              <SearchBar
+                placeholder={t("filter_topics_placeholder")}
+                value={filterText}
+                handleChange={setFilterText}
+                icon="filter"
+              />
+            </div>
+            {profile && (
+              <Button fitContent={true} clickAction={openNewModal} primary={false}>
+                <AddIcon/>
+                {t("create")}
+              </Button>
+            )}
+          </div>
+
+          {!topicsAreLoading && profile && !hasAnyTopics && (
+            <EmptyStateNoTopics/>
+          )}
+
+          {!topicsAreLoading && hasNoMatches && (
+            <EmptyStateNoMatches/>
+          )}
+
+          {renderSection(t("favorites"), <StarIcon/>, favoriteTopics)}
+          {renderSection(t("my_topics"), <RectangleGroup/>, myTopics)}
+          {renderSection(t("other_topics"), <RectangleGroup/>, otherTopics)}
+        </div>
+      </div>
+
+      {editingTopic && (
+        <EditTopicModal
+          topic={editingTopic}
+          subscriptions={subscriptions}
+          providers={providers}
+          refreshTopics={refreshTopics}
+          refreshTopicItems={() => undefined}
+          refreshSubscriptions={refreshSubscriptions}
+        />
+      )}
+
+      <DeleteTopicConfirmationModal onDeleteTopic={confirmDeleteTopic}/>
+    </>
+  );
+}
+
+export default TopicsListPageComponent;

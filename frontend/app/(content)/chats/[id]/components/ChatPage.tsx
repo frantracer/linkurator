@@ -1,0 +1,309 @@
+'use client';
+
+import React, {useEffect, useRef, useState} from "react";
+import Button from "../../../../../components/atoms/Button";
+import {TrashIcon} from "../../../../../components/atoms/Icons";
+import ChatInput from "./ChatInput";
+import TopTitle from "../../../../../components/molecules/TopTitle";
+import {ChatMessage, newTopicsWereCreated} from "../../../../../entities/Chat";
+import {ChatRateLimitError, deleteChat, queryAgent} from "../../../../../services/chatService";
+import useChat from "../../../../../hooks/useChat";
+import {useQueryClient} from '@tanstack/react-query';
+import useProfile from "../../../../../hooks/useProfile";
+import {v4 as uuidv4} from 'uuid';
+import {useRouter} from 'next/navigation';
+import DeleteChatConfirmationModal, {
+  DeleteChatConfirmationModalId
+} from "../../../../../components/organism/DeleteChatConfirmationModal";
+import ErrorModal, {ErrorModalId} from "../../../../../components/organism/ErrorModal";
+import {closeModal, openModal} from "../../../../../utilities/modalAction";
+import {useTranslations} from 'next-intl';
+import ItemCarousel from "../../../../../components/molecules/ItemCarousel";
+import ReactMarkdown from 'react-markdown';
+import {invalidateTopicsCache} from "../../../../../hooks/useTopics";
+import {paths} from "../../../../../configuration";
+import useProviders from "../../../../../hooks/useProviders";
+import Divider from "../../../../../components/atoms/Divider";
+
+const MESSAGE_LIMIT = 5;
+const CHARACTER_LIMIT = 500;
+
+const ChatPageComponent = ({conversationId}: { conversationId: string }) => {
+  const [inputMessage, setInputMessage] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState({title: '', message: ''});
+  const queryClient = useQueryClient();
+  const router = useRouter();
+  const t = useTranslations('common');
+  const {providers} = useProviders();
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  const {conversation, isLoading: conversationLoading} = useChat(conversationId);
+  const [localMessages, setLocalMessages] = useState<ChatMessage[]>([]);
+  const {profile} = useProfile();
+  const isLoggedIn = !!profile;
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({behavior: 'smooth'});
+  };
+
+  useEffect(() => {
+    if (conversation) {
+      setIsLoading(conversation.isWaitingForResponse || false);
+      setLocalMessages(conversation.messages);
+
+      if (newTopicsWereCreated(conversation)) {
+        invalidateTopicsCache(queryClient);
+      }
+    }
+  }, [conversation, queryClient]);
+
+  // Scroll to bottom when messages change
+  useEffect(() => {
+    scrollToBottom();
+  }, [localMessages]);
+
+  // Count user messages
+  const userMessageCount = localMessages.filter(message => message.sender === 'user').length;
+  const isMessageLimitReached = userMessageCount >= MESSAGE_LIMIT;
+
+  const handleSendMessage = async () => {
+    if (!inputMessage.trim() || isLoading || isMessageLimitReached || inputMessage.length > CHARACTER_LIMIT) return;
+
+    const userMessage: ChatMessage = {
+      id: uuidv4(),
+      content: inputMessage,
+      sender: 'user',
+      timestamp: new Date(),
+      items: [],
+      topicsWereCreated: false,
+    };
+
+    setLocalMessages(prev => [...prev, userMessage]);
+    setInputMessage('');
+    setIsLoading(true);
+
+    try {
+      await queryAgent(conversationId, userMessage.content);
+
+      // Invalidate and refetch the conversation data
+      await queryClient.invalidateQueries({queryKey: ['chat', conversationId]});
+      await queryClient.invalidateQueries({queryKey: ['chatConversations']});
+    } catch (error) {
+      console.error('Error getting agent response:', error);
+      let sender: "error" | "rate_limit" = 'error';
+      if (error instanceof ChatRateLimitError) {
+        sender = 'rate_limit';
+      }
+
+      const errorMessage: ChatMessage = {
+        id: uuidv4(),
+        content: "",
+        sender: sender,
+        timestamp: new Date(),
+        items: [],
+        topicsWereCreated: false,
+      };
+      setLocalMessages(prev => [...prev, errorMessage]);
+      setIsLoading(false);
+    }
+  };
+
+  const handleDeleteChat = async () => {
+    if (isDeleting) return;
+
+    setIsDeleting(true);
+    try {
+      await deleteChat(conversationId);
+
+      // Close the modal and navigate
+      closeModal(DeleteChatConfirmationModalId);
+
+      // Invalidate and refetch the conversations list
+      queryClient.invalidateQueries({queryKey: ['chatConversations']});
+      queryClient.removeQueries({queryKey: ['chat', conversationId]});
+
+      // Navigate back to chat home
+      router.push(paths.CHATS + '/' + uuidv4());
+    } catch (error) {
+      console.error('Error deleting conversation:', error);
+      closeModal(DeleteChatConfirmationModalId);
+      setErrorMessage({
+        title: t('deletion_failed'),
+        message: t('delete_conversation_error')
+      });
+      openModal(ErrorModalId);
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
+  const handleDeleteButtonClick = () => {
+    openModal(DeleteChatConfirmationModalId);
+  };
+
+
+  const handleSampleQuestionClick = (question: string) => {
+    setInputMessage(question);
+  };
+
+  const getMessageContent = (message: ChatMessage) => {
+    if (message.sender === 'rate_limit') {
+      return t("agent_rate_limit_error");
+    }
+    if (message.sender === 'error') {
+      return t("agent_error");
+    }
+    return message.content;
+  }
+
+  return (
+    <div className="flex flex-col h-full">
+      <TopTitle>
+        <div className="flex flex-row items-center h-full w-full px-4">
+          <div className="w-10 shrink-0 flex items-center justify-start">
+            {localMessages.length > 0 && (
+              <Button
+                fitContent={true}
+                clickAction={handleDeleteButtonClick}
+                disabled={isDeleting}
+                primary={false}
+                tooltip={t("delete_conversation")}
+              >
+                <TrashIcon/>
+              </Button>
+            )}
+          </div>
+          <div className="flex-1 min-w-0 flex justify-center items-center overflow-hidden h-full">
+            <h1 className="text-xl font-bold min-w-0 whitespace-nowrap truncate">
+              {conversationLoading
+                ? t('loading')
+                : conversation?.title || t('new_chat')
+              }
+            </h1>
+          </div>
+          <div className="w-10 shrink-0"/>
+        </div>
+      </TopTitle>
+
+      <div className="flex flex-col flex-1 h-full bg-base-300 overflow-hidden">
+        {/* Messages Area */}
+        <div className="flex-1 overflow-y-auto p-4 space-y-4">
+          {localMessages.length === 0 && !conversationLoading && (
+            <div className="flex flex-col items-center space-y-6 mt-8">
+              <div className="text-center text-base-content/60">
+                <p className="text-lg mb-4">{t('start_conversation')}</p>
+                <p className="text-sm mb-6">{t('sample_questions')}</p>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 w-full max-w-2xl">
+                <button
+                  onClick={() => handleSampleQuestionClick(isLoggedIn ? t('sample_question_1') : t('sample_question_guest_1'))}
+                  className="p-4 text-left bg-base-200 hover:bg-base-300 rounded-lg transition-colors duration-200 border border-base-300 hover:border-primary"
+                >
+                  <span className="text-sm">{isLoggedIn ? t('sample_question_1') : t('sample_question_guest_1')}</span>
+                </button>
+
+                <button
+                  onClick={() => handleSampleQuestionClick(isLoggedIn ? t('sample_question_2') : t('sample_question_guest_2'))}
+                  className="p-4 text-left bg-base-200 hover:bg-base-300 rounded-lg transition-colors duration-200 border border-base-300 hover:border-primary"
+                >
+                  <span className="text-sm">{isLoggedIn ? t('sample_question_2') : t('sample_question_guest_2')}</span>
+                </button>
+
+              </div>
+            </div>
+          )}
+
+          {conversationLoading && localMessages.length === 0 && (
+            <div className="text-center text-base-content/60 mt-8">
+              <p>{t('loading_conversation')}</p>
+            </div>
+          )}
+
+          {localMessages.map((message) => (
+            <div
+              key={message.id}
+              className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
+            >
+              <div
+                className={`max-w-[80%] p-3 rounded-lg ${
+                  message.sender === 'user'
+                    ? 'bg-primary text-primary-content'
+                    : 'bg-base-200 text-base-content border border-neutral'
+                }`}
+              >
+                <div className="markdown-content">
+                  <ReactMarkdown>
+                    {getMessageContent(message)}
+                  </ReactMarkdown>
+                </div>
+                {message.sender === 'rate_limit' && (
+                  <div className={"py-4"}>
+                    <Button fitContent={true} clickAction={() => router.push('/register')} primary={true}>
+                      {t('register')}
+                    </Button>
+                  </div>
+                )}
+                {message.items && message.items.length > 0 &&
+                    <Divider />
+                }
+                {message.items && message.items.length > 0 && (
+                  <ItemCarousel
+                    items={message.items}
+                    providers={providers}
+                    title={t('suggested_items')}
+                    collapsible={true}
+                    defaultExpanded={true}
+                  />
+                )}
+                <p className="text-xs opacity-70 mt-1">
+                  {message.timestamp.toLocaleTimeString()}
+                </p>
+              </div>
+            </div>
+          ))}
+
+          {(isLoading || conversation?.isWaitingForResponse) && (
+            <div className="flex justify-start">
+              <div className="bg-base-200 text-base-content max-w-[80%] p-3 rounded-lg border border-neutral">
+                <div className="flex space-x-1">
+                  <div className="w-2 h-2 bg-current rounded-full animate-bounce"></div>
+                  <div className="w-2 h-2 bg-current rounded-full animate-bounce"
+                       style={{animationDelay: '0.1s'}}></div>
+                  <div className="w-2 h-2 bg-current rounded-full animate-bounce"
+                       style={{animationDelay: '0.2s'}}></div>
+                </div>
+              </div>
+            </div>
+          )}
+          <div ref={messagesEndRef}/>
+        </div>
+
+        <ChatInput
+          value={inputMessage}
+          onChange={setInputMessage}
+          onSend={handleSendMessage}
+          disabled={isLoading}
+          characterLimit={CHARACTER_LIMIT}
+          messageLimit={MESSAGE_LIMIT}
+          userMessageCount={userMessageCount}
+          isMessageLimitReached={isMessageLimitReached}
+        />
+      </div>
+
+      {/* Modals */}
+      <DeleteChatConfirmationModal
+        onDeleteChat={handleDeleteChat}
+        isDeleting={isDeleting}
+      />
+      <ErrorModal
+        title={errorMessage.title}
+        message={errorMessage.message}
+      />
+    </div>
+  );
+};
+
+export default ChatPageComponent;

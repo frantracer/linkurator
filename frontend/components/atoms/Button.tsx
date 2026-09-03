@@ -1,0 +1,87 @@
+import React from "react";
+import Link from "next/link";
+import classNames from "classnames";
+
+type ButtonProps = {
+  clickAction?: () => void
+  href?: string
+  relatedModalId?: string
+  showOnlyOnMobile?: boolean
+  hideOnMobile?: boolean
+  fitContent?: boolean
+  disabled?: boolean
+  primary?: boolean
+  borderless?: boolean
+  tooltip?: string
+  children?: React.ReactNode
+  stopPropagation?: boolean
+}
+
+const noAction = () => {
+}
+
+const Button = (
+  {
+    clickAction = noAction,
+    href = undefined,
+    relatedModalId = undefined,
+    showOnlyOnMobile = false,
+    hideOnMobile = false,
+    fitContent = true,
+    disabled = false,
+    primary = true,
+    borderless = false,
+    tooltip = undefined,
+    stopPropagation = true,
+    children
+  }: ButtonProps
+) => {
+  const className = classNames(
+    "btn btn-sm rounded px-1 text-base-content border-neutral",
+    {
+      "btn-outline": !primary && !borderless,
+      "w-fit": fitContent,
+      "flex-1": !fitContent,
+      "w-full": !fitContent,
+      "lg:hidden": showOnlyOnMobile,
+      "hidden lg:flex": hideOnMobile,
+      "opacity-50 cursor-not-allowed": disabled,
+      "bg-primary hover:!bg-primary hover:brightness-110": primary,
+      "btn-ghost": borderless && !primary,
+      "border-0": borderless,
+      "text-white": primary,
+      "hover:!text-primary hover:!bg-base-300 hover:!border-primary": borderless || !primary,
+    }
+  );
+
+  if (disabled) {
+    clickAction = noAction;
+    relatedModalId = undefined;
+  }
+
+  const handleClick = (e: React.MouseEvent<HTMLLabelElement>) => {
+    if (stopPropagation) {
+      e.stopPropagation();
+    }
+    (e.currentTarget as HTMLElement).blur();
+    if (clickAction) {
+      clickAction();
+    }
+  }
+
+  if (href) {
+    return (
+      <Link href={href} className={className} title={tooltip}>
+        {children}
+      </Link>
+    );
+  }
+
+  return (
+    <label role={"button"} onClick={handleClick} htmlFor={relatedModalId} className={className} title={tooltip}>
+      {children}
+    </label>
+  );
+}
+
+export default Button;
