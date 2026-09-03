@@ -1,15 +1,2 @@
-secrets
-.venv
-/data
-
-.mypy_cache
-.pytest_cache
-__pycache__
-.coverage
-coverage.xml
-
-.idea
-.vscode
-
-.config.json
-.env
+/.env
+/.config.json
