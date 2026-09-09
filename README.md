@@ -2,9 +2,31 @@
 
 Linkurator helps you explore and categorize your subscriptions from content providers like YouTube, Spotify, Patreon, and RSS.
 
-This is a monorepo with two independently deployed services:
+## Running the app
 
-- [`backend/`](backend/README.md) — FastAPI + PostgreSQL + RabbitMQ API and background processor.
-- [`frontend/`](frontend/README.md) — Next.js web app.
+Requirements: [Docker and Docker Compose](https://docs.docker.com/engine/install/).
 
-Each service keeps its own README, CLAUDE.md, dependencies, and CI workflow (`.github/workflows/backend-ci.yml`, `.github/workflows/frontend-ci.yml`), which only run when files under their respective directory change. See the root [CLAUDE.md](CLAUDE.md) for layout and CI details.
+Bootstrap the configuration files `.config.json`/`.env` once with:
+```bash
+docker compose run --rm generate-env
+```
+
+Then start the application with:
+```bash
+docker compose up
+```
+
+- Frontend: http://localhost:3000
+- API docs: http://localhost:9000/docs
+
+Stop everything with:
+```bash
+docker compose down
+```
+
+## Building the app
+
+To build the backend and frontend images from source, run:
+```bash
+docker compose build
+```

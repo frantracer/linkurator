@@ -1,5 +1,6 @@
-const WEB_BASE_URL = process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : 'https://www.linkurator.com';
-const API_BASE_URL = process.env.NODE_ENV === 'development' ? 'http://localhost:9000' : 'https://api.linkurator.com';
+const IS_DEVELOPMENT = process.env.LINKURATOR_APP_ENV === 'development' || process.env.NODE_ENV === 'development';
+const WEB_BASE_URL = IS_DEVELOPMENT ? 'http://localhost:3000' : 'https://www.linkurator.com';
+const API_BASE_URL = IS_DEVELOPMENT ? 'http://localhost:9000' : 'https://api.linkurator.com';
 const SUBSCRIPTIONS_URL = `${API_BASE_URL}/subscriptions/`;
 const TOPICS_URL = `${API_BASE_URL}/topics/`;
 const ITEMS_URL = `${API_BASE_URL}/items/`;

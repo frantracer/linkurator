@@ -1,3 +1,5 @@
+name: linkurator
+
 services:
   generate-env:
     image: frantracer/linkurator-api

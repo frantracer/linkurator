@@ -4,6 +4,8 @@ on:
   push:
     paths:
       - 'frontend/**'
+      - '.github/workflows/frontend-ci.yml'
+  workflow_dispatch:
 
 defaults:
   run:
@@ -12,11 +14,14 @@ defaults:
 jobs:
   build:
     runs-on: ubuntu-latest
+    environment: Production
+    env:
+      DOCKER_PUBLISH_BRANCH: main
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: '20'
           cache: 'yarn'
           cache-dependency-path: frontend/yarn.lock
       - name: Install dependencies
@@ -25,5 +30,16 @@ jobs:
         run: yarn lint
       - name: Test
         run: yarn test
-      - name: Build
-        run: yarn build
+      - name: Install Docker
+        if: github.ref_name == env.DOCKER_PUBLISH_BRANCH
+        uses: docker/setup-buildx-action@v3
+      - name: Build image
+        if: github.ref_name == env.DOCKER_PUBLISH_BRANCH
+        run: docker build -t frantracer/linkurator-frontend .
+      - name: Push image to Docker Hub
+        if: github.ref_name == env.DOCKER_PUBLISH_BRANCH
+        run: |
+          docker login -u frantracer -p "$LINKURATOR_DOCKER_TOKEN"
+          docker push frantracer/linkurator-frontend
+        env:
+          LINKURATOR_DOCKER_TOKEN: ${{secrets.LINKURATOR_DOCKER_TOKEN}}

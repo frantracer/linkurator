@@ -1,35 +1,21 @@
+name: linkurator
+
+include:
+  - backend/docker-compose.yml
+
 services:
   postgres:
-    image: postgres:16-alpine
-    container_name: linkurator-postgres
-    restart: unless-stopped
-    ports:
-      - "5432:5432"
+    profiles: !reset []
     environment:
-      - POSTGRES_USER=develop
-      - POSTGRES_PASSWORD=develop
       - POSTGRES_DB=main
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U develop"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d main"]
       interval: 5s
       timeout: 5s
       retries: 10
 
   queue:
-    image: rabbitmq:3.13.0-management
-    container_name: linkurator-queue
-    hostname: linkurator-queue
-    restart: unless-stopped
-    ports:
-      - "5672:5672"
-      - "15672:15672"
-    environment:
-      - RABBITMQ_DEFAULT_USER=develop
-      - RABBITMQ_DEFAULT_PASS=develop
-    volumes:
-      - rabbitmq_data:/var/lib/rabbitmq
+    profiles: !reset []
     healthcheck:
       test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
       interval: 5s
@@ -37,14 +23,12 @@ services:
       retries: 10
 
   api:
+    profiles: !reset []
     build:
       context: ./backend
-    image: linkurator-backend:local
-    container_name: linkurator-api
-    network_mode: host
+    image: frantracer/linkurator-api
     volumes:
       - ./.config.json:/app/.config.json:ro
-    command: ["make", "run-api"]
     depends_on:
       postgres:
         condition: service_healthy
@@ -52,14 +36,12 @@ services:
         condition: service_healthy
 
   processor:
+    profiles: !reset []
     build:
       context: ./backend
-    image: linkurator-backend:local
-    container_name: linkurator-processor
-    network_mode: host
+    image: frantracer/linkurator-api
     volumes:
       - ./.config.json:/app/.config.json:ro
-    command: ["make", "run-processor"]
     depends_on:
       postgres:
         condition: service_healthy
@@ -69,21 +51,12 @@ services:
   frontend:
     build:
       context: ./frontend
-      dockerfile_inline: |
-        FROM node:20-alpine
-        WORKDIR /app
-        COPY package.json yarn.lock ./
-        RUN yarn install --frozen-lockfile
-        COPY . .
-        CMD ["yarn", "dev"]
-    image: linkurator-frontend:local
+    image: frantracer/linkurator-frontend
     container_name: linkurator-frontend
     network_mode: host
-    environment:
-      - NODE_ENV=development
     depends_on:
       - api
 
-volumes:
-  postgres_data:
-  rabbitmq_data:
+  generate-env:
+    volumes:
+      - ./:/output
