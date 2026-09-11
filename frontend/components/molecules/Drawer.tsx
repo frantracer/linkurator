@@ -35,7 +35,7 @@ const Drawer = (
       <div className="drawer-content flex flex-col w-full h-full min-h-0 overflow-y-auto">
         {mainContent}
       </div>
-      <div className="drawer-side z-40">
+      <div className="drawer-side z-[60]">
         <label aria-label="close sidebar" className="drawer-overlay"
                onClick={handleClickOrTouchBackground}/>
         {sideContent}
