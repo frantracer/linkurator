@@ -22,12 +22,14 @@ import {MenuItem} from "./MenuItem";
 import {FindTopicModalId} from "../organism/FindTopicModal";
 import {FindCuratorModalId} from "../organism/FindCuratorModal";
 import ProfileDropdown from "../organism/ProfileDropdown";
+import GuestAvatarDropdown from "../organism/GuestAvatarDropdown";
+import AvatarPlaceholder from "./AvatarPlaceholder";
 import useProfile from "../../hooks/useProfile";
 
 const BottomMenuMobile = () => {
   const router = useRouter();
   const t = useTranslations("common");
-  const {profile} = useProfile();
+  const {profile, profileIsLoading} = useProfile();
 
   const openLateralMenu = () => {
     showLateralMenu(LATERAL_NAVIGATION_MENU_ID);
@@ -123,7 +125,9 @@ const BottomMenuMobile = () => {
         </MenuItem>
       </Dropdown>
 
-      {profile && <ProfileDropdown profile={profile} bottom={false}/>}
+      {profileIsLoading && <AvatarPlaceholder/>}
+      {!profileIsLoading && profile && <ProfileDropdown profile={profile} bottom={false}/>}
+      {!profileIsLoading && !profile && <GuestAvatarDropdown bottom={false}/>}
     </div>
   );
 };
