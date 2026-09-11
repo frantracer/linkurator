@@ -6,13 +6,13 @@ import Button from "../components/atoms/Button"
 import Collapse from "../components/atoms/Collapse";
 import FlexColumn from "../components/atoms/FlexColumn";
 import ThemeToggleButton from "../components/molecules/ThemeToggleButton";
-import Card from "../components/molecules/Card";
+import LogoCarousel from "../components/molecules/LogoCarousel";
 import LanguageSelector from "../components/molecules/LanguageSelector";
 import {LogoImage} from "../components/atoms/LogoImage";
 import FlexRow from "../components/atoms/FlexRow";
 import FlexItem from "../components/atoms/FlexItem";
 import {useTranslations} from "next-intl";
-import {SubscriptionIcon, ChatBubbleIcon, LinkedinIcon, RectangleGroup, ThumbsUpIcon, CuratorIcon} from "../components/atoms/Icons";
+import {LinkedinIcon, GithubIcon} from "../components/atoms/Icons";
 import {useEffect} from "react";
 import useProfile from "../hooks/useProfile";
 import {paths} from "../configuration";
@@ -66,16 +66,16 @@ export default function LandingPage() {
           <span className="text-xl font-bold">Linkurator</span>
         </FlexRow>
         <FlexRow position={"center"} hideOnMobile={true}>
-          <Link href="#features" className="text-sm font-medium hover:underline underline-offset-4">
-            {t("features")}
-          </Link>
-          <div className={"w-4"}/>
           <Link href="#how-it-works" className="text-sm font-medium hover:underline underline-offset-4">
             {t("how_it_works")}
           </Link>
           <div className={"w-4"}/>
-          <Link href="#testimonials" className="text-sm font-medium hover:underline underline-offset-4">
-            {t("testimonials")}
+          <Link href="#integrations" className="text-sm font-medium hover:underline underline-offset-4">
+            {t("integrations")}
+          </Link>
+          <div className={"w-4"}/>
+          <Link href="#about" className="text-sm font-medium hover:underline underline-offset-4">
+            {t("about")}
           </Link>
           <div className={"w-4"}/>
           <Link href="#faq" className="text-sm font-medium hover:underline underline-offset-4">
@@ -94,28 +94,17 @@ export default function LandingPage() {
       </div>
       <main className="flex-1">
         {/* Hero Section */}
-        <section className="w-full py-12 md:py-24 lg:py-32 xl:py-48 bg-base-200">
+        <section className="w-full pt-12 pb-12 px-6 bg-base-200">
           <div className="mx-auto container px-4 md:px-6">
             <div className="grid gap-6 lg:grid-cols-[1fr_600px] lg:gap-12 xl:grid-cols-[1fr_700px]">
               <div className="flex flex-col justify-center space-y-4">
-                <div className="space-y-2">
+                <div className="space-y-12 py-4">
                   <h1 className="text-3xl font-bold tracking-tighter sm:text-5xl xl:text-6xl/none">
                     {t("hero_title")}
                   </h1>
                   <p className="max-w-[600px] text-muted-foreground md:text-xl">
                     {t("hero_subtitle_1")}
                   </p>
-                  <p className="max-w-[600px] text-muted-foreground md:text-xl">
-                    {t("hero_subtitle_2")}
-                  </p>
-                </div>
-                <div className="flex flex-col gap-2 min-[400px]:flex-row">
-                  <Button href={"/register"}>
-                    {t("sign_up")}
-                  </Button>
-                  <Button href={"#trending-curations"} primary={false}>
-                    {t("explore_now")}
-                  </Button>
                 </div>
               </div>
               <div className="flex items-center justify-center">
@@ -133,8 +122,20 @@ export default function LandingPage() {
           </div>
         </section>
 
+        {/* No Algorithm Callout */}
+        <section className="w-full pt-12 pb-12 px-6 bg-base-100">
+          <div className="mx-auto container px-4 md:px-6 text-center">
+            <p className="text-xl md:text-2xl font-bold tracking-tight text-primary">
+              {t("no_algorithm_statement")}
+            </p>
+            <p className="mt-2 text-sm md:text-base text-muted-foreground">
+              {t("no_algorithm_subtitle")}
+            </p>
+          </div>
+        </section>
+
         {/* Trending Curations */}
-        <section id="trending-curations" className="w-full py-8 bg-base-100">
+        <section id="trending-curations" className="w-full pt-12 pb-12 px-6 bg-base-200">
           <FlexColumn position={"center"}>
             <h2 className="text-2xl font-bold text-center">{t("trending_curations")}</h2>
             <div className="container px-4 md:px-6">
@@ -160,43 +161,8 @@ export default function LandingPage() {
           </FlexColumn>
         </section>
 
-        {/* Chat Section */}
-        <section className="w-full py-12 md:py-24 lg:py-32 bg-base-200">
-          <div className="mx-auto container px-4 md:px-6">
-            <div className="grid gap-6 lg:grid-cols-2 lg:gap-12 items-center">
-              <div className="flex flex-col justify-center space-y-4">
-                <div className="space-y-2">
-                  <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">
-                    {t("chat_section_title")}
-                  </h2>
-                  <p className="text-muted-foreground md:text-xl">
-                    {t("chat_section_subtitle")}
-                  </p>
-                  <p className="text-muted-foreground">
-                    {t("chat_section_description")}
-                  </p>
-                </div>
-                <div className="flex flex-col gap-2 min-[400px]:flex-row">
-                  <Button href={"/chats"}>
-                    {t("try_chat")}
-                  </Button>
-                </div>
-              </div>
-              <div className="flex items-center justify-center">
-                <div className="relative flex items-center justify-center w-64 h-64 rounded-full bg-primary/10">
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-32 h-32 text-primary">
-                    <path fillRule="evenodd"
-                          d="M4.848 2.771A49.144 49.144 0 0 1 12 2.25c2.43 0 4.817.178 7.152.52 1.978.292 3.348 2.024 3.348 3.97v6.02c0 1.946-1.37 3.678-3.348 3.97a48.901 48.901 0 0 1-3.476.383.39.39 0 0 0-.297.17l-2.755 4.133a.75.75 0 0 1-1.248 0l-2.755-4.133a.39.39 0 0 0-.297-.17 48.9 48.9 0 0 1-3.476-.384c-1.978-.29-3.348-2.024-3.348-3.97V6.741c0-1.946 1.37-3.68 3.348-3.97ZM6.75 8.25a.75.75 0 0 1 .75-.75h9a.75.75 0 0 1 0 1.5h-9a.75.75 0 0 1-.75-.75Zm.75 2.25a.75.75 0 0 0 0 1.5H12a.75.75 0 0 0 0-1.5H7.5Z"
-                          clipRule="evenodd"/>
-                  </svg>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
         {/* How It Works */}
-        <section id="how-it-works" className="w-full py-12 md:py-24 lg:py-32 bg-base-100">
+        <section id="how-it-works" className="w-full pt-12 pb-12 px-6 bg-base-100">
           <FlexColumn position={"center"}>
             <div className="flex flex-col items-center justify-center space-y-4 text-center">
               <div className="space-y-2">
@@ -230,8 +196,8 @@ export default function LandingPage() {
                   </svg>,
                 },
                 {
-                  title: t("filter_and_recommend"),
-                  description: t("filter_and_recommend_subtitle"),
+                  title: t("filter_step"),
+                  description: t("filter_step_subtitle"),
                   icon: <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5"
                              stroke="currentColor"
                              className="size-10">
@@ -240,8 +206,8 @@ export default function LandingPage() {
                   </svg>,
                 },
                 {
-                  title: t("discover_and_follow"),
-                  description: t("discover_and_follow_subtitle"),
+                  title: t("share_step"),
+                  description: t("share_step_subtitle"),
                   icon: <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
                              className="size-10">
                     <path fillRule="evenodd"
@@ -264,190 +230,75 @@ export default function LandingPage() {
           </FlexColumn>
         </section>
 
-        {/* Interactive Demo */}
-        <section className="w-full py-12 md:py-24 lg:py-32 bg-base-200">
+        {/* Integrations Section */}
+        <section id="integrations" className="w-full pt-12 pb-12 px-6 bg-base-200">
           <FlexColumn position={"center"}>
             <div className="flex flex-col items-center justify-center space-y-4 text-center">
               <div className="space-y-2">
-                <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">{t("watch_video")}</h2>
+                <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">{t("integrations")}</h2>
                 <p
                   className="max-w-[900px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                  {t("watch_video_subtitle")}
+                  {t("integrations_subtitle")}
                 </p>
               </div>
-              <iframe
-                className={"aspect-video"}
-                width={"100%"}
-                src="https://www.youtube.com/embed/7EcJGmXnnpM?si=dPuDftY9V7P86J9k"
-                title="YouTube video player"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                referrerPolicy="strict-origin-when-cross-origin"
-                allowFullScreen/>
+            </div>
+            <LogoCarousel items={[
+              {src: "/youtube_icon.webp", alt: "YouTube logo", label: "YouTube"},
+              {src: "/spotify_icon.webp", alt: "Spotify logo", label: "Spotify"},
+              {src: "/rss_icon.webp", alt: "RSS logo", label: "RSS"},
+              {src: "/patreon_icon.webp", alt: "Patreon logo", label: "Patreon"},
+              {src: "/podimo_icon.webp", alt: "Podimo logo", label: "Podimo (" + t("soon") + ")"},
+              {src: "/substack_icon.webp", alt: "Substack logo", label: "Substack (" + t("soon") + ")"},
+            ]}/>
+          </FlexColumn>
+        </section>
+
+        {/* Who We Are */}
+        <section id="about" className="w-full pt-12 pb-12 px-6 bg-base-100">
+          <FlexColumn position={"center"}>
+            <div className="flex flex-col items-center justify-center space-y-4 text-center max-w-2xl">
+              <div className="relative h-24 w-24 overflow-hidden rounded-full border shadow-sm bg-primary/10">
+                <Image
+                  src="/frantracer.jpg"
+                  alt="Fran, creator of Linkurator"
+                  fill
+                  sizes="96px"
+                  className="object-cover"
+                />
+              </div>
+              <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">{t("about_title")}</h2>
+              <p className="text-muted-foreground md:text-xl/relaxed">{t("about_description_1")}</p>
+              <p className="text-muted-foreground md:text-xl/relaxed">{t("about_description_2")}</p>
+              <Button href="https://www.linkedin.com/in/frantracer/" primary={false}>
+                <LinkedinIcon/>
+                {t("about_linkedin_cta")}
+              </Button>
             </div>
           </FlexColumn>
         </section>
 
-        {/* Features Section */}
-        <section id="features" className="w-full py-12 md:py-24 lg:py-32 bg-base-100">
+        {/* Open Source */}
+        <section id="open-source" className="w-full pt-12 pb-12 px-6 bg-base-200">
           <FlexColumn position={"center"}>
-            <div className="flex flex-col items-center justify-center space-y-4 text-center">
-              <div className="space-y-2">
-                <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">{t("features")}</h2>
-                <p
-                  className="max-w-[900px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                  {t("features_subtitle")}
-                </p>
-              </div>
-            </div>
-            <div className="mx-auto grid max-w-5xl items-center gap-6 py-12 lg:grid-cols-2 lg:gap-12">
-              <div className="flex flex-col justify-center space-y-4">
-                <ul className="grid gap-6">
-                  {[
-                    {
-                      title: t("features_list.feature_1_title"),
-                      description: t("features_list.feature_1_subtitle"),
-                      icon: <SubscriptionIcon/>,
-                    },
-                    {
-                      title: t("features_list.feature_2_title"),
-                      description: t("features_list.feature_2_subtitle"),
-                      icon: <RectangleGroup/>,
-                    },
-                    {
-                      title: t("features_list.feature_3_title"),
-                      description: t("features_list.feature_3_subtitle"),
-                      icon: <CuratorIcon/>,
-                    },
-                    {
-                      title: t("features_list.feature_4_title"),
-                      description: t("features_list.feature_4_subtitle"),
-                      icon: <ThumbsUpIcon/>,
-                    },
-                    {
-                      title: t("features_list.feature_5_title"),
-                      description: t("features_list.feature_5_subtitle"),
-                      icon: <ChatBubbleIcon/>,
-                    },
-                  ].map((feature, i) => (
-                    <li key={i} className="flex items-start gap-4">
-                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10">
-                        {feature.icon}
-                      </div>
-                      <div className="space-y-1">
-                        <h3 className="text-xl font-bold">{feature.title}</h3>
-                        <p className="text-muted-foreground">{feature.description}</p>
-                      </div>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-            <div className={""}>
-              <div className={"flex flex-row flex-wrap items-center justify-center gap-4"}>
-                <div className={"flex flex-row items-center justify-start"}>
-                  <Image
-                    src="/youtube_icon.webp"
-                    width={60}
-                    height={60}
-                    alt="YouTube logo"
-                    className="h-8 object-contain"
-                  />
-                  <span>YouTube</span>
-                </div>
-                <div className={"flex flex-row items-center justify-start"}>
-                  <Image
-                    src="/spotify_icon.webp"
-                    width={60}
-                    height={60}
-                    alt="Spotify logo"
-                    className="h-8 object-contain"
-                  />
-                  <span>Spotify</span>
-                </div>
-                <div className={"flex flex-row items-center justify-start"}>
-                  <Image
-                    src="/rss_icon.webp"
-                    width={60}
-                    height={60}
-                    alt="RSS logo"
-                    className="h-8 object-contain"
-                  />
-                  <span>{"RSS"}</span>
-                </div>
-                <div className={"flex flex-row items-center justify-start"}>
-                  <Image
-                    src="/patreon_icon.webp"
-                    width={60}
-                    height={60}
-                    alt="Patreon logo"
-                    className="h-8 object-contain"
-                  />
-                  <span>{"Patreon"}</span>
-                </div>
-                <div className={"flex flex-row items-center justify-start"}>
-                  <Image
-                    src="/podimo_icon.webp"
-                    width={60}
-                    height={60}
-                    alt="Podimo logo"
-                    className="h-8 object-contain"
-                  />
-                  <span>{"Podimo (" + t("soon") + ")"}</span>
-                </div>
-              </div>
-            </div>
-          </FlexColumn>
-        </section>
-
-        {/* Social Proof & Testimonials */}
-        <section id="testimonials" className="w-full py-12 md:py-24 lg:py-32 bg-base-200">
-          <FlexColumn position={"center"}>
-            <div className="flex flex-col items-center justify-center space-y-4 text-center">
-              <div className="space-y-2">
-                <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">{t("testimonials")}</h2>
-                <p
-                  className="max-w-[900px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                  {t("testimonials_subtitle")}
-                </p>
-              </div>
-            </div>
-            <div className="mx-auto grid max-w-5xl gap-6 py-12 lg:grid-cols-3">
-              {[
-                {
-                  quote: t("testimonial_1.quote"),
-                  author: t("testimonial_1.author")
-                },
-                {
-                  quote: t("testimonial_2.quote"),
-                  author: t("testimonial_2.author")
-                },
-                {
-                  quote: t("testimonial_3.quote"),
-                  author: t("testimonial_3.author")
-                },
-              ].map((testimonial, i) => (
-                <Card key={i} title={testimonial.quote}>
-                  <div className="flex items-center gap-4">
-                    <div className="rounded-full bg-primary/10 p-1 h-12 w-12 flex items-center justify-center">
-                      <span className="text-xl font-bold text-primary">{testimonial.author[0]}</span>
-                    </div>
-                    <div>
-                      <h4>{testimonial.author}</h4>
-                    </div>
-                  </div>
-                </Card>
-              ))}
+            <div className="flex flex-col items-center justify-center space-y-4 text-center max-w-2xl">
+              <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">{t("open_source_title")}</h2>
+              <p className="text-muted-foreground md:text-xl/relaxed">{t("open_source_trust")}</p>
+              <p className="text-muted-foreground md:text-xl/relaxed">{t("open_source_description")}</p>
+              <Button href="https://github.com/frantracer/linkurator" primary={false}>
+                <GithubIcon/>
+                {t("open_source_cta")}
+              </Button>
             </div>
           </FlexColumn>
         </section>
 
         {/* Call to Action Section */}
-        <section id="signup" className="w-full py-12 md:py-24 lg:py-32 bg-base-100">
+        <section id="signup" className="w-full pt-12 pb-12 px-6 bg-base-100">
           <FlexColumn position={"center"}>
             <div className="flex flex-col items-center justify-center space-y-4 text-center">
               <div className="space-y-2">
                 <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">{t("ready_to_start")}</h2>
-                <p className="max-w-[600px] text-muted-foreground md:text-xl/relaxed">
+                <p className="max-w-[600px] mx-auto text-muted-foreground md:text-xl/relaxed">
                   {t("ready_to_start_subtitle")}
                 </p>
               </div>
@@ -459,7 +310,7 @@ export default function LandingPage() {
         </section>
 
         {/* FAQ Section */}
-        <section id="faq" className="w-full py-12 md:py-24 lg:py-32 bg-base-200">
+        <section id="faq" className="w-full pt-12 pb-12 px-6 bg-base-200">
           <FlexColumn position={"center"}>
             <div className="flex flex-col items-center justify-center space-y-4 text-center">
               <div className="space-y-2">
@@ -490,7 +341,7 @@ export default function LandingPage() {
               <span className="text-xl font-bold">Linkurator</span>
             </div>
             <p className="text-sm text-muted-foreground">
-              {t("hero_subtitle_1") + " " + t("hero_subtitle_2")}
+              {t("hero_subtitle_1")}
             </p>
             <div className="flex gap-4">
               <Button href="https://www.linkedin.com/company/linkurator">
@@ -504,8 +355,8 @@ export default function LandingPage() {
               <h4 className="text-sm font-medium">{t("product")}</h4>
               <ul className="space-y-2 text-sm">
                 <li>
-                  <Link href="#features" className="text-muted-foreground hover:text-foreground">
-                    {t("features")}
+                  <Link href="#integrations" className="text-muted-foreground hover:text-foreground">
+                    {t("integrations")}
                   </Link>
                 </li>
                 <li>
@@ -534,7 +385,7 @@ export default function LandingPage() {
                   </Link>
                 </li>
                 <li>
-                  <Link href="https://github.com/frantracer/linkurator-frontend"
+                  <Link href="https://github.com/frantracer/linkurator"
                         className="text-muted-foreground hover:text-foreground">
                     {t("source_code")}
                   </Link>
