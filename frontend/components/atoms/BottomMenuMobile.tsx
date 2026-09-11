@@ -1,5 +1,5 @@
 import React from "react";
-import {useRouter} from "next/navigation";
+import {usePathname, useRouter} from "next/navigation";
 import Button from "./Button";
 import {
   BoltIcon,
@@ -28,8 +28,10 @@ import useProfile from "../../hooks/useProfile";
 
 const BottomMenuMobile = () => {
   const router = useRouter();
+  const pathname = usePathname();
   const t = useTranslations("common");
   const {profile, profileIsLoading} = useProfile();
+  const isHome = pathname === paths.HOME;
 
   const openLateralMenu = () => {
     showLateralMenu(LATERAL_NAVIGATION_MENU_ID);
@@ -81,8 +83,8 @@ const BottomMenuMobile = () => {
       <Button
         clickAction={goToHome}
         fitContent={true}
-        primary={false}
-        borderless={true}
+        primary={isHome}
+        borderless={!isHome}
         tooltip={t("home")}
       >
         <HomeIcon/>
