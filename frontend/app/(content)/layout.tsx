@@ -13,7 +13,7 @@ export default function DashboardLayout(
     <div className="flex flex-col h-dvh w-dvw overflow-y-hidden">
       <div className="flex flex-1 overflow-y-hidden min-h-0">
         <LateralNavigationMenu>
-          <div className="flex flex-1 min-h-0 pb-16 lg:pb-0">
+          <div className="flex flex-col flex-1 min-h-0 pb-16 lg:pb-0">
             {children}
           </div>
         </LateralNavigationMenu>
