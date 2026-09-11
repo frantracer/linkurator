@@ -55,7 +55,7 @@ const BottomMenuMobile = () => {
 
   return (
     <div
-      className="flex flex-row bg-base-100 border-t-[1px] border-neutral items-center justify-around p-2 lg:hidden w-full h-16">
+      className="flex flex-row bg-base-100 border-t-[1px] border-neutral items-center justify-around p-2 lg:hidden w-full h-16 fixed inset-x-0 bottom-0 z-50">
       <Button
         clickAction={openLateralMenu}
         fitContent={true}
