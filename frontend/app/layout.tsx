@@ -8,6 +8,7 @@ import { getMessages } from 'next-intl/server';
 import { Analytics } from '@vercel/analytics/next';
 import { ToastProvider } from '../contexts/ToastContext';
 import { getUserTheme } from '../utilities/theme';
+import ClientOnly from '../components/atoms/ClientOnly';
 
 export const metadata: Metadata = {
   title: 'Linkurator',
@@ -41,7 +42,9 @@ export default async function RootLayout(
         <NextIntlClientProvider messages={messages}>
           <ReactQueryProvider>
             <ToastProvider>
-              {children}
+              <ClientOnly>
+                {children}
+              </ClientOnly>
             </ToastProvider>
           </ReactQueryProvider>
         </NextIntlClientProvider>
