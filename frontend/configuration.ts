@@ -1,6 +1,9 @@
 const IS_DEVELOPMENT = process.env.LINKURATOR_APP_ENV === 'development' || process.env.NODE_ENV === 'development';
-const WEB_BASE_URL = IS_DEVELOPMENT ? 'http://localhost:3000' : 'https://www.linkurator.com';
-const API_BASE_URL = IS_DEVELOPMENT ? 'http://localhost:9000' : 'https://api.linkurator.com';
+// In development, derive the host from the browser's address bar (falling back to localhost
+// for server-side rendering) so the app also works when opened via a LAN IP, e.g. from a phone.
+const DEV_HOSTNAME = typeof window !== 'undefined' ? window.location.hostname : 'localhost';
+const WEB_BASE_URL = IS_DEVELOPMENT ? `http://${DEV_HOSTNAME}:3000` : 'https://www.linkurator.com';
+const API_BASE_URL = IS_DEVELOPMENT ? `http://${DEV_HOSTNAME}:9000` : 'https://api.linkurator.com';
 const SUBSCRIPTIONS_URL = `${API_BASE_URL}/subscriptions/`;
 const TOPICS_URL = `${API_BASE_URL}/topics/`;
 const ITEMS_URL = `${API_BASE_URL}/items/`;

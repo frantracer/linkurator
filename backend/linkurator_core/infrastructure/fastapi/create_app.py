@@ -297,7 +297,8 @@ def create_app_from_handlers(handlers: Handlers) -> FastAPI:
     app.add_middleware(
         CORSMiddleware,
         allow_origins=["http://localhost:3000", "https://localhost",
-                       "https://linkurator.com", "https://www.linkurator.com"],
+                       "https://linkurator.com", "https://www.linkurator.com",
+                       "http://10.75.212.116:3000"],
         allow_credentials=True,
         allow_methods=["*"],
         allow_headers=["*"],
