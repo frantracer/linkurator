@@ -37,11 +37,11 @@ export default function LandingPage() {
     },
     {
       question: t("faq_question_2"),
-      answer: t("faq_answer_2"),
+      answer: t("faq_answer_2")
     },
     {
       question: t("faq_question_3"),
-      answer: t("faq_answer_3")
+      answer: t("faq_answer_3"),
     },
     {
       question: t("faq_question_4"),
@@ -50,10 +50,6 @@ export default function LandingPage() {
     {
       question: t("faq_question_5"),
       answer: t("faq_answer_5"),
-    },
-    {
-      question: t("faq_question_6"),
-      answer: t("faq_answer_6"),
     },
   ]
 
