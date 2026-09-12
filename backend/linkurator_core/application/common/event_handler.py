@@ -35,7 +35,7 @@ class EventHandler:
     send_validate_new_user_email: SendValidateNewUserEmail
     send_welcome_email: SendWelcomeEmail
     process_user_query_handler: ProcessUserQueryHandler
-    summarize_subscription_handler: SummarizeSubscriptionHandler
+    summarize_subscription_handler: SummarizeSubscriptionHandler | None
 
     async def handle(self, event: Event) -> None:
         if isinstance(event, SubscriptionItemsBecameOutdatedEvent):
@@ -51,6 +51,7 @@ class EventHandler:
         elif isinstance(event, NewChatQueryEvent):
             await self.process_user_query_handler.handle(event.chat_id, event.query)
         elif isinstance(event, SubscriptionNeedsSummarizationEvent):
-            await self.summarize_subscription_handler.handle(event.subscription_id)
+            if self.summarize_subscription_handler is not None:
+                await self.summarize_subscription_handler.handle(event.subscription_id)
         else:
             pass

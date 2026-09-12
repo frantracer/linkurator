@@ -56,12 +56,6 @@
     },
     "service_account_email": ""
   },
-  "mistral_ai": {
-    "api_key": ""
-  },
-  "openai": {
-    "api_key": ""
-  },
   "providers": {
     "youtube": {
       "enabled": false,
@@ -84,7 +78,15 @@
     }
   },
   "ai_agent": {
-    "base_url": "http://localhost:9000"
+    "base_url": "http://localhost:9000",
+    "openai": {
+      "enabled": false,
+      "api_key": ""
+    },
+    "mistral_ai": {
+      "enabled": false,
+      "api_key": ""
+    }
   },
   "vpn": {
     "enabled": false,

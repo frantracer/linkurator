@@ -206,8 +206,8 @@ async def run_processor() -> None:  # pylint: disable=too-many-locals
         email_sender = GmailEmailSender(account_service=google_domain_service)
 
     agent_model = create_agent_model(
-        openai_api_key=settings.openai.api_key,
-        mistral_api_key=settings.mistral_ai.api_key,
+        openai_api_key=settings.ai_agent.openai.api_key if settings.ai_agent.openai.enabled else None,
+        mistral_api_key=settings.ai_agent.mistral_ai.api_key if settings.ai_agent.mistral_ai.enabled else None,
     )
 
     ai_agent_service = MainQueryAgent(
@@ -220,9 +220,11 @@ async def run_processor() -> None:  # pylint: disable=too-many-locals
         model=agent_model,
     )
 
-    subscription_summarizer_service = SubscriptionSummarizerService(
-        model=agent_model,
-    )
+    subscription_summarizer_service: SubscriptionSummarizerService | None = None
+    if agent_model is not None:
+        subscription_summarizer_service = SubscriptionSummarizerService(
+            model=agent_model,
+        )
 
     # Event bus
     event_bus = RabbitMQEventBus(host=str(rabbitmq_settings.ip_address), port=rabbitmq_settings.port,
@@ -278,10 +280,12 @@ async def run_processor() -> None:  # pylint: disable=too-many-locals
         chat_repository=chat_repository,
         query_agent_service=ai_agent_service,
     )
-    summarize_subscription_handler = SummarizeSubscriptionHandler(
-        subscription_repository=subscription_repository,
-        summarizer_service=subscription_summarizer_service,
-    )
+    summarize_subscription_handler: SummarizeSubscriptionHandler | None = None
+    if subscription_summarizer_service is not None:
+        summarize_subscription_handler = SummarizeSubscriptionHandler(
+            subscription_repository=subscription_repository,
+            summarizer_service=subscription_summarizer_service,
+        )
     find_subscriptions_for_summarization = FindSubscriptionsForSummarizationHandler(
         subscription_repository=subscription_repository,
         event_bus=event_bus,
@@ -312,7 +316,8 @@ async def run_processor() -> None:  # pylint: disable=too-many-locals
     scheduler.schedule_recurring_task(task=find_outdated_subscriptions.handle, interval_seconds=60 * 5)
     scheduler.schedule_recurring_task(task=find_deprecated_items.handle, interval_seconds=60 * 5)
     scheduler.schedule_recurring_task(task=find_zero_duration_items.handle, interval_seconds=60 * 5)
-    scheduler.schedule_recurring_task(task=find_subscriptions_for_summarization.handle, interval_seconds=60 * 60 * 4)
+    if summarize_subscription_handler is not None:
+        scheduler.schedule_recurring_task(task=find_subscriptions_for_summarization.handle, interval_seconds=60 * 60 * 4)
 
     await run_parallel(
         event_bus.start(),

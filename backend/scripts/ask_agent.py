@@ -51,8 +51,8 @@ async def main() -> None:
         chat_repository=chat_repository,
         base_url="http://localhost:8000",
         model=create_agent_model(
-            openai_api_key=settings.openai.api_key,
-            mistral_api_key=settings.mistral_ai.api_key,
+            openai_api_key=settings.ai_agent.openai.api_key if settings.ai_agent.openai.enabled else None,
+            mistral_api_key=settings.ai_agent.mistral_ai.api_key if settings.ai_agent.mistral_ai.enabled else None,
         ),
     )
 

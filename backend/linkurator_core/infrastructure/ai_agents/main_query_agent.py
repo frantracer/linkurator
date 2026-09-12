@@ -1,4 +1,5 @@
 import logging
+from dataclasses import dataclass
 from uuid import UUID
 
 import logfire
@@ -28,6 +29,15 @@ from linkurator_core.infrastructure.ai_agents.topic_manager_agent import (
 )
 from linkurator_core.infrastructure.ai_agents.utils import build_chat_context, parse_ids_to_uuids
 
+NO_LLM_CONFIGURED_MESSAGE = "Configure any LLM credential to start chatting"
+
+
+@dataclass
+class MainQueryAgentSubAgents:
+    router_agent: RouterAgent
+    recommendations_agent: RecommendationsAgent
+    topic_manager_agent: TopicManagerAgent
+
 
 class MainQueryAgent(QueryAgentService):
     def __init__(
@@ -38,7 +48,7 @@ class MainQueryAgent(QueryAgentService):
             topic_repository: TopicRepository,
             chat_repository: ChatRepository,
             base_url: str,
-            model: Model,
+            model: Model | None,
     ) -> None:
         self.user_repository = user_repository
         self.subscription_repository = subscription_repository
@@ -47,25 +57,38 @@ class MainQueryAgent(QueryAgentService):
         self.chat_repository = chat_repository
         self.base_url = base_url
 
-        self.router_agent = RouterAgent(
-            model=model,
-        )
-        self.recommendations_agent = RecommendationsAgent(
-            model=model,
-            base_url=base_url,
-            user_repository=user_repository,
-            subscription_repository=subscription_repository,
-            item_repository=item_repository,
-            topic_repository=topic_repository,
-        )
-        self.topic_manager_agent = TopicManagerAgent(
-            model=model,
-            user_repository=user_repository,
-            subscription_repository=subscription_repository,
-            topic_repository=topic_repository,
-        )
+        self._agents: MainQueryAgentSubAgents | None = None
+        if model is not None:
+            self._agents = MainQueryAgentSubAgents(
+                router_agent=RouterAgent(
+                    model=model,
+                ),
+                recommendations_agent=RecommendationsAgent(
+                    model=model,
+                    base_url=base_url,
+                    user_repository=user_repository,
+                    subscription_repository=subscription_repository,
+                    item_repository=item_repository,
+                    topic_repository=topic_repository,
+                ),
+                topic_manager_agent=TopicManagerAgent(
+                    model=model,
+                    user_repository=user_repository,
+                    subscription_repository=subscription_repository,
+                    topic_repository=topic_repository,
+                ),
+            )
 
     async def query(self, user_id: UUID | None, query: str, chat_id: UUID) -> AgentQueryResult:
+        agents = self._agents
+        if agents is None:
+            return AgentQueryResult(
+                message=NO_LLM_CONFIGURED_MESSAGE,
+                items=[],
+                subscriptions=[],
+                topics_were_created=False,
+            )
+
         with logfire.span("MainAgent", user_id=str(user_id), chat_id=str(chat_id)):
             previous_chat = await self.chat_repository.get(chat_id)
             usage = RunUsage()
@@ -74,7 +97,7 @@ class MainQueryAgent(QueryAgentService):
             max_retries = 3
             while retry < max_retries:
                 try:
-                    return await self._perform_query(user_id, query, previous_chat, usage)
+                    return await self._perform_query(user_id, query, previous_chat, usage, agents)
                 except UnexpectedModelBehavior as e:
                     logging.exception(f"Error during AI agent query, retry {retry + 1}/{max_retries}: {e}")
                     retry += 1
@@ -82,23 +105,30 @@ class MainQueryAgent(QueryAgentService):
             logging.error(msg)
             raise QueryAgentError(msg)
 
-    async def _perform_query(self, user_id: UUID | None, query: str, chat: Chat | None, usage: RunUsage) -> AgentQueryResult:
+    async def _perform_query(
+            self,
+            user_id: UUID | None,
+            query: str,
+            chat: Chat | None,
+            usage: RunUsage,
+            agents: MainQueryAgentSubAgents,
+    ) -> AgentQueryResult:
         context = build_chat_context(chat)
         prompt = f"{context}\n{query}"
 
         # Step 1: Route the query to the appropriate agent
-        routing_result = await self.router_agent.query(
+        routing_result = await agents.router_agent.query(
             query=prompt,
             usage=usage,
         )
 
         # Step 2: Handle the query with the appropriate specialized agent
         if routing_result.agent_type == "recommendations":
-            return await self._handle_recommendations_query(user_id, prompt, chat, usage)
+            return await self._handle_recommendations_query(user_id, prompt, chat, usage, agents)
         if routing_result.agent_type == "topic_manager" and user_id is not None:
-            return await self._handle_topic_manager_query(user_id, prompt, chat, usage)
+            return await self._handle_topic_manager_query(user_id, prompt, chat, usage, agents)
         # Default to recommendations if routing fails
-        return await self._handle_recommendations_query(user_id, prompt, chat, usage)
+        return await self._handle_recommendations_query(user_id, prompt, chat, usage, agents)
 
     async def _handle_recommendations_query(
             self,
@@ -106,8 +136,9 @@ class MainQueryAgent(QueryAgentService):
             query: str,
             chat: Chat | None,
             usage: RunUsage,
+            agents: MainQueryAgentSubAgents,
     ) -> AgentQueryResult:
-        result = await self.recommendations_agent.query(
+        result = await agents.recommendations_agent.query(
             query=query,
             previous_chat=chat,
             user_id=user_id,
@@ -126,8 +157,9 @@ class MainQueryAgent(QueryAgentService):
             query: str,
             chat: Chat | None,
             usage: RunUsage,
+            agents: MainQueryAgentSubAgents,
     ) -> AgentQueryResult:
-        result = await self.topic_manager_agent.query(
+        result = await agents.topic_manager_agent.query(
             query=query,
             user_id=user_id,
             previous_chat=chat,

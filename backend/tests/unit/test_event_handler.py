@@ -8,6 +8,7 @@ from linkurator_core.application.common.event_handler import EventHandler
 from linkurator_core.domain.common.event import (
     SubscriptionBecameOutdatedEvent,
     SubscriptionItemsBecameOutdatedEvent,
+    SubscriptionNeedsSummarizationEvent,
     UserRegisteredEvent,
     UserRegisterRequestSentEvent,
 )
@@ -88,3 +89,27 @@ async def test_new_registered_user_event_triggers_send_welcome_email_handler() -
     handle_calls = send_welcome_email.handle.call_args_list
     assert len(handle_calls) == 1
     assert handle_calls[0] == call(uuid.UUID("e3b84e67-11d9-425d-936e-6eb64689f17d"))
+
+
+@pytest.mark.asyncio()
+async def test_subscription_needs_summarization_event_triggers_summarize_subscription_handler() -> None:
+    summarize_subscription_handler = AsyncMock()
+    summarize_subscription_handler.handle.return_value = None
+    event_handler = dummy_event_handler()
+    event_handler.summarize_subscription_handler = summarize_subscription_handler
+
+    await event_handler.handle(SubscriptionNeedsSummarizationEvent.new(
+        subscription_id=uuid.UUID("4d00e658-2947-4781-a045-691f0ef57831")))
+
+    handle_calls = summarize_subscription_handler.handle.call_args_list
+    assert len(handle_calls) == 1
+    assert handle_calls[0] == call(uuid.UUID("4d00e658-2947-4781-a045-691f0ef57831"))
+
+
+@pytest.mark.asyncio()
+async def test_subscription_needs_summarization_event_is_ignored_when_summarization_is_disabled() -> None:
+    event_handler = dummy_event_handler()
+    event_handler.summarize_subscription_handler = None
+
+    await event_handler.handle(SubscriptionNeedsSummarizationEvent.new(
+        subscription_id=uuid.UUID("4d00e658-2947-4781-a045-691f0ef57831")))

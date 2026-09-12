@@ -12,12 +12,13 @@ MISTRAL_MODEL_NAME = "mistral-small-latest"
 def create_agent_model(
         openai_api_key: str | None = None,
         mistral_api_key: str | None = None,
-) -> Model:
+) -> Model | None:
     """
     Create the model used by the AI agents from the available API keys.
 
     Both API keys are optional. OpenAI is preferred over Mistral. When both keys are provided,
-    OpenAI is used as the primary model and Mistral as a fallback.
+    OpenAI is used as the primary model and Mistral as a fallback. Returns None if neither
+    key is provided.
     """
     openai_model = OpenAIChatModel(
         OPENAI_MODEL_NAME,
@@ -36,5 +37,4 @@ def create_agent_model(
     if mistral_model is not None:
         return mistral_model
 
-    msg = "An OpenAI or Mistral API key must be provided to create the agent model."
-    raise ValueError(msg)
+    return None

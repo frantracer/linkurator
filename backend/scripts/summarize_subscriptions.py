@@ -18,9 +18,12 @@ async def main() -> None:
     configure_logging(settings.logging)
 
     agent_model = create_agent_model(
-        openai_api_key=settings.openai.api_key,
-        mistral_api_key=settings.mistral_ai.api_key,
+        openai_api_key=settings.ai_agent.openai.api_key if settings.ai_agent.openai.enabled else None,
+        mistral_api_key=settings.ai_agent.mistral_ai.api_key if settings.ai_agent.mistral_ai.enabled else None,
     )
+    if agent_model is None:
+        logging.error("No LLM credentials configured; enable openai or mistral_ai under ai_agent in the config file.")
+        return
 
     # Create test subscriptions
     test_subscriptions = [

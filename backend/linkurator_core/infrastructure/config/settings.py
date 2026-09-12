@@ -18,10 +18,6 @@ class ApiSettings(BaseModel):
     with_gunicorn: bool
 
 
-class AIAgentSettings(BaseModel):
-    base_url: str
-
-
 class GoogleWebCredentials(BaseModel):
     client_id: str
     project_id: str
@@ -49,21 +45,43 @@ class GoogleSettings(BaseModel):
 
 
 class MistralAISettings(BaseModel):
+    enabled: bool = False
     api_key: str | None = None
 
     @field_validator("api_key", mode="after")
     @classmethod
     def empty_api_key_to_none(cls, value: str | None) -> str | None:
         return value or None
+
+    @model_validator(mode="after")
+    def check_api_key_not_empty_when_enabled(self) -> "MistralAISettings":
+        if self.enabled and not self.api_key:
+            msg = "A Mistral AI API key must be provided when Mistral AI is enabled."
+            raise ValueError(msg)
+        return self
 
 
 class OpenAISettings(BaseModel):
+    enabled: bool = False
     api_key: str | None = None
 
     @field_validator("api_key", mode="after")
     @classmethod
     def empty_api_key_to_none(cls, value: str | None) -> str | None:
         return value or None
+
+    @model_validator(mode="after")
+    def check_api_key_not_empty_when_enabled(self) -> "OpenAISettings":
+        if self.enabled and not self.api_key:
+            msg = "An OpenAI API key must be provided when OpenAI is enabled."
+            raise ValueError(msg)
+        return self
+
+
+class AIAgentSettings(BaseModel):
+    base_url: str
+    openai: OpenAISettings
+    mistral_ai: MistralAISettings
 
 
 class YoutubeSettings(BaseModel):
@@ -176,8 +194,6 @@ class ApplicationSettings(BaseModel):
     api: ApiSettings
     ai_agent: AIAgentSettings
     google: GoogleSettings
-    mistral_ai: MistralAISettings
-    openai: OpenAISettings
     providers: ProvidersSettings
     postgres: PostgresSettings
     rabbitmq: RabbitMQSettings
@@ -202,14 +218,17 @@ class ApplicationSettings(BaseModel):
             patreon=PatreonSettings(**providers_config.get("patreon", {})),
         )
 
-        openai_settings = OpenAISettings(**config.get("openai", {}))
+        ai_agent_config = config["ai_agent"]
+        ai_agent_settings = AIAgentSettings(
+            base_url=ai_agent_config["base_url"],
+            openai=OpenAISettings(**ai_agent_config.get("openai", {})),
+            mistral_ai=MistralAISettings(**ai_agent_config.get("mistral_ai", {})),
+        )
 
         return cls(
             api=ApiSettings(**config["api"]),
-            ai_agent=AIAgentSettings(**config["ai_agent"]),
+            ai_agent=ai_agent_settings,
             google=GoogleSettings(**config["google"]),
-            mistral_ai=MistralAISettings(**config["mistral_ai"]),
-            openai=openai_settings,
             providers=providers_settings,
             postgres=PostgresSettings(**config["postgres"]),
             rabbitmq=RabbitMQSettings(**config["rabbitmq"]),
