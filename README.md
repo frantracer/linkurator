@@ -1,6 +1,9 @@
 # Linkurator
 
-Linkurator helps you explore and categorize your subscriptions from content providers like YouTube, Spotify, Patreon, and RSS.
+Linkurator is a tool that helps you explore and categorize your subscriptions from content providers like YouTube, Spotify, Patreon, and RSS.
+
+<img src="frontend/public/linkurator_main_page.png" alt="Linkurator landing page" width="1024">
+
 
 ## Running the app
 
