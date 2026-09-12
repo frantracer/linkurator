@@ -7,6 +7,7 @@ import Collapse from "../components/atoms/Collapse";
 import FlexColumn from "../components/atoms/FlexColumn";
 import ThemeToggleButton from "../components/molecules/ThemeToggleButton";
 import LogoCarousel from "../components/molecules/LogoCarousel";
+import Carousel from "../components/molecules/Carousel";
 import LanguageSelector from "../components/molecules/LanguageSelector";
 import {LogoImage} from "../components/atoms/LogoImage";
 import FlexRow from "../components/atoms/FlexRow";
@@ -135,29 +136,23 @@ export default function LandingPage() {
         </section>
 
         {/* Trending Curations */}
-        <section id="trending-curations" className="w-full pt-12 pb-12 px-6 bg-base-200">
+        <section id="trending-curations" className="w-full pt-12 pb-12 px-2 bg-base-200">
           <FlexColumn position={"center"}>
             <h2 className="text-2xl font-bold text-center">{t("trending_curations")}</h2>
-            <div className="container px-4 md:px-6">
-              <div className="grid grid-cols-[repeat(auto-fill,minmax(320px,1fr))] gap-4
-              justify-items-center justify-content-center">
-                {[
-                  {title: t("geopolitics_topic"), link: "/topics/8b281f83-c3b0-4846-866b-a1521ed39670"},
-                  {title: t("programming_topic"), link: "/topics/f5e01f25-64b1-4b9c-b0a3-75769fe0d617"},
-                  {title: t("cooking_topic"), link: "/topics/9ebf46b2-be81-48fc-8124-50e98f9c7436"},
-                  {title: t("science_topic"), link: "/topics/b502f236-1716-4e2c-bd7d-3d943741897c"},
-                ].map((category, i) => (
-                  <div key={i} className="card bg-base-100 w-72 shadow-xl overflow-hidden rounded-xl border">
-                    <div className="card-body items-center text-center">
-                      <h2 className="card-title">{category.title}</h2>
-                      <div className="card-actions">
-                        <Button href={category.link}>{t("explore_now")}</Button>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
+            <Carousel ariaLabel={t("trending_curations")}>
+              {[
+                {title: t("geopolitics_topic"), link: "/topics/8b281f83-c3b0-4846-866b-a1521ed39670"},
+                {title: t("programming_topic"), link: "/topics/f5e01f25-64b1-4b9c-b0a3-75769fe0d617"},
+                {title: t("cooking_topic"), link: "/topics/9ebf46b2-be81-48fc-8124-50e98f9c7436"},
+                {title: t("science_topic"), link: "/topics/b502f236-1716-4e2c-bd7d-3d943741897c"},
+              ].map((category, i) => (
+                <div key={i} className="w-48 h-28 rounded-xl border bg-base-100 shadow-xl
+                  flex flex-col items-center justify-center gap-2 px-4 text-center">
+                  <h3 className="font-semibold">{category.title}</h3>
+                  <Button href={category.link}>{t("explore_now")}</Button>
+                </div>
+              ))}
+            </Carousel>
           </FlexColumn>
         </section>
 
@@ -231,7 +226,7 @@ export default function LandingPage() {
         </section>
 
         {/* Integrations Section */}
-        <section id="integrations" className="w-full pt-12 pb-12 px-6 bg-base-200">
+        <section id="integrations" className="w-full pt-12 pb-12 px-2 bg-base-200">
           <FlexColumn position={"center"}>
             <div className="flex flex-col items-center justify-center space-y-4 text-center">
               <div className="space-y-2">
