@@ -21,7 +21,7 @@ async def main() -> None:
     settings = ApplicationSettings.from_file()
     configure_logging(settings.logging)
 
-    if settings.patreon is None:
+    if not settings.providers.patreon.enabled:
         logging.error("Patreon settings not configured")
         return
 
@@ -40,8 +40,8 @@ async def main() -> None:
         )
 
     client = PatreonApiClient(
-        client_id=settings.patreon.client_id,
-        client_secret=settings.patreon.client_secret,
+        client_id=settings.providers.patreon.client_id,
+        client_secret=settings.providers.patreon.client_secret,
         http_client=http_client,
         http_client_proxy=http_client_proxy,
     )

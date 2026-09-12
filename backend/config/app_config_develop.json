@@ -29,7 +29,6 @@
     }
   },
   "google": {
-    "youtube_api_keys": [],
     "oauth": {
       "web": {
         "client_id": "",
@@ -63,13 +62,26 @@
   "openai": {
     "api_key": ""
   },
-  "spotify": {
-    "credentials": [
-      {
-        "client_id": "",
-        "client_secret": ""
-      }
-    ]
+  "providers": {
+    "youtube": {
+      "enabled": false,
+      "api_keys": []
+    },
+    "spotify": {
+      "enabled": false,
+      "credentials": [
+        {
+          "client_id": "",
+          "client_secret": ""
+        }
+      ]
+    },
+    "patreon": {
+      "enabled": false,
+      "client_id": "",
+      "client_secret": "",
+      "use_vpn": false
+    }
   },
   "ai_agent": {
     "base_url": "http://localhost:9000"

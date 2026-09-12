@@ -156,32 +156,6 @@ def app_handlers() -> Handlers:
 
     rss_feed_client = RssFeedClient(http_client=http_client)
 
-    youtube_service = YoutubeService(
-        subscription_repository=subscription_repository,
-        user_repository=user_repository,
-        item_repository=item_repository,
-        youtube_client=YoutubeApiClient(),
-        youtube_rss_client=YoutubeRssClient(),
-        api_keys=settings.google.youtube_api_keys,
-    )
-
-    spotify_client = SpotifyApiClient(
-        credentials=[
-            SpotifyCredentials(
-                client_id=cred.client_id,
-                client_secret=cred.client_secret,
-            )
-            for cred in settings.spotify.credentials
-        ],
-    )
-
-    spotify_service = SpotifySubscriptionService(
-        spotify_client=spotify_client,
-        subscription_repository=subscription_repository,
-        user_repository=user_repository,
-        item_repository=item_repository,
-    )
-
     rss_service = RssSubscriptionService(
         subscription_repository=subscription_repository,
         item_repository=item_repository,
@@ -189,17 +163,50 @@ def app_handlers() -> Handlers:
         rss_data_repository=rss_data_repository,
     )
 
-    subscription_services: list[SubscriptionService] = [youtube_service, spotify_service, rss_service]
+    subscription_services: list[SubscriptionService] = [rss_service]
 
-    # Add Patreon service if configured
+    # Add YouTube service if enabled
+    youtube_service: YoutubeService | None = None
+    if settings.providers.youtube.enabled:
+        youtube_service = YoutubeService(
+            subscription_repository=subscription_repository,
+            user_repository=user_repository,
+            item_repository=item_repository,
+            youtube_client=YoutubeApiClient(),
+            youtube_rss_client=YoutubeRssClient(),
+            api_keys=settings.providers.youtube.api_keys,
+        )
+        subscription_services.append(youtube_service)
+
+    # Add Spotify service if enabled
+    spotify_service: SpotifySubscriptionService | None = None
+    if settings.providers.spotify.enabled:
+        spotify_client = SpotifyApiClient(
+            credentials=[
+                SpotifyCredentials(
+                    client_id=cred.client_id,
+                    client_secret=cred.client_secret,
+                )
+                for cred in settings.providers.spotify.credentials
+            ],
+        )
+        spotify_service = SpotifySubscriptionService(
+            spotify_client=spotify_client,
+            subscription_repository=subscription_repository,
+            user_repository=user_repository,
+            item_repository=item_repository,
+        )
+        subscription_services.append(spotify_service)
+
+    # Add Patreon service if enabled
     patreon_client: PatreonApiClient | None = None
     patreon_service: PatreonSubscriptionService | None = None
-    if settings.patreon:
+    if settings.providers.patreon.enabled:
         patreon_client = PatreonApiClient(
-            client_id=settings.patreon.client_id,
-            client_secret=settings.patreon.client_secret,
+            client_id=settings.providers.patreon.client_id,
+            client_secret=settings.providers.patreon.client_secret,
             http_client=http_client,
-            http_client_proxy=proxy_http_client,
+            http_client_proxy=proxy_http_client if settings.providers.patreon.use_vpn else http_client,
         )
         patreon_service = PatreonSubscriptionService(
             subscription_repository=subscription_repository,
@@ -364,7 +371,7 @@ def app_handlers() -> Handlers:
             youtube_subscription_service=youtube_service,
             user_repository=user_repository,
             subscription_repository=subscription_repository,
-            event_bus_service=event_bus),
+            event_bus_service=event_bus) if youtube_service is not None else None,
         patreon_client=patreon_client,
         update_patreon_user_subscriptions_handler=UpdatePatreonUserSubscriptionsHandler(
             patreon_subscription_service=patreon_service,

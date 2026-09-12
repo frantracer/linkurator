@@ -40,12 +40,12 @@ async def main() -> None:
     settings = ApplicationSettings.from_file()
     configure_logging(settings.logging)
 
-    if settings.patreon is None:
+    if not settings.providers.patreon.enabled:
         logging.error("Patreon settings not configured")
         return
 
-    client_id = settings.patreon.client_id
-    client_secret = settings.patreon.client_secret
+    client_id = settings.providers.patreon.client_id
+    client_secret = settings.providers.patreon.client_secret
 
     # Build authorization URL
     scopes = "identity.memberships"

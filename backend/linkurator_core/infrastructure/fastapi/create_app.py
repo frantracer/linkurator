@@ -140,7 +140,7 @@ class Handlers:  # pylint: disable=too-many-instance-attributes
     get_followed_subscriptions_items_handler: GetFollowedSubscriptionsItemsHandler
     get_platform_statistics: GetPlatformStatisticsHandler
     get_providers_handler: GetProvidersHandler
-    update_youtube_user_subscriptions_handler: UpdateYoutubeUserSubscriptionsHandler
+    update_youtube_user_subscriptions_handler: UpdateYoutubeUserSubscriptionsHandler | None
     patreon_client: PatreonApiClient | None
     update_patreon_user_subscriptions_handler: UpdatePatreonUserSubscriptionsHandler | None
     query_agent_handler: QueryAgentHandler

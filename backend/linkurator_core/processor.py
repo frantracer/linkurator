@@ -91,7 +91,6 @@ async def run_processor() -> None:  # pylint: disable=too-many-locals
     # Read settings
     settings = ApplicationSettings.from_file()
     db_settings = settings.postgres
-    spotify_secrets = settings.spotify
     rabbitmq_settings = settings.rabbitmq
 
     # Repositories
@@ -125,31 +124,34 @@ async def run_processor() -> None:  # pylint: disable=too-many-locals
     )
 
     # Services
-    youtube_client = YoutubeApiClient()
-    youtube_rss_client = YoutubeRssClient()
-    youtube_service = YoutubeService(
-        user_repository=user_repository,
-        subscription_repository=subscription_repository,
-        item_repository=item_repository,
-        api_keys=settings.google.youtube_api_keys,
-        youtube_client=youtube_client,
-        youtube_rss_client=youtube_rss_client,
-    )
-    spotify_client = SpotifyApiClient(
-        credentials=[
-            SpotifyCredentials(
-                client_id=cred.client_id,
-                client_secret=cred.client_secret,
-            )
-            for cred in spotify_secrets.credentials
-        ],
-    )
-    spotify_service = SpotifySubscriptionService(
-        spotify_client=spotify_client,
-        user_repository=user_repository,
-        item_repository=item_repository,
-        subscription_repository=subscription_repository,
-    )
+    youtube_service: YoutubeService | None = None
+    if settings.providers.youtube.enabled:
+        youtube_service = YoutubeService(
+            user_repository=user_repository,
+            subscription_repository=subscription_repository,
+            item_repository=item_repository,
+            api_keys=settings.providers.youtube.api_keys,
+            youtube_client=YoutubeApiClient(),
+            youtube_rss_client=YoutubeRssClient(),
+        )
+
+    spotify_service: SpotifySubscriptionService | None = None
+    if settings.providers.spotify.enabled:
+        spotify_client = SpotifyApiClient(
+            credentials=[
+                SpotifyCredentials(
+                    client_id=cred.client_id,
+                    client_secret=cred.client_secret,
+                )
+                for cred in settings.providers.spotify.credentials
+            ],
+        )
+        spotify_service = SpotifySubscriptionService(
+            spotify_client=spotify_client,
+            user_repository=user_repository,
+            item_repository=item_repository,
+            subscription_repository=subscription_repository,
+        )
 
     http_client = AsyncHttpClient(contact_email=settings.google.service_account_email)
     http_client_proxy = http_client
@@ -166,15 +168,19 @@ async def run_processor() -> None:  # pylint: disable=too-many-locals
         rss_data_repository=rss_data_repository,
     )
 
-    subscription_providers: list[SubscriptionService] = [spotify_service, youtube_service, rss_service]
+    subscription_providers: list[SubscriptionService] = [rss_service]
+    if spotify_service is not None:
+        subscription_providers.append(spotify_service)
+    if youtube_service is not None:
+        subscription_providers.append(youtube_service)
 
     patreon_service: PatreonSubscriptionService | None = None
-    if settings.patreon is not None:
+    if settings.providers.patreon.enabled:
         patreon_client = PatreonApiClient(
-            client_id=settings.patreon.client_id,
-            client_secret=settings.patreon.client_secret,
+            client_id=settings.providers.patreon.client_id,
+            client_secret=settings.providers.patreon.client_secret,
             http_client=http_client,
-            http_client_proxy=http_client_proxy,
+            http_client_proxy=http_client_proxy if settings.providers.patreon.use_vpn else http_client,
         )
         patreon_service = PatreonSubscriptionService(
             subscription_repository=subscription_repository,
@@ -223,11 +229,13 @@ async def run_processor() -> None:  # pylint: disable=too-many-locals
                                  username=rabbitmq_settings.user, password=rabbitmq_settings.password)
 
     # Event handlers
-    update_youtube_user_subscriptions = UpdateYoutubeUserSubscriptionsHandler(
-        youtube_subscription_service=youtube_service,
-        user_repository=user_repository,
-        subscription_repository=subscription_repository,
-        event_bus_service=event_bus)
+    update_youtube_user_subscriptions: UpdateYoutubeUserSubscriptionsHandler | None = None
+    if youtube_service is not None:
+        update_youtube_user_subscriptions = UpdateYoutubeUserSubscriptionsHandler(
+            youtube_subscription_service=youtube_service,
+            user_repository=user_repository,
+            subscription_repository=subscription_repository,
+            event_bus_service=event_bus)
     update_subscriptions_items = UpdateSubscriptionItemsHandler(
         subscription_repository=subscription_repository,
         item_repository=item_repository,

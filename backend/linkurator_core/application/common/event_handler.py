@@ -28,7 +28,7 @@ from linkurator_core.domain.common.event import (
 
 @dataclass
 class EventHandler:
-    update_youtube_user_subscriptions_handler: UpdateYoutubeUserSubscriptionsHandler
+    update_youtube_user_subscriptions_handler: UpdateYoutubeUserSubscriptionsHandler | None
     update_subscription_items_handler: UpdateSubscriptionItemsHandler
     update_subscription_handler: UpdateSubscriptionHandler
     refresh_items_handler: RefreshItemsHandler

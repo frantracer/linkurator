@@ -38,7 +38,6 @@ class GoogleOAuth(BaseModel):
 
 
 class GoogleSettings(BaseModel):
-    youtube_api_keys: list[str]
     oauth: GoogleOAuth
     email_service_credentials: dict[str, str]
     service_account_email: str | None = None
@@ -67,25 +66,53 @@ class OpenAISettings(BaseModel):
         return value or None
 
 
+class YoutubeSettings(BaseModel):
+    enabled: bool = False
+    api_keys: list[str] = []
+
+    @model_validator(mode="after")
+    def check_api_keys_not_empty_when_enabled(self) -> "YoutubeSettings":
+        if self.enabled and len(self.api_keys) == 0:
+            msg = "At least one Youtube API key must be provided when Youtube is enabled."
+            raise ValueError(msg)
+        return self
+
+
 class SpotifyCredentialPair(BaseModel):
     client_id: str
     client_secret: str
 
 
 class SpotifySettings(BaseModel):
-    credentials: list[SpotifyCredentialPair]
+    enabled: bool = False
+    credentials: list[SpotifyCredentialPair] = []
 
     @model_validator(mode="after")
-    def check_credentials_not_empty(self) -> "SpotifySettings":
-        if len(self.credentials) == 0:
-            msg = "At least one Spotify credential pair must be provided."
+    def check_credentials_not_empty_when_enabled(self) -> "SpotifySettings":
+        if self.enabled and len(self.credentials) == 0:
+            msg = "At least one Spotify credential pair must be provided when Spotify is enabled."
             raise ValueError(msg)
         return self
 
 
 class PatreonSettings(BaseModel):
-    client_id: str
-    client_secret: str
+    enabled: bool = False
+    client_id: str = ""
+    client_secret: str = ""
+    use_vpn: bool = False
+
+    @model_validator(mode="after")
+    def check_credentials_not_empty_when_enabled(self) -> "PatreonSettings":
+        if self.enabled and (not self.client_id or not self.client_secret):
+            msg = "Both client_id and client_secret must be provided when Patreon is enabled."
+            raise ValueError(msg)
+        return self
+
+
+class ProvidersSettings(BaseModel):
+    youtube: YoutubeSettings
+    spotify: SpotifySettings
+    patreon: PatreonSettings
 
 
 class PostgresSettings(BaseModel):
@@ -151,8 +178,7 @@ class ApplicationSettings(BaseModel):
     google: GoogleSettings
     mistral_ai: MistralAISettings
     openai: OpenAISettings
-    spotify: SpotifySettings
-    patreon: PatreonSettings | None
+    providers: ProvidersSettings
     postgres: PostgresSettings
     rabbitmq: RabbitMQSettings
     logging: LogSettings
@@ -169,8 +195,12 @@ class ApplicationSettings(BaseModel):
         with open(file_path, encoding="utf-8") as f:
             config: dict[str, Any] = json.load(f)
 
-        patreon_config = config.get("patreon")
-        patreon_settings = PatreonSettings(**patreon_config) if patreon_config else None
+        providers_config = config.get("providers", {})
+        providers_settings = ProvidersSettings(
+            youtube=YoutubeSettings(**providers_config.get("youtube", {})),
+            spotify=SpotifySettings(**providers_config.get("spotify", {})),
+            patreon=PatreonSettings(**providers_config.get("patreon", {})),
+        )
 
         openai_settings = OpenAISettings(**config.get("openai", {}))
 
@@ -180,8 +210,7 @@ class ApplicationSettings(BaseModel):
             google=GoogleSettings(**config["google"]),
             mistral_ai=MistralAISettings(**config["mistral_ai"]),
             openai=openai_settings,
-            spotify=SpotifySettings(**config["spotify"]),
-            patreon=patreon_settings,
+            providers=providers_settings,
             postgres=PostgresSettings(**config["postgres"]),
             rabbitmq=RabbitMQSettings(**config["rabbitmq"]),
             logging=LogSettings(**config["logging"]),

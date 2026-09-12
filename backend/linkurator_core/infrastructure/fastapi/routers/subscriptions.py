@@ -65,7 +65,7 @@ def get_router(  # pylint: disable=too-many-statements
         get_subscription_items_handler: GetSubscriptionItemsHandler,
         delete_subscription_items_handler: DeleteSubscriptionItemsHandler,
         refresh_subscription_handler: RefreshSubscriptionHandler,
-        update_user_subscriptions_handler: UpdateYoutubeUserSubscriptionsHandler,
+        update_user_subscriptions_handler: UpdateYoutubeUserSubscriptionsHandler | None,
         get_followed_subscriptions_items_handler: GetFollowedSubscriptionsItemsHandler,
         patreon_client: PatreonApiClient | None = None,
         update_patreon_user_subscriptions_handler: UpdatePatreonUserSubscriptionsHandler | None = None,
@@ -449,6 +449,9 @@ def get_router(  # pylint: disable=too-many-statements
         if session is None:
             return RedirectResponse(url=redirect_uri or "/login")
 
+        if update_user_subscriptions_handler is None:
+            return RedirectResponse(url=redirect_uri or "/subscriptions")
+
         youtube_channel_scope = "https://www.googleapis.com/auth/youtube.readonly"
         oauth_url = google_client.authorization_url(
             scopes=[youtube_channel_scope],
@@ -473,7 +476,7 @@ def get_router(  # pylint: disable=too-many-statements
         if session is None:
             return RedirectResponse(url=redirect_uri or "/login")
 
-        if error is None and code is not None:
+        if update_user_subscriptions_handler is not None and error is None and code is not None:
             tokens = google_client.validate_code(
                 code=code,
                 redirect_uri=urljoin(str(request.base_url), "/subscriptions/sync/youtube_auth"))
