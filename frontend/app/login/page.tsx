@@ -15,6 +15,7 @@ import Box from "../../components/atoms/Box";
 import InputText, {InputType} from "../../components/atoms/InputText";
 import {login} from "../../services/profileService";
 import {ErrorBanner} from "../../components/atoms/ErrorBanner";
+import {InfoBanner} from "../../components/atoms/InfoBanner";
 import LinkuratorHeader from "../../components/organism/LinkuratorHeader";
 import {useTranslations} from 'next-intl';
 
@@ -32,6 +33,23 @@ const RegisterErrorBanner = () => {
     <ErrorBanner>
       {t("you_must_sign_up")}
     </ErrorBanner>
+  );
+}
+
+const AccountCreatedBanner = () => {
+  const t = useTranslations("common");
+
+  const searchParams = useSearchParams();
+  const registered = searchParams.get('registered');
+
+  if (!registered) {
+    return;
+  }
+
+  return (
+    <InfoBanner>
+      {t("account_created")}
+    </InfoBanner>
   );
 }
 
@@ -94,6 +112,10 @@ const Home: NextPage = () => {
 
             <Suspense>
               <RegisterErrorBanner/>
+            </Suspense>
+
+            <Suspense>
+              <AccountCreatedBanner/>
             </Suspense>
 
             <ALink href={paths.FORGOT_PASSWORD}>

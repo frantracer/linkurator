@@ -65,8 +65,12 @@ const Home: NextPage = () => {
       return;
     }
 
-    register(firstName, lastName, username, email, password).then(() => {
-      router.push(paths.REGISTER_EMAIL_SENT);
+    register(firstName, lastName, username, email, password).then((confirmationRequired) => {
+      if (confirmationRequired) {
+        router.push(paths.REGISTER_EMAIL_SENT);
+      } else {
+        router.push(`${paths.LOGIN}?registered=true`);
+      }
     }).catch(() => {
       setErrors([t("registration_error")]);
     })

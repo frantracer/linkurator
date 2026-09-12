@@ -47,6 +47,10 @@ async def main() -> None:
     message_text = input_arguments.message_text + f"\n{uuid4()}"
 
     settings = ApplicationSettings.from_file()
+    if settings.google.service_account_email is None:
+        msg = "google.service_account_email is not configured"
+        raise ValueError(msg)
+
     google_account_service = GoogleDomainAccountService(
         email=settings.google.service_account_email,
         service_credentials=settings.google.email_service_credentials)

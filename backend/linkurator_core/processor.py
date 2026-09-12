@@ -36,6 +36,7 @@ from linkurator_core.domain.common.event import (
     UserRegisteredEvent,
     UserRegisterRequestSentEvent,
 )
+from linkurator_core.domain.notifications.email_sender import EmailSender
 from linkurator_core.domain.subscriptions.general_subscription_service import GeneralSubscriptionService
 from linkurator_core.domain.subscriptions.subscription_service import SubscriptionService
 from linkurator_core.infrastructure.ai_agents.main_query_agent import MainQueryAgent
@@ -51,6 +52,7 @@ from linkurator_core.infrastructure.google.youtube_api_client import YoutubeApiC
 from linkurator_core.infrastructure.google.youtube_rss_client import YoutubeRssClient
 from linkurator_core.infrastructure.google.youtube_service import YoutubeService
 from linkurator_core.infrastructure.logger import configure_logging
+from linkurator_core.infrastructure.notifications.null_email_sender import NullEmailSender
 from linkurator_core.infrastructure.patreon.patreon_api_client import PatreonApiClient
 from linkurator_core.infrastructure.patreon.patreon_service import PatreonSubscriptionService
 from linkurator_core.infrastructure.postgres.chat_repository import PostgresChatRepository
@@ -187,11 +189,15 @@ async def run_processor() -> None:  # pylint: disable=too-many-locals
         services=subscription_providers,
     )
 
-    google_domain_service = GoogleDomainAccountService(
-        service_credentials=settings.google.email_service_credentials,
-        email=settings.google.service_account_email,
-    )
-    gmail_email_sender = GmailEmailSender(account_service=google_domain_service)
+    service_account_email = settings.google.service_account_email
+
+    email_sender: EmailSender = NullEmailSender()
+    if service_account_email is not None:
+        google_domain_service = GoogleDomainAccountService(
+            service_credentials=settings.google.email_service_credentials,
+            email=service_account_email,
+        )
+        email_sender = GmailEmailSender(account_service=google_domain_service)
 
     agent_model = create_agent_model(
         openai_api_key=settings.openai.api_key,
@@ -252,12 +258,12 @@ async def run_processor() -> None:  # pylint: disable=too-many-locals
         item_repository=item_repository,
         event_bus=event_bus)
     send_validate_new_user_email = SendValidateNewUserEmail(
-        email_sender=gmail_email_sender,
+        email_sender=email_sender,
         registration_request_repository=registration_request_repository,
     )
     send_welcome_email = SendWelcomeEmail(
         user_repository=user_repository,
-        email_sender=gmail_email_sender,
+        email_sender=email_sender,
         base_url=settings.website.host,
     )
     process_user_query_handler = ProcessUserQueryHandler(

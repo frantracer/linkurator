@@ -10,6 +10,11 @@ export type Profile = {
   email: string
 }
 
+type RegisterResponse = {
+  message: string
+  confirmation_required: boolean
+}
+
 export async function getProfile(): Promise<Profile | null> {
   try {
     const {data, status} = await axios.get<Profile>(configuration.PROFILE_URL, {withCredentials: true});
@@ -70,9 +75,9 @@ export async function login(email: string, password: string): Promise<void> {
 
 export async function register(
   firstName: string, lastName: string, username: string, email: string, password: string,
-): Promise<void> {
+): Promise<boolean> {
   const hashedPassword = hashPassword(password);
-  const {status} = await axios.post(configuration.REGISTER_EMAIL_URL, {
+  const {status, data} = await axios.post<RegisterResponse>(configuration.REGISTER_EMAIL_URL, {
     email: email,
     password: hashedPassword,
     first_name: firstName,
@@ -83,6 +88,7 @@ export async function register(
   if (status !== 201) {
     throw new Error("Error registering");
   }
+  return data.confirmation_required;
 }
 
 export async function validateNewAccountRequest(requestId: string): Promise<boolean> {

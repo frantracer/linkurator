@@ -6,7 +6,7 @@ from uuid import uuid4
 
 from pydantic import AnyUrl
 
-from linkurator_core.domain.common.event import UserRegisterRequestSentEvent
+from linkurator_core.domain.common.event import UserRegisteredEvent, UserRegisterRequestSentEvent
 from linkurator_core.domain.common.event_bus_service import EventBusService
 from linkurator_core.domain.common.utils import parse_url
 from linkurator_core.domain.users.registration_request import RegistrationRequest
@@ -40,10 +40,12 @@ class RegisterNewUserWithEmail:
     def __init__(self,
                  user_repository: UserRepository,
                  registration_request_repository: RegistrationRequestRepository,
-                 event_bus: EventBusService) -> None:
+                 event_bus: EventBusService,
+                 email_confirmation_enabled: bool = True) -> None:
         self.user_repository = user_repository
         self.registration_request_repository = registration_request_repository
         self.event_bus = event_bus
+        self.email_confirmation_enabled = email_confirmation_enabled
 
     async def handle(
             self,
@@ -81,6 +83,11 @@ class RegisterNewUserWithEmail:
             google_refresh_token=None,
         )
         new_user.set_password(password)
+
+        if not self.email_confirmation_enabled:
+            await self.user_repository.add(new_user)
+            await self.event_bus.publish(event=UserRegisteredEvent.new(user_id=new_user.uuid))
+            return []
 
         request = RegistrationRequest.new(user=new_user, seconds_to_expire=ONE_DAY_IN_SECONDS,
                                           validation_base_url=validation_base_url)

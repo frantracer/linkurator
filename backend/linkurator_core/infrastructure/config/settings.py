@@ -41,7 +41,12 @@ class GoogleSettings(BaseModel):
     youtube_api_keys: list[str]
     oauth: GoogleOAuth
     email_service_credentials: dict[str, str]
-    service_account_email: str
+    service_account_email: str | None = None
+
+    @field_validator("service_account_email", mode="after")
+    @classmethod
+    def empty_service_account_email_to_none(cls, value: str | None) -> str | None:
+        return value or None
 
 
 class MistralAISettings(BaseModel):

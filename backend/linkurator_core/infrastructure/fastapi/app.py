@@ -66,6 +66,7 @@ from linkurator_core.application.users.update_patreon_user_subscriptions_handler
 )
 from linkurator_core.application.users.update_user_subscriptions_handler import UpdateYoutubeUserSubscriptionsHandler
 from linkurator_core.application.users.upsert_user_filter_handler import UpsertUserFilterHandler
+from linkurator_core.domain.notifications.email_sender import EmailSender
 from linkurator_core.domain.subscriptions.general_subscription_service import GeneralSubscriptionService
 from linkurator_core.domain.subscriptions.subscription_service import SubscriptionService
 from linkurator_core.domain.users.password_change_request import PasswordChangeRequest
@@ -79,6 +80,7 @@ from linkurator_core.infrastructure.google.youtube_api_client import YoutubeApiC
 from linkurator_core.infrastructure.google.youtube_rss_client import YoutubeRssClient
 from linkurator_core.infrastructure.google.youtube_service import YoutubeService
 from linkurator_core.infrastructure.logger import configure_logging
+from linkurator_core.infrastructure.notifications.null_email_sender import NullEmailSender
 from linkurator_core.infrastructure.patreon.patreon_api_client import PatreonApiClient
 from linkurator_core.infrastructure.patreon.patreon_service import PatreonSubscriptionService
 from linkurator_core.infrastructure.postgres.chat_repository import PostgresChatRepository
@@ -212,11 +214,18 @@ def app_handlers() -> Handlers:
     event_bus = RabbitMQEventBus(host=str(rabbitmq_settings.ip_address), port=rabbitmq_settings.port,
                                  username=rabbitmq_settings.user, password=rabbitmq_settings.password)
 
-    google_domain_service = GoogleDomainAccountService(
-        service_credentials=settings.google.email_service_credentials,
-        email=settings.google.service_account_email,
-    )
-    email_sender = GmailEmailSender(account_service=google_domain_service)
+    service_account_email = settings.google.service_account_email
+    is_email_sender_enabled = service_account_email is not None
+
+    email_sender: EmailSender
+    if service_account_email is not None:
+        google_domain_service = GoogleDomainAccountService(
+            service_credentials=settings.google.email_service_credentials,
+            email=service_account_email,
+        )
+        email_sender = GmailEmailSender(account_service=google_domain_service)
+    else:
+        email_sender = NullEmailSender()
 
     RegistrationRequest.valid_domains = settings.website.valid_domains
     PasswordChangeRequest.valid_domains = settings.website.valid_domains
@@ -228,7 +237,8 @@ def app_handlers() -> Handlers:
         register_user_with_email=RegisterNewUserWithEmail(
             user_repository=user_repository,
             registration_request_repository=registration_request_repository,
-            event_bus=event_bus),
+            event_bus=event_bus,
+            email_confirmation_enabled=is_email_sender_enabled),
         validate_new_user_request=ValidateNewUserRequest(
             user_repository=user_repository,
             registration_request_repository=registration_request_repository,

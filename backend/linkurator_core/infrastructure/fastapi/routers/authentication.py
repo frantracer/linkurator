@@ -55,6 +55,11 @@ class ChangePasswordSchema(BaseModel):
     new_password: PasswordWith64HexCharacters
 
 
+class RegisterEmailResponse(BaseModel):
+    message: str
+    confirmation_required: bool
+
+
 def check_basic_auth(credentials: Annotated[HTTPBasicCredentials, Depends(HTTPBasic())]) -> None:
     hasher = hashlib.sha256()
     hasher.update(f"{credentials.username}:{credentials.password}".encode())
@@ -232,6 +237,7 @@ def get_router(  # pylint: disable=too-many-statements
 
     @router.post("/register_email",
                  status_code=status.HTTP_201_CREATED,
+                 response_model=RegisterEmailResponse,
                  responses={
                      status.HTTP_400_BAD_REQUEST: {"description": "Invalid request"},
                  })
@@ -249,7 +255,10 @@ def get_router(  # pylint: disable=too-many-statements
             if errors:
                 return JSONResponse(status_code=status.HTTP_400_BAD_REQUEST,
                                     content={"errors": ", ".join([str(e) for e in errors])})
-            return JSONResponse(status_code=status.HTTP_201_CREATED, content={"message": "Registration request sent"})
+            return RegisterEmailResponse(
+                message="Registration request sent",
+                confirmation_required=register_user_with_email.email_confirmation_enabled,
+            )
         except ValueError as exc:
             raise default_responses.bad_request(message=str(exc))
 

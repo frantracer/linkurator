@@ -76,6 +76,7 @@
     "checking": "Checking...",
     "email_validated": "Email validated successfully.",
     "validation_expired": "Validation time has expired or your email has already been validated",
+    "account_created": "Your account has been created. Please log in.",
     "recommendations": "Recommendations",
     "recommendations_for_you": "Recommendations for you",
     "my_profile": "My profile",
