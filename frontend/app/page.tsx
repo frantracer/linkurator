@@ -329,25 +329,20 @@ export default function LandingPage() {
         </section>
       </main>
       <footer className="w-full border-t bg-background">
-        <div className="container flex flex-col gap-8 px-4 py-10 md:px-6 lg:flex-row lg:gap-12">
-          <div className="flex flex-col gap-4 lg:w-1/3">
+        <div className="container flex flex-col gap-6 px-6 py-10 lg:flex-row lg:gap-12">
+          <div className="flex flex-row gap-8 flex-wrap justify-between items-start">
             <div className="flex items-center gap-2">
               <LogoImage/>
               <span className="text-xl font-bold">Linkurator</span>
             </div>
-            <p className="text-sm text-muted-foreground">
-              {t("hero_subtitle_1")}
-            </p>
-            <div className="flex gap-4">
-              <Button href="https://www.linkedin.com/company/linkurator">
-                <LinkedinIcon/>
-                <span className="sr-only">LinkedIn</span>
-              </Button>
+            <div className="flex flex-row gap-4">
+              <LanguageSelector/>
+              <ThemeToggleButton/>
             </div>
           </div>
           <div className="grid flex-1 grid-cols-2 gap-8 sm:grid-cols-4">
             <div className="space-y-3">
-              <h4 className="text-sm font-medium">{t("product")}</h4>
+              <h4 className="text-sm font-bold">{t("product")}</h4>
               <ul className="space-y-2 text-sm">
                 <li>
                   <Link href="#integrations" className="text-muted-foreground hover:text-foreground">
@@ -362,17 +357,23 @@ export default function LandingPage() {
               </ul>
             </div>
             <div className="space-y-3">
-              <h4 className="text-sm font-medium">{t("company")}</h4>
+              <h4 className="text-sm font-bold">{t("contact")}</h4>
               <ul className="space-y-2 text-sm">
                 <li>
                   <Link href="mailto:admin@linkurator.com" className="text-muted-foreground hover:text-foreground">
-                    {t("contact")}
+                    {t("email")}
+                  </Link>
+                </li>
+                <li>
+                  <Link href="https://www.linkedin.com/company/linkurator"
+                        className="text-muted-foreground hover:text-foreground">
+                    LinkedIn
                   </Link>
                 </li>
               </ul>
             </div>
             <div className="space-y-3">
-              <h4 className="text-sm font-medium">{t("resources")}</h4>
+              <h4 className="text-sm font-bold">{t("resources")}</h4>
               <ul className="space-y-2 text-sm">
                 <li>
                   <Link href="https://api.linkurator.com/docs" className="text-muted-foreground hover:text-foreground">
@@ -388,7 +389,7 @@ export default function LandingPage() {
               </ul>
             </div>
             <div className="space-y-3">
-              <h4 className="text-sm font-medium">{t("legal")}</h4>
+              <h4 className="text-sm font-bold">{t("legal")}</h4>
               <ul className="space-y-2 text-sm">
                 <li>
                   <Link href="/tos" className="text-muted-foreground hover:text-foreground">
@@ -404,16 +405,6 @@ export default function LandingPage() {
             </div>
           </div>
         </div>
-        <FlexRow position={"center"} hideOverflow={true}>
-          <div className="flex items-center gap-2 px-4 py-2 w-full">
-            <LanguageSelector/>
-            <FlexItem grow={true}/>
-            <ThemeToggleButton/>
-            <div className="text-center text-sm text-muted-foreground md:text-left">
-              © {new Date().getFullYear()} Linkurator. {t("all_rights_reserved")}
-            </div>
-          </div>
-        </FlexRow>
       </footer>
     </div>
   )
