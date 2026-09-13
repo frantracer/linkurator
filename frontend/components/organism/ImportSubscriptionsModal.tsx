@@ -5,10 +5,11 @@ import Button from "../atoms/Button";
 import {getProviderIcon} from "../../entities/Provider";
 import useProviders from "../../hooks/useProviders";
 import {configuration} from "../../configuration";
-import {closeModal} from "../../utilities/modalAction";
+import {closeModal, openModal} from "../../utilities/modalAction";
 import {useRouter} from "next/navigation";
 import {useTranslations} from "next-intl";
 import Box from "../atoms/Box";
+import {ImportOpmlModalId} from "./ImportOpmlModal";
 
 export const ImportSubscriptionsModalId = "import-subscriptions-modal";
 
@@ -27,6 +28,11 @@ const ImportSubscriptionsModal = () => {
   const handlePatreonImport = () => {
     router.push(configuration.SUBSCRIPTIONS_PATREON_IMPORT_URL);
     closeModal(ImportSubscriptionsModalId);
+  }
+
+  const handleOpmlImport = () => {
+    closeModal(ImportSubscriptionsModalId);
+    openModal(ImportOpmlModalId);
   }
 
   const handleClose = () => {
@@ -52,6 +58,14 @@ const ImportSubscriptionsModal = () => {
               <Button clickAction={handlePatreonImport}>
                 <Miniature src={getProviderIcon(providers, "patreon")} alt={"patreon logo"}/>
                 {t("import_from_patreon")}
+              </Button>
+            </div>
+          )}
+          {isProviderAvailable("rss") && (
+            <div className={"flex flex-row items-center justify-center gap-4 w-full"}>
+              <Button clickAction={handleOpmlImport}>
+                <Miniature src={getProviderIcon(providers, "rss")} alt={"rss logo"}/>
+                {t("import_from_rss")}
               </Button>
             </div>
           )}

@@ -39,6 +39,7 @@ import QuickAccessesModal, {QuickAccessesModalId} from "./QuickAccessesModal";
 import LateralTopicList from "./LateralTopicList";
 import {v4 as uuidv4} from 'uuid';
 import ImportSubscriptionsModal from "./ImportSubscriptionsModal";
+import ImportOpmlModal from "./ImportOpmlModal";
 import {scrollToDrawerTop} from "../../utilities/scrollToDrawerTop";
 import {Topic} from "../../entities/Topic";
 
@@ -266,6 +267,7 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
       <FindCuratorModal refreshCurators={refreshCurators} curators={curators}/>
       <QuickAccessesModal onClose={() => closeModal(QuickAccessesModalId)}/>
       <ImportSubscriptionsModal/>
+      <ImportOpmlModal refreshSubscriptions={refreshSubscriptions}/>
       {
         children
       }

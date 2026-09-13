@@ -187,6 +187,36 @@ export async function getItem(uuid: string): Promise<SubscriptionItem | undefine
   return undefined;
 }
 
+export type ImportOpmlResult = {
+  imported: number;
+  alreadyFollowed: number;
+  failed: number;
+  topicsCreated: number;
+}
+
+export async function importOpmlSubscriptions(file: File, createTopics: boolean): Promise<ImportOpmlResult | undefined> {
+  try {
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("create_topics", String(createTopics));
+    const {data, status} = await axios.post(
+      configuration.SUBSCRIPTIONS_URL + "import/opml",
+      formData,
+      {withCredentials: true});
+    if (status === 200) {
+      return {
+        imported: data.imported,
+        alreadyFollowed: data.already_followed,
+        failed: data.failed,
+        topicsCreated: data.topics_created,
+      };
+    }
+  } catch (error: any) {
+    console.error("Error importing OPML subscriptions", error);
+  }
+  return undefined;
+}
+
 export async function refreshSubscription(uuid: string): Promise<boolean> {
   try {
     const url = configuration.SUBSCRIPTIONS_URL + uuid + "/refresh";
