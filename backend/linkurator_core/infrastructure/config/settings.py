@@ -162,6 +162,7 @@ class LogfireSettings(BaseModel):
 
 class LogSettings(BaseModel):
     level: str
+    show_traces: bool = False
     logfire: LogfireSettings
 
 

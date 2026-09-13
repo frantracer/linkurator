@@ -3,11 +3,14 @@ import logging
 
 import uvicorn.server
 
-from linkurator_core.infrastructure.config.settings import ApiSettings, ApplicationSettings
+from linkurator_core.infrastructure.config.settings import ApiSettings, ApplicationSettings, LogSettings
+from linkurator_core.infrastructure.logger import configure_logging
 from linkurator_core.infrastructure.postgres.repositories import run_postgres_migrations
 
 
-async def main(api_args: ApiSettings) -> None:
+async def main(api_args: ApiSettings, log_settings: LogSettings) -> None:
+    configure_logging(log_settings)
+
     # API
     api_server = ApiServer(
         app_path="linkurator_core.infrastructure.fastapi.app:create_app",
@@ -46,6 +49,7 @@ class ApiServer:
                     port=self.port,
                     workers=self.workers,
                     log_level=logging.DEBUG if self.debug else logging.INFO,
+                    log_config=None,
                     reload=self.reload,
                     factory=True)
 
@@ -60,4 +64,4 @@ if __name__ == "__main__":
         app_settings.postgres.ip_address, app_settings.postgres.port, app_settings.postgres.database,
         app_settings.postgres.user, app_settings.postgres.password)
 
-    asyncio.run(main(app_settings.api))
+    asyncio.run(main(app_settings.api, app_settings.logging))

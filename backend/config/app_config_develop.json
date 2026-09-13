@@ -22,6 +22,7 @@
   },
   "logging": {
     "level": "INFO",
+    "show_traces": false,
     "logfire": {
       "enabled": false,
       "token": "",
