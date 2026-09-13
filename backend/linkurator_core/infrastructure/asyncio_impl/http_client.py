@@ -6,6 +6,9 @@ from typing import Any, TypeVar
 
 from aiohttp import ClientSession
 
+DEFAULT_MAX_RETRIES = 2
+DEFAULT_RETRY_DELAY = 1.0
+
 
 @dataclass
 class HttpResponse:
@@ -28,8 +31,8 @@ class AsyncHttpClient:
         contact_email: str | None = None,
         headers: dict[str, str] | None = None,
         proxy_url: str | None = None,
-        max_retries: int = 3,
-        retry_delay: float = 1.0,
+        max_retries: int = DEFAULT_MAX_RETRIES,
+        retry_delay: float = DEFAULT_RETRY_DELAY,
     ) -> None:
         self.headers: dict[str, str] = headers or {}
         self.proxy_url = proxy_url
