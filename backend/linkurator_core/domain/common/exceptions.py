@@ -42,6 +42,10 @@ class InvalidRssFeedError(Exception):
     pass
 
 
+class InvalidOpmlFileError(Exception):
+    pass
+
+
 class CannotFollowOwnedTopicError(Exception):
     pass
 

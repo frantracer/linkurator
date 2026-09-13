@@ -41,6 +41,9 @@ from linkurator_core.application.subscriptions.follow_subscription_handler impor
 from linkurator_core.application.subscriptions.get_providers_handler import GetProvidersHandler
 from linkurator_core.application.subscriptions.get_subscription_handler import GetSubscriptionHandler
 from linkurator_core.application.subscriptions.get_user_subscriptions_handler import GetUserSubscriptionsHandler
+from linkurator_core.application.subscriptions.import_opml_subscriptions_handler import (
+    ImportOpmlSubscriptionsHandler,
+)
 from linkurator_core.application.subscriptions.refresh_subscription_handler import RefreshSubscriptionHandler
 from linkurator_core.application.subscriptions.unfollow_subscription_handler import UnfollowSubscriptionHandler
 from linkurator_core.application.topics.assign_subscription_to_user_topic_handler import (
@@ -105,6 +108,7 @@ class Handlers:  # pylint: disable=too-many-instance-attributes
     get_subscription: GetSubscriptionHandler
     get_user_subscriptions: GetUserSubscriptionsHandler
     find_subscriptions_by_name_handler: FindSubscriptionsByNameOrUrlHandler
+    import_opml_subscriptions_handler: ImportOpmlSubscriptionsHandler
     follow_subscription_handler: FollowSubscriptionHandler
     unfollow_subscription_handler: UnfollowSubscriptionHandler
     get_subscription_items_handler: GetSubscriptionItemsHandler
@@ -246,6 +250,7 @@ def create_app_from_handlers(handlers: Handlers) -> FastAPI:
             get_subscription_handler=handlers.get_subscription,
             get_user_subscriptions_handler=handlers.get_user_subscriptions,
             find_subscriptions_by_name_or_url=handlers.find_subscriptions_by_name_handler,
+            import_opml_subscriptions_handler=handlers.import_opml_subscriptions_handler,
             follow_subscription_handler=handlers.follow_subscription_handler,
             unfollow_subscription_handler=handlers.unfollow_subscription_handler,
             get_subscription_items_handler=handlers.get_subscription_items_handler,

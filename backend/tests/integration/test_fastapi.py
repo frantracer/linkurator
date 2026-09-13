@@ -16,6 +16,7 @@ from linkurator_core.application.items.get_subscription_items_handler import (
     GetSubscriptionItemsResponse,
 )
 from linkurator_core.application.items.get_topic_items_handler import GetTopicItemsHandler
+from linkurator_core.application.subscriptions.import_opml_subscriptions_handler import ImportOpmlResult
 from linkurator_core.application.topics.get_curator_topics_as_user_handler import (
     GetCuratorTopicsHandler,
     GetCuratorTopicsResponse,
@@ -59,6 +60,7 @@ def dummy_handlers() -> Handlers:
         get_subscription=AsyncMock(),
         get_user_subscriptions=AsyncMock(),
         find_subscriptions_by_name_handler=AsyncMock(),
+        import_opml_subscriptions_handler=AsyncMock(),
         follow_subscription_handler=AsyncMock(),
         unfollow_subscription_handler=AsyncMock(),
         get_subscription_items_handler=AsyncMock(),
@@ -586,6 +588,40 @@ def test_unfollow_subscription_returns_204(handlers: Handlers) -> None:
     response = client.delete("/subscriptions/36477a42-3874-45c8-9472-baab09204484/follow")
     assert response.status_code == 204
     assert response.content == b""
+
+
+def test_import_opml_subscriptions_returns_200(handlers: Handlers) -> None:
+    dummy_handler = AsyncMock()
+    dummy_handler.handle.return_value = ImportOpmlResult(
+        imported=2, already_followed=1, failed=0, topics_created=1)
+    handlers.import_opml_subscriptions_handler = dummy_handler
+    client = TestClient(create_app_from_handlers(handlers), cookies={"token": "token"})
+
+    response = client.post(
+        "/subscriptions/import/opml",
+        files={"file": ("feeds.opml", b"<opml><body/></opml>", "text/xml")},
+        data={"create_topics": "true"},
+    )
+
+    assert response.status_code == 200
+    assert response.json() == {
+        "imported": 2,
+        "already_followed": 1,
+        "failed": 0,
+        "topics_created": 1,
+    }
+    assert dummy_handler.handle.call_args.kwargs["create_topics"] is True
+
+
+def test_import_opml_subscriptions_without_authentication_returns_401(handlers: Handlers) -> None:
+    client = TestClient(create_app_from_handlers(handlers))
+
+    response = client.post(
+        "/subscriptions/import/opml",
+        files={"file": ("feeds.opml", b"<opml><body/></opml>", "text/xml")},
+    )
+
+    assert response.status_code == 401
 
 
 def test_favorite_topic_returns_201(handlers: Handlers) -> None:

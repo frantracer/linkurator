@@ -33,6 +33,9 @@ from linkurator_core.application.subscriptions.follow_subscription_handler impor
 from linkurator_core.application.subscriptions.get_providers_handler import GetProvidersHandler
 from linkurator_core.application.subscriptions.get_subscription_handler import GetSubscriptionHandler
 from linkurator_core.application.subscriptions.get_user_subscriptions_handler import GetUserSubscriptionsHandler
+from linkurator_core.application.subscriptions.import_opml_subscriptions_handler import (
+    ImportOpmlSubscriptionsHandler,
+)
 from linkurator_core.application.subscriptions.refresh_subscription_handler import RefreshSubscriptionHandler
 from linkurator_core.application.subscriptions.unfollow_subscription_handler import UnfollowSubscriptionHandler
 from linkurator_core.application.topics.assign_subscription_to_user_topic_handler import (
@@ -287,6 +290,13 @@ def app_handlers() -> Handlers:
             subscription_repository=subscription_repository,
             subscription_service=general_subscription_service,
             event_bus=event_bus,
+        ),
+        import_opml_subscriptions_handler=ImportOpmlSubscriptionsHandler(
+            subscription_service=general_subscription_service,
+            user_repository=user_repository,
+            subscription_repository=subscription_repository,
+            topic_repository=topic_repository,
+            event_bus_service=event_bus,
         ),
         follow_curator_handler=FollowCuratorHandler(user_repository),
         unfollow_curator_handler=UnfollowCuratorHandler(user_repository),

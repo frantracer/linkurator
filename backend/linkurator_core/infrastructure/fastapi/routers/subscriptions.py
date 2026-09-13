@@ -6,7 +6,7 @@ from typing import Annotated, Any, Callable, Coroutine
 from urllib.parse import urljoin
 from uuid import UUID
 
-from fastapi import Depends, Query, Request, status
+from fastapi import Depends, Form, Query, Request, UploadFile, status
 from fastapi.responses import RedirectResponse
 from fastapi.routing import APIRouter
 from pydantic.types import NonNegativeInt, PositiveInt
@@ -22,6 +22,9 @@ from linkurator_core.application.subscriptions.find_subscription_by_name_or_url_
 from linkurator_core.application.subscriptions.follow_subscription_handler import FollowSubscriptionHandler
 from linkurator_core.application.subscriptions.get_subscription_handler import GetSubscriptionHandler
 from linkurator_core.application.subscriptions.get_user_subscriptions_handler import GetUserSubscriptionsHandler
+from linkurator_core.application.subscriptions.import_opml_subscriptions_handler import (
+    ImportOpmlSubscriptionsHandler,
+)
 from linkurator_core.application.subscriptions.refresh_subscription_handler import RefreshSubscriptionHandler
 from linkurator_core.application.subscriptions.unfollow_subscription_handler import UnfollowSubscriptionHandler
 from linkurator_core.application.users.get_user_profile_handler import GetUserProfileHandler
@@ -39,7 +42,7 @@ from linkurator_core.infrastructure.fastapi.models import default_responses
 from linkurator_core.infrastructure.fastapi.models.default_responses import EmptyResponse
 from linkurator_core.infrastructure.fastapi.models.item import VALID_INTERACTIONS, InteractionFilterSchema, ItemSchema
 from linkurator_core.infrastructure.fastapi.models.page import FullPage, Page
-from linkurator_core.infrastructure.fastapi.models.subscription import SubscriptionSchema
+from linkurator_core.infrastructure.fastapi.models.subscription import ImportOpmlResultSchema, SubscriptionSchema
 from linkurator_core.infrastructure.google.account_service import GoogleAccountService
 from linkurator_core.infrastructure.patreon.patreon_api_client import PatreonApiClient
 
@@ -60,6 +63,7 @@ def get_router(  # pylint: disable=too-many-statements
         get_subscription_handler: GetSubscriptionHandler,
         get_user_subscriptions_handler: GetUserSubscriptionsHandler,
         find_subscriptions_by_name_or_url: FindSubscriptionsByNameOrUrlHandler,
+        import_opml_subscriptions_handler: ImportOpmlSubscriptionsHandler,
         follow_subscription_handler: FollowSubscriptionHandler,
         unfollow_subscription_handler: UnfollowSubscriptionHandler,
         get_subscription_items_handler: GetSubscriptionItemsHandler,
@@ -198,6 +202,31 @@ def get_router(  # pylint: disable=too-many-statements
         return FullPage[SubscriptionSchema].create(
             elements=[SubscriptionSchema.from_domain_subscription(sub, user) for sub in subs],
         )
+
+    @router.post("/import/opml",
+                 status_code=status.HTTP_200_OK,
+                 responses={
+                     status.HTTP_401_UNAUTHORIZED: {"model": None},
+                 })
+    async def import_opml_subscriptions(
+            file: UploadFile,
+            create_topics: bool = Form(default=True),
+            session: Session | None = Depends(get_session),
+    ) -> ImportOpmlResultSchema:
+        """
+        Import RSS subscriptions from an OPML file.
+        :param file: The OPML file to import
+        :param create_topics: Whether to create a topic per OPML group (form field)
+        :param session: The session of the logged user
+        :return: A summary of the import. UNAUTHORIZED status code if the session is invalid.
+        """
+        if session is None:
+            raise default_responses.not_authenticated()
+
+        content = (await file.read()).decode("utf-8")
+        result = await import_opml_subscriptions_handler.handle(
+            user_id=session.user_id, opml_content=content, create_topics=create_topics)
+        return ImportOpmlResultSchema.from_domain(result)
 
     @router.get("/{sub_id}",
                 status_code=status.HTTP_200_OK,
