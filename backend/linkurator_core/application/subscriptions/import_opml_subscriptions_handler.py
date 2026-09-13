@@ -6,7 +6,10 @@ import logging
 from dataclasses import dataclass
 from uuid import UUID, uuid4
 
-from linkurator_core.domain.common.event import SubscriptionNeedsSummarizationEvent
+from linkurator_core.domain.common.event import (
+    SubscriptionItemsBecameOutdatedEvent,
+    SubscriptionNeedsSummarizationEvent,
+)
 from linkurator_core.domain.common.event_bus_service import EventBusService
 from linkurator_core.domain.common.exceptions import DuplicatedKeyError
 from linkurator_core.domain.common.utils import parse_url
@@ -116,7 +119,7 @@ class ImportOpmlSubscriptionsHandler:
         registered_subscription = await self.subscription_repository.find_by_url(subscription.url)
         if registered_subscription is None:
             await self.subscription_repository.add(subscription)
-            event = SubscriptionNeedsSummarizationEvent.new(subscription.uuid)
-            await self.event_bus_service.publish(event)
+            await self.event_bus_service.publish(SubscriptionNeedsSummarizationEvent.new(subscription.uuid))
+            await self.event_bus_service.publish(SubscriptionItemsBecameOutdatedEvent.new(subscription.uuid))
             return subscription
         return registered_subscription

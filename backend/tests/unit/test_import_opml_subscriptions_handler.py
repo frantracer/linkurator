@@ -6,6 +6,10 @@ import pytest
 from linkurator_core.application.subscriptions.import_opml_subscriptions_handler import (
     ImportOpmlSubscriptionsHandler,
 )
+from linkurator_core.domain.common.event import (
+    SubscriptionItemsBecameOutdatedEvent,
+    SubscriptionNeedsSummarizationEvent,
+)
 from linkurator_core.domain.common.event_bus_service import EventBusService
 from linkurator_core.domain.common.mock_factory import mock_sub, mock_user
 from linkurator_core.domain.subscriptions.general_subscription_service import GeneralSubscriptionService
@@ -72,7 +76,12 @@ async def test_import_opml_creates_subscriptions_topics_and_follows_them() -> No
     assert topics[0].name == "News"
     assert set(topics[0].subscriptions_ids) == {sub1.uuid, sub2.uuid}
 
-    assert event_bus_service.publish.call_count == 3
+    published_events = [call.args[0] for call in event_bus_service.publish.call_args_list]
+    assert len(published_events) == 6
+    outdated_events = [e for e in published_events if isinstance(e, SubscriptionItemsBecameOutdatedEvent)]
+    summarization_events = [e for e in published_events if isinstance(e, SubscriptionNeedsSummarizationEvent)]
+    assert {e.subscription_id for e in outdated_events} == {sub1.uuid, sub2.uuid, sub3.uuid}
+    assert {e.subscription_id for e in summarization_events} == {sub1.uuid, sub2.uuid, sub3.uuid}
 
 
 @pytest.mark.asyncio()
