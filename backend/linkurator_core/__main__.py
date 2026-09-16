@@ -34,7 +34,7 @@ class ApiServer:
     async def start(self) -> None:
         if self.with_gunicorn:
             task = await asyncio.create_subprocess_shell(" ".join(
-                [".venv/bin/gunicorn", self.app_path,
+                [".venv/bin/gunicorn", f"{self.app_path}()",
                  "--workers", f"{self.workers}",
                  "--worker-class", "uvicorn.workers.UvicornWorker",
                  "--bind", f"{self.host}:{self.port}",
