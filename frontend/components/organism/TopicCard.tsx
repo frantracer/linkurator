@@ -8,6 +8,7 @@ import Miniature from "../atoms/Miniature";
 import Tag from "../atoms/Tag";
 import ALink from "../atoms/ALink";
 import CrossButton from "../atoms/CrossButton";
+import TopicIcon from "../atoms/TopicIcon";
 
 type TopicCardProps = {
   topic: Topic;
@@ -58,9 +59,22 @@ const TopicCard = ({topic, onEdit, onDelete, onToggleFavorite, onFollow, onUnfol
         <span className="sr-only">{topic.name}</span>
       </ALink>
       <div className="card-body m-1 p-2 gap-3">
-        <div className="flex flex-row items-center gap-1">
-          <h2 className="card-title text-sm flex-1 hover:text-primary line-clamp-2">{topic.name}</h2>
-          <div className="relative z-10">
+        <div className="flex flex-row items-start gap-3">
+          <TopicIcon name={topic.name}/>
+          <div className="flex-1 min-w-0 flex flex-col gap-1 pt-1">
+            <h2 className="card-title text-sm hover:text-primary line-clamp-2">{topic.name}</h2>
+            {!topic.is_owner && (
+              <div className="relative z-10 flex flex-row items-center gap-1 min-w-0 text-xs text-base-content/70">
+                <ALink href={paths.CURATORS + "/" + topic.curator.username}>
+                  <div className={"flex flex-row items-center gap-1"}>
+                    <Miniature src={topic.curator.avatar_url} alt={topic.curator.username}/>
+                    <span className="truncate">{topic.curator.username}</span>
+                  </div>
+                </ALink>
+              </div>
+            )}
+          </div>
+          <div className="relative z-10 shrink-0">
             <Button
               primary={false}
               borderless={true}
@@ -72,16 +86,6 @@ const TopicCard = ({topic, onEdit, onDelete, onToggleFavorite, onFollow, onUnfol
             </Button>
           </div>
         </div>
-        {!topic.is_owner && (
-          <div className="relative z-10 flex flex-row items-center gap-1 min-w-0 text-xs text-base-content/70">
-            <ALink href={paths.CURATORS + "/" + topic.curator.username}>
-              <div className={"flex flex-row items-center gap-1"}>
-                <Miniature src={topic.curator.avatar_url} alt={topic.curator.username}/>
-                <span className="truncate">{topic.curator.username}</span>
-              </div>
-            </ALink>
-          </div>
-        )}
         <div className="flex flex-row items-center justify-between gap-2 mt-auto">
           <Tag>
             <span className="text-xs">

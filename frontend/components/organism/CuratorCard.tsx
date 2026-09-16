@@ -3,9 +3,9 @@ import {useTranslations} from "next-intl";
 import {paths} from "../../configuration";
 import {Curator} from "../../entities/Curators";
 import ALink from "../atoms/ALink";
+import Avatar from "../atoms/Avatar";
 import Button from "../atoms/Button";
 import CrossButton from "../atoms/CrossButton";
-import Miniature from "../atoms/Miniature";
 import Tag from "../atoms/Tag";
 
 type CuratorCardProps = {
@@ -40,9 +40,9 @@ const CuratorCard = ({curator, onFollow, onUnfollow}: CuratorCardProps) => {
         <span className="sr-only">{curator.username}</span>
       </ALink>
       <div className="card-body m-1 p-2 gap-3">
-        <div className="flex flex-row items-center gap-2 min-w-0">
-          <Miniature src={curator.avatar_url} alt={curator.username}/>
-          <h3 className="card-title text-sm flex-1 hover:text-primary line-clamp-2">
+        <div className="flex flex-row items-start gap-3">
+          <Avatar src={curator.avatar_url} alt={curator.username} size="lg"/>
+          <h3 className="card-title text-sm flex-1 hover:text-primary line-clamp-2 pt-1">
             {curator.username}
           </h3>
         </div>

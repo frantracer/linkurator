@@ -3,10 +3,10 @@ import {useTranslations} from "next-intl";
 import {paths} from "../../configuration";
 import {Subscription} from "../../entities/Subscription";
 import ALink from "../atoms/ALink";
+import Avatar from "../atoms/Avatar";
 import Button from "../atoms/Button";
 import CrossButton from "../atoms/CrossButton";
 import {PencilIcon} from "../atoms/Icons";
-import Miniature from "../atoms/Miniature";
 import Tag from "../atoms/Tag";
 
 type SubscriptionCardProps = {
@@ -40,13 +40,13 @@ const SubscriptionCard = ({subscription, topicsCount, onAssign, onUnfollow}: Sub
         <span className="sr-only">{subscription.name}</span>
       </ALink>
       <div className="card-body m-1 p-2 gap-3">
-        <div className="flex flex-row items-center gap-2 min-w-0">
-          <Miniature src={subscription.thumbnail} alt={subscription.name}/>
-          <h3 className="card-title text-sm flex-1 hover:text-primary line-clamp-2">
+        <div className="flex flex-row items-start gap-3">
+          <Avatar src={subscription.thumbnail} alt={subscription.name} size="lg"/>
+          <h3 className="card-title text-sm flex-1 hover:text-primary line-clamp-2 pt-1">
             {subscription.name}
           </h3>
           {onAssign && (
-            <div className="relative z-10">
+            <div className="relative z-10 shrink-0">
               <Button
                 primary={false}
                 borderless={true}
