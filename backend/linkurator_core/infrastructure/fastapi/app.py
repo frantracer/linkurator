@@ -407,6 +407,7 @@ def app_handlers() -> Handlers:
 
 
 def create_app() -> FastAPI:
-    configure_logging(ApplicationSettings.from_file().logging)
+    settings = ApplicationSettings.from_file()
+    configure_logging(settings.logging)
 
-    return create_app_from_handlers(app_handlers())
+    return create_app_from_handlers(app_handlers(), cors_origins=settings.api.cors_origins)

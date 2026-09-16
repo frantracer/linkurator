@@ -16,6 +16,7 @@ class ApiSettings(BaseModel):
     debug: bool
     reload: bool
     with_gunicorn: bool
+    cors_origins: list[str] = []
 
 
 class GoogleWebCredentials(BaseModel):

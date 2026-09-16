@@ -156,7 +156,7 @@ class Handlers:  # pylint: disable=too-many-instance-attributes
     delete_user_filter_handler: DeleteUserFilterHandler
 
 
-def create_app_from_handlers(handlers: Handlers) -> FastAPI:
+def create_app_from_handlers(handlers: Handlers, cors_origins: list[str] | None = None) -> FastAPI:
     app = FastAPI(title="Linkurator API", version="0.1.0")
 
     async def get_current_session(request: Request) -> Session | None:
@@ -301,9 +301,7 @@ def create_app_from_handlers(handlers: Handlers) -> FastAPI:
 
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=["http://localhost:3000", "https://localhost",
-                       "https://linkurator.com", "https://www.linkurator.com",
-                       "http://10.75.212.116:3000"],
+        allow_origins=cors_origins or [],
         allow_credentials=True,
         allow_methods=["*"],
         allow_headers=["*"],
