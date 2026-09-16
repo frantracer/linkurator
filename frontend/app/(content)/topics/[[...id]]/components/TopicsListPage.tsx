@@ -3,6 +3,7 @@
 import React, {useState} from "react";
 import {useTranslations} from "next-intl";
 import Button from "../../../../../components/atoms/Button";
+import Collapse from "../../../../../components/atoms/Collapse";
 import {AddIcon, MagnifyingGlassIcon, RectangleGroup, StarIcon} from "../../../../../components/atoms/Icons";
 import SearchBar from "../../../../../components/molecules/SearchBar";
 import TopTitle from "../../../../../components/molecules/TopTitle";
@@ -36,6 +37,7 @@ const TopicsListPageComponent = () => {
   const [editingTopic, setEditingTopic] = useState<Topic | null>(null);
   const [deletingTopic, setDeletingTopic] = useState<Topic | null>(null);
   const [filterText, setFilterText] = useState("");
+  const [openSections, setOpenSections] = useState<Record<string, boolean>>({});
   const {showToast} = useToast();
 
   const normalizedFilter = filterText.trim().toLowerCase();
@@ -83,28 +85,34 @@ const TopicsListPageComponent = () => {
   const openDiscoverModal = () => openModal(FindTopicModalId);
   const openNewModal = () => openModal(NewTopicModalId);
 
-  const renderSection = (title: string, icon: React.ReactNode, sectionTopics: Topic[]) => {
+  const renderSection = (key: string, title: string, icon: React.ReactNode, sectionTopics: Topic[]) => {
     if (sectionTopics.length === 0) return null;
     return (
-      <section className="flex flex-col gap-3">
-        <div className="flex flex-row gap-2 items-center">
-          {icon}
-          <h2 className="text-xl">{title} ({sectionTopics.length})</h2>
-        </div>
-        <div className="grid grid-cols-[repeat(auto-fill,minmax(275px,1fr))] gap-4 justify-items-center justify-content-center">
-          {sectionTopics.map(topic => (
-            <TopicCard
-              key={topic.uuid}
-              topic={topic}
-              onToggleFavorite={handleToggleFavorite}
-              onEdit={topic.is_owner ? handleEditTopic : undefined}
-              onDelete={topic.is_owner ? handleDeleteTopic : undefined}
-              onFollow={!topic.is_owner ? handleFollowTopic : undefined}
-              onUnfollow={!topic.is_owner ? handleUnfollowTopic : undefined}
-            />
-          ))}
-        </div>
-      </section>
+      <Collapse
+        isOpen={openSections[key] ?? true}
+        onToggle={(isOpen) => setOpenSections(prev => ({...prev, [key]: isOpen}))}
+        title={
+          <div className="flex flex-row gap-2 items-center">
+            {icon}
+            <h2 className="text-xl">{title} ({sectionTopics.length})</h2>
+          </div>
+        }
+        content={
+          <div className="grid grid-cols-[repeat(auto-fill,minmax(275px,1fr))] gap-4 justify-items-center justify-content-center">
+            {sectionTopics.map(topic => (
+              <TopicCard
+                key={topic.uuid}
+                topic={topic}
+                onToggleFavorite={handleToggleFavorite}
+                onEdit={topic.is_owner ? handleEditTopic : undefined}
+                onDelete={topic.is_owner ? handleDeleteTopic : undefined}
+                onFollow={!topic.is_owner ? handleFollowTopic : undefined}
+                onUnfollow={!topic.is_owner ? handleUnfollowTopic : undefined}
+              />
+            ))}
+          </div>
+        }
+      />
     );
   }
 
@@ -155,9 +163,9 @@ const TopicsListPageComponent = () => {
             <EmptyStateNoMatches/>
           )}
 
-          {renderSection(t("favorites"), <StarIcon/>, favoriteTopics)}
-          {renderSection(t("my_topics"), <RectangleGroup/>, myTopics)}
-          {renderSection(t("other_topics"), <RectangleGroup/>, otherTopics)}
+          {renderSection("favorites", t("favorites"), <StarIcon/>, favoriteTopics)}
+          {renderSection("my_topics", t("my_topics"), <RectangleGroup/>, myTopics)}
+          {renderSection("other_topics", t("other_topics"), <RectangleGroup/>, otherTopics)}
         </div>
       </div>
 

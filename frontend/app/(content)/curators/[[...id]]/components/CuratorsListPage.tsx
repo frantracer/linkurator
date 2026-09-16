@@ -3,6 +3,7 @@
 import React, {useState} from "react";
 import {useTranslations} from "next-intl";
 import Button from "../../../../../components/atoms/Button";
+import Collapse from "../../../../../components/atoms/Collapse";
 import {CuratorIcon, MagnifyingGlassIcon} from "../../../../../components/atoms/Icons";
 import SearchBar from "../../../../../components/molecules/SearchBar";
 import TopTitle from "../../../../../components/molecules/TopTitle";
@@ -21,6 +22,7 @@ const CuratorsListPageComponent = () => {
   const {profile, profileIsLoading} = useProfile();
   const {curators, curatorsAreLoading, refreshCurators} = useCurators(profile, profileIsLoading);
   const [filterText, setFilterText] = useState("");
+  const [openSections, setOpenSections] = useState<Record<string, boolean>>({});
 
   const normalizedFilter = filterText.trim().toLowerCase();
   const filteredCurators = normalizedFilter === ""
@@ -40,26 +42,32 @@ const CuratorsListPageComponent = () => {
     unfollowCurator(curator.id).then(() => refreshCurators());
   }
 
-  const renderSection = (title: string, items: Curator[]) => {
+  const renderSection = (key: string, title: string, items: Curator[]) => {
     if (items.length === 0) return null;
     return (
-      <section className="flex flex-col gap-3">
-        <div className="flex flex-row gap-2 items-center">
-          <CuratorIcon/>
-          <h2 className="text-xl">{title} ({items.length})</h2>
-        </div>
-        <div
-          className="grid grid-cols-[repeat(auto-fill,minmax(275px,1fr))] gap-4 justify-items-center justify-content-center">
-          {items.map(curator => (
-            <CuratorCard
-              key={curator.id}
-              curator={curator}
-              onFollow={profile ? handleFollow : undefined}
-              onUnfollow={profile ? handleUnfollow : undefined}
-            />
-          ))}
-        </div>
-      </section>
+      <Collapse
+        isOpen={openSections[key] ?? true}
+        onToggle={(isOpen) => setOpenSections(prev => ({...prev, [key]: isOpen}))}
+        title={
+          <div className="flex flex-row gap-2 items-center">
+            <CuratorIcon/>
+            <h2 className="text-xl">{title} ({items.length})</h2>
+          </div>
+        }
+        content={
+          <div
+            className="grid grid-cols-[repeat(auto-fill,minmax(275px,1fr))] gap-4 justify-items-center justify-content-center">
+            {items.map(curator => (
+              <CuratorCard
+                key={curator.id}
+                curator={curator}
+                onFollow={profile ? handleFollow : undefined}
+                onUnfollow={profile ? handleUnfollow : undefined}
+              />
+            ))}
+          </div>
+        }
+      />
     );
   }
 
@@ -104,8 +112,8 @@ const CuratorsListPageComponent = () => {
             <EmptyStateNoMatches/>
           )}
 
-          {renderSection(t("following"), followedCurators)}
-          {renderSection(t("discover_curators"), otherCurators)}
+          {renderSection("following", t("following"), followedCurators)}
+          {renderSection("discover_curators", t("discover_curators"), otherCurators)}
         </div>
       </div>
 

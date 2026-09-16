@@ -4,6 +4,7 @@ import React, {useState} from "react";
 import {flushSync} from "react-dom";
 import {useTranslations} from "next-intl";
 import Button from "../../../../../components/atoms/Button";
+import Collapse from "../../../../../components/atoms/Collapse";
 import {ImportIcon, MagnifyingGlassIcon, SubscriptionIcon} from "../../../../../components/atoms/Icons";
 import EmptyStateNoSubscriptions from "../../../../../components/organism/EmptyStateNoSubscriptions";
 import EmptyStateNoMatches from "../../../../../components/organism/EmptyStateNoMatches";
@@ -33,6 +34,7 @@ const SubscriptionsListPageComponent = () => {
   const {providers} = useProviders();
   const [filterText, setFilterText] = useState("");
   const [assigningSubscription, setAssigningSubscription] = useState<Subscription | null>(null);
+  const [openProviders, setOpenProviders] = useState<Record<string, boolean>>({});
 
   const topicsCountBySubscription = new Map<string, number>();
   topics.forEach(topic => {
@@ -122,25 +124,32 @@ const SubscriptionsListPageComponent = () => {
           )}
 
           {subscriptionsByProvider.map(({provider, items}) => (
-            <section key={provider.name} className="flex flex-col gap-3">
-              <div className="flex flex-row gap-2 items-center">
-                <Miniature src={getProviderIcon(providers, provider.name)} alt={`${provider.name} logo`}/>
-                <h2 className="text-xl">
-                  {getProviderPrettyName(providers, provider.name)} ({items.length})
-                </h2>
-              </div>
-              <div className="grid grid-cols-[repeat(auto-fill,minmax(275px,1fr))] gap-4 justify-items-center justify-content-center">
-                {items.map(subscription => (
-                  <SubscriptionCard
-                    key={subscription.uuid}
-                    subscription={subscription}
-                    topicsCount={topicsCountBySubscription.get(subscription.uuid) ?? 0}
-                    onAssign={profile ? handleAssign : undefined}
-                    onUnfollow={profile ? handleUnfollow : undefined}
-                  />
-                ))}
-              </div>
-            </section>
+            <Collapse
+              key={provider.name}
+              isOpen={openProviders[provider.name] ?? true}
+              onToggle={(isOpen) => setOpenProviders(prev => ({...prev, [provider.name]: isOpen}))}
+              title={
+                <div className="flex flex-row gap-2 items-center">
+                  <Miniature src={getProviderIcon(providers, provider.name)} alt={`${provider.name} logo`}/>
+                  <h2 className="text-xl">
+                    {getProviderPrettyName(providers, provider.name)} ({items.length})
+                  </h2>
+                </div>
+              }
+              content={
+                <div className="grid grid-cols-[repeat(auto-fill,minmax(275px,1fr))] gap-4 justify-items-center justify-content-center">
+                  {items.map(subscription => (
+                    <SubscriptionCard
+                      key={subscription.uuid}
+                      subscription={subscription}
+                      topicsCount={topicsCountBySubscription.get(subscription.uuid) ?? 0}
+                      onAssign={profile ? handleAssign : undefined}
+                      onUnfollow={profile ? handleUnfollow : undefined}
+                    />
+                  ))}
+                </div>
+              }
+            />
           ))}
         </div>
       </div>
