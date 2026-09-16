@@ -157,7 +157,10 @@ def app_handlers() -> Handlers:
             proxy_url=f"http://localhost:{settings.vpn.http_proxy_port}",
         )
 
-    rss_feed_client = RssFeedClient(http_client=http_client)
+    rss_feed_client = RssFeedClient(
+        http_client=http_client,
+        http_client_proxy=proxy_http_client if settings.vpn.enabled else None,
+    )
 
     rss_service = RssSubscriptionService(
         subscription_repository=subscription_repository,

@@ -159,7 +159,10 @@ async def run_processor() -> None:  # pylint: disable=too-many-locals
         http_client_proxy = AsyncHttpClient(
             proxy_url=f"http://localhost:{settings.vpn.http_proxy_port}",
         )
-    rss_client = RssFeedClient(http_client=http_client)
+    rss_client = RssFeedClient(
+        http_client=http_client,
+        http_client_proxy=http_client_proxy if settings.vpn.enabled else None,
+    )
 
     rss_service = RssSubscriptionService(
         subscription_repository=subscription_repository,

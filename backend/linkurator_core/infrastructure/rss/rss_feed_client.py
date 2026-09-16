@@ -12,9 +12,13 @@ from html.parser import HTMLParser
 from urllib.parse import urljoin, urlparse
 
 from linkurator_core.domain.common.exceptions import InvalidRssFeedError
-from linkurator_core.infrastructure.asyncio_impl.http_client import AsyncHttpClient
+from linkurator_core.infrastructure.asyncio_impl.http_client import AsyncHttpClient, HttpResponse
 
 DEFAULT_FEED_ICON = "https://upload.wikimedia.org/wikipedia/en/4/43/Feed-icon.svg"
+
+# Statuses a site typically returns when it's blocking the requester's IP/UA
+# (e.g. Cloudflare or similar bot protection), as opposed to the feed itself being broken.
+BLOCKED_STATUS_CODES = frozenset({403, 429, 503})
 
 
 @dataclass
@@ -71,12 +75,30 @@ class OpenGraphImageParser(HTMLParser):
 
 
 class RssFeedClient:
-    def __init__(self, http_client: AsyncHttpClient = AsyncHttpClient()) -> None:
+    def __init__(
+        self,
+        http_client: AsyncHttpClient = AsyncHttpClient(),
+        http_client_proxy: AsyncHttpClient | None = None,
+    ) -> None:
         self.http_client = http_client
+        self.http_client_proxy = http_client_proxy
+
+    async def _get_with_proxy_fallback(self, url: str) -> HttpResponse:
+        """
+        Fetch a URL, retrying through the proxy client if the response looks like an IP block.
+
+        Some feeds (e.g. sites behind Cloudflare) block requests from the server's
+        regular egress IP with a 403/429/503. When a proxy client is configured,
+        retry through it before giving up.
+        """
+        response = await self.http_client.get(url)
+        if response.status in BLOCKED_STATUS_CODES and self.http_client_proxy is not None:
+            response = await self.http_client_proxy.get(url)
+        return response
 
     async def get_feed_info(self, feed_url: str) -> RssFeedInfo:
         """Get feed information from an RSS/Atom feed URL."""
-        response = await self.http_client.get(feed_url)
+        response = await self._get_with_proxy_fallback(feed_url)
         if response.status == 404:
             msg = f"Feed not found: {feed_url}"
             raise InvalidRssFeedError(msg)
@@ -192,7 +214,7 @@ class RssFeedClient:
 
     async def get_feed_items(self, feed_url: str) -> list[RssFeedItem]:
         """Get items from an RSS/Atom feed URL."""
-        response = await self.http_client.get(feed_url)
+        response = await self._get_with_proxy_fallback(feed_url)
         if response.status == 404:
             return []
         if response.status != 200:

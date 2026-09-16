@@ -148,6 +148,81 @@ async def test_get_feed_items_returns_empty_list_for_404() -> None:
     assert items == []
 
 
+@pytest.mark.asyncio()
+async def test_get_feed_info_retries_with_proxy_on_403() -> None:
+    http_client_mock = AsyncMock(spec=AsyncHttpClient)
+    http_client_mock.get.return_value = HttpResponse(status=403, text="")
+
+    http_client_proxy_mock = AsyncMock(spec=AsyncHttpClient)
+    http_client_proxy_mock.get.return_value = HttpResponse(status=200, text="not valid xml")
+
+    client = RssFeedClient(http_client=http_client_mock, http_client_proxy=http_client_proxy_mock)
+
+    with pytest.raises(InvalidRssFeedError, match="Failed to parse XML"):
+        await client.get_feed_info("https://example.com/feed.xml")
+
+    http_client_mock.get.assert_called_once_with("https://example.com/feed.xml")
+    http_client_proxy_mock.get.assert_called_once_with("https://example.com/feed.xml")
+
+
+@pytest.mark.asyncio()
+async def test_get_feed_items_retries_with_proxy_on_403(rss_xml: str) -> None:
+    http_client_mock = AsyncMock(spec=AsyncHttpClient)
+    http_client_mock.get.return_value = HttpResponse(status=403, text="")
+
+    http_client_proxy_mock = AsyncMock(spec=AsyncHttpClient)
+    http_client_proxy_mock.get.return_value = HttpResponse(status=200, text=rss_xml)
+
+    client = RssFeedClient(http_client=http_client_mock, http_client_proxy=http_client_proxy_mock)
+    items = await client.get_feed_items("https://example.com/feed.xml")
+
+    assert len(items) == 2
+    http_client_proxy_mock.get.assert_called_once_with("https://example.com/feed.xml")
+
+
+@pytest.mark.asyncio()
+async def test_get_feed_items_raises_error_for_403_without_proxy_configured() -> None:
+    http_client_mock = AsyncMock(spec=AsyncHttpClient)
+    http_client_mock.get.return_value = HttpResponse(status=403, text="")
+
+    client = RssFeedClient(http_client=http_client_mock)
+
+    with pytest.raises(InvalidRssFeedError, match="Invalid response status: 403"):
+        await client.get_feed_items("https://example.com/feed.xml")
+
+
+@pytest.mark.asyncio()
+@pytest.mark.parametrize("status", [403, 429, 503])
+async def test_get_feed_items_retries_with_proxy_on_blocked_status(status: int, rss_xml: str) -> None:
+    http_client_mock = AsyncMock(spec=AsyncHttpClient)
+    http_client_mock.get.return_value = HttpResponse(status=status, text="")
+
+    http_client_proxy_mock = AsyncMock(spec=AsyncHttpClient)
+    http_client_proxy_mock.get.return_value = HttpResponse(status=200, text=rss_xml)
+
+    client = RssFeedClient(http_client=http_client_mock, http_client_proxy=http_client_proxy_mock)
+    items = await client.get_feed_items("https://example.com/feed.xml")
+
+    assert len(items) == 2
+    http_client_proxy_mock.get.assert_called_once_with("https://example.com/feed.xml")
+
+
+@pytest.mark.asyncio()
+async def test_get_feed_items_does_not_retry_with_proxy_on_server_error() -> None:
+    """A 500 isn't a sign of IP blocking, so it shouldn't burn a proxy request."""
+    http_client_mock = AsyncMock(spec=AsyncHttpClient)
+    http_client_mock.get.return_value = HttpResponse(status=500, text="")
+
+    http_client_proxy_mock = AsyncMock(spec=AsyncHttpClient)
+
+    client = RssFeedClient(http_client=http_client_mock, http_client_proxy=http_client_proxy_mock)
+
+    with pytest.raises(InvalidRssFeedError, match="Invalid response status: 500"):
+        await client.get_feed_items("https://example.com/feed.xml")
+
+    http_client_proxy_mock.get.assert_not_called()
+
+
 def test_parse_el_pais_rss_feed(client: RssFeedClient, el_pais_xml: str) -> None:
     """Test parsing a real-world RSS feed from El Pais newspaper."""
     # Test feed info parsing
