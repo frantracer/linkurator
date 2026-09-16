@@ -78,7 +78,7 @@ def test_configure_logging_does_not_attach_logfire_handler_when_disabled() -> No
     assert len(logfire_handlers) == 0
 
 
-def test_configure_logging_attaches_error_only_logfire_handler_when_enabled() -> None:
+def test_configure_logging_attaches_warning_and_above_logfire_handler_when_enabled() -> None:
     settings = LogSettings(
         level="INFO",
         show_traces=False,
@@ -90,4 +90,4 @@ def test_configure_logging_attaches_error_only_logfire_handler_when_enabled() ->
     root_logger = logging.getLogger()
     logfire_handlers = [h for h in root_logger.handlers if isinstance(h, logfire.LogfireLoggingHandler)]
     assert len(logfire_handlers) == 1
-    assert logfire_handlers[0].level == logging.ERROR
+    assert logfire_handlers[0].level == logging.WARNING

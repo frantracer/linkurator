@@ -51,4 +51,4 @@ def configure_logging(
 
         logfire.instrument_pydantic_ai()
 
-        root_logger.addHandler(logfire.LogfireLoggingHandler(level=logging.ERROR))
+        root_logger.addHandler(logfire.LogfireLoggingHandler(level=logging.WARNING))
