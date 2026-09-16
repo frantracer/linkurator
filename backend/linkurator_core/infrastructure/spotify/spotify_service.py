@@ -21,6 +21,7 @@ from linkurator_core.infrastructure.spotify.spotify_api_client import (
     ShowImage,
     SpotifyApiClient,
     SpotifyApiNotFoundError,
+    SpotifyApiRateLimitError,
 )
 
 SHOW_ID_KEY = "show_id"
@@ -144,6 +145,12 @@ class SpotifySubscriptionService(SubscriptionService):
         except SpotifyApiNotFoundError:
             logging.warning("Spotify show '%s' for subscription '%s' not found, returning empty items", show_id, sub_id)
             return []
+        except SpotifyApiRateLimitError:
+            logging.warning(
+                "Spotify rate limit exceeded while fetching episodes for show '%s' (subscription '%s'), "
+                "returning items retrieved so far",
+                show_id, sub_id)
+            return [item for item in items if item.published_at >= from_date]
 
         return [item for item in items if item.published_at >= from_date]
 
