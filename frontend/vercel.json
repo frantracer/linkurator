@@ -1,5 +1,4 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "buildCommand": "yarn lint && yarn test && yarn build",
-  "ignoreCommand": "git diff --quiet $VERCEL_GIT_PREVIOUS_SHA HEAD -- :/frontend"
+  "buildCommand": "yarn lint && yarn test && yarn build"
 }
