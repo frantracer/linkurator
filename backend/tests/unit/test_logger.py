@@ -1,5 +1,7 @@
 import logging
 
+import logfire
+
 from linkurator_core.infrastructure.config.settings import LogfireEnvironment, LogfireSettings, LogSettings
 from linkurator_core.infrastructure.logger import TracebackFilter, configure_logging
 
@@ -66,3 +68,26 @@ def test_configure_logging_applies_the_configured_level() -> None:
 
     configure_logging(_log_settings(level="DEBUG", show_traces=False))
     assert logging.getLogger().getEffectiveLevel() == logging.DEBUG
+
+
+def test_configure_logging_does_not_attach_logfire_handler_when_disabled() -> None:
+    configure_logging(_log_settings(show_traces=False))
+
+    root_logger = logging.getLogger()
+    logfire_handlers = [h for h in root_logger.handlers if isinstance(h, logfire.LogfireLoggingHandler)]
+    assert len(logfire_handlers) == 0
+
+
+def test_configure_logging_attaches_error_only_logfire_handler_when_enabled() -> None:
+    settings = LogSettings(
+        level="INFO",
+        show_traces=False,
+        logfire=LogfireSettings(enabled=True, token="", environment=LogfireEnvironment.TEST),
+    )
+
+    configure_logging(settings)
+
+    root_logger = logging.getLogger()
+    logfire_handlers = [h for h in root_logger.handlers if isinstance(h, logfire.LogfireLoggingHandler)]
+    assert len(logfire_handlers) == 1
+    assert logfire_handlers[0].level == logging.ERROR
