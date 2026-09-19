@@ -1,19 +1,22 @@
 from __future__ import annotations
 
 import asyncio
+import logging
 from typing import Any, Callable, Coroutine
 
 import aio_pika
+from aio_pika.exceptions import ProbableAuthenticationError
 
 from linkurator_core.domain.common.event import Event
 from linkurator_core.domain.common.event_bus_service import EventBusService
 
 STOP_PAYLOAD = "STOP"
+CONNECT_MAX_ATTEMPTS = 30
+CONNECT_RETRY_DELAY_SECONDS = 2.0
 
 
 class RabbitMQEventBus(EventBusService):
-    def __init__(self, host: str, port: int, username: str, password: str, queue_name: str = "event_queue",
-                 loop: asyncio.AbstractEventLoop | None = None) -> None:
+    def __init__(self, host: str, port: int, username: str, password: str, queue_name: str = "event_queue") -> None:
         self.host = host
         self.port = port
         self.username = username
@@ -22,7 +25,7 @@ class RabbitMQEventBus(EventBusService):
         self.connection: aio_pika.abc.AbstractRobustConnection | None = None
         self.queue_name = queue_name
         self._is_running = False
-        self.loop = loop or asyncio.get_event_loop()
+        self._background_tasks: set[asyncio.Task[None]] = set()
         self.url = f"amqp://{self.username}:{self.password}@{self.host}:{self.port}/"
 
     async def publish(self, event: Event) -> None:
@@ -31,7 +34,7 @@ class RabbitMQEventBus(EventBusService):
 
     async def _publish(self, data: str) -> None:
         if self.connection is None:
-            self.connection = await aio_pika.connect_robust(self.url, loop=self.loop)
+            self.connection = await aio_pika.connect_robust(self.url)
 
         channel = await self.connection.channel()
         await channel.default_exchange.publish(
@@ -46,8 +49,23 @@ class RabbitMQEventBus(EventBusService):
 
         self.event_handlers[event_type].append(callback)
 
+    async def _connect_with_retries(self) -> aio_pika.abc.AbstractRobustConnection:
+        # connect_robust only reconnects after a first successful connection, and RabbitMQ can take several
+        # seconds to accept connections when it starts at the same time as this service
+        attempt = 1
+        while True:
+            try:
+                return await aio_pika.connect_robust(self.url)
+            except OSError as error:
+                if isinstance(error, ProbableAuthenticationError) or attempt >= CONNECT_MAX_ATTEMPTS:
+                    raise
+                logging.warning("RabbitMQ connection attempt %d/%d failed: %s. Retrying in %s seconds",
+                                attempt, CONNECT_MAX_ATTEMPTS, error, CONNECT_RETRY_DELAY_SECONDS)
+                attempt += 1
+                await asyncio.sleep(CONNECT_RETRY_DELAY_SECONDS)
+
     async def start(self) -> None:
-        self.connection = await aio_pika.connect_robust(self.url, loop=self.loop)
+        self.connection = await self._connect_with_retries()
 
         if self.connection is None:
             msg = "Connection is not established"
@@ -71,7 +89,9 @@ class RabbitMQEventBus(EventBusService):
 
                         if event.__class__ in self.event_handlers:
                             for handler in self.event_handlers[event.__class__]:
-                                self.loop.create_task(handler(event))
+                                task = asyncio.create_task(handler(event))
+                                self._background_tasks.add(task)
+                                task.add_done_callback(self._background_tasks.discard)
 
             await channel.close()
 
