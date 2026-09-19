@@ -1,12 +1,12 @@
 import unittest
-from unittest.mock import AsyncMock, MagicMock
+from unittest.mock import AsyncMock
 
 from linkurator_core.application.auth.register_new_user_with_google import RegisterUserHandler
 from linkurator_core.domain.common import utils
 from linkurator_core.domain.common.event import UserRegisteredEvent
 from linkurator_core.domain.common.event_bus_service import EventBusService
 from linkurator_core.domain.common.mock_factory import mock_user
-from linkurator_core.domain.users.account_service import UserDetails, UserInfo
+from linkurator_core.domain.users.account_service import AccountService, UserDetails, UserInfo
 from linkurator_core.domain.users.user import User
 from linkurator_core.domain.users.user_repository import UserRepository
 from linkurator_core.infrastructure.in_memory.user_repository import InMemoryUserRepository
@@ -18,7 +18,7 @@ class TestRegisterUserHandler(unittest.IsolatedAsyncioTestCase):
         user_repo_mock = AsyncMock(spec=UserRepository)
         user_repo_mock.get_by_email.return_value = None
 
-        account_service_mock = MagicMock()
+        account_service_mock = AsyncMock(spec=AccountService)
         account_service_mock.get_user_info.return_value = UserInfo(
             email="john@email.com",
             details=UserDetails(
@@ -55,7 +55,7 @@ class TestRegisterUserHandler(unittest.IsolatedAsyncioTestCase):
 
         event_bus_mock = AsyncMock(spec=EventBusService)
 
-        account_service_mock = MagicMock()
+        account_service_mock = AsyncMock(spec=AccountService)
         account_service_mock.get_user_info.return_value = UserInfo(
             email="john@email.com",
             details=UserDetails(

@@ -21,7 +21,7 @@ class ValidateTokenHandler:
         if session is not None and not session.is_expired():
             return session
 
-        user_info = self.account_service.get_user_info(access_token)
+        user_info = await self.account_service.get_user_info(access_token)
         if user_info is None:
             return None
 

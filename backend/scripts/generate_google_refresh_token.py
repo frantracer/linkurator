@@ -1,4 +1,5 @@
 import argparse
+import asyncio
 from dataclasses import dataclass
 from enum import Enum
 from urllib.parse import parse_qs, urlparse
@@ -26,7 +27,7 @@ def parse_arguments() -> Arguments:
     return Arguments(scopes=Scopes(args.scope))
 
 
-def main() -> None:
+async def main() -> None:
     arguments = parse_arguments()
 
     google_secrets = ApplicationSettings.from_file().google.oauth.web
@@ -47,16 +48,16 @@ def main() -> None:
     url = urlparse(redirect_url_str)
     code = parse_qs(url.query)["code"][0]
 
-    tokens = google_account_service.validate_code(code, redirect_uri)
+    tokens = await google_account_service.validate_code(code, redirect_uri)
     if tokens is not None and tokens.refresh_token is None:
-        google_account_service.revoke_credentials(tokens.access_token)
+        await google_account_service.revoke_credentials(tokens.access_token)
 
         redirect_url_str = input()
 
         url = urlparse(redirect_url_str)
         code = parse_qs(url.query)["code"][0]
 
-        tokens = google_account_service.validate_code(code, redirect_uri)
+        tokens = await google_account_service.validate_code(code, redirect_uri)
 
     if tokens is not None and tokens.refresh_token is not None:
         pass
@@ -65,4 +66,4 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())

@@ -506,7 +506,7 @@ def get_router(  # pylint: disable=too-many-statements
             return RedirectResponse(url=redirect_uri or "/login")
 
         if update_user_subscriptions_handler is not None and error is None and code is not None:
-            tokens = google_client.validate_code(
+            tokens = await google_client.validate_code(
                 code=code,
                 redirect_uri=urljoin(str(request.base_url), "/subscriptions/sync/youtube_auth"))
             if tokens is not None and tokens.access_token is not None:

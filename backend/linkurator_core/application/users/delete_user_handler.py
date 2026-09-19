@@ -21,7 +21,7 @@ class DeleteUserHandler:
             return
 
         try:
-            self.account_service.revoke_credentials(user_session.token)
+            await self.account_service.revoke_credentials(user_session.token)
         except FailToRevokeCredentialsError:
             logging.warning("Failed to revoke credentials for user %s", user.username)
 

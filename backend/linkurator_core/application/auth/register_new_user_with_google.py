@@ -39,7 +39,7 @@ class RegisterUserHandler:
         self.username_generator = username_generator
 
     async def handle(self, access_token: str) -> RegistrationError | None:
-        user_info = self.account_service.get_user_info(access_token)
+        user_info = await self.account_service.get_user_info(access_token)
         if user_info is None or user_info.details is None:
             return "Failed to get user info"
 

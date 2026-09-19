@@ -5,6 +5,7 @@ from unittest.mock import AsyncMock, MagicMock
 
 from linkurator_core.application.auth.validate_session_token import ValidateTokenHandler
 from linkurator_core.domain.common.mock_factory import mock_user
+from linkurator_core.domain.users.account_service import AccountService
 from linkurator_core.domain.users.session import Session
 from linkurator_core.domain.users.session_repository import SessionRepository
 from linkurator_core.infrastructure.in_memory.user_repository import InMemoryUserRepository
@@ -20,7 +21,7 @@ class TestValidateTokenHandler(unittest.IsolatedAsyncioTestCase):
         dummy_user.last_login_at = datetime.now(tz=timezone.utc) - timedelta(days=1)
         await user_repo_mock.add(dummy_user)
 
-        account_service_mock = MagicMock()
+        account_service_mock = AsyncMock(spec=AccountService)
         account_service_mock.get_user_info.return_value = dummy_user
 
         handler = ValidateTokenHandler(user_repo_mock, session_repo_mock, account_service_mock)
@@ -43,7 +44,7 @@ class TestValidateTokenHandler(unittest.IsolatedAsyncioTestCase):
         dummy_user = mock_user(uuid=user_id)
         user_repo_mock.get.return_value = dummy_user
 
-        account_service_mock = MagicMock()
+        account_service_mock = AsyncMock(spec=AccountService)
 
         handler = ValidateTokenHandler(user_repo_mock, session_repo_mock, account_service_mock)
 
@@ -57,7 +58,7 @@ class TestValidateTokenHandler(unittest.IsolatedAsyncioTestCase):
         user_repo_mock = MagicMock()
         user_repo_mock.get_by_email.return_value = None
 
-        account_service_mock = MagicMock()
+        account_service_mock = AsyncMock(spec=AccountService)
         account_service_mock.get_user_info.return_value = None
 
         handler = ValidateTokenHandler(user_repo_mock, session_repo_mock, account_service_mock)
@@ -75,7 +76,7 @@ class TestValidateTokenHandler(unittest.IsolatedAsyncioTestCase):
 
         user_repo_mock = MagicMock()
 
-        account_service_mock = MagicMock()
+        account_service_mock = AsyncMock(spec=AccountService)
         account_service_mock.get_user_info.return_value = None
 
         handler = ValidateTokenHandler(user_repo_mock, session_repo_mock, account_service_mock)

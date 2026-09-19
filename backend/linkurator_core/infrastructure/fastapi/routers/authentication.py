@@ -171,7 +171,8 @@ def get_router(  # pylint: disable=too-many-statements
         if code is None:
             return unauthorized_error("No code returned", redirect_uri)
 
-        tokens = google_client.validate_code(code=code, redirect_uri=urljoin(str(request.base_url), "/login_auth"))
+        tokens = await google_client.validate_code(
+            code=code, redirect_uri=urljoin(str(request.base_url), "/login_auth"))
         if tokens is None:
             return unauthorized_error("Invalid code", redirect_uri)
 
@@ -219,7 +220,7 @@ def get_router(  # pylint: disable=too-many-statements
             auth_error = "No code returned"
 
         else:
-            tokens = google_client.validate_code(
+            tokens = await google_client.validate_code(
                 code=code,
                 redirect_uri=urljoin(str(request.base_url), "/register_auth"))
             if tokens is None:
@@ -294,7 +295,7 @@ def get_router(  # pylint: disable=too-many-statements
         if token is None:
             return unauthorized_error("No token provided", None)
 
-        google_client.revoke_credentials(token)
+        await google_client.revoke_credentials(token)
         response = JSONResponse(content={"message": "Token revoked"})
         response.delete_cookie(key=TOKEN_COOKIE_NAME)
         return response

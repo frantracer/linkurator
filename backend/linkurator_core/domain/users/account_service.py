@@ -31,17 +31,17 @@ class AccountService(abc.ABC):
         raise NotImplementedError()
 
     @abc.abstractmethod
-    def get_user_info(self, access_token: str) -> Optional[UserInfo]:
+    async def get_user_info(self, access_token: str) -> Optional[UserInfo]:
         raise NotImplementedError()
 
     @abc.abstractmethod
-    def generate_access_token_from_refresh_token(self, refresh_token: str) -> Optional[str]:
+    async def generate_access_token_from_refresh_token(self, refresh_token: str) -> Optional[str]:
         raise NotImplementedError()
 
     @abc.abstractmethod
-    def validate_code(self, code: str, redirect_uri: str) -> Optional[CodeValidationResponse]:
+    async def validate_code(self, code: str, redirect_uri: str) -> Optional[CodeValidationResponse]:
         raise NotImplementedError()
 
     @abc.abstractmethod
-    def revoke_credentials(self, access_token: str) -> None:
+    async def revoke_credentials(self, access_token: str) -> None:
         raise NotImplementedError()

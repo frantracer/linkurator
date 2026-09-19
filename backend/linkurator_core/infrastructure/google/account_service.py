@@ -1,16 +1,17 @@
 from __future__ import annotations
 
+import base64
 import http
+import logging
 from urllib.parse import urlencode
 
 import google.auth.transport.requests
-import requests
 from google.oauth2.service_account import Credentials
-from requests.auth import HTTPBasicAuth
 
 from linkurator_core.domain.common.exceptions import FailToRevokeCredentialsError
 from linkurator_core.domain.common.utils import parse_url
 from linkurator_core.domain.users.account_service import AccountService, CodeValidationResponse, UserDetails, UserInfo
+from linkurator_core.infrastructure.asyncio_impl.http_client import AsyncHttpClient
 
 
 class GoogleAccountService(AccountService):
@@ -20,9 +21,10 @@ class GoogleAccountService(AccountService):
     More documentation: https://developers.google.com/identity/protocols/oauth2/openid-connect
     """
 
-    def __init__(self, client_id: str, client_secret: str) -> None:
+    def __init__(self, client_id: str, client_secret: str, http_client: AsyncHttpClient | None = None) -> None:
         self.client_id = client_id
         self.client_secret = client_secret
+        self.http_client = http_client if http_client is not None else AsyncHttpClient()
 
     def authorization_url(self, scopes: list[str], redirect_uri: str) -> str:
         google_oauth_url = "https://accounts.google.com/o/oauth2/auth"
@@ -38,32 +40,39 @@ class GoogleAccountService(AccountService):
         }
         return f"{google_oauth_url}?{urlencode(query_params)}"
 
-    def validate_code(self, code: str, redirect_uri: str) -> CodeValidationResponse | None:
+    def _client_auth_headers(self) -> dict[str, str]:
+        credentials = base64.b64encode(f"{self.client_id}:{self.client_secret}".encode()).decode()
+        return {"Authorization": f"Basic {credentials}"}
+
+    async def validate_code(self, code: str, redirect_uri: str) -> CodeValidationResponse | None:
         google_oauth_url = "https://oauth2.googleapis.com/token"
         query_params: dict[str, str] = {
             "grant_type": "authorization_code",
             "code": code,
             "redirect_uri": redirect_uri,
         }
-        token_response = requests.post(google_oauth_url, auth=HTTPBasicAuth(self.client_id, self.client_secret),
-                                       data=query_params, timeout=10)
+        token_response = await self.http_client.post(
+            google_oauth_url, data=query_params,
+            headers=self._client_auth_headers())
+
+        if token_response.status != http.HTTPStatus.OK:
+            logging.warning("Failed to validate code: %s %s", token_response.status, token_response.json)
+            return None
 
         return CodeValidationResponse(
-            access_token=token_response.json()["access_token"],
-            refresh_token=token_response.json().get("refresh_token"),
+            access_token=token_response.json["access_token"],
+            refresh_token=token_response.json.get("refresh_token"),
         )
 
-    def revoke_credentials(self, access_token: str) -> None:
-        revoke_response = requests.post("https://oauth2.googleapis.com/revoke",
-                                        params={"token": access_token},
-                                        headers={"content-type": "application/x-www-form-urlencoded"},
-                                        timeout=10)
+    async def revoke_credentials(self, access_token: str) -> None:
+        revoke_response = await self.http_client.post("https://oauth2.googleapis.com/revoke",
+                                                      data={"token": access_token})
 
-        if revoke_response.status_code != http.HTTPStatus.OK:
-            msg = f"Failed to revoke token: {revoke_response.content!s}"
+        if revoke_response.status != http.HTTPStatus.OK:
+            msg = f"Failed to revoke token: {revoke_response.json!s}"
             raise FailToRevokeCredentialsError(msg)
 
-    def generate_access_token_from_refresh_token(self, refresh_token: str) -> str | None:
+    async def generate_access_token_from_refresh_token(self, refresh_token: str) -> str | None:
         google_oauth_url = "https://oauth2.googleapis.com/token"
         query_params: dict[str, str] = {
             "grant_type": "refresh_token",
@@ -71,20 +80,27 @@ class GoogleAccountService(AccountService):
             "client_id": self.client_id,
             "client_secret": self.client_secret,
         }
-        token_response = requests.post(google_oauth_url, auth=HTTPBasicAuth(self.client_id, self.client_secret),
-                                       data=query_params, timeout=10)
-        return token_response.json().get("access_token", None)
+        token_response = await self.http_client.post(
+            google_oauth_url,
+            data=query_params,
+            headers=self._client_auth_headers())
 
-    def get_user_info(self, access_token: str) -> UserInfo | None:
-        user_info_url = "https://openidconnect.googleapis.com/v1/userinfo"
-        user_info_response = requests.get(user_info_url,
-                                          headers={"Authorization": f"Bearer {access_token}"},
-                                          timeout=10)
-
-        if user_info_response.status_code != http.HTTPStatus.OK:
+        if token_response.status != http.HTTPStatus.OK:
+            logging.warning("Failed to refresh access token: %s %s", token_response.status, token_response.json)
             return None
 
-        user_info = dict(user_info_response.json())
+        return token_response.json.get("access_token", None)
+
+    async def get_user_info(self, access_token: str) -> UserInfo | None:
+        user_info_url = "https://openidconnect.googleapis.com/v1/userinfo"
+        user_info_response = await self.http_client.get_json(
+            user_info_url,
+            headers={"Authorization": f"Bearer {access_token}"})
+
+        if user_info_response.status != http.HTTPStatus.OK:
+            return None
+
+        user_info = dict(user_info_response.json)
         user_details: UserDetails | None = None
         if user_info.get("given_name") is not None:
             user_details = UserDetails(
@@ -97,17 +113,6 @@ class GoogleAccountService(AccountService):
             email=user_info["email"],
             details=user_details,
         )
-
-    def token_has_scope_access(self, access_token: str, scope: str) -> bool:
-        scope_validation_url = "https://www.googleapis.com/oauth2/v1/tokeninfo"
-        scope_validation_response = requests.get(scope_validation_url,
-                                                 params={"access_token": access_token},
-                                                 timeout=10)
-
-        if scope_validation_response.status_code != http.HTTPStatus.OK:
-            return False
-
-        return scope in scope_validation_response.json().get("scope", "").split(" ")
 
 
 class GoogleDomainAccountService:

@@ -20,7 +20,7 @@ async def main() -> None:
 
     google_account_service = GoogleAccountService(client_id=secrets.client_id, client_secret=secrets.client_secret)
 
-    access_token = google_account_service.generate_access_token_from_refresh_token(refresh_token=refresh_token)
+    access_token = await google_account_service.generate_access_token_from_refresh_token(refresh_token=refresh_token)
 
     if access_token is None:
         sys.exit(1)
