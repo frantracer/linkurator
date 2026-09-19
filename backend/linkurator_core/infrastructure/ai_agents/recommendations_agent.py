@@ -28,6 +28,7 @@ from linkurator_core.domain.topics.topic import Topic
 from linkurator_core.domain.topics.topic_repository import TopicRepository
 from linkurator_core.domain.users.user_repository import UserRepository
 from linkurator_core.infrastructure.ai_agents.keyword_generator_agent import KeywordGeneratorAgent
+from linkurator_core.infrastructure.ai_agents.utils import format_duration
 
 ITEMS_PER_PAGE = 20
 SHORT_ID_LENGTH = 8
@@ -153,6 +154,10 @@ class ItemForAI(BaseModel):
     published_at: datetime = Field(
         description="Publication date of the item, if available",
     )
+    duration: str | None = Field(
+        default=None,
+        description="Duration of the item in a readable format (e.g. '1h 5m 3s'). Null means the duration is unknown",
+    )
 
     @classmethod
     def from_item(cls, item: Item, sub_name: str) -> "ItemForAI":
@@ -163,6 +168,7 @@ class ItemForAI(BaseModel):
             description=item.description,
             provider=item.provider,
             published_at=item.published_at,
+            duration=format_duration(item.duration),
         )
 
 
