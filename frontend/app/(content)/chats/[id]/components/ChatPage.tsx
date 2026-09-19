@@ -158,6 +158,16 @@ const ChatPageComponent = ({conversationId}: { conversationId: string }) => {
     return message.content;
   }
 
+  const getMessageClass = (message: ChatMessage) => {
+    if (message.sender === 'user') {
+      return 'max-w-[80%] p-3 rounded-lg bg-primary text-primary-content';
+    }
+    if (message.sender === 'assistant') {
+      return 'w-full mt-4 text-base-content';
+    }
+    return 'max-w-[80%] p-3 rounded-lg bg-base-200 text-base-content border border-neutral';
+  }
+
   return (
     <div className="flex flex-col h-full">
       <TopTitle>
@@ -227,13 +237,7 @@ const ChatPageComponent = ({conversationId}: { conversationId: string }) => {
               key={message.id}
               className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
             >
-              <div
-                className={`max-w-[80%] p-3 rounded-lg ${
-                  message.sender === 'user'
-                    ? 'bg-primary text-primary-content'
-                    : 'bg-base-200 text-base-content border border-neutral'
-                }`}
-              >
+              <div className={getMessageClass(message)}>
                 <div className="markdown-content">
                   <ReactMarkdown>
                     {getMessageContent(message)}

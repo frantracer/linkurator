@@ -65,7 +65,7 @@ const ItemCarousel = ({
       {collapsible ? (
         <button
           onClick={() => setIsExpanded(!isExpanded)}
-          className="flex items-center justify-between w-full p-2 text-sm font-medium text-base-content bg-base-300/50 rounded-lg hover:bg-base-300 transition-colors duration-200"
+          className="flex items-center justify-between w-full p-2 text-sm font-medium text-base-content bg-base-200 rounded-lg hover:bg-base-100 transition-colors duration-200"
         >
           {titleContent}
           {isExpanded ? <ChevronUpIcon /> : <ChevronDownIcon />}
