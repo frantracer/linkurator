@@ -68,7 +68,7 @@ const ContentItemCard = (
     onChangeSwapButton = defaultOnChangeSwapButton,
     limitTitleLength = false
   }: ContentItemCardProps) => {
-  const {ref, inView} = useInView({threshold: 0});
+  const {ref, inView} = useInView({threshold: 0, triggerOnce: true});
   const t = useTranslations("common");
   const router = useRouter();
   const {showToast} = useToast();
@@ -98,13 +98,14 @@ const ContentItemCard = (
 
   if (!inView) {
     return (
-      <div ref={ref}>
+      <div key="skeleton" ref={ref}>
         <ItemCardSkeleton/>
       </div>
     )
   } else {
     return (
       <div
+        key="card"
         className="card card-compact rounded-lg w-80 bg-base-200 hover:scale-105 shadow-md border border-neutral hover:shadow-xl hover:border-primary duration-200">
         <figure className="aspect-video h-48">
           <img className="h-full hover:cursor-pointer"
