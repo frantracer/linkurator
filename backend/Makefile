@@ -140,7 +140,7 @@ docker-generate-env: docker-build
 	docker compose --profile init run --rm generate-env
 
 docker-up: docker-generate-env
-	docker compose --profile app --profile infra up -d
+	docker compose --profile app --profile infra up --force-recreate -d
 
 docker-run-external-services:
 	docker compose --profile infra up -d --quiet-pull
