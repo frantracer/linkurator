@@ -117,13 +117,3 @@ class ChatSummaryResponse(BaseModel):
             created_at=chat.created_at,
             updated_at=chat.updated_at,
         )
-
-
-class GetUserChatsResponse(BaseModel):
-    chats: list[ChatSummaryResponse] = Field(description="List of user chats")
-
-    @classmethod
-    def from_domain(cls, chats: list[Chat]) -> "GetUserChatsResponse":
-        return cls(
-            chats=[ChatSummaryResponse.from_domain(chat) for chat in chats],
-        )

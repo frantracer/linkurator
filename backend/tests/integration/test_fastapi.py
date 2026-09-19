@@ -7,6 +7,7 @@ from fastapi.testclient import TestClient
 from starlette.status import HTTP_400_BAD_REQUEST
 
 from linkurator_core.application.auth.validate_session_token import ValidateTokenHandler
+from linkurator_core.application.chats.get_user_chats_handler import GetUserChatsHandler
 from linkurator_core.application.items.get_followed_subscriptions_items_handler import (
     GetFollowedSubscriptionsItemsHandler,
     GetFollowedSubscriptionsItemsResponse,
@@ -29,7 +30,7 @@ from linkurator_core.domain.common.exceptions import (
     SubscriptionNotFoundError,
     TopicNotFoundError,
 )
-from linkurator_core.domain.common.mock_factory import mock_sub, mock_topic, mock_user
+from linkurator_core.domain.common.mock_factory import mock_chat, mock_sub, mock_topic, mock_user
 from linkurator_core.domain.items.item import Item
 from linkurator_core.domain.items.item_with_interactions import ItemWithInteractions
 from linkurator_core.domain.users.session import Session
@@ -746,6 +747,52 @@ def test_get_followed_subscriptions_items_parses_query_parameters(handlers: Hand
         include_viewed_items=True,
         include_hidden_items=True,
     )
+
+
+def test_get_user_chats_without_authentication_returns_401(handlers: Handlers) -> None:
+    client = TestClient(create_app_from_handlers(handlers))
+
+    response = client.get("/chats")
+
+    assert response.status_code == 401
+
+
+def test_get_user_chats_passes_pagination_and_search_to_handler(handlers: Handlers) -> None:
+    dummy_handler = AsyncMock(spec=GetUserChatsHandler)
+    dummy_handler.handle.return_value = [
+        mock_chat(user_id=USER_UUID, title="First"),
+        mock_chat(user_id=USER_UUID, title="Second"),
+    ]
+    handlers.get_user_chats_handler = dummy_handler
+
+    client = TestClient(create_app_from_handlers(handlers), cookies={"token": "token"})
+
+    response = client.get("/chats?page_number=1&page_size=2&search=foo")
+
+    assert response.status_code == 200
+    dummy_handler.handle.assert_called_once_with(
+        user_id=USER_UUID, page_number=1, page_size=2, title_filter="foo",
+    )
+    body = response.json()
+    assert [chat["title"] for chat in body["elements"]] == ["First", "Second"]
+    assert "page_number=2" in body["next_page"]
+    assert "search=foo" in body["next_page"]
+
+
+def test_get_user_chats_ignores_blank_search(handlers: Handlers) -> None:
+    dummy_handler = AsyncMock(spec=GetUserChatsHandler)
+    dummy_handler.handle.return_value = []
+    handlers.get_user_chats_handler = dummy_handler
+
+    client = TestClient(create_app_from_handlers(handlers), cookies={"token": "token"})
+
+    response = client.get("/chats?search=%20%20")
+
+    assert response.status_code == 200
+    dummy_handler.handle.assert_called_once_with(
+        user_id=USER_UUID, page_number=0, page_size=20, title_filter=None,
+    )
+    assert response.json()["next_page"] is None
 
 
 def test_get_curator_topics_without_authentication_returns_200(handlers: Handlers) -> None:

@@ -1,6 +1,6 @@
 import time
 import uuid
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from ipaddress import IPv4Address
 from math import floor
 from typing import Any
@@ -132,6 +132,112 @@ async def test_get_by_user_id_multiple_chats(chat_repo: ChatRepository) -> None:
     user_titles = {chat.title for chat in user_chats}
     assert user_titles == {"Chat 1", "Chat 2"}
     assert other_user_chats[0].title == "Other Chat"
+
+
+@pytest.mark.asyncio()
+async def test_get_by_user_id_respects_page_size(chat_repo: ChatRepository) -> None:
+    await chat_repo.delete_all()
+
+    user_id = uuid.uuid4()
+    for i in range(5):
+        await chat_repo.add(mock_chat(user_id=user_id, title=f"Chat {i}"))
+        time.sleep(0.001)  # Ensure different updated_at timestamps
+
+    first_page = await chat_repo.get_by_user_id(user_id, page_number=0, page_size=2)
+    second_page = await chat_repo.get_by_user_id(user_id, page_number=1, page_size=2)
+    third_page = await chat_repo.get_by_user_id(user_id, page_number=2, page_size=2)
+
+    assert [chat.title for chat in first_page] == ["Chat 4", "Chat 3"]
+    assert [chat.title for chat in second_page] == ["Chat 2", "Chat 1"]
+    assert [chat.title for chat in third_page] == ["Chat 0"]
+
+
+@pytest.mark.asyncio()
+async def test_get_by_user_id_page_beyond_results_is_empty(chat_repo: ChatRepository) -> None:
+    await chat_repo.delete_all()
+
+    user_id = uuid.uuid4()
+    await chat_repo.add(mock_chat(user_id=user_id, title="Only Chat"))
+
+    chats = await chat_repo.get_by_user_id(user_id, page_number=1, page_size=10)
+
+    assert chats == []
+
+
+@pytest.mark.asyncio()
+async def test_get_by_user_id_filters_by_title_ignoring_case_and_accents(chat_repo: ChatRepository) -> None:
+    await chat_repo.delete_all()
+
+    user_id = uuid.uuid4()
+    await chat_repo.add(mock_chat(user_id=user_id, title="Recomendaciones de Música"))
+    await chat_repo.add(mock_chat(user_id=user_id, title="Best cooking channels"))
+    await chat_repo.add(mock_chat(user_id=uuid.uuid4(), title="Música de otro usuario"))
+
+    by_unaccented_text = await chat_repo.get_by_user_id(user_id, title_filter="musica")
+    by_accented_uppercase_text = await chat_repo.get_by_user_id(user_id, title_filter="MÚSICA")
+    by_uppercase_text = await chat_repo.get_by_user_id(user_id, title_filter="COOKING")
+    by_partial_word = await chat_repo.get_by_user_id(user_id, title_filter="omendacio")
+    without_matches = await chat_repo.get_by_user_id(user_id, title_filter="gardening")
+
+    assert [chat.title for chat in by_unaccented_text] == ["Recomendaciones de Música"]
+    assert [chat.title for chat in by_accented_uppercase_text] == ["Recomendaciones de Música"]
+    assert [chat.title for chat in by_uppercase_text] == ["Best cooking channels"]
+    assert [chat.title for chat in by_partial_word] == ["Recomendaciones de Música"]
+    assert without_matches == []
+
+
+@pytest.mark.asyncio()
+async def test_get_by_user_id_empty_title_filter_returns_all_chats(chat_repo: ChatRepository) -> None:
+    await chat_repo.delete_all()
+
+    user_id = uuid.uuid4()
+    await chat_repo.add(mock_chat(user_id=user_id, title="Chat 1"))
+    await chat_repo.add(mock_chat(user_id=user_id, title="Chat 2"))
+
+    chats = await chat_repo.get_by_user_id(user_id, title_filter="")
+
+    assert len(chats) == 2
+
+
+@pytest.mark.asyncio()
+async def test_get_by_user_id_title_filter_treats_wildcards_literally(chat_repo: ChatRepository) -> None:
+    await chat_repo.delete_all()
+
+    user_id = uuid.uuid4()
+    for title in ["100% legit", "100 percent", "snake_case", "snakeXcase", "back\\slash"]:
+        await chat_repo.add(mock_chat(user_id=user_id, title=title))
+
+    percent_matches = await chat_repo.get_by_user_id(user_id, title_filter="100%")
+    underscore_matches = await chat_repo.get_by_user_id(user_id, title_filter="snake_case")
+    backslash_matches = await chat_repo.get_by_user_id(user_id, title_filter="\\")
+
+    assert [chat.title for chat in percent_matches] == ["100% legit"]
+    assert [chat.title for chat in underscore_matches] == ["snake_case"]
+    assert [chat.title for chat in backslash_matches] == ["back\\slash"]
+
+
+@pytest.mark.asyncio()
+async def test_get_by_user_id_title_filter_is_applied_before_pagination(chat_repo: ChatRepository) -> None:
+    await chat_repo.delete_all()
+
+    user_id = uuid.uuid4()
+    base_time = datetime(2026, 1, 1, tzinfo=timezone.utc)
+    for i in range(5):
+        await chat_repo.add(mock_chat(
+            user_id=user_id, title=f"Match {i}", updated_at=base_time + timedelta(minutes=2 * i)))
+        await chat_repo.add(mock_chat(
+            user_id=user_id, title=f"Other {i}", updated_at=base_time + timedelta(minutes=2 * i + 1)))
+
+    pages = [
+        await chat_repo.get_by_user_id(user_id, page_number=page_number, page_size=2, title_filter="match")
+        for page_number in range(3)
+    ]
+
+    assert [[chat.title for chat in page] for page in pages] == [
+        ["Match 4", "Match 3"],
+        ["Match 2", "Match 1"],
+        ["Match 0"],
+    ]
 
 
 @pytest.mark.asyncio()

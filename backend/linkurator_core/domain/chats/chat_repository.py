@@ -13,7 +13,13 @@ class ChatRepository(abc.ABC):
     async def get(self, chat_id: UUID) -> Optional[Chat]: ...
 
     @abc.abstractmethod
-    async def get_by_user_id(self, user_id: UUID) -> List[Chat]: ...
+    async def get_by_user_id(
+        self,
+        user_id: UUID,
+        page_number: int = 0,
+        page_size: int = 50,
+        title_filter: Optional[str] = None,
+    ) -> List[Chat]: ...
 
     @abc.abstractmethod
     async def update(self, chat: Chat) -> None: ...

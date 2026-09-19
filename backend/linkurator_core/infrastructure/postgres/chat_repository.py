@@ -32,6 +32,10 @@ def _row_to_chat(chat_row: Any, message_rows: list[Any]) -> Chat:
     )
 
 
+def _escape_like(value: str) -> str:
+    return value.replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_")
+
+
 async def _insert_messages(conn: Any, chat_id: UUID, messages: list[ChatMessage]) -> None:
     if len(messages) == 0:
         return
@@ -80,10 +84,24 @@ class PostgresChatRepository(ChatRepository):
         )
         return _row_to_chat(chat_row, message_rows)
 
-    async def get_by_user_id(self, user_id: UUID) -> list[Chat]:
+    async def get_by_user_id(
+        self,
+        user_id: UUID,
+        page_number: int = 0,
+        page_size: int = 50,
+        title_filter: str | None = None,
+    ) -> list[Chat]:
         pool = await self._connector.pool()
+        title_pattern = f"%{_escape_like(title_filter)}%" if title_filter else None
         chat_rows = await pool.fetch(
-            "SELECT * FROM chats WHERE user_id = %s ORDER BY updated_at DESC", user_id,
+            """
+            SELECT * FROM chats
+            WHERE user_id = %s
+                AND (%s::text IS NULL OR immutable_unaccent(title) ILIKE immutable_unaccent(%s))
+            ORDER BY updated_at DESC
+            LIMIT %s OFFSET %s
+            """,
+            user_id, title_pattern, title_pattern, page_size, page_number * page_size,
         )
         chats = []
         for chat_row in chat_rows:

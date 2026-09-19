@@ -2,6 +2,7 @@ from typing import Any, Callable, Coroutine, Optional
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, Request, status
+from pydantic.types import NonNegativeInt, PositiveInt
 
 from linkurator_core.application.chats.delete_chat_handler import DeleteChatHandler
 from linkurator_core.application.chats.get_chat_handler import GetChatHandler
@@ -16,8 +17,9 @@ from linkurator_core.infrastructure.fastapi.models import default_responses
 from linkurator_core.infrastructure.fastapi.models.agent import AgentQueryRequest
 from linkurator_core.infrastructure.fastapi.models.chat import (
     ChatResponse,
-    GetUserChatsResponse,
+    ChatSummaryResponse,
 )
+from linkurator_core.infrastructure.fastapi.models.page import Page
 from linkurator_core.infrastructure.rate_limiter import AnonymousUserRateLimiter
 
 
@@ -34,20 +36,37 @@ def get_router(
     @router.get(
         "",
         status_code=status.HTTP_200_OK,
-        response_model=GetUserChatsResponse,
+        response_model=Page[ChatSummaryResponse],
         responses={
             status.HTTP_401_UNAUTHORIZED: {"model": None},
         },
     )
     async def get_user_chats(
+        request: Request,
+        page_number: NonNegativeInt = 0,
+        page_size: PositiveInt = 20,
+        search: str | None = None,
         session: Optional[Session] = Depends(get_session),
-    ) -> GetUserChatsResponse:
-        """Get all chats for the authenticated user."""
+    ) -> Page[ChatSummaryResponse]:
+        """Get the authenticated user's chats, most recently updated first, optionally filtered by title."""
         if session is None:
             raise default_responses.not_authenticated()
 
-        chats = await get_user_chats_handler.handle(user_id=session.user_id)
-        return GetUserChatsResponse.from_domain(chats)
+        chats = await get_user_chats_handler.handle(
+            user_id=session.user_id,
+            page_number=page_number,
+            page_size=page_size,
+            title_filter=(search or "").strip() or None,
+        )
+
+        current_url = request.url.include_query_params(page_number=page_number, page_size=page_size)
+
+        return Page[ChatSummaryResponse].create(
+            elements=[ChatSummaryResponse.from_domain(chat) for chat in chats],
+            page_number=page_number,
+            page_size=page_size,
+            current_url=current_url,
+        )
 
     @router.get(
         "/{chat_id}",
