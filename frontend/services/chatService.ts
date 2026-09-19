@@ -2,6 +2,8 @@ import {configuration} from "../configuration";
 import {v4 as uuidv4} from 'uuid';
 import {ChatConversation, ChatMessage} from "../entities/Chat";
 import {mapJsonItemToSubscriptionItem} from "./subscriptionService";
+import {replaceBaseUrl} from "../utilities/replaceBaseUrl";
+import {CHATS_PER_PAGE} from "../utilities/constants";
 
 export class ChatRateLimitError extends Error {
   status: number;
@@ -12,9 +14,32 @@ export class ChatRateLimitError extends Error {
   }
 }
 
-export const getChats = async (): Promise<ChatConversation[]> => {
+export type ChatsPageResponse = {
+  elements: ChatConversation[];
+  nextPage: URL | undefined;
+};
+
+const mapJsonToChatsPageResponse = (json: Record<string, any>): ChatsPageResponse => {
+  let nextPage: URL | undefined = undefined;
+  if (json.next_page) {
+    nextPage = replaceBaseUrl(new URL(json.next_page), new URL(configuration.API_BASE_URL));
+  }
+
+  return {
+    elements: json.elements.map((chat: any) => ({
+      id: chat.uuid,
+      title: chat.title,
+      messages: [],
+      createdAt: new Date(chat.created_at),
+      updatedAt: new Date(chat.updated_at),
+    })) as ChatConversation[],
+    nextPage: nextPage,
+  };
+}
+
+const fetchChatsPage = async (url: string): Promise<ChatsPageResponse> => {
   try {
-    const response = await fetch(configuration.CHATS_URL, {
+    const response = await fetch(url, {
       method: 'GET',
       credentials: 'include',
     });
@@ -26,19 +51,22 @@ export const getChats = async (): Promise<ChatConversation[]> => {
     }
 
     const data = await response.json();
-    return data["chats"].map((chat: any) => ({
-      id: chat.uuid,
-      title: chat.title,
-      messages: [],
-      createdAt: new Date(chat.created_at),
-      updatedAt: new Date(chat.updated_at),
-    })) as ChatConversation[];
+    return mapJsonToChatsPageResponse(data);
   } catch (error) {
     if (error instanceof Error && 'status' in error) {
       throw error;
     }
     throw new Error('Failed to fetch chats' + (error instanceof Error ? `: ${error.message}` : ''));
   }
+}
+
+export const getChats = async (search: string = "", pageSize: number = CHATS_PER_PAGE): Promise<ChatsPageResponse> => {
+  const searchParam = search ? "&search=" + encodeURIComponent(search) : "";
+  return fetchChatsPage(configuration.CHATS_URL + "?page_size=" + pageSize + searchParam);
+}
+
+export const getChatsFromUrl = async (url: string): Promise<ChatsPageResponse> => {
+  return fetchChatsPage(url);
 }
 
 export const getChat = async (conversationId: string): Promise<ChatConversation | null> => {

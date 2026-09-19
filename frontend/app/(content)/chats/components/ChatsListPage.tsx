@@ -1,30 +1,51 @@
 'use client';
 
-import React, {useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import {useRouter} from "next/navigation";
 import {useLocale, useTranslations} from "next-intl";
 import {v4 as uuidv4} from 'uuid';
 import Button from "../../../../components/atoms/Button";
 import {InfoBanner} from "../../../../components/atoms/InfoBanner";
+import {Spinner} from "../../../../components/atoms/Spinner";
 import {AddIcon, ChatBubbleIcon} from "../../../../components/atoms/Icons";
 import SearchBar from "../../../../components/molecules/SearchBar";
 import TopTitle from "../../../../components/molecules/TopTitle";
+import EmptyStateNoMatches from "../../../../components/organism/EmptyStateNoMatches";
 import {paths} from "../../../../configuration";
-import {ChatConversation, conversationSorting} from "../../../../entities/Chat";
+import {ChatConversation} from "../../../../entities/Chat";
 import useChatConversations from "../../../../hooks/useChatConversations";
+import {useDebounce} from "../../../../hooks/useDebounce";
 
 const ChatsListPageComponent = () => {
   const t = useTranslations("common");
   const locale = useLocale();
   const router = useRouter();
-  const {conversations, isLoading} = useChatConversations();
   const [filterText, setFilterText] = useState("");
+  const debouncedFilter = useDebounce(filterText.trim(), 300);
+  const {conversations, isLoading, isFinished, fetchMoreConversations} = useChatConversations(debouncedFilter);
+  const containerRef = useRef<HTMLDivElement>(null);
 
-  const normalizedFilter = filterText.trim().toLowerCase();
-  const filteredConversations = (normalizedFilter === ""
-      ? conversations
-      : conversations.filter(conversation => conversation.title.toLowerCase().includes(normalizedFilter))
-  ).slice().sort(conversationSorting);
+  const handleContainerScroll = (event: React.UIEvent<HTMLDivElement>) => {
+    const element = event.currentTarget;
+    if (isFinished || isLoading) {
+      return;
+    }
+    if ((element.scrollTop + element.clientHeight) / element.scrollHeight >= 0.90) {
+      fetchMoreConversations();
+    }
+  };
+
+  // If there's no scrollbar fetch more conversations
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container || isFinished || isLoading) {
+      return;
+    }
+
+    if (container.scrollHeight <= container.clientHeight) {
+      fetchMoreConversations();
+    }
+  }, [conversations.length, isLoading, isFinished, fetchMoreConversations]);
 
   const goToChat = (conversation: ChatConversation) => {
     router.push(paths.CHATS + "/" + conversation.id);
@@ -35,6 +56,7 @@ const ChatsListPageComponent = () => {
   }
 
   const hasAnyConversations = conversations.length > 0;
+  const isFiltering = debouncedFilter !== "";
 
   return (
     <>
@@ -48,7 +70,11 @@ const ChatsListPageComponent = () => {
           <div className="w-10 shrink-0"/>
         </div>
       </TopTitle>
-      <div className="flex flex-col h-full bg-base-300 overflow-y-auto overflow-x-hidden">
+      <div
+        ref={containerRef}
+        onScroll={handleContainerScroll}
+        className="flex flex-col h-full bg-base-300 overflow-y-auto overflow-x-hidden"
+      >
         <div className="flex flex-col gap-6 p-4 max-w-2xl w-full mx-auto">
           <div className="flex flex-row gap-2 w-full items-center">
             <Button fitContent={true} clickAction={goToNewChat} primary={false}>
@@ -63,15 +89,19 @@ const ChatsListPageComponent = () => {
             />
           </div>
 
-          {!isLoading && !hasAnyConversations && (
+          {!isLoading && !hasAnyConversations && !isFiltering && (
             <InfoBanner>
               <span>{t("no_conversations_yet")}</span>
             </InfoBanner>
           )}
 
+          {!isLoading && !hasAnyConversations && isFiltering && (
+            <EmptyStateNoMatches/>
+          )}
+
           {hasAnyConversations && (
             <div className="flex flex-col gap-2">
-              {filteredConversations.map(conversation => (
+              {conversations.map(conversation => (
                 <div
                   key={conversation.id}
                   onClick={() => goToChat(conversation)}
@@ -99,6 +129,17 @@ const ChatsListPageComponent = () => {
                 </div>
               ))}
             </div>
+          )}
+
+          {isLoading && (
+            <div className="flex items-center justify-center gap-2">
+              <Spinner/>
+              <span>{t("loading")}</span>
+            </div>
+          )}
+
+          {hasAnyConversations && isFinished && !isLoading && (
+            <InfoBanner>{t("no_more_content")}</InfoBanner>
           )}
         </div>
       </div>
