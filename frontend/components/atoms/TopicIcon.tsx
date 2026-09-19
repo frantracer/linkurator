@@ -22,11 +22,23 @@ function hashName(name: string): number {
   return Math.abs(hash);
 }
 
+const graphemeSegmenter = typeof Intl !== "undefined" && typeof Intl.Segmenter === "function"
+  ? new Intl.Segmenter(undefined, {granularity: "grapheme"})
+  : null;
+
+function splitCharacters(text: string): string[] {
+  if (graphemeSegmenter) {
+    return Array.from(graphemeSegmenter.segment(text), (part) => part.segment);
+  }
+  // Fallback for browsers without Intl.Segmenter: code points keep most emojis intact
+  return Array.from(text);
+}
+
 function getInitials(name: string): string {
   const words = name.trim().split(/\s+/).filter(Boolean);
   if (words.length === 0) return "?";
-  if (words.length === 1) return words[0].slice(0, 2).toUpperCase();
-  return (words[0][0] + words[1][0]).toUpperCase();
+  if (words.length === 1) return splitCharacters(words[0]).slice(0, 2).join("").toUpperCase();
+  return (splitCharacters(words[0])[0] + splitCharacters(words[1])[0]).toUpperCase();
 }
 
 const TopicIcon = ({name}: TopicIconProps) => {
