@@ -36,7 +36,9 @@ async def main() -> None:
         return
 
     shows = await client.get_shows(show_ids=[show.id])
-    assert show == shows[0]
+    if show != shows[0]:
+        msg = "Show found by name differs from the one fetched by id"
+        raise ValueError(msg)
 
     if show is not None:
         limit = 50
@@ -48,7 +50,9 @@ async def main() -> None:
             offset += limit
 
             same_response = await client.get_episodes(episode_ids=[episode.id for episode in response.items])
-            assert response.items == same_response
+            if response.items != same_response:
+                msg = "Show episodes differ from the ones fetched by id"
+                raise ValueError(msg)
 
 
 if __name__ == "__main__":
