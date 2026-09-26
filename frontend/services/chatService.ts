@@ -1,9 +1,34 @@
 import {configuration} from "../configuration";
 import {v4 as uuidv4} from 'uuid';
-import {ChatConversation, ChatMessage} from "../entities/Chat";
+import {ChatConversation, ChatMessage, ChatScope} from "../entities/Chat";
 import {mapJsonItemToSubscriptionItem} from "./subscriptionService";
 import {replaceBaseUrl} from "../utilities/replaceBaseUrl";
 import {CHATS_PER_PAGE} from "../utilities/constants";
+
+const mapChatScopeToJson = (scope: ChatScope): Record<string, any> => ({
+  subscription_ids: scope.subscriptionIds || [],
+  topic_ids: scope.topicIds || [],
+  curator_ids: scope.curatorIds || [],
+  text_search: scope.textSearch,
+  min_duration: scope.minDuration,
+  max_duration: scope.maxDuration,
+  include_interactions: scope.includeInteractions,
+  excluded_subscriptions: scope.excludedSubscriptions || [],
+});
+
+const mapJsonToChatScope = (json: Record<string, any> | null | undefined): ChatScope | undefined => {
+  if (!json) return undefined;
+  return {
+    subscriptionIds: json.subscription_ids || [],
+    topicIds: json.topic_ids || [],
+    curatorIds: json.curator_ids || [],
+    textSearch: json.text_search || undefined,
+    minDuration: json.min_duration ?? undefined,
+    maxDuration: json.max_duration ?? undefined,
+    includeInteractions: json.include_interactions || undefined,
+    excludedSubscriptions: json.excluded_subscriptions || [],
+  };
+};
 
 export class ChatRateLimitError extends Error {
   status: number;
@@ -97,6 +122,7 @@ export const getChat = async (conversationId: string): Promise<ChatConversation 
         return mapJsonItemToSubscriptionItem(item)
       }) || [],
       topicsWereCreated: msg.topics_were_created || false,
+      scope: mapJsonToChatScope(msg.scope),
     })) as ChatMessage[];
 
     return {
@@ -137,7 +163,7 @@ export const deleteChat = async (conversationId: string): Promise<void> => {
   }
 };
 
-export const queryAgent = async (conversationId: string, query: string): Promise<ChatConversation> => {
+export const queryAgent = async (conversationId: string, query: string, scope?: ChatScope): Promise<ChatConversation> => {
   const response = await fetch(
     configuration.CHATS_URL + "/" + conversationId + "/messages",
     {
@@ -146,7 +172,7 @@ export const queryAgent = async (conversationId: string, query: string): Promise
         'Content-Type': 'application/json',
       },
       credentials: 'include',
-      body: JSON.stringify({query: query}),
+      body: JSON.stringify({query: query, scope: scope ? mapChatScopeToJson(scope) : undefined}),
       signal: AbortSignal.timeout(3 * 60 * 1000) // 3 minutes timeout
     });
 
@@ -169,6 +195,7 @@ export const queryAgent = async (conversationId: string, query: string): Promise
     timestamp: new Date(msg.timestamp),
     items: msg.items || [],
     topicsWereCreated: msg.topics_were_created || false,
+    scope: mapJsonToChatScope(msg.scope),
   })) as ChatMessage[];
 
   return {

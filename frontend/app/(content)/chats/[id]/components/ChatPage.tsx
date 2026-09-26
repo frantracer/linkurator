@@ -1,11 +1,12 @@
 'use client';
 
-import React, {useEffect, useRef, useState} from "react";
+import React, {useCallback, useEffect, useRef, useState} from "react";
 import Button from "../../../../../components/atoms/Button";
-import {TrashIcon} from "../../../../../components/atoms/Icons";
+import {FunnelIcon, TrashIcon} from "../../../../../components/atoms/Icons";
 import ChatInput from "./ChatInput";
 import TopTitle from "../../../../../components/molecules/TopTitle";
-import {ChatMessage, newTopicsWereCreated} from "../../../../../entities/Chat";
+import {ChatMessage, ChatScope, getLatestScope, newTopicsWereCreated} from "../../../../../entities/Chat";
+import {defaultFilters, Filters} from "../../../../../entities/Filters";
 import {ChatRateLimitError, deleteChat, queryAgent} from "../../../../../services/chatService";
 import useChat from "../../../../../hooks/useChat";
 import {useQueryClient} from '@tanstack/react-query';
@@ -23,10 +24,46 @@ import ReactMarkdown from 'react-markdown';
 import {invalidateTopicsCache} from "../../../../../hooks/useTopics";
 import {paths} from "../../../../../configuration";
 import useProviders from "../../../../../hooks/useProviders";
+import useSubscriptions from "../../../../../hooks/useSubscriptions";
+import {useTopics} from "../../../../../hooks/useTopics";
+import useTopicsSubscriptions from "../../../../../hooks/useTopicsSubscriptions";
+import useUserFilter from "../../../../../hooks/useUserFilter";
 import Divider from "../../../../../components/atoms/Divider";
+import HoverPopover from "../../../../../components/atoms/HoverPopover";
+import Drawer from "../../../../../components/molecules/Drawer";
+import ContentFilter, {CONTENT_FILTER_ID} from "../../../../../components/organism/ContentFilter";
+import ChatScopeTags, {SCOPE_KIND_ICONS} from "../../../../../components/organism/ChatScopeTags";
+import TagsRow from "../../../../../components/atoms/TagsRow";
+import ChatScopeModal, {ChatScopeModalId} from "../../../../../components/organism/ChatScopeModal";
+import {PickedEntity} from "../../../../../components/organism/EntityPickerModal";
+import {
+  addScopeEntity,
+  ChatScopeEntity,
+  consumeChatScope,
+  filtersFromScope,
+  getScopeEntities,
+  isEntityInScope,
+  removeScopeEntity,
+  SCOPE_KIND_LABEL_KEYS,
+  scopeFromFilters,
+  scopeHasKind,
+  scopeUsesInteractions
+} from "../../../../../utilities/chatScope";
+import {showLateralMenu} from "../../../../../utilities/lateralMenuAction";
 
 const MESSAGE_LIMIT = 5;
 const CHARACTER_LIMIT = 500;
+
+const scopeEntityFromPicked = (entity: PickedEntity): ChatScopeEntity => {
+  switch (entity.kind) {
+    case 'topic':
+      return {kind: 'topic', id: entity.topic.uuid};
+    case 'subscription':
+      return {kind: 'subscription', id: entity.subscription.uuid};
+    case 'curator':
+      return {kind: 'curator', id: entity.curator.id};
+  }
+};
 
 const ChatPageComponent = ({conversationId}: { conversationId: string }) => {
   const [inputMessage, setInputMessage] = useState('');
@@ -41,12 +78,56 @@ const ChatPageComponent = ({conversationId}: { conversationId: string }) => {
 
   const {conversation, isLoading: conversationLoading} = useChat(conversationId);
   const [localMessages, setLocalMessages] = useState<ChatMessage[]>([]);
-  const {profile} = useProfile();
+  const consumedScopeRef = useRef(false);
+  const {profile, profileIsLoading} = useProfile();
   const isLoggedIn = !!profile;
+  const {topics} = useTopics(profile, profileIsLoading);
+  const {subscriptions} = useSubscriptions(profile);
+  const {userFilter} = useUserFilter();
+
+  // Draft of the scope and filters the next message is sent with, starting from the latest used in the chat.
+  // A scope without an entity is the "everything" scope.
+  const [scope, setScope] = useState<ChatScope | undefined>();
+  const [filters, setFilters] = useState<Filters>(defaultFilters);
+  // Set once the draft no longer follows the user's default filters.
+  const draftInitializedRef = useRef(false);
+  const updateDraft = useCallback((newScope: ChatScope | undefined, newFilters: Filters) => {
+    draftInitializedRef.current = true;
+    setScope(newScope);
+    setFilters(newFilters);
+  }, []);
+  const scopeEntities = getScopeEntities(scope);
+  // A single entity is named after its kind, several of them are just the chat scope.
+  const singleEntityKind = scopeEntities.length === 1 ? scopeEntities[0].kind : undefined;
+  const scopeTitleKey = scopeEntities.length === 0 ? 'chat_scope_none'
+    : singleEntityKind ? SCOPE_KIND_LABEL_KEYS[singleEntityKind] : 'chat_scope';
+  // Interactions don't apply to guests or curators.
+  const showInteractions = isLoggedIn && scopeUsesInteractions(scope);
+  const {topicsSubscriptions} = useTopicsSubscriptions(scope?.topicIds ?? [], topics, subscriptions);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({behavior: 'smooth'});
   };
+
+  useEffect(() => {
+    if (consumedScopeRef.current) return;
+    consumedScopeRef.current = true;
+    const handedOverScope = consumeChatScope(conversationId);
+    if (handedOverScope) {
+      updateDraft(handedOverScope, filtersFromScope(handedOverScope, defaultFilters));
+      setInputMessage(t('chat_scope_prefill'));
+    }
+  }, [conversationId, t, updateDraft]);
+
+  useEffect(() => {
+    if (draftInitializedRef.current) return;
+    const latestScope = conversation ? getLatestScope(conversation.messages) : undefined;
+    if (latestScope) {
+      updateDraft(latestScope, filtersFromScope(latestScope, userFilter));
+    } else {
+      setFilters(userFilter);
+    }
+  }, [conversation, userFilter, updateDraft]);
 
   useEffect(() => {
     if (conversation) {
@@ -71,6 +152,9 @@ const ChatPageComponent = ({conversationId}: { conversationId: string }) => {
   const handleSendMessage = async () => {
     if (!inputMessage.trim() || isLoading || isMessageLimitReached || inputMessage.length > CHARACTER_LIMIT) return;
 
+    draftInitializedRef.current = true;
+    const scopeForThisMessage = scopeFromFilters(filters, scope ?? {});
+
     const userMessage: ChatMessage = {
       id: uuidv4(),
       content: inputMessage,
@@ -78,6 +162,7 @@ const ChatPageComponent = ({conversationId}: { conversationId: string }) => {
       timestamp: new Date(),
       items: [],
       topicsWereCreated: false,
+      scope: scopeForThisMessage,
     };
 
     setLocalMessages(prev => [...prev, userMessage]);
@@ -85,7 +170,7 @@ const ChatPageComponent = ({conversationId}: { conversationId: string }) => {
     setIsLoading(true);
 
     try {
-      await queryAgent(conversationId, userMessage.content);
+      await queryAgent(conversationId, userMessage.content, scopeForThisMessage);
 
       // Invalidate and refetch the conversation data
       await queryClient.invalidateQueries({queryKey: ['chat', conversationId]});
@@ -143,6 +228,40 @@ const ChatPageComponent = ({conversationId}: { conversationId: string }) => {
     openModal(DeleteChatConfirmationModalId);
   };
 
+  const handleFiltersChange = (newFilters: Filters) => {
+    updateDraft(scope, newFilters);
+  };
+
+  const handleAddEntity = (entity: ChatScopeEntity) => {
+    updateDraft(addScopeEntity(scope, entity), filters);
+  };
+
+  const handleRemoveEntity = (entity: ChatScopeEntity) => {
+    // The exclusions belong to the topics of the scope, so they don't outlive a removed one.
+    const newFilters = entity.kind === 'topic' ? {...filters, excludedSubscriptions: []} : filters;
+    updateDraft(removeScopeEntity(scope, entity), newFilters);
+  };
+
+  const handleToggleEntity = (pickedEntity: PickedEntity) => {
+    const entity = scopeEntityFromPicked(pickedEntity);
+    if (isEntityInScope(scope, entity)) {
+      handleRemoveEntity(entity);
+    } else {
+      handleAddEntity(entity);
+    }
+  };
+
+  const handleClearScope = () => {
+    updateDraft(undefined, {...filters, excludedSubscriptions: []});
+  };
+
+  const handleShowScopeModal = () => {
+    openModal(ChatScopeModalId);
+  };
+
+  const handleShowFilters = () => {
+    showLateralMenu(CONTENT_FILTER_ID);
+  };
 
   const handleSampleQuestionClick = (question: string) => {
     setInputMessage(question);
@@ -169,7 +288,16 @@ const ChatPageComponent = ({conversationId}: { conversationId: string }) => {
   }
 
   return (
-    <div className="flex flex-col h-full">
+    <Drawer id={CONTENT_FILTER_ID} right={true} alwaysOpenOnDesktop={false}>
+      <ContentFilter title={t(scopeTitleKey)}
+                     icon={singleEntityKind ? SCOPE_KIND_ICONS[singleEntityKind] : undefined}
+                     subscriptions={scopeHasKind(scope, 'topic') ? topicsSubscriptions : undefined}
+                     providers={providers}
+                     filters={filters}
+                     showInteractions={showInteractions}
+                     setFilters={handleFiltersChange}
+                     resetFilters={() => handleFiltersChange(userFilter)}
+      />
       <TopTitle>
         <div className="flex flex-row items-center h-full w-full px-4">
           <div className="w-10 shrink-0 flex items-center justify-start">
@@ -193,11 +321,30 @@ const ChatPageComponent = ({conversationId}: { conversationId: string }) => {
               }
             </h1>
           </div>
-          <div className="w-10 shrink-0"/>
+          <div className="w-10 shrink-0 flex items-center justify-end">
+            <Button
+              fitContent={true}
+              clickAction={handleShowFilters}
+              primary={false}
+              tooltip={t("filter")}
+            >
+              <FunnelIcon/>
+            </Button>
+          </div>
         </div>
       </TopTitle>
 
       <div className="flex flex-col flex-1 h-full bg-base-300 overflow-hidden">
+        {/* What the next message is searched with. Guests have no entities to pick from. */}
+        <TagsRow>
+          <ChatScopeTags scope={scope}
+                         filters={filters}
+                         showInteractions={showInteractions}
+                         onAddEntity={isLoggedIn ? handleShowScopeModal : undefined}
+                         onRemoveEntity={isLoggedIn ? handleRemoveEntity : undefined}
+                         onChangeFilters={handleFiltersChange}
+                         onOpenFilters={handleShowFilters}/>
+        </TagsRow>
         {/* Messages Area */}
         <div className="flex-1 overflow-y-auto p-4 space-y-4">
           {localMessages.length === 0 && !conversationLoading && (
@@ -262,9 +409,23 @@ const ChatPageComponent = ({conversationId}: { conversationId: string }) => {
                     defaultExpanded={true}
                   />
                 )}
-                <p className="text-xs opacity-70 mt-1">
-                  {message.timestamp.toLocaleTimeString()}
-                </p>
+                <div className="flex flex-row items-center gap-2 mt-1">
+                  <p className="text-xs opacity-70">
+                    {message.timestamp.toLocaleTimeString()}
+                  </p>
+                  {message.sender === 'user' && message.scope && (
+                    <HoverPopover trigger={<FunnelIcon/>} label={t('chat_message_filters')}>
+                      <p className="mb-2 text-xs font-semibold opacity-70">{t('chat_message_filters')}</p>
+                      <div className="flex flex-row flex-wrap gap-1">
+                        <ChatScopeTags
+                          scope={message.scope}
+                          filters={filtersFromScope(message.scope, defaultFilters)}
+                          showInteractions={isLoggedIn && scopeUsesInteractions(message.scope)}
+                        />
+                      </div>
+                    </HoverPopover>
+                  )}
+                </div>
               </div>
             </div>
           ))}
@@ -306,7 +467,8 @@ const ChatPageComponent = ({conversationId}: { conversationId: string }) => {
         title={errorMessage.title}
         message={errorMessage.message}
       />
-    </div>
+      {isLoggedIn && <ChatScopeModal scope={scope} onToggleEntity={handleToggleEntity} onClearScope={handleClearScope}/>}
+    </Drawer>
   );
 };
 

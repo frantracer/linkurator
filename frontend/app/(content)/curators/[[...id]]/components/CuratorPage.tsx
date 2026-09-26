@@ -7,6 +7,7 @@ import Button from "../../../../../components/atoms/Button";
 import CrossButton from "../../../../../components/atoms/CrossButton";
 import {
   AddIcon,
+  ChatBubbleIcon,
   FunnelIcon,
   MinusIcon,
   OptionsIcon,
@@ -32,6 +33,7 @@ import useFilters from "../../../../../hooks/useFilters";
 import useProfile from "../../../../../hooks/useProfile";
 import {followCurator, unfollowCurator} from "../../../../../services/curatorService";
 import {showLateralMenu} from "../../../../../utilities/lateralMenuAction";
+import {newScopedChatPath, scopeFromFilters} from "../../../../../utilities/chatScope";
 import CuratorTopicsList from "../../../../../components/organism/CuratorTopicsList";
 import CuratorSubscriptionsList from "../../../../../components/organism/CuratorSubscriptionsList";
 import {useCuratorSubscriptions} from "../../../../../hooks/useCuratorSubscriptions";
@@ -107,6 +109,11 @@ const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
     showLateralMenu(CONTENT_FILTER_ID);
   }
 
+  const handleChatAboutThis = () => {
+    if (!curator) return;
+    router.push(newScopedChatPath(scopeFromFilters(filters, {curatorIds: [curator.id]})));
+  }
+
   const handleFollowCurator = (curatorId: string) => {
     followCurator(curatorId).then(() => {
       refreshCurators()
@@ -146,6 +153,14 @@ const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
         )
       }
     }
+    dropdownButtons.push(
+      <MenuItem key={"curators-chat"} onClick={handleChatAboutThis} hideMenuOnClick={true}>
+        <div className="flex flex-row gap-2 items-center justify-left">
+          <ChatBubbleIcon/>
+          {t("chat_about_this")}
+        </div>
+      </MenuItem>
+    )
     dropdownButtons.push(
       <MenuItem key={"curators-filter"} onClick={handleFilter} hideMenuOnClick={true}>
         <div className="flex flex-row gap-2 items-center justify-left">

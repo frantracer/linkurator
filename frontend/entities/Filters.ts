@@ -15,14 +15,21 @@ export type Filters = {
   excludedSubscriptions: string[];
 }
 
+// Upper bound used as "no maximum" by the long duration preset.
+export const UNBOUNDED_DURATION_SECONDS = 999999;
+
+const PRESET_DURATION_RANGES = {
+  short: {min: 0, max: 119},
+  medium: {min: 120, max: 3599},
+  long: {min: 3600, max: UNBOUNDED_DURATION_SECONDS},
+} as const;
+
 export function getFilterDuration(filters: Filters): { min: number | undefined, max: number | undefined } {
   switch (filters.durationGroup) {
     case "short":
-      return {min: 0, max: 119};
     case "medium":
-      return {min: 120, max: 3599};
     case "long":
-      return {min: 3600, max: 999999};
+      return PRESET_DURATION_RANGES[filters.durationGroup];
     case "all":
       return {min: undefined, max: undefined};
     default:
@@ -31,6 +38,15 @@ export function getFilterDuration(filters: Filters): { min: number | undefined, 
         max: filters.maxDuration !== undefined ? filters.maxDuration * 60 : undefined
       };
   }
+}
+
+// Inverse of getFilterDuration; "custom" when the range matches no preset.
+export function getDurationGroupFromRange(min: number | undefined, max: number | undefined): DurationGroup {
+  if (min === undefined && max === undefined) return "all";
+  for (const [group, range] of Object.entries(PRESET_DURATION_RANGES)) {
+    if (range.min === min && range.max === max) return group as DurationGroup;
+  }
+  return "custom";
 }
 
 export function isItemShown(item: SubscriptionItem, filters: Filters) {

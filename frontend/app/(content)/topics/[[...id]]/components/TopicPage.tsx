@@ -8,6 +8,7 @@ import {ErrorBanner} from "../../../../../components/atoms/ErrorBanner";
 import CrossButton from "../../../../../components/atoms/CrossButton";
 import {
   AddIcon,
+  ChatBubbleIcon,
   FunnelIcon,
   MinusIcon,
   OptionsIcon,
@@ -39,6 +40,7 @@ import {deleteTopic, followTopic, unfollowTopic} from "../../../../../services/t
 import {useFavoriteTopics} from "../../../../../hooks/useFavoriteTopics";
 import {showLateralMenu} from "../../../../../utilities/lateralMenuAction";
 import {openModal} from "../../../../../utilities/modalAction";
+import {newScopedChatPath, scopeFromFilters} from "../../../../../utilities/chatScope";
 import Dropdown from "../../../../../components/atoms/Dropdown";
 import Menu from "../../../../../components/atoms/Menu";
 import TopTitle from "../../../../../components/molecules/TopTitle";
@@ -81,6 +83,11 @@ const TopicPageComponent = ({topicId}: { topicId: string }) => {
 
   const handleShowFilters = () => {
     showLateralMenu(CONTENT_FILTER_ID);
+  }
+
+  const handleChatAboutThis = () => {
+    if (!selectedTopic) return;
+    router.push(newScopedChatPath(scopeFromFilters(filters, {topicIds: [selectedTopic.uuid]})));
   }
 
   const handleEditTopic = () => {
@@ -202,6 +209,16 @@ const TopicPageComponent = ({topicId}: { topicId: string }) => {
         </MenuItem>
       )
     }
+  }
+  if (selectedTopic) {
+    dropdownButtons.push(
+      <MenuItem key={"topics-chat"} onClick={handleChatAboutThis} hideMenuOnClick={true}>
+        <div className="flex flex-row gap-2 items-center justify-left">
+          <ChatBubbleIcon/>
+          {t("chat_about_this")}
+        </div>
+      </MenuItem>
+    )
   }
   dropdownButtons.push(
     <MenuItem key={"topics-filter"} onClick={handleShowFilters} hideMenuOnClick={true}>

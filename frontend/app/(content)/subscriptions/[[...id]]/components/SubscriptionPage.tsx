@@ -1,11 +1,13 @@
 'use client';
 
 import {useTranslations} from 'next-intl';
+import {useRouter} from "next/navigation";
 import React, {useEffect, useState} from "react";
 import Button from "../../../../../components/atoms/Button";
 import CrossButton from "../../../../../components/atoms/CrossButton";
 import {
   AddIcon,
+  ChatBubbleIcon,
   FunnelIcon,
   MinusIcon,
   OptionsIcon,
@@ -36,6 +38,7 @@ import {
 } from "../../../../../services/subscriptionService";
 import {showLateralMenu} from "../../../../../utilities/lateralMenuAction";
 import {openModal} from "../../../../../utilities/modalAction";
+import {newScopedChatPath, scopeFromFilters} from "../../../../../utilities/chatScope";
 import Dropdown from "../../../../../components/atoms/Dropdown";
 import Menu from "../../../../../components/atoms/Menu";
 import {useToast} from "../../../../../contexts/ToastContext";
@@ -44,6 +47,7 @@ const REFRESH_SUBSCRIPTIONS_INTERVAL = 10000;
 
 const SubscriptionPageComponent = ({subscriptionId}: { subscriptionId: string }) => {
   const t = useTranslations("common");
+  const router = useRouter();
   const {showToast} = useToast();
   const {providers} = useProviders();
 
@@ -76,6 +80,11 @@ const SubscriptionPageComponent = ({subscriptionId}: { subscriptionId: string })
 
   const handleShowFilters = () => {
     showLateralMenu(CONTENT_FILTER_ID);
+  }
+
+  const handleChatAboutThis = () => {
+    if (!selectedSubscription) return;
+    router.push(newScopedChatPath(scopeFromFilters(filters, {subscriptionIds: [selectedSubscription.uuid]})));
   }
 
   const handleAssignSubscription = () => {
@@ -162,6 +171,16 @@ const SubscriptionPageComponent = ({subscriptionId}: { subscriptionId: string })
         <div className="flex flex-row gap-2 items-center justify-left">
           <AddIcon/>
           {t("follow")}
+        </div>
+      </MenuItem>
+    )
+  }
+  if (selectedSubscription) {
+    dropdownButtons.push(
+      <MenuItem key={"subscriptions-chat"} onClick={handleChatAboutThis} hideMenuOnClick={true}>
+        <div className="flex flex-row gap-2 items-center justify-left">
+          <ChatBubbleIcon/>
+          {t("chat_about_this")}
         </div>
       </MenuItem>
     )
