@@ -5,7 +5,9 @@ from pydantic import BaseModel, Field
 
 from linkurator_core.application.chats.get_chat_handler import EnrichedChat
 from linkurator_core.domain.chats.chat import Chat, ChatMessage, ChatScope
+from linkurator_core.domain.items.interaction import Interaction
 from linkurator_core.domain.items.item import Item
+from linkurator_core.domain.items.item_with_interactions import CuratorInteractions
 from linkurator_core.domain.subscriptions.subscription import Subscription
 from linkurator_core.infrastructure.fastapi.models.agent import chat_scope_included_interactions
 from linkurator_core.infrastructure.fastapi.models.item import InteractionFilterSchema, ItemSchema
@@ -52,6 +54,8 @@ class ChatMessageResponse(BaseModel):
         message: ChatMessage,
         items: list[Item] | None = None,
         subscriptions: list[Subscription] | None = None,
+        user_interactions: list[Interaction] | None = None,
+        curator_interactions: list[CuratorInteractions] | None = None,
     ) -> "ChatMessageResponse":
         indexed_subscriptions = {sub.uuid: sub for sub in (subscriptions or [])}
 
@@ -59,6 +63,8 @@ class ChatMessageResponse(BaseModel):
             ItemSchema.from_domain_item(
                 item=item,
                 subscription=indexed_subscriptions[item.subscription_uuid],
+                user_interactions=user_interactions,
+                curator_interactions=curator_interactions,
             )
             for item in (items or [])
         ]
@@ -103,6 +109,8 @@ class ChatResponse(BaseModel):
                 message=enriched_msg.message,
                 items=enriched_msg.items,
                 subscriptions=enriched_msg.subscriptions,
+                user_interactions=enriched_msg.user_interactions,
+                curator_interactions=enriched_msg.curator_interactions,
             )
             enriched_messages.append(chat_msg_response)
 

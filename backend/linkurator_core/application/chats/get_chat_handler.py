@@ -1,15 +1,18 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Optional
 from uuid import UUID
 
 from linkurator_core.domain.chats.chat import Chat, ChatMessage
 from linkurator_core.domain.chats.chat_repository import ChatRepository
+from linkurator_core.domain.items.interaction import Interaction
 from linkurator_core.domain.items.item import Item
 from linkurator_core.domain.items.item_repository import ItemFilterCriteria, ItemRepository
+from linkurator_core.domain.items.item_with_interactions import CuratorInteractions
 from linkurator_core.domain.subscriptions.subscription import Subscription
 from linkurator_core.domain.subscriptions.subscription_repository import SubscriptionRepository
 from linkurator_core.domain.topics.topic import Topic
 from linkurator_core.domain.topics.topic_repository import TopicRepository
+from linkurator_core.domain.users.user_repository import UserRepository
 
 
 @dataclass
@@ -18,6 +21,8 @@ class EnrichedChatMessage:
     items: list[Item]
     subscriptions: list[Subscription]
     topics: list[Topic]
+    user_interactions: list[Interaction] = field(default_factory=list)
+    curator_interactions: list[CuratorInteractions] = field(default_factory=list)
 
 
 @dataclass
@@ -34,11 +39,13 @@ class GetChatHandler:
         item_repository: ItemRepository,
         subscription_repository: SubscriptionRepository,
         topic_repository: TopicRepository,
+        user_repository: UserRepository,
     ) -> None:
         self.chat_repository = chat_repository
         self.item_repository = item_repository
         self.subscription_repository = subscription_repository
         self.topic_repository = topic_repository
+        self.user_repository = user_repository
 
     async def handle(self, chat_id: UUID, user_id: UUID | None) -> Optional[EnrichedChat]:
         chat = await self.chat_repository.get(chat_id)
@@ -81,8 +88,42 @@ class GetChatHandler:
             )
             enriched_messages.append(enriched_message)
 
+        if user_id is not None:
+            await self._add_interactions(user_id, enriched_messages)
+
         return EnrichedChat(
             chat=chat,
             enriched_messages=enriched_messages,
             is_waiting_for_response=chat.is_waiting_for_response(),
         )
+
+    async def _add_interactions(self, user_id: UUID, enriched_messages: list[EnrichedChatMessage]) -> None:
+        item_ids = list({item.uuid for enriched_msg in enriched_messages for item in enriched_msg.items})
+        if not item_ids:
+            return
+
+        user_interactions_by_item = await self.item_repository.get_user_interactions_by_item_id(
+            user_id=user_id, item_ids=item_ids)
+
+        curator_interactions_by_item: dict[UUID, list[CuratorInteractions]] = {}
+        user = await self.user_repository.get(user_id)
+        for curator_id in user.curators if user is not None else set():
+            curator = await self.user_repository.get(curator_id)
+            if curator is None:
+                continue
+            interactions_by_item = await self.item_repository.get_user_interactions_by_item_id(
+                user_id=curator.uuid, item_ids=item_ids)
+            for item_id, interactions in interactions_by_item.items():
+                curator_interactions_by_item.setdefault(item_id, []).append(
+                    CuratorInteractions(curator=curator, interactions=interactions),
+                )
+
+        for enriched_msg in enriched_messages:
+            enriched_msg.user_interactions = [
+                interaction for item in enriched_msg.items
+                for interaction in user_interactions_by_item.get(item.uuid, [])
+            ]
+            enriched_msg.curator_interactions = [
+                curator_interaction for item in enriched_msg.items
+                for curator_interaction in curator_interactions_by_item.get(item.uuid, [])
+            ]

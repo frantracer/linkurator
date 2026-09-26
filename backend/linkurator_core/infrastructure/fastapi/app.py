@@ -401,6 +401,7 @@ def app_handlers() -> Handlers:
             item_repository=item_repository,
             subscription_repository=subscription_repository,
             topic_repository=topic_repository,
+            user_repository=user_repository,
         ),
         delete_chat_handler=DeleteChatHandler(chat_repository=chat_repository),
         get_user_filter_handler=GetUserFilterHandler(user_filter_repository=user_filter_repository),
