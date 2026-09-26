@@ -116,6 +116,10 @@ class MainQueryAgent(QueryAgentService):
         context = build_chat_context(chat)
         prompt = f"{context}\n{query}"
 
+        # A scoped chat is an explicit "search these items" request: skip routing.
+        if chat is not None and chat.latest_entity_scope() is not None:
+            return await self._handle_recommendations_query(user_id, prompt, chat, usage, agents)
+
         # Step 1: Route the query to the appropriate agent
         routing_result = await agents.router_agent.query(
             query=prompt,

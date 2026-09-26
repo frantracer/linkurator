@@ -7,7 +7,7 @@ from typing import Any
 
 import pytest
 
-from linkurator_core.domain.chats.chat import Chat, ChatRole
+from linkurator_core.domain.chats.chat import Chat, ChatRole, ChatScope
 from linkurator_core.domain.chats.chat_repository import ChatRepository
 from linkurator_core.domain.common.mock_factory import mock_chat, mock_chat_message
 from linkurator_core.infrastructure.in_memory.chat_repository import InMemoryChatRepository
@@ -274,6 +274,32 @@ async def test_update_existing_chat(chat_repo: ChatRepository) -> None:
 
 
 @pytest.mark.asyncio()
+async def test_update_chat_keeps_the_scope_of_each_message(chat_repo: ChatRepository) -> None:
+    await chat_repo.delete_all()
+
+    chat = mock_chat(title="Chat")
+    chat.add_user_message("First", ChatScope(text_search="baking"))
+    await chat_repo.add(chat)
+
+    chat.add_assistant_message("Answer")
+    chat.add_user_message("Second", ChatScope(text_search="cooking"))
+    await chat_repo.update(chat)
+
+    updated_chat = await chat_repo.get(chat.uuid)
+
+    assert updated_chat is not None
+    scopes = [message.scope for message in updated_chat.messages]
+    assert scopes[0] is not None
+    assert scopes[0].text_search == "baking"
+    assert scopes[1] is None
+    assert scopes[2] is not None
+    assert scopes[2].text_search == "cooking"
+    latest = updated_chat.latest_scope()
+    assert latest is not None
+    assert latest.text_search == "cooking"
+
+
+@pytest.mark.asyncio()
 async def test_update_nonexistent_chat(chat_repo: ChatRepository) -> None:
     await chat_repo.delete_all()
 
@@ -478,6 +504,59 @@ async def test_content_and_title_with_nul_bytes(chat_repo: ChatRepository) -> No
     else:
         assert retrieved_chat.title == "Title\x00with nul"
         assert retrieved_chat.messages[0].content == "Hello\x00World"
+
+
+@pytest.mark.asyncio()
+async def test_add_and_get_chat_message_without_scope(chat_repo: ChatRepository) -> None:
+    await chat_repo.delete_all()
+
+    chat = mock_chat(title="No scope chat", messages=[mock_chat_message()])
+
+    await chat_repo.add(chat)
+    retrieved_chat = await chat_repo.get(chat.uuid)
+
+    assert retrieved_chat is not None
+    assert retrieved_chat.messages[0].scope is None
+    assert retrieved_chat.latest_scope() is None
+
+
+@pytest.mark.asyncio()
+async def test_add_and_get_chat_message_with_scope(chat_repo: ChatRepository) -> None:
+    await chat_repo.delete_all()
+
+    subscription_id = uuid.uuid4()
+    topic_id = uuid.uuid4()
+    curator_id = uuid.uuid4()
+    excluded_subscription_id = uuid.uuid4()
+    scope = ChatScope(
+        subscription_ids=[subscription_id],
+        topic_ids=[topic_id],
+        curator_ids=[curator_id],
+        text_search="cooking",
+        min_duration=60,
+        max_duration=1200,
+        include_viewed_items=False,
+        include_hidden_items=False,
+        excluded_subscriptions=[excluded_subscription_id],
+    )
+    chat = mock_chat(title="Scoped chat", messages=[mock_chat_message(scope=scope)])
+
+    await chat_repo.add(chat)
+    retrieved_chat = await chat_repo.get(chat.uuid)
+
+    assert retrieved_chat is not None
+    retrieved_scope = retrieved_chat.messages[0].scope
+    assert retrieved_scope is not None
+    assert retrieved_scope.subscription_ids == [subscription_id]
+    assert retrieved_scope.topic_ids == [topic_id]
+    assert retrieved_scope.curator_ids == [curator_id]
+    assert retrieved_scope.text_search == "cooking"
+    assert retrieved_scope.min_duration == 60
+    assert retrieved_scope.max_duration == 1200
+    assert retrieved_scope.include_viewed_items is False
+    assert retrieved_scope.include_hidden_items is False
+    assert retrieved_scope.include_recommended_items is True
+    assert retrieved_scope.excluded_subscriptions == [excluded_subscription_id]
 
 
 @pytest.mark.asyncio()

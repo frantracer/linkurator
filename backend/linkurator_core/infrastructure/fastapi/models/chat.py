@@ -4,10 +4,35 @@ from uuid import UUID
 from pydantic import BaseModel, Field
 
 from linkurator_core.application.chats.get_chat_handler import EnrichedChat
-from linkurator_core.domain.chats.chat import Chat, ChatMessage
+from linkurator_core.domain.chats.chat import Chat, ChatMessage, ChatScope
 from linkurator_core.domain.items.item import Item
 from linkurator_core.domain.subscriptions.subscription import Subscription
-from linkurator_core.infrastructure.fastapi.models.item import ItemSchema
+from linkurator_core.infrastructure.fastapi.models.agent import chat_scope_included_interactions
+from linkurator_core.infrastructure.fastapi.models.item import InteractionFilterSchema, ItemSchema
+
+
+class ChatScopeResponse(BaseModel):
+    subscription_ids: list[UUID] = Field(default_factory=list)
+    topic_ids: list[UUID] = Field(default_factory=list)
+    curator_ids: list[UUID] = Field(default_factory=list)
+    text_search: str | None = Field(default=None)
+    min_duration: int | None = Field(default=None)
+    max_duration: int | None = Field(default=None)
+    include_interactions: list[InteractionFilterSchema] = Field(default_factory=list)
+    excluded_subscriptions: list[UUID] = Field(default_factory=list)
+
+    @classmethod
+    def from_domain(cls, scope: ChatScope) -> "ChatScopeResponse":
+        return cls(
+            subscription_ids=scope.subscription_ids,
+            topic_ids=scope.topic_ids,
+            curator_ids=scope.curator_ids,
+            text_search=scope.text_search,
+            min_duration=scope.min_duration,
+            max_duration=scope.max_duration,
+            include_interactions=chat_scope_included_interactions(scope),
+            excluded_subscriptions=scope.excluded_subscriptions,
+        )
 
 
 class ChatMessageResponse(BaseModel):
@@ -16,6 +41,10 @@ class ChatMessageResponse(BaseModel):
     timestamp: datetime = Field(description="Message timestamp")
     items: list[ItemSchema] = Field(default_factory=list, description="Items referenced in this message")
     topics_were_created: bool = Field(description="Indicates if new topics were created as a result of this message")
+    scope: ChatScopeResponse | None = Field(
+        default=None,
+        description="Scope the message was sent with",
+    )
 
     @classmethod
     def from_domain(
@@ -40,6 +69,7 @@ class ChatMessageResponse(BaseModel):
             timestamp=message.timestamp,
             items=item_responses,
             topics_were_created=message.topic_were_created,
+            scope=ChatScopeResponse.from_domain(message.scope) if message.scope else None,
         )
 
 

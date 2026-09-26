@@ -4,7 +4,7 @@ from unittest.mock import AsyncMock
 import pytest
 
 from linkurator_core.application.chats.query_agent_handler import QueryAgentHandler
-from linkurator_core.domain.chats.chat import ChatRole
+from linkurator_core.domain.chats.chat import ChatRole, ChatScope
 from linkurator_core.domain.common.event_bus_service import EventBusService
 from linkurator_core.domain.common.exceptions import (
     InvalidChatError,
@@ -177,6 +177,91 @@ async def test_query_agent_handler_chat_title_truncation() -> None:
     assert created_chat is not None
     assert len(created_chat.title) == 50  # 47 chars + "..."
     assert created_chat.title.endswith("...")
+
+
+@pytest.mark.asyncio()
+async def test_query_agent_handler_persists_scope_on_new_chat() -> None:
+    chat_repository = InMemoryChatRepository()
+    event_bus = AsyncMock(spec=EventBusService)
+
+    handler = QueryAgentHandler(
+        chat_repository=chat_repository,
+        event_bus=event_bus,
+    )
+
+    user_id = uuid.uuid4()
+    chat_id = uuid.uuid4()
+    topic_id = uuid.uuid4()
+    scope = ChatScope(topic_ids=[topic_id])
+
+    await handler.handle(user_id=user_id, query="Recommend me something", chat_id=chat_id, scope=scope)
+
+    created_chat = await chat_repository.get(chat_id)
+    assert created_chat is not None
+    message_scope = created_chat.messages[0].scope
+    assert message_scope is not None
+    assert message_scope.topic_ids == [topic_id]
+    assert created_chat.latest_scope() == message_scope
+
+
+@pytest.mark.asyncio()
+async def test_query_agent_handler_stores_a_scope_per_message() -> None:
+    chat_repository = InMemoryChatRepository()
+    event_bus = AsyncMock(spec=EventBusService)
+
+    user_id = uuid.uuid4()
+    chat_id = uuid.uuid4()
+    handler = QueryAgentHandler(
+        chat_repository=chat_repository,
+        event_bus=event_bus,
+    )
+
+    await handler.handle(
+        user_id=user_id, query="First query", chat_id=chat_id, scope=ChatScope(text_search="baking"),
+    )
+    chat = await chat_repository.get(chat_id)
+    assert chat is not None
+    chat.add_assistant_message("answer")
+    await chat_repository.update(chat)
+
+    await handler.handle(
+        user_id=user_id, query="Second query", chat_id=chat_id, scope=ChatScope(text_search="cooking"),
+    )
+
+    updated_chat = await chat_repository.get(chat_id)
+    assert updated_chat is not None
+    user_scopes = [m.scope.text_search if m.scope else None for m in updated_chat.messages if m.role == ChatRole.USER]
+    assert user_scopes == ["baking", "cooking"]
+    latest = updated_chat.latest_scope()
+    assert latest is not None
+    assert latest.text_search == "cooking"
+
+
+@pytest.mark.asyncio()
+async def test_query_agent_handler_message_without_scope_does_not_inherit_the_previous_one() -> None:
+    chat_repository = InMemoryChatRepository()
+    event_bus = AsyncMock(spec=EventBusService)
+
+    user_id = uuid.uuid4()
+    chat_id = uuid.uuid4()
+    handler = QueryAgentHandler(
+        chat_repository=chat_repository,
+        event_bus=event_bus,
+    )
+
+    await handler.handle(
+        user_id=user_id, query="First query", chat_id=chat_id, scope=ChatScope(text_search="baking"),
+    )
+    chat = await chat_repository.get(chat_id)
+    assert chat is not None
+    chat.add_assistant_message("answer")
+    await chat_repository.update(chat)
+
+    await handler.handle(user_id=user_id, query="Second query", chat_id=chat_id)
+
+    updated_chat = await chat_repository.get(chat_id)
+    assert updated_chat is not None
+    assert updated_chat.latest_scope() is None
 
 
 @pytest.mark.asyncio()

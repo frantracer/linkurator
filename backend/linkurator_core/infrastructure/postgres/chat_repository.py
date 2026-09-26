@@ -1,12 +1,51 @@
 from __future__ import annotations
 
+import json
 from ipaddress import IPv4Address
 from typing import Any
 from uuid import UUID
 
-from linkurator_core.domain.chats.chat import Chat, ChatMessage, ChatRole
+from linkurator_core.domain.chats.chat import Chat, ChatMessage, ChatRole, ChatScope
 from linkurator_core.domain.chats.chat_repository import ChatRepository
 from linkurator_core.infrastructure.postgres.common import PostgresConnector, drop_nul_bytes
+
+
+def _chat_scope_to_json(scope: ChatScope | None) -> str | None:
+    if scope is None:
+        return None
+    return json.dumps({
+        "subscription_ids": [str(uid) for uid in scope.subscription_ids],
+        "topic_ids": [str(uid) for uid in scope.topic_ids],
+        "curator_ids": [str(uid) for uid in scope.curator_ids],
+        "text_search": scope.text_search,
+        "min_duration": scope.min_duration,
+        "max_duration": scope.max_duration,
+        "include_items_without_interactions": scope.include_items_without_interactions,
+        "include_recommended_items": scope.include_recommended_items,
+        "include_discouraged_items": scope.include_discouraged_items,
+        "include_viewed_items": scope.include_viewed_items,
+        "include_hidden_items": scope.include_hidden_items,
+        "excluded_subscriptions": [str(uid) for uid in scope.excluded_subscriptions],
+    })
+
+
+def _json_to_chat_scope(data: dict[str, Any] | None) -> ChatScope | None:
+    if data is None:
+        return None
+    return ChatScope(
+        subscription_ids=[UUID(uid) for uid in data.get("subscription_ids", [])],
+        topic_ids=[UUID(uid) for uid in data.get("topic_ids", [])],
+        curator_ids=[UUID(uid) for uid in data.get("curator_ids", [])],
+        text_search=data.get("text_search"),
+        min_duration=data.get("min_duration"),
+        max_duration=data.get("max_duration"),
+        include_items_without_interactions=data.get("include_items_without_interactions", True),
+        include_recommended_items=data.get("include_recommended_items", True),
+        include_discouraged_items=data.get("include_discouraged_items", True),
+        include_viewed_items=data.get("include_viewed_items", True),
+        include_hidden_items=data.get("include_hidden_items", True),
+        excluded_subscriptions=[UUID(uid) for uid in data.get("excluded_subscriptions", [])],
+    )
 
 
 def _row_to_message(row: Any) -> ChatMessage:
@@ -18,6 +57,7 @@ def _row_to_message(row: Any) -> ChatMessage:
         subscription_uuids=list(row["subscription_uuids"]),
         topic_uuids=list(row["topic_uuids"]),
         topic_were_created=row["topic_were_created"],
+        scope=_json_to_chat_scope(row["scope"]),
     )
 
 
@@ -43,14 +83,14 @@ async def _insert_messages(conn: Any, chat_id: UUID, messages: list[ChatMessage]
         """
         INSERT INTO chat_messages (
             chat_id, seq, role, content, timestamp,
-            item_uuids, subscription_uuids, topic_uuids, topic_were_created
-        ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+            item_uuids, subscription_uuids, topic_uuids, topic_were_created, scope
+        ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s::jsonb)
         """,
         [
             (
                 chat_id, seq, message.role.value, drop_nul_bytes(message.content), message.timestamp,
                 message.item_uuids, message.subscription_uuids, message.topic_uuids,
-                message.topic_were_created,
+                message.topic_were_created, _chat_scope_to_json(message.scope),
             )
             for seq, message in enumerate(messages)
         ],

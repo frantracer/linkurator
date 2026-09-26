@@ -1,7 +1,7 @@
 import asyncio
 import logging
 import re
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from datetime import datetime, timezone
 from typing import Union
 from uuid import UUID
@@ -15,7 +15,7 @@ from pydantic_ai.tools import ToolDefinition
 from pydantic_ai.usage import RunUsage
 
 from linkurator_core.application.subscriptions.get_user_subscriptions_handler import GetUserSubscriptionsHandler
-from linkurator_core.domain.chats.chat import Chat, ChatRole
+from linkurator_core.domain.chats.chat import Chat, ChatRole, ChatScope
 from linkurator_core.domain.items.item import Item, ItemProvider
 from linkurator_core.domain.items.item_repository import (
     AnyItemInteraction,
@@ -27,6 +27,10 @@ from linkurator_core.domain.subscriptions.subscription_repository import Subscri
 from linkurator_core.domain.topics.topic import Topic
 from linkurator_core.domain.topics.topic_repository import TopicRepository
 from linkurator_core.domain.users.user_repository import UserRepository
+from linkurator_core.infrastructure.ai_agents.chat_scope_resolver import (
+    resolve_scope_candidate_item_ids,
+    scope_item_interactions,
+)
 from linkurator_core.infrastructure.ai_agents.keyword_generator_agent import KeywordGeneratorAgent
 from linkurator_core.infrastructure.ai_agents.utils import format_duration
 
@@ -55,6 +59,65 @@ def resolve_short_ids(ids: list[str] | None, mapping: dict[str, UUID]) -> list[U
     return resolved
 
 
+def apply_scope_filters(criteria: ItemFilterCriteria, deps: "RecommendationsDependencies") -> ItemFilterCriteria:
+    """
+    Layer the scope's filters over the criteria the LLM asked for, when the scope has no entity.
+
+    A text already in the criteria (a generated keyword) is more specific, so it is kept.
+    """
+    scope = deps.scope
+    if scope is None:
+        return criteria
+    return replace(
+        criteria,
+        text=criteria.text or scope.text_search,
+        min_duration=scope.min_duration,
+        max_duration=scope.max_duration,
+        interactions_from_user=deps.user_uuid,
+        interactions=scope_item_interactions(scope),
+    )
+
+
+async def build_find_subscriptions_items_criteria(
+    deps: "RecommendationsDependencies",
+    topic_ids: list[str] | None,
+    subscription_ids: list[str] | None,
+) -> ItemFilterCriteria:
+    """
+    Build the criteria for the find_subscriptions_items tool from the short ids the LLM asked for.
+
+    When the chat is scoped, the LLM's own ids are ignored in favour of the scope candidate items.
+    """
+    if deps.is_scoped():
+        return ItemFilterCriteria(item_ids=deps.candidate_item_ids)
+
+    all_subs_ids = set(resolve_short_ids(subscription_ids, deps.subscription_id_map))
+    topics = await deps.topic_repository.find_topics(resolve_short_ids(topic_ids, deps.topic_id_map))
+    for topic in topics:
+        all_subs_ids.update(topic.subscriptions_ids)
+
+    criteria = ItemFilterCriteria(
+        subscription_ids=None if len(all_subs_ids) == 0 else list(all_subs_ids),
+        interactions_from_user=deps.user_uuid,
+        interactions=AnyItemInteraction(without_interactions=True),
+    )
+    return apply_scope_filters(criteria, deps)
+
+
+def build_find_items_by_keywords_criteria(
+    deps: "RecommendationsDependencies",
+    keyword: str,
+) -> ItemFilterCriteria:
+    """
+    Build the per-keyword criteria for the find_items_by_keywords tool.
+
+    When the chat is scoped, the search is also constrained to the scope candidate items.
+    """
+    if deps.is_scoped():
+        return ItemFilterCriteria(text=keyword, item_ids=deps.candidate_item_ids)
+    return apply_scope_filters(ItemFilterCriteria(text=keyword), deps)
+
+
 @dataclass
 class RecommendationsDependencies:
     user_uuid: UUID | None
@@ -69,6 +132,16 @@ class RecommendationsDependencies:
     topic_id_map: dict[str, UUID] = field(default_factory=dict)
     find_items_by_keywords_calls: int = 0
     find_subscriptions_items_calls: int = 0
+    scope: ChatScope | None = None
+    candidate_item_ids: set[UUID] = field(default_factory=set)
+
+    def entity_scope(self) -> ChatScope | None:
+        if self.scope is None or not self.scope.has_entity_restriction():
+            return None
+        return self.scope
+
+    def is_scoped(self) -> bool:
+        return self.entity_scope() is not None
 
     def register_item_id(self, item_uuid: UUID) -> None:
         self.item_id_map[short_id(item_uuid)] = item_uuid
@@ -229,7 +302,17 @@ class RecommendationsAgent:
             topic_repository=self.topic_repository,
             keyword_generator_agent=self.keyword_generator_agent,
             previous_chat=previous_chat,
+            scope=previous_chat.latest_scope() if previous_chat is not None else None,
         )
+        entity_scope = deps.entity_scope()
+        if entity_scope is not None:
+            deps.candidate_item_ids = await resolve_scope_candidate_item_ids(
+                scope=entity_scope,
+                user_id=user_id,
+                item_repository=self.item_repository,
+                topic_repository=self.topic_repository,
+            )
+
         result = await self.recommendations_agent.run(query, deps=deps, usage=usage)
 
         final_message = _expand_short_id_links(result.output.response, deps, self.base_url)
@@ -329,9 +412,25 @@ def create_recommendations_agent(model: Model) -> Agent[RecommendationsDependenc
         return f"Today is {now.strftime('%A %Y-%m-%d')}"
 
     @ai_agent.system_prompt
+    async def scope_information(
+        ctx: RunContext[RecommendationsDependencies],
+    ) -> str:
+        if not ctx.deps.is_scoped():
+            return ""
+        return (
+            "This chat is restricted to a subset of the customer's items. "
+            "The find_subscriptions_items and find_items_by_keywords tools are already "
+            "constrained to this scope and its active filters; ignore any topic/subscription "
+            "ids you might otherwise infer and just call the tools with the user's query.\n"
+        )
+
+    @ai_agent.system_prompt
     async def user_subscriptions_and_topics(
         ctx: RunContext[RecommendationsDependencies],
     ) -> str:
+        if ctx.deps.is_scoped():
+            return ""
+
         handler = GetUserSubscriptionsHandler(
             user_repository=ctx.deps.user_repository,
             subscription_repository=ctx.deps.subscription_repository,
@@ -429,25 +528,7 @@ def create_recommendations_agent(model: Model) -> Agent[RecommendationsDependenc
         """
         ctx.deps.find_subscriptions_items_calls += 1
 
-        topic_uuids: list[UUID] = resolve_short_ids(topic_ids, ctx.deps.topic_id_map)
-        subscription_uuids: list[UUID] = resolve_short_ids(
-            subscription_ids, ctx.deps.subscription_id_map,
-        )
-
-        topics = await ctx.deps.topic_repository.find_topics(topic_uuids)
-
-        all_subs_ids: set[UUID] = set()
-
-        all_subs_ids.update(subscription_uuids)
-
-        for topic in topics:
-            all_subs_ids.update(topic.subscriptions_ids)
-
-        criteria = ItemFilterCriteria(
-            subscription_ids=None if len(all_subs_ids) == 0 else list(all_subs_ids),
-            interactions_from_user=ctx.deps.user_uuid,
-            interactions=AnyItemInteraction(without_interactions=True),
-        )
+        criteria = await build_find_subscriptions_items_criteria(ctx.deps, topic_ids, subscription_ids)
 
         items = await ctx.deps.item_repository.find_items(
             criteria=criteria,
@@ -499,9 +580,7 @@ def create_recommendations_agent(model: Model) -> Agent[RecommendationsDependenc
 
         tasks = []
         for keyword in keywords:
-            criteria = ItemFilterCriteria(
-                text=keyword,
-            )
+            criteria = build_find_items_by_keywords_criteria(ctx.deps, keyword)
 
             task = ctx.deps.item_repository.find_items(
                 criteria=criteria,

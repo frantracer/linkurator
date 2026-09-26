@@ -142,6 +142,7 @@ def get_router(
                 user_id=user_id,
                 query=query_request.query,
                 chat_id=chat_id,
+                scope=query_request.scope.to_domain() if query_request.scope else None,
             )
         except (MaxMessagePerChatError, MessageIsBeingProcessedError) as e:
             raise default_responses.bad_request(str(e))

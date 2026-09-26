@@ -1,6 +1,6 @@
 from uuid import UUID
 
-from linkurator_core.domain.chats.chat import Chat, ChatRole
+from linkurator_core.domain.chats.chat import Chat, ChatRole, ChatScope
 from linkurator_core.domain.chats.chat_repository import ChatRepository
 from linkurator_core.domain.common.event import NewChatQueryEvent
 from linkurator_core.domain.common.event_bus_service import EventBusService
@@ -19,7 +19,13 @@ class QueryAgentHandler:
         self.chat_repository = chat_repository
         self.event_bus = event_bus
 
-    async def handle(self, user_id: UUID | None, query: str, chat_id: UUID) -> None:
+    async def handle(
+            self,
+            user_id: UUID | None,
+            query: str,
+            chat_id: UUID,
+            scope: ChatScope | None = None,
+    ) -> None:
         chat = await self.chat_repository.get(chat_id)
         if chat is None:
             title = query[:47] + "..." if len(query) > 50 else query
@@ -36,7 +42,7 @@ class QueryAgentHandler:
         if chat.is_waiting_for_response():
             raise MessageIsBeingProcessedError()
 
-        chat.add_user_message(query)
+        chat.add_user_message(query, scope)
         await self.chat_repository.update(chat)
 
         await self.event_bus.publish(

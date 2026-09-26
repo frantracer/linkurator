@@ -7,7 +7,9 @@ from fastapi.testclient import TestClient
 from starlette.status import HTTP_400_BAD_REQUEST
 
 from linkurator_core.application.auth.validate_session_token import ValidateTokenHandler
+from linkurator_core.application.chats.get_chat_handler import EnrichedChat, EnrichedChatMessage, GetChatHandler
 from linkurator_core.application.chats.get_user_chats_handler import GetUserChatsHandler
+from linkurator_core.application.chats.query_agent_handler import QueryAgentHandler
 from linkurator_core.application.items.get_followed_subscriptions_items_handler import (
     GetFollowedSubscriptionsItemsHandler,
     GetFollowedSubscriptionsItemsResponse,
@@ -25,12 +27,19 @@ from linkurator_core.application.topics.get_curator_topics_as_user_handler impor
 from linkurator_core.application.topics.get_topic_handler import GetTopicHandler, GetTopicResponse
 from linkurator_core.application.topics.get_user_topics_handler import CuratorTopic, GetUserTopicsHandler
 from linkurator_core.application.users.get_user_profile_handler import GetUserProfileHandler
+from linkurator_core.domain.chats.chat import ChatScope
 from linkurator_core.domain.common import utils
 from linkurator_core.domain.common.exceptions import (
     SubscriptionNotFoundError,
     TopicNotFoundError,
 )
-from linkurator_core.domain.common.mock_factory import mock_chat, mock_sub, mock_topic, mock_user
+from linkurator_core.domain.common.mock_factory import (
+    mock_chat,
+    mock_chat_message,
+    mock_sub,
+    mock_topic,
+    mock_user,
+)
 from linkurator_core.domain.items.item import Item
 from linkurator_core.domain.items.item_with_interactions import ItemWithInteractions
 from linkurator_core.domain.users.session import Session
@@ -793,6 +802,65 @@ def test_get_user_chats_ignores_blank_search(handlers: Handlers) -> None:
         user_id=USER_UUID, page_number=0, page_size=20, title_filter=None,
     )
     assert response.json()["next_page"] is None
+
+
+def test_query_agent_with_scope_passes_domain_scope_to_handler(handlers: Handlers) -> None:
+    dummy_query_agent_handler = AsyncMock(spec=QueryAgentHandler)
+    handlers.query_agent_handler = dummy_query_agent_handler
+
+    chat_id = uuid.uuid4()
+    topic_id = uuid.uuid4()
+    scoped_message = mock_chat_message(scope=ChatScope(topic_ids=[topic_id]))
+    scoped_chat = mock_chat(uuid=chat_id, user_id=USER_UUID, messages=[scoped_message])
+
+    dummy_get_chat_handler = AsyncMock(spec=GetChatHandler)
+    dummy_get_chat_handler.handle.return_value = EnrichedChat(
+        chat=scoped_chat,
+        enriched_messages=[EnrichedChatMessage(message=scoped_message, items=[], subscriptions=[], topics=[])],
+        is_waiting_for_response=False,
+    )
+    handlers.get_chat_handler = dummy_get_chat_handler
+
+    client = TestClient(create_app_from_handlers(handlers), cookies={"token": "token"})
+
+    response = client.post(
+        f"/chats/{chat_id}/messages",
+        json={
+            "query": "Recommend me something",
+            "scope": {"topic_ids": [str(topic_id)]},
+        },
+    )
+
+    assert response.status_code == 202
+    dummy_query_agent_handler.handle.assert_called_once()
+    call_kwargs = dummy_query_agent_handler.handle.call_args.kwargs
+    assert call_kwargs["scope"] is not None
+    assert call_kwargs["scope"].topic_ids == [topic_id]
+
+    body = response.json()
+    assert body["messages"][0]["scope"]["topic_ids"] == [str(topic_id)]
+
+
+def test_query_agent_without_scope_passes_none_to_handler(handlers: Handlers) -> None:
+    dummy_query_agent_handler = AsyncMock(spec=QueryAgentHandler)
+    handlers.query_agent_handler = dummy_query_agent_handler
+
+    chat_id = uuid.uuid4()
+    unscoped_chat = mock_chat(uuid=chat_id, user_id=USER_UUID)
+
+    dummy_get_chat_handler = AsyncMock(spec=GetChatHandler)
+    dummy_get_chat_handler.handle.return_value = EnrichedChat(
+        chat=unscoped_chat, enriched_messages=[], is_waiting_for_response=False,
+    )
+    handlers.get_chat_handler = dummy_get_chat_handler
+
+    client = TestClient(create_app_from_handlers(handlers), cookies={"token": "token"})
+
+    response = client.post(f"/chats/{chat_id}/messages", json={"query": "Hello"})
+
+    assert response.status_code == 202
+    call_kwargs = dummy_query_agent_handler.handle.call_args.kwargs
+    assert call_kwargs["scope"] is None
 
 
 def test_get_curator_topics_without_authentication_returns_200(handlers: Handlers) -> None:

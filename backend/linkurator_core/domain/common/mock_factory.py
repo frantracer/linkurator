@@ -3,7 +3,7 @@ from __future__ import annotations
 from datetime import datetime, timezone
 from uuid import UUID, uuid4
 
-from linkurator_core.domain.chats.chat import Chat, ChatMessage, ChatRole
+from linkurator_core.domain.chats.chat import Chat, ChatMessage, ChatRole, ChatScope
 from linkurator_core.domain.common import utils
 from linkurator_core.domain.common.utils import parse_url
 from linkurator_core.domain.items.interaction import Interaction, InteractionType
@@ -179,6 +179,7 @@ def mock_chat_message(
         subscription_uuids: list[UUID] | None = None,
         topic_uuids: list[UUID] | None = None,
         topic_were_created: bool = False,
+        scope: ChatScope | None = None,
 ) -> ChatMessage:
     content = content or f"Test message from {role}"
     timestamp = timestamp or datetime.now(tz=timezone.utc)
@@ -194,6 +195,7 @@ def mock_chat_message(
         subscription_uuids=subscription_uuids,
         topic_uuids=topic_uuids,
         topic_were_created=topic_were_created,
+        scope=scope,
     )
 
 
