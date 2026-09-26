@@ -407,6 +407,7 @@ const ChatPageComponent = ({conversationId}: { conversationId: string }) => {
                     title={t('suggested_items')}
                     collapsible={true}
                     defaultExpanded={true}
+                    refreshItem={() => queryClient.invalidateQueries({queryKey: ['chat', conversationId]})}
                   />
                 )}
                 <div className="flex flex-row items-center gap-2 mt-1">
