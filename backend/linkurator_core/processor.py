@@ -11,6 +11,8 @@ from linkurator_core.application.auth.send_validate_new_user_email import SendVa
 from linkurator_core.application.auth.send_welcome_email import SendWelcomeEmail
 from linkurator_core.application.chats.process_user_query_handler import ProcessUserQueryHandler
 from linkurator_core.application.common.event_handler import EventHandler
+from linkurator_core.application.items.embed_items_handler import EmbedItemsHandler
+from linkurator_core.application.items.enqueue_items_to_embed_handler import EnqueueItemsToEmbedHandler
 from linkurator_core.application.items.find_deprecated_items_handler import FindDeprecatedItemsHandler
 from linkurator_core.application.items.find_zero_duration_items import FindZeroDurationItems
 from linkurator_core.application.items.refresh_items_handler import RefreshItemsHandler
@@ -39,6 +41,7 @@ from linkurator_core.domain.common.event import (
 from linkurator_core.domain.notifications.email_sender import EmailSender
 from linkurator_core.domain.subscriptions.general_subscription_service import GeneralSubscriptionService
 from linkurator_core.domain.subscriptions.subscription_service import SubscriptionService
+from linkurator_core.infrastructure.ai_agents.embeddings import OpenAIEmbeddingService
 from linkurator_core.infrastructure.ai_agents.main_query_agent import MainQueryAgent
 from linkurator_core.infrastructure.ai_agents.model import create_agent_model
 from linkurator_core.infrastructure.ai_agents.subscription_summarizer import SubscriptionSummarizerService
@@ -56,6 +59,9 @@ from linkurator_core.infrastructure.notifications.null_email_sender import NullE
 from linkurator_core.infrastructure.patreon.patreon_api_client import PatreonApiClient
 from linkurator_core.infrastructure.patreon.patreon_service import PatreonSubscriptionService
 from linkurator_core.infrastructure.postgres.chat_repository import PostgresChatRepository
+from linkurator_core.infrastructure.postgres.item_embedding_queue_repository import (
+    PostgresItemEmbeddingQueueRepository,
+)
 from linkurator_core.infrastructure.postgres.item_repository import PostgresItemRepository
 from linkurator_core.infrastructure.postgres.registration_request_repository import (
     PostgresRegistrationRequestRepository,
@@ -119,6 +125,10 @@ async def run_processor() -> None:  # pylint: disable=too-many-locals
         username=db_settings.user, password=db_settings.password,
     )
     rss_data_repository = PostgresRssDataRepository(
+        ip=db_settings.ip_address, port=db_settings.port, db_name=db_settings.database,
+        username=db_settings.user, password=db_settings.password,
+    )
+    item_embedding_queue_repository = PostgresItemEmbeddingQueueRepository(
         ip=db_settings.ip_address, port=db_settings.port, db_name=db_settings.database,
         username=db_settings.user, password=db_settings.password,
     )
@@ -252,7 +262,9 @@ async def run_processor() -> None:  # pylint: disable=too-many-locals
     )
     refresh_items_handler = RefreshItemsHandler(
         item_repository=item_repository,
-        subscription_service=general_subscription_service)
+        subscription_service=general_subscription_service,
+        item_embedding_queue_repository=item_embedding_queue_repository,
+    )
     find_subscriptions_with_outdated_items = FindSubscriptionsWithOutdatedItemsHandler(
         subscription_repository=subscription_repository,
         event_bus=event_bus,
@@ -293,6 +305,18 @@ async def run_processor() -> None:  # pylint: disable=too-many-locals
         subscription_repository=subscription_repository,
         event_bus=event_bus,
     )
+    enqueue_items_to_embed_handler: EnqueueItemsToEmbedHandler | None = None
+    embed_items_handler: EmbedItemsHandler | None = None
+    if settings.ai_agent.openai.enabled and settings.ai_agent.openai.api_key is not None:
+        enqueue_items_to_embed_handler = EnqueueItemsToEmbedHandler(
+            item_repository=item_repository,
+            item_embedding_queue_repository=item_embedding_queue_repository,
+        )
+        embed_items_handler = EmbedItemsHandler(
+            item_repository=item_repository,
+            item_embedding_queue_repository=item_embedding_queue_repository,
+            embedding_service=OpenAIEmbeddingService(api_key=settings.ai_agent.openai.api_key),
+        )
 
     event_handler = EventHandler(
         update_youtube_user_subscriptions_handler=update_youtube_user_subscriptions,
@@ -321,6 +345,10 @@ async def run_processor() -> None:  # pylint: disable=too-many-locals
     scheduler.schedule_recurring_task(task=find_zero_duration_items.handle, interval_seconds=60 * 5)
     if summarize_subscription_handler is not None:
         scheduler.schedule_recurring_task(task=find_subscriptions_for_summarization.handle, interval_seconds=60 * 60 * 4)
+    if enqueue_items_to_embed_handler is not None:
+        scheduler.schedule_recurring_task(task=enqueue_items_to_embed_handler.handle, interval_seconds=60)
+    if embed_items_handler is not None:
+        scheduler.schedule_recurring_task(task=embed_items_handler.handle, interval_seconds=60)
 
     await run_parallel(
         event_bus.start(),

@@ -10,11 +10,24 @@ from uuid import UUID
 from linkurator_core.domain.common import utils
 from linkurator_core.domain.items.interaction import Interaction, InteractionType
 from linkurator_core.domain.items.item import Item, ItemProvider
-from linkurator_core.domain.items.item_repository import InteractionFilterCriteria, ItemFilterCriteria, ItemRepository
+from linkurator_core.domain.items.item_embedding import ItemEmbedding
+from linkurator_core.domain.items.item_repository import (
+    InteractionFilterCriteria,
+    ItemFilterCriteria,
+    ItemRepository,
+    SimilarItem,
+    SimilarItemsFilter,
+)
 from linkurator_core.infrastructure.postgres.common import PostgresConnector, drop_nul_bytes
 
+# The binary index only gives a rough order, so more candidates than requested are fetched
+# from it and re-ranked with the full embeddings.
+RERANK_CANDIDATES_PER_RESULT = 10
+MIN_HNSW_EF_SEARCH = 40
+MAX_HNSW_EF_SEARCH = 1000
 
-def _row_to_item(row: Any) -> Item:
+
+def row_to_item(row: Any) -> Item:
     return Item(
         uuid=row["uuid"],
         subscription_uuid=row["subscription_uuid"],
@@ -140,6 +153,36 @@ def _build_interaction_condition(criteria: ItemFilterCriteria) -> SqlFragment | 
     return SqlFragment(f"({joined.placeholders})", joined.params)
 
 
+def _to_vector_literal(vector: list[float]) -> str:
+    """Text representation of a pgvector value, so no pgvector adapter is needed on the client side"""
+    return "[" + ",".join(str(value) for value in vector) + "]"
+
+
+def _ef_search(candidates: int) -> int:
+    return min(max(candidates, MIN_HNSW_EF_SEARCH), MAX_HNSW_EF_SEARCH)
+
+
+def _filter_conditions(filters: SimilarItemsFilter) -> tuple[str, list[Any]]:
+    conditions = ""
+    params: list[Any] = []
+    if filters.min_duration is not None:
+        conditions += " AND items.duration >= %s"
+        params.append(filters.min_duration)
+    if filters.max_duration is not None:
+        conditions += " AND items.duration <= %s"
+        params.append(filters.max_duration)
+    if filters.published_after is not None:
+        conditions += " AND items.published_at >= %s"
+        params.append(filters.published_after)
+    if filters.published_before is not None:
+        conditions += " AND items.published_at < %s"
+        params.append(filters.published_before)
+    if len(filters.providers) > 0:
+        conditions += " AND items.provider = ANY(%s)"
+        params.append(filters.providers)
+    return conditions, params
+
+
 class PostgresItemRepository(ItemRepository):
     def __init__(self, ip: IPv4Address, port: int, db_name: str, username: str, password: str) -> None:
         super().__init__()
@@ -196,7 +239,7 @@ class PostgresItemRepository(ItemRepository):
         row = await pool.fetchrow("SELECT * FROM items WHERE uuid = %s", item_id)
         if row is None or row["deleted_at"] is not None:
             return None
-        return _row_to_item(row)
+        return row_to_item(row)
 
     async def delete_item(self, item_id: UUID) -> None:
         pool = await self._connector.pool()
@@ -218,7 +261,7 @@ class PostgresItemRepository(ItemRepository):
         )
         params = (*where_clause.params, limit, page_number * limit)
         rows = await pool.fetch(query, *params)
-        return [_row_to_item(row) for row in rows]
+        return [row_to_item(row) for row in rows]
 
     async def delete_all_items(self) -> None:
         pool = await self._connector.pool()
@@ -300,3 +343,88 @@ class PostgresItemRepository(ItemRepository):
         return await pool.fetchval(
             "SELECT COUNT(*) FROM items WHERE deleted_at IS NULL AND provider = %s", provider,
         )
+
+    async def upsert_embeddings(self, embeddings: list[ItemEmbedding]) -> None:
+        if len(embeddings) == 0:
+            return
+        pool = await self._connector.pool()
+        await pool.executemany(
+            """
+            INSERT INTO item_embeddings (item_uuid, embedding, text_hash, created_at)
+            VALUES (%s, %s::halfvec, %s, %s)
+            ON CONFLICT (item_uuid) DO UPDATE SET
+                embedding = EXCLUDED.embedding,
+                text_hash = EXCLUDED.text_hash,
+                created_at = EXCLUDED.created_at
+            """,
+            [
+                (
+                    embedding.item_uuid, _to_vector_literal(embedding.vector),
+                    embedding.text_hash, embedding.created_at,
+                )
+                for embedding in embeddings
+            ],
+        )
+
+    async def get_embedding_text_hashes(self, item_ids: list[UUID]) -> dict[UUID, UUID]:
+        pool = await self._connector.pool()
+        rows = await pool.fetch(
+            "SELECT item_uuid, text_hash FROM item_embeddings "
+            "WHERE item_uuid = ANY(%s::uuid[]) AND text_hash IS NOT NULL",
+            item_ids,
+        )
+        return {row["item_uuid"]: row["text_hash"] for row in rows}
+
+    async def find_items_created_after(self, created_after: datetime, limit: int) -> list[Item]:
+        pool = await self._connector.pool()
+        rows = await pool.fetch(
+            "SELECT * FROM items WHERE created_at > %s AND deleted_at IS NULL ORDER BY created_at LIMIT %s",
+            created_after, limit,
+        )
+        return [row_to_item(row) for row in rows]
+
+    async def find_similar_items(
+            self,
+            vector: list[float],
+            limit: int,
+            excluded_vectors: list[list[float]] | None = None,
+            max_excluded_similarity: float = 1.0,
+            filters: SimilarItemsFilter | None = None,
+    ) -> list[SimilarItem]:
+        excluded_vectors = excluded_vectors or []
+        filter_conditions, filter_params = _filter_conditions(filters or SimilarItemsFilter())
+        exclusion_conditions = "".join(
+            " AND 1 - (item_embeddings.embedding <=> %s::halfvec) < %s" for _ in excluded_vectors
+        )
+        exclusion_params = [
+            param
+            for excluded_vector in excluded_vectors
+            for param in (_to_vector_literal(excluded_vector), max_excluded_similarity)
+        ]
+        candidates = limit * RERANK_CANDIDATES_PER_RESULT
+        # The HNSW index returns at most hnsw.ef_search rows, and filters applied after the index
+        # scan (deleted items, filters, exclusions) shrink that further. Iterative scans keep reading the
+        # index until the candidates are found, at the cost of a relaxed order. The candidates are
+        # then sorted by the exact distance to the full embedding.
+        query = (
+            "WITH candidates AS MATERIALIZED ("  # noqa: S608
+            " SELECT items.*, item_embeddings.embedding <=> %s::halfvec AS distance"
+            " FROM item_embeddings JOIN items ON items.uuid = item_embeddings.item_uuid"
+            " WHERE items.deleted_at IS NULL" + filter_conditions + exclusion_conditions
+            + " ORDER BY binary_quantize(item_embeddings.embedding)::bit(1536)"
+            " <~> binary_quantize(%s::halfvec) LIMIT %s"
+            ") SELECT * FROM candidates ORDER BY distance LIMIT %s"
+        )
+        vector_literal = _to_vector_literal(vector)
+        pool = await self._connector.pool()
+        async with pool.acquire() as conn, conn.transaction():
+            await conn.execute("SELECT set_config('hnsw.ef_search', %s, true)", str(_ef_search(candidates)))
+            await conn.execute("SELECT set_config('hnsw.iterative_scan', 'relaxed_order', true)")
+            rows = await conn.fetch(
+                query, vector_literal, *filter_params, *exclusion_params, vector_literal, candidates, limit,
+            )
+        return [SimilarItem(item=row_to_item(row), similarity=1 - float(row["distance"])) for row in rows]
+
+    async def delete_all_embeddings(self) -> None:
+        pool = await self._connector.pool()
+        await pool.execute("DELETE FROM item_embeddings")

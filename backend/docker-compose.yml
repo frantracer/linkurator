@@ -42,7 +42,19 @@ services:
     command: ["make", "run-processor"]
 
   postgres:
-    image: postgres:16-alpine
+    # Official alpine image plus the pgvector extension, compiled in place so the data
+    # directory keeps the same libc/collation as the plain postgres:16-alpine image.
+    image: linkurator-postgres:16-alpine-pgvector-0.8.1
+    build:
+      dockerfile_inline: |
+        FROM postgres:16-alpine
+        RUN apk add --no-cache --virtual .build-deps git build-base \
+         && git clone --branch v0.8.1 --depth 1 https://github.com/pgvector/pgvector.git /tmp/pgvector \
+         && cd /tmp/pgvector \
+         && make OPTFLAGS="" with_llvm=no \
+         && make install with_llvm=no \
+         && rm -rf /tmp/pgvector \
+         && apk del .build-deps
     container_name: linkurator-postgres
     restart: always
     profiles: ["infra"]

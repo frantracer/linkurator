@@ -1,12 +1,21 @@
 from __future__ import annotations
 
+import math
+from datetime import datetime
 from uuid import UUID
 
 from unidecode import unidecode
 
 from linkurator_core.domain.items.interaction import Interaction, InteractionType
 from linkurator_core.domain.items.item import Item, ItemProvider
-from linkurator_core.domain.items.item_repository import InteractionFilterCriteria, ItemFilterCriteria, ItemRepository
+from linkurator_core.domain.items.item_embedding import ItemEmbedding
+from linkurator_core.domain.items.item_repository import (
+    InteractionFilterCriteria,
+    ItemFilterCriteria,
+    ItemRepository,
+    SimilarItem,
+    SimilarItemsFilter,
+)
 
 
 def _item_contains_text(text: str, item: Item) -> bool:
@@ -15,11 +24,31 @@ def _item_contains_text(text: str, item: Item) -> bool:
     return all(text_input in item_text for text_input in text_inputs)
 
 
+def _cosine_similarity(first: list[float], second: list[float]) -> float:
+    norms = math.hypot(*first) * math.hypot(*second)
+    if norms == 0:
+        return 0.0
+    return sum(a * b for a, b in zip(first, second, strict=True)) / norms
+
+
+def _matches(item: Item, filters: SimilarItemsFilter) -> bool:
+    if filters.min_duration is not None and (item.duration is None or item.duration < filters.min_duration):
+        return False
+    if filters.max_duration is not None and (item.duration is None or item.duration > filters.max_duration):
+        return False
+    if filters.published_after is not None and item.published_at < filters.published_after:
+        return False
+    if filters.published_before is not None and item.published_at >= filters.published_before:
+        return False
+    return len(filters.providers) == 0 or item.provider in filters.providers
+
+
 class InMemoryItemRepository(ItemRepository):
     def __init__(self) -> None:
         super().__init__()
         self.items: dict[UUID, Item] = {}
         self.interactions: dict[UUID, Interaction] = {}
+        self.embeddings: dict[UUID, ItemEmbedding] = {}
 
     async def upsert_items(self, items: list[Item]) -> None:
         for item in items:
@@ -158,3 +187,48 @@ class InMemoryItemRepository(ItemRepository):
                 continue
             count += 1
         return count
+
+    def _active_items(self) -> list[Item]:
+        return [item for item in self.items.values() if item.deleted_at is None]
+
+    async def upsert_embeddings(self, embeddings: list[ItemEmbedding]) -> None:
+        for embedding in embeddings:
+            self.embeddings[embedding.item_uuid] = embedding
+
+    async def get_embedding_text_hashes(self, item_ids: list[UUID]) -> dict[UUID, UUID]:
+        return {
+            item_id: self.embeddings[item_id].text_hash
+            for item_id in item_ids
+            if item_id in self.embeddings
+        }
+
+    async def find_items_created_after(self, created_after: datetime, limit: int) -> list[Item]:
+        items = [item for item in self._active_items() if item.created_at > created_after]
+        items.sort(key=lambda item: item.created_at)
+        return items[:limit]
+
+    async def find_similar_items(
+            self,
+            vector: list[float],
+            limit: int,
+            excluded_vectors: list[list[float]] | None = None,
+            max_excluded_similarity: float = 1.0,
+            filters: SimilarItemsFilter | None = None,
+    ) -> list[SimilarItem]:
+        excluded_vectors = excluded_vectors or []
+        filters = filters or SimilarItemsFilter()
+        similar_items = [
+            SimilarItem(item=item, similarity=_cosine_similarity(vector, self.embeddings[item.uuid].vector))
+            for item in self._active_items()
+            if item.uuid in self.embeddings
+            and _matches(item, filters)
+            and all(
+                _cosine_similarity(excluded_vector, self.embeddings[item.uuid].vector) < max_excluded_similarity
+                for excluded_vector in excluded_vectors
+            )
+        ]
+        similar_items.sort(key=lambda similar_item: similar_item.similarity, reverse=True)
+        return similar_items[:limit]
+
+    async def delete_all_embeddings(self) -> None:
+        self.embeddings.clear()
