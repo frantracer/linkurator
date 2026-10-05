@@ -1,15 +1,17 @@
+import React, {useEffect, useState} from "react";
+import classNames from "classnames";
 import {SubscriptionItem} from "../../entities/SubscriptionItem";
 import {readableAgoUnits} from "../../utilities/dateFormatter";
 import {InteractionType, interactWithItem, removeInteractionWithItem,} from "../../services/interactionService";
 import {paths} from "../../configuration";
 import Link from "next/link";
 import {useInView} from "react-intersection-observer";
-import {SwapButton} from "../atoms/SwapButton";
 import {
   ArchiveBoxFilledIcon,
   ArchiveBoxIcon,
   CheckCircleFilledIcon,
   CheckCircleIcon,
+  EllipsisHorizontalIcon,
   ThumbsDownFilledIcon,
   ThumbsDownIcon,
   ThumbsUpFilledIcon,
@@ -22,6 +24,8 @@ import {useTranslations} from "next-intl";
 import AvatarGroup from "../atoms/AvatarGroup";
 import {useRouter} from "next/navigation";
 import {useToast} from "../../contexts/ToastContext";
+import Dropdown from "../atoms/Dropdown";
+import {MenuItem} from "../atoms/MenuItem";
 
 type ContentItemCardProps = {
   item: SubscriptionItem;
@@ -57,6 +61,40 @@ async function defaultOnChangeSwapButton(itemUuid: string, interactionType: Inte
   }
 }
 
+type ActionButtonProps = {
+  active: boolean;
+  onClick: () => void;
+  tooltip: string;
+  children: React.ReactNode;
+}
+
+const ActionButton = ({active, onClick, tooltip, children}: ActionButtonProps) => {
+  const className = classNames(
+    "btn btn-sm btn-outline flex-1 flex-nowrap gap-1 px-2 rounded-md font-normal text-xs",
+    "hover:!bg-base-300 hover:!border-primary hover:!text-primary",
+    {
+      "border-neutral text-base-content": !active,
+      "border-primary text-primary": active,
+    }
+  );
+
+  return (
+    <button
+      type="button"
+      className={className}
+      title={tooltip}
+      aria-pressed={active}
+      onClick={(e) => {
+        e.stopPropagation();
+        e.currentTarget.blur();
+        onClick();
+      }}
+    >
+      {children}
+    </button>
+  );
+}
+
 const ContentItemCard = (
   {
     item,
@@ -72,6 +110,16 @@ const ContentItemCard = (
   const t = useTranslations("common");
   const router = useRouter();
   const {showToast} = useToast();
+
+  const [recommended, setRecommended] = useState(item.recommended);
+  const [viewed, setViewed] = useState(item.viewed);
+  const [discouraged, setDiscouraged] = useState(item.discouraged);
+  const [hidden, setHidden] = useState(item.hidden);
+
+  useEffect(() => setRecommended(item.recommended), [item.recommended]);
+  useEffect(() => setViewed(item.viewed), [item.viewed]);
+  useEffect(() => setDiscouraged(item.discouraged), [item.discouraged]);
+  useEffect(() => setHidden(item.hidden), [item.hidden]);
 
   const convertPublishedToAgoText = (date: Date) => {
     const ago = readableAgoUnits(date);
@@ -96,6 +144,42 @@ const ContentItemCard = (
     }
   };
 
+  const toggleInteraction = (
+    interactionType: InteractionType,
+    isActive: boolean,
+    setActive: (active: boolean) => void,
+    markedMessage: string,
+    unmarkedMessage: string
+  ) => {
+    const newValue = !isActive;
+    setActive(newValue);
+    showToast(
+      newValue ? markedMessage : unmarkedMessage,
+      item.name,
+      () => {
+        setActive(isActive);
+        onChangeSwapButton(item.uuid, interactionType, isActive).then(onChange);
+      }
+    );
+    return onChangeSwapButton(item.uuid, interactionType, newValue).then(onChange);
+  };
+
+  const toggleRecommended = () => toggleInteraction(
+    InteractionType.Recommended, recommended, setRecommended,
+    t("action_marked_as_recommended"), t("action_unmarked_as_recommended"));
+
+  const toggleViewed = () => toggleInteraction(
+    InteractionType.Viewed, viewed, setViewed,
+    t("action_marked_as_viewed"), t("action_marked_as_not_viewed"));
+
+  const toggleDiscouraged = () => toggleInteraction(
+    InteractionType.Discouraged, discouraged, setDiscouraged,
+    t("action_marked_as_not_recommended"), t("action_unmarked_as_not_recommended"));
+
+  const toggleHidden = () => toggleInteraction(
+    InteractionType.Hidden, hidden, setHidden,
+    t("action_marked_as_archived"), t("action_marked_as_not_archived"));
+
   if (!inView) {
     return (
       <div key="skeleton" ref={ref}>
@@ -106,8 +190,12 @@ const ContentItemCard = (
     return (
       <div
         key="card"
-        className="card card-compact rounded-lg w-80 bg-base-200 hover:scale-105 shadow-md border border-neutral hover:shadow-xl hover:border-primary duration-200">
-        <figure className="aspect-video h-48">
+        className={classNames(
+          "card card-compact rounded-lg w-80 bg-base-200 hover:scale-105 shadow-md hover:shadow-xl duration-200",
+          "after:absolute after:inset-0 after:rounded-lg after:border after:border-neutral after:pointer-events-none",
+          "hover:after:border-primary after:transition-colors after:duration-200"
+        )}>
+        <figure className="aspect-video h-48 rounded-t-lg">
           <img className="h-full hover:cursor-pointer"
                src={item.thumbnail}
                alt={item.name}
@@ -120,20 +208,26 @@ const ContentItemCard = (
             </span>
           }
         </figure>
-        <div className="card-body m-1">
+        <div className="card-body">
           <h2
             className={`card-title text-sm cursor-pointer hover:text-primary ${limitTitleLength ? 'line-clamp-2' : ''}`}
             onClick={() => handleOpenItem(item.url)}
             title={limitTitleLength ? item.name : undefined}>
             {item.name}
           </h2>
-          {withSubscription &&
-              <div className="flex text-xs gap-x-2 items-center cursor-pointer hover:text-primary text-base-content/70">
-                  <Miniature src={getProviderIcon(providers, item.subscription.provider)} alt={item.subscription.provider}/>
-                  <Miniature src={item.subscription.thumbnail} alt={item.subscription.name}/>
-                  <Link href={paths.SUBSCRIPTIONS + "/" + item.subscription.uuid}>{item.subscription.name}</Link>
-              </div>
-          }
+          <div className="flex text-xs gap-x-2 items-center text-base-content/70">
+            {withSubscription &&
+                <div className="flex flex-1 min-w-0 gap-x-1 items-center cursor-pointer hover:text-primary">
+                    <Miniature src={getProviderIcon(providers, item.subscription.provider)}
+                               alt={item.subscription.provider}/>
+                    <Miniature src={item.subscription.thumbnail} alt={item.subscription.name}/>
+                    <Link className="min-w-0 break-words" href={paths.SUBSCRIPTIONS + "/" + item.subscription.uuid}>
+                      {item.subscription.name}
+                    </Link>
+                </div>
+            }
+            <p className="flex-none ml-auto whitespace-nowrap">{convertPublishedToAgoText(item.published_at)}</p>
+          </div>
           {item.recommended_by && item.recommended_by.length > 0 &&
               <div className="flex gap-x-2 items-center">
                   <span className="text-xs text-base-content/70">{t("recommended_by")}:</span>
@@ -146,147 +240,61 @@ const ContentItemCard = (
                   )} maxDisplay={3}/>
               </div>
           }
-          <div className="flex flex-row">
-            <div className={"flex flex-grow"}>
-              <p className={"text-xs text-base-content/70 self-end"}>{convertPublishedToAgoText(item.published_at)}</p>
-            </div>
-            {withInteractions &&
-                <div className="card-actions flex justify-end">
-                    <div className={"hover:text-primary"}>
-                        <SwapButton
-                            key={`${item.uuid}-discouraged-${item.discouraged}`}
-                            defaultChecked={item.discouraged}
-                            onChange={
-                              (isChecked) => {
-                                if (isChecked) {
-                                  showToast(
-                                    t("action_marked_as_not_recommended"),
-                                    item.name,
-                                    () => {
-                                      onChangeSwapButton &&
-                                        onChangeSwapButton(item.uuid, InteractionType.Discouraged, false).then(onChange);
-                                    }
-                                  );
-                                } else {
-                                  showToast(
-                                    t("action_unmarked_as_not_recommended"),
-                                    item.name,
-                                    () => {
-                                      onChangeSwapButton &&
-                                        onChangeSwapButton(item.uuid, InteractionType.Discouraged, true).then(onChange);
-                                    }
-                                  );
-                                }
-                                return onChangeSwapButton &&
-                                  onChangeSwapButton(item.uuid, InteractionType.Discouraged, isChecked).then(onChange);
-                              }
+          {withInteractions &&
+              <div className="card-actions flex flex-row flex-nowrap gap-2 mt-3">
+                  <ActionButton
+                      active={recommended}
+                      onClick={toggleRecommended}
+                      tooltip={recommended ? t("not_recommended") : t("mark_as_recommended")}>
+                    {recommended ? <ThumbsUpFilledIcon/> : <ThumbsUpIcon/>}
+                    {recommended ? t("recommended") : t("recommend")}
+                  </ActionButton>
+                  <ActionButton
+                      active={viewed}
+                      onClick={toggleViewed}
+                      tooltip={viewed ? t("mark_as_not_viewed") : t("mark_as_viewed")}>
+                    {viewed ? <CheckCircleFilledIcon/> : <CheckCircleIcon/>}
+                    {viewed ? t("viewed") : t("mark_viewed")}
+                  </ActionButton>
+                  <Dropdown
+                      small={true}
+                      bottom={false}
+                      position="end"
+                      closeOnClickInside={true}
+                      button={
+                        <span
+                          className={classNames(
+                            "btn btn-sm btn-outline px-2 rounded-md",
+                            "hover:!bg-base-300 hover:!border-primary hover:!text-primary",
+                            {
+                              "border-neutral text-base-content": !discouraged && !hidden,
+                              "border-primary text-primary": discouraged || hidden,
                             }
-                            tooltip={item.discouraged ? t("mark_as_not_recommended") : t("mark_as_not_recommended")}>
-                            <ThumbsDownFilledIcon/>
-                            <ThumbsDownIcon/>
-                        </SwapButton>
-                    </div>
-                    <div className={"hover:text-primary"}>
-                        <SwapButton
-                            key={`${item.uuid}-recommended-${item.recommended}`}
-                            defaultChecked={item.recommended}
-                            onChange={
-                              (isChecked) => {
-                                if (isChecked) {
-                                  showToast(
-                                    t("action_marked_as_recommended"),
-                                    item.name,
-                                    () => {
-                                      onChangeSwapButton &&
-                                        onChangeSwapButton(item.uuid, InteractionType.Recommended, false).then(onChange);
-                                    }
-                                  );
-                                } else {
-                                  showToast(
-                                    t("action_unmarked_as_recommended"),
-                                    item.name,
-                                    () => {
-                                      onChangeSwapButton &&
-                                        onChangeSwapButton(item.uuid, InteractionType.Recommended, true).then(onChange);
-                                    }
-                                  );
-                                }
-                                return onChangeSwapButton &&
-                                  onChangeSwapButton(item.uuid, InteractionType.Recommended, isChecked).then(onChange);
-                              }
-                            }
-                            tooltip={item.recommended ? t("not_recommended") : t("mark_as_recommended")}>
-                            <ThumbsUpFilledIcon/>
-                            <ThumbsUpIcon/>
-                        </SwapButton>
-                    </div>
-                    <div className={"hover:text-primary"}>
-                        <SwapButton
-                            key={`${item.uuid}-hidden-${item.hidden}`}
-                            defaultChecked={item.hidden}
-                            onChange={(isChecked) => {
-                              if (isChecked) {
-                                showToast(
-                                  t("action_marked_as_archived"),
-                                  item.name,
-                                  () => {
-                                    onChangeSwapButton &&
-                                      onChangeSwapButton(item.uuid, InteractionType.Hidden, false).then(onChange);
-                                  }
-                                );
-                              } else {
-                                showToast(
-                                  t("action_marked_as_not_archived"),
-                                  item.name,
-                                  () => {
-                                    onChangeSwapButton &&
-                                      onChangeSwapButton(item.uuid, InteractionType.Hidden, true).then(onChange);
-                                  }
-                                );
-                              }
-                              return onChangeSwapButton &&
-                                onChangeSwapButton(item.uuid, InteractionType.Hidden, isChecked).then(onChange);
-                            }}
-                            tooltip={item.hidden ? t("mark_as_not_archived") : t("mark_as_archived")}>
-                            <ArchiveBoxFilledIcon/>
-                            <ArchiveBoxIcon/>
-                        </SwapButton>
-                    </div>
-                    <div className={"hover:text-primary"}>
-                        <SwapButton
-                            key={`${item.uuid}-viewed-${item.viewed}`}
-                            defaultChecked={item.viewed}
-                            onChange={(isChecked) => {
-                              if (isChecked) {
-                                showToast(
-                                  t("action_marked_as_viewed"),
-                                  item.name,
-                                  () => {
-                                    onChangeSwapButton &&
-                                      onChangeSwapButton(item.uuid, InteractionType.Viewed, false).then(onChange);
-                                  }
-                                );
-                              } else {
-                                showToast(
-                                  t("action_marked_as_not_viewed"),
-                                  item.name,
-                                  () => {
-                                    onChangeSwapButton &&
-                                      onChangeSwapButton(item.uuid, InteractionType.Viewed, true).then(onChange);
-                                  }
-                                );
-                              }
-                              return onChangeSwapButton &&
-                                onChangeSwapButton(item.uuid, InteractionType.Viewed, isChecked).then(onChange);
-                            }}
-                            tooltip={item.viewed ? t("mark_as_not_viewed") : t("mark_as_viewed")}>
-                            <CheckCircleFilledIcon/>
-                            <CheckCircleIcon/>
-                        </SwapButton>
-                    </div>
-                </div>
-            }
-          </div>
+                          )}
+                          title={t("more_actions")}
+                          aria-label={t("more_actions")}>
+                          <EllipsisHorizontalIcon/>
+                        </span>
+                      }>
+                      <li>
+                          <MenuItem onClick={toggleDiscouraged} selected={discouraged}>
+                              <span className="flex items-center gap-2">
+                                {discouraged ? <ThumbsDownFilledIcon/> : <ThumbsDownIcon/>}
+                                {discouraged ? t("not_recommended") : t("dont_recommend")}
+                              </span>
+                          </MenuItem>
+                      </li>
+                      <li>
+                          <MenuItem onClick={toggleHidden} selected={hidden}>
+                              <span className="flex items-center gap-2">
+                                {hidden ? <ArchiveBoxFilledIcon/> : <ArchiveBoxIcon/>}
+                                {hidden ? t("unarchive") : t("archive")}
+                              </span>
+                          </MenuItem>
+                      </li>
+                  </Dropdown>
+              </div>
+          }
         </div>
       </div>
     )
