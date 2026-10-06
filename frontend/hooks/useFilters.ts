@@ -1,11 +1,12 @@
 import {useEffect, useState} from "react";
-import {defaultFilters, Filters} from "../entities/Filters";
+import {areFiltersEqual, defaultFilters, Filters} from "../entities/Filters";
 import useUserFilter from "./useUserFilter";
 
 type UseFilters = {
   filters: Filters,
   setFilters: (filters: Filters) => void,
   resetFilters: () => void,
+  isModified: boolean,
 }
 
 const useFilters = (): UseFilters => {
@@ -21,7 +22,8 @@ const useFilters = (): UseFilters => {
   return {
     filters,
     setFilters,
-    resetFilters: () => setFilters(userFilter)
+    resetFilters: () => setFilters(userFilter),
+    isModified: !areFiltersEqual(filters, userFilter),
   }
 };
 

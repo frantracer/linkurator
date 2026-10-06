@@ -8,9 +8,8 @@ import CrossButton from "../../../../../components/atoms/CrossButton";
 import {
   AddIcon,
   ChatBubbleIcon,
-  FunnelIcon,
+  EllipsisHorizontalIcon,
   MinusIcon,
-  OptionsIcon,
   RectangleGroup,
   ShareIcon,
   SubscriptionIcon,
@@ -20,9 +19,9 @@ import {MenuItem} from "../../../../../components/atoms/MenuItem";
 import Miniature from "../../../../../components/atoms/Miniature";
 import Tag from "../../../../../components/atoms/Tag";
 import TagsRow from "../../../../../components/atoms/TagsRow";
-import Drawer from "../../../../../components/molecules/Drawer";
 import TopTitle from "../../../../../components/molecules/TopTitle";
-import ContentFilter, {CONTENT_FILTER_ID} from "../../../../../components/organism/ContentFilter";
+import FilterToggleButton from "../../../../../components/molecules/FilterToggleButton";
+import ContentFilterBar from "../../../../../components/organism/ContentFilterBar";
 import ContentItemCardGrid from "../../../../../components/organism/ContentItemCardGrid";
 import {paths} from "../../../../../configuration";
 import {useCurator} from "../../../../../hooks/useCurator";
@@ -30,9 +29,9 @@ import useCuratorItems from "../../../../../hooks/useCuratorItems";
 import {useCurators} from "../../../../../hooks/useCurators";
 import {useCuratorTopics} from "../../../../../hooks/useCuratorTopics";
 import useFilters from "../../../../../hooks/useFilters";
+import useFilterBarVisibility from "../../../../../hooks/useFilterBarVisibility";
 import useProfile from "../../../../../hooks/useProfile";
 import {followCurator, unfollowCurator} from "../../../../../services/curatorService";
-import {showLateralMenu} from "../../../../../utilities/lateralMenuAction";
 import {newScopedChatPath, scopeFromFilters} from "../../../../../utilities/chatScope";
 import CuratorTopicsList from "../../../../../components/organism/CuratorTopicsList";
 import CuratorSubscriptionsList from "../../../../../components/organism/CuratorSubscriptionsList";
@@ -54,8 +53,9 @@ const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const {providers} = useProviders();
-  const {filters, setFilters, resetFilters} = useFilters();
+  const {filters, setFilters, resetFilters, isModified: areFiltersModified} = useFilters();
   const [debouncedFilters, setDebouncedFilters] = useState(filters);
+  const {showFilters, toggleFilters} = useFilterBarVisibility();
   const [selectedSection, setSelectedSection] = useState<SectionKey>(DEFAULT_SECTION);
 
   const sectionParam = searchParams.get("section");
@@ -103,10 +103,6 @@ const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
     refetchTopics().then(() => {
       refreshUserTopics();
     })
-  }
-
-  const handleFilter = () => {
-    showLateralMenu(CONTENT_FILTER_ID);
   }
 
   const handleChatAboutThis = () => {
@@ -161,14 +157,6 @@ const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
         </div>
       </MenuItem>
     )
-    dropdownButtons.push(
-      <MenuItem key={"curators-filter"} onClick={handleFilter} hideMenuOnClick={true}>
-        <div className="flex flex-row gap-2 items-center justify-left">
-          <FunnelIcon/>
-          {t("filter")}
-        </div>
-      </MenuItem>
-    )
   }
 
   useEffect(() => {
@@ -189,31 +177,14 @@ const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
   ];
 
   return (
-    <Drawer id={CONTENT_FILTER_ID} right={true} alwaysOpenOnDesktop={false}>
-      <ContentFilter title={curator ? curator.username : ""}
-                     avatarSrc={curator ? curator.avatar_url : ""}
-                     filters={filters} setFilters={setFilters} resetFilters={resetFilters}/>
+    <div className="flex flex-col w-full h-full min-h-0 overflow-hidden">
       <TopTitle>
-        <div className="flex flex-row items-center h-full w-full px-4">
+        <div className="flex flex-row items-center gap-4 h-full w-full px-4">
           {!isMainDataLoading && curator &&
               <>
                   <div className="w-10 shrink-0 flex items-center justify-start">
-                    {isLoggedIn && !isOwnCuratorProfile && curator &&
-                        <Dropdown
-                            small={true}
-                            position="start"
-                            bottom={true}
-                            button={
-                              <Button primary={false} fitContent={true} stopPropagation={false}>
-                                <OptionsIcon/>
-                              </Button>
-                            }
-                            closeOnClickInside={true}
-                        >
-                            <Menu>
-                              {dropdownButtons}
-                            </Menu>
-                        </Dropdown>
+                    {selectedSection === "recommendations" &&
+                        <FilterToggleButton isOpen={showFilters} isModified={areFiltersModified} onClick={toggleFilters}/>
                     }
                   </div>
                   <div className="flex-1 min-w-0 flex flex-col items-center gap-2 overflow-hidden">
@@ -253,16 +224,30 @@ const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
                       </div>
                   </div>
                   <div className="w-10 shrink-0 flex items-center justify-end">
-                    <Button primary={false} fitContent={true} clickAction={handleFilter} tooltip={t("filter")}>
-                      <FunnelIcon/>
-                    </Button>
+                    {isLoggedIn && !isOwnCuratorProfile && curator &&
+                        <Dropdown
+                            small={true}
+                            position="end"
+                            bottom={true}
+                            button={
+                              <Button primary={false} fitContent={true} stopPropagation={false}>
+                                <EllipsisHorizontalIcon/>
+                              </Button>
+                            }
+                            closeOnClickInside={true}
+                        >
+                            <Menu>
+                              {dropdownButtons}
+                            </Menu>
+                        </Dropdown>
+                    }
                   </div>
               </>
           }
         </div>
       </TopTitle>
 
-      <div className="flex flex-col h-full bg-base-300 overflow-hidden">
+      <div className="flex flex-col flex-1 min-h-0 bg-base-300 overflow-hidden">
         <TagsRow>
           {sections.map(section => (
             <Tag
@@ -277,6 +262,10 @@ const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
             </Tag>
           ))}
         </TagsRow>
+
+        {selectedSection === "recommendations" && showFilters && (
+          <ContentFilterBar filters={filters} setFilters={setFilters} resetFilters={resetFilters}/>
+        )}
 
         {selectedSection === "recommendations" && (
           <div className="flex-1 min-h-0">
@@ -321,7 +310,7 @@ const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
           curatorUrl={typeof window !== 'undefined' ? window.location.href : ''}
         />
       )}
-    </Drawer>
+    </div>
   );
 };
 

@@ -31,6 +31,7 @@ type ContentItemCardGridProps = {
   withSubscription?: boolean;
   subscriptions?: Subscription[] | null;
   topics?: Topic[] | null;
+  filterBar?: React.ReactNode;
 }
 
 const ContentItemCardGrid = (
@@ -47,7 +48,8 @@ const ContentItemCardGrid = (
     scanningEntityName = "",
     withSubscription = true,
     subscriptions = null,
-    topics = null
+    topics = null,
+    filterBar = null
   }: ContentItemCardGridProps
 ) => {
   const {set: invalidCards, add: addInvalidCard} = useSet<string>();
@@ -131,6 +133,7 @@ const ContentItemCardGrid = (
             ))}
           </TagsRow>
       }
+      {filterBar}
       <div ref={containerRef} onScroll={handleGridScroll} className="flex-1 min-h-0 overflow-auto flex flex-col">
         {isBeingScanned &&
             <div className="flex items-center justify-center h-full">

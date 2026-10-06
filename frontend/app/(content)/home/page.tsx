@@ -4,24 +4,28 @@ import {useTranslations} from "next-intl";
 import {useRouter, useSearchParams} from "next/navigation";
 import React, {Suspense, useEffect, useState} from "react";
 import TopTitle from "../../../components/molecules/TopTitle";
+import FilterToggleButton from "../../../components/molecules/FilterToggleButton";
 import {paths} from "../../../configuration";
 import useProfile from "../../../hooks/useProfile";
 import useSubscriptions from "../../../hooks/useSubscriptions";
 import {useTopics} from "../../../hooks/useTopics";
 import useFilters from "../../../hooks/useFilters";
+import useFilterBarVisibility from "../../../hooks/useFilterBarVisibility";
 import useLatestSubscriptionItems from "../../../hooks/useLatestSubscriptionItems";
 import useLatestFavoriteTopicItems from "../../../hooks/useLatestFavoriteTopicItems";
 import useLatestFollowedCuratorItems from "../../../hooks/useLatestFollowedCuratorItems";
 import {useCurators} from "../../../hooks/useCurators";
 import useProviders from "../../../hooks/useProviders";
-import {CuratorIcon, FunnelIcon, HomeIcon, StarIcon, SubscriptionIcon} from "../../../components/atoms/Icons";
-import Button from "../../../components/atoms/Button";
+import {
+  CuratorIcon,
+  HomeIcon,
+  StarIcon,
+  SubscriptionIcon
+} from "../../../components/atoms/Icons";
 import Tag from "../../../components/atoms/Tag";
 import TagsRow from "../../../components/atoms/TagsRow";
-import Drawer from "../../../components/molecules/Drawer";
 import ContentItemCardGrid from "../../../components/organism/ContentItemCardGrid";
-import ContentFilter, {CONTENT_FILTER_ID} from "../../../components/organism/ContentFilter";
-import {showLateralMenu} from "../../../utilities/lateralMenuAction";
+import ContentFilterBar from "../../../components/organism/ContentFilterBar";
 import EmptyStateNoFavoriteTopics from "../../../components/organism/EmptyStateNoFavoriteTopics";
 import EmptyStateNoFollowedCurators from "../../../components/organism/EmptyStateNoFollowedCurators";
 import EmptyStateNoMatches from "../../../components/organism/EmptyStateNoMatches";
@@ -58,15 +62,12 @@ const HomePageComponent = () => {
     router.push(`${paths.HOME}?section=${key}`);
   };
 
-  const handleShowFilters = () => {
-    showLateralMenu(CONTENT_FILTER_ID);
-  };
-
   const {profile, profileIsLoading} = useProfile();
   const {subscriptions, subscriptionsAreLoading} = useSubscriptions(profile);
   const {topics, topicsAreLoading} = useTopics(profile, profileIsLoading);
-  const {filters, setFilters, resetFilters} = useFilters();
+  const {filters, setFilters, resetFilters, isModified: areFiltersModified} = useFilters();
   const [debouncedFilters, setDebouncedFilters] = useState(filters);
+  const {showFilters, toggleFilters} = useFilterBarVisibility();
   const {
     latestItems,
     isLoading: latestItemsLoading,
@@ -172,26 +173,17 @@ const HomePageComponent = () => {
   }
 
   return (
-    <Drawer id={CONTENT_FILTER_ID} right={true} alwaysOpenOnDesktop={false}>
-      <ContentFilter title={activeSection.title}
-                     icon={activeSection.icon}
-                     filters={filters}
-                     showInteractions={true}
-                     setFilters={setFilters}
-                     resetFilters={resetFilters}/>
-      <div className="flex flex-col h-full bg-base-300">
+    <div className="flex flex-col w-full h-full min-h-0 overflow-hidden bg-base-300">
       <TopTitle>
         <div className="flex flex-row items-center h-full w-full px-4">
-          <div className="w-10 shrink-0 flex items-center justify-start"/>
+          <div className="w-10 shrink-0 flex items-center justify-start">
+            <FilterToggleButton isOpen={showFilters} isModified={areFiltersModified} onClick={toggleFilters}/>
+          </div>
           <h1 className="text-xl font-bold flex-1 min-w-0 flex items-center justify-center gap-2">
             <HomeIcon/>
             {t("home")}
           </h1>
-          <div className="w-10 shrink-0 flex items-center justify-end">
-            <Button primary={false} fitContent={true} clickAction={handleShowFilters} tooltip={t("filter")}>
-              <FunnelIcon/>
-            </Button>
-          </div>
+          <div className="w-10 shrink-0 flex items-center justify-end"/>
         </div>
       </TopTitle>
 
@@ -217,6 +209,12 @@ const HomePageComponent = () => {
                   </Tag>
                 ))}
               </TagsRow>
+              {showFilters &&
+                  <ContentFilterBar filters={filters}
+                                    showInteractions={true}
+                                    setFilters={setFilters}
+                                    resetFilters={resetFilters}/>
+              }
 
             {showEmptyState
               ? <div className="flex-1 overflow-y-auto p-4 flex items-center justify-center">
@@ -237,8 +235,7 @@ const HomePageComponent = () => {
             }
           </>
       }
-      </div>
-    </Drawer>
+    </div>
   );
 };
 

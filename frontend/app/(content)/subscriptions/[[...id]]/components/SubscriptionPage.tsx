@@ -8,24 +8,24 @@ import CrossButton from "../../../../../components/atoms/CrossButton";
 import {
   AddIcon,
   ChatBubbleIcon,
-  FunnelIcon,
+  EllipsisHorizontalIcon,
   MinusIcon,
-  OptionsIcon,
   PencilIcon,
   RefreshIcon
 } from "../../../../../components/atoms/Icons";
 import {MenuItem} from "../../../../../components/atoms/MenuItem";
 import Miniature from "../../../../../components/atoms/Miniature";
 import Tag from "../../../../../components/atoms/Tag";
-import Drawer from "../../../../../components/molecules/Drawer";
 import TopTitle from "../../../../../components/molecules/TopTitle";
+import FilterToggleButton from "../../../../../components/molecules/FilterToggleButton";
 import AssignTopicModal, {AssignTopicModalId} from "../../../../../components/organism/AssignTopicModal";
-import ContentFilter, {CONTENT_FILTER_ID} from "../../../../../components/organism/ContentFilter";
+import ContentFilterBar from "../../../../../components/organism/ContentFilterBar";
 import ContentItemCardGrid from "../../../../../components/organism/ContentItemCardGrid";
 import {paths} from "../../../../../configuration";
 import {getProviderIcon, getProviderPrettyName} from "../../../../../entities/Provider";
 import useProviders from "../../../../../hooks/useProviders";
 import useFilters from "../../../../../hooks/useFilters";
+import useFilterBarVisibility from "../../../../../hooks/useFilterBarVisibility";
 import useProfile from "../../../../../hooks/useProfile";
 import useSubscription from "../../../../../hooks/useSubscription";
 import useSubscriptionItems from "../../../../../hooks/useSubscriptionItems";
@@ -36,7 +36,6 @@ import {
   refreshSubscription,
   unfollowSubscription
 } from "../../../../../services/subscriptionService";
-import {showLateralMenu} from "../../../../../utilities/lateralMenuAction";
 import {openModal} from "../../../../../utilities/modalAction";
 import {newScopedChatPath, scopeFromFilters} from "../../../../../utilities/chatScope";
 import Dropdown from "../../../../../components/atoms/Dropdown";
@@ -51,8 +50,9 @@ const SubscriptionPageComponent = ({subscriptionId}: { subscriptionId: string })
   const {showToast} = useToast();
   const {providers} = useProviders();
 
-  const {filters, setFilters, resetFilters} = useFilters();
+  const {filters, setFilters, resetFilters, isModified: areFiltersModified} = useFilters();
   const [debouncedFilters, setDebouncedFilters] = useState(filters);
+  const {showFilters, toggleFilters} = useFilterBarVisibility();
   const {profile, profileIsLoading} = useProfile();
   const {subscriptions, refreshSubscriptions} = useSubscriptions(profile);
   const {topics, refreshTopics} = useTopics(profile, profileIsLoading);
@@ -77,10 +77,6 @@ const SubscriptionPageComponent = ({subscriptionId}: { subscriptionId: string })
     isLoading,
     isFinished
   } = useSubscriptionItems(selectedSubscription, debouncedFilters);
-
-  const handleShowFilters = () => {
-    showLateralMenu(CONTENT_FILTER_ID);
-  }
 
   const handleChatAboutThis = () => {
     if (!selectedSubscription) return;
@@ -185,44 +181,14 @@ const SubscriptionPageComponent = ({subscriptionId}: { subscriptionId: string })
       </MenuItem>
     )
   }
-  dropdownButtons.push(
-    <MenuItem key={"subscriptions-filter"} onClick={handleShowFilters} hideMenuOnClick={true}>
-      <div className="flex flex-row gap-2 items-center justify-left">
-        <FunnelIcon/>
-        {t("filter")}
-      </div>
-    </MenuItem>
-  )
 
   return (
-    <Drawer id={CONTENT_FILTER_ID} right={true} alwaysOpenOnDesktop={false}>
-      <ContentFilter title={subscriptionName}
-                     avatarSrc={selectedSubscription ? selectedSubscription.thumbnail : ""}
-                     filters={filters}
-                     showInteractions={isUserLogged}
-                     setFilters={setFilters}
-                     resetFilters={resetFilters}/>
+    <div className="flex flex-col w-full h-full min-h-0 overflow-hidden">
       <TopTitle>
-        <div className="flex flex-row items-center h-full w-full px-4">
+        <div className="flex flex-row items-center gap-4 h-full w-full px-4">
           {!profileIsLoading && <>
               <div className="w-10 shrink-0 flex items-center justify-start">
-                {isUserLogged && selectedSubscription &&
-                    <Dropdown
-                        button={
-                          <Button primary={false} fitContent={true} stopPropagation={false}>
-                            <OptionsIcon/>
-                          </Button>
-                        }
-                        small={true}
-                        position="start"
-                        bottom={true}
-                        closeOnClickInside={true}
-                    >
-                        <Menu>
-                          {dropdownButtons}
-                        </Menu>
-                    </Dropdown>
-                }
+                  <FilterToggleButton isOpen={showFilters} isModified={areFiltersModified} onClick={toggleFilters}/>
               </div>
               <div className="flex-1 min-w-0 flex flex-col items-center gap-2 overflow-hidden">
                   <div className="w-full flex flex-row items-center justify-center gap-2 overflow-hidden">
@@ -265,14 +231,28 @@ const SubscriptionPageComponent = ({subscriptionId}: { subscriptionId: string })
                   </div>
               </div>
               <div className="w-10 shrink-0 flex items-center justify-end">
-                <Button primary={false} fitContent={true} clickAction={handleShowFilters} tooltip={t("filter")}>
-                  <FunnelIcon/>
-                </Button>
+                {isUserLogged && selectedSubscription &&
+                    <Dropdown
+                        button={
+                          <Button primary={false} fitContent={true} stopPropagation={false}>
+                            <EllipsisHorizontalIcon/>
+                          </Button>
+                        }
+                        small={true}
+                        position="end"
+                        bottom={true}
+                        closeOnClickInside={true}
+                    >
+                        <Menu>
+                          {dropdownButtons}
+                        </Menu>
+                    </Dropdown>
+                }
               </div>
           </>}
         </div>
       </TopTitle>
-      <div className="flex flex-col h-full bg-base-300 overflow-auto">
+      <div className="flex flex-col flex-1 min-h-0 bg-base-300 overflow-auto">
         {isSubscriptionError &&
             <div className="flex items-center justify-center h-dvh">
                 <span>{t("subscription_not_exist")}</span>
@@ -292,6 +272,12 @@ const SubscriptionPageComponent = ({subscriptionId}: { subscriptionId: string })
                 scanningEntityName={selectedSubscription.name}
                 withSubscription={false}
                 topics={topics.filter(topic => topic.subscriptions_ids.includes(selectedSubscription.uuid))}
+                filterBar={showFilters &&
+                    <ContentFilterBar filters={filters}
+                                      showInteractions={isUserLogged}
+                                      setFilters={setFilters}
+                                      resetFilters={resetFilters}/>
+                }
             />
         }
         {selectedSubscription &&
@@ -300,7 +286,7 @@ const SubscriptionPageComponent = ({subscriptionId}: { subscriptionId: string })
                               refreshTopics={refreshTopics}/>
         }
       </div>
-    </Drawer>
+    </div>
   );
 };
 

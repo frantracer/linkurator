@@ -11,7 +11,7 @@ const Tag = ({children, selected = false, onClick}: TagProps) => {
   const colorClasses = selected ? "badge-primary" : "badge-neutral badge-outline";
   return (
     <div
-      className={`badge ${colorClasses} h-fit w-fit py-1 justify-start items-center text-wrap text-sm ${interactive ? "cursor-pointer" : ""}`}
+      className={`badge ${colorClasses} h-fit w-fit py-1 justify-start items-center text-wrap text-sm ${interactive ? "cursor-pointer hover:border-primary" : ""}`}
       onClick={onClick}
       role={interactive ? "button" : undefined}
     >

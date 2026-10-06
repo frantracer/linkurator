@@ -9,9 +9,8 @@ import CrossButton from "../../../../../components/atoms/CrossButton";
 import {
   AddIcon,
   ChatBubbleIcon,
-  FunnelIcon,
+  EllipsisHorizontalIcon,
   MinusIcon,
-  OptionsIcon,
   PencilIcon,
   StarFilledIcon,
   StarIcon,
@@ -20,16 +19,16 @@ import {
 import {MenuItem} from "../../../../../components/atoms/MenuItem";
 import Miniature from "../../../../../components/atoms/Miniature";
 import Tag from "../../../../../components/atoms/Tag";
-import Drawer from "../../../../../components/molecules/Drawer";
 import DeleteTopicConfirmationModal, {
   DeleteTopicConfirmationModalId
 } from "../../../../../components/organism/DeleteTopicConfirmationModal";
 import EditTopicModal, {EditTopicModalId} from "../../../../../components/organism/EditTopicModal";
-import ContentFilter, {CONTENT_FILTER_ID} from "../../../../../components/organism/ContentFilter";
+import ContentFilterBar from "../../../../../components/organism/ContentFilterBar";
 import ContentItemCardGrid from "../../../../../components/organism/ContentItemCardGrid";
 import {paths} from "../../../../../configuration";
 import {isTopicScanned} from "../../../../../entities/Topic";
 import useFilters from "../../../../../hooks/useFilters";
+import useFilterBarVisibility from "../../../../../hooks/useFilterBarVisibility";
 import useProfile from "../../../../../hooks/useProfile";
 import useSubscriptions from "../../../../../hooks/useSubscriptions";
 import {useTopic} from "../../../../../hooks/useTopic";
@@ -38,12 +37,12 @@ import {useTopics} from "../../../../../hooks/useTopics";
 import useTopicSubscriptions from "../../../../../hooks/useTopicSubscriptions";
 import {deleteTopic, followTopic, unfollowTopic} from "../../../../../services/topicService";
 import {useFavoriteTopics} from "../../../../../hooks/useFavoriteTopics";
-import {showLateralMenu} from "../../../../../utilities/lateralMenuAction";
 import {openModal} from "../../../../../utilities/modalAction";
 import {newScopedChatPath, scopeFromFilters} from "../../../../../utilities/chatScope";
 import Dropdown from "../../../../../components/atoms/Dropdown";
 import Menu from "../../../../../components/atoms/Menu";
 import TopTitle from "../../../../../components/molecules/TopTitle";
+import FilterToggleButton from "../../../../../components/molecules/FilterToggleButton";
 import useProviders from "../../../../../hooks/useProviders";
 import ALink from "../../../../../components/atoms/ALink";
 
@@ -53,8 +52,9 @@ const TopicPageComponent = ({topicId}: { topicId: string }) => {
   const t = useTranslations("common");
   const router = useRouter()
 
-  const {filters, setFilters, resetFilters} = useFilters();
+  const {filters, setFilters, resetFilters, isModified: areFiltersModified} = useFilters();
   const [debouncedFilters, setDebouncedFilters] = useState(filters);
+  const {showFilters, toggleFilters} = useFilterBarVisibility();
   const {providers} = useProviders();
   const {profile, profileIsLoading} = useProfile();
   const {subscriptions, refreshSubscriptions} = useSubscriptions(profile);
@@ -80,10 +80,6 @@ const TopicPageComponent = ({topicId}: { topicId: string }) => {
   const topicName = selectedTopic ? selectedTopic.name : "";
   const isTopicBeingScanned = selectedTopic ? !isTopicScanned(selectedTopic, subscriptions) : false
   const isUserLogged = !!profile
-
-  const handleShowFilters = () => {
-    showLateralMenu(CONTENT_FILTER_ID);
-  }
 
   const handleChatAboutThis = () => {
     if (!selectedTopic) return;
@@ -220,46 +216,14 @@ const TopicPageComponent = ({topicId}: { topicId: string }) => {
       </MenuItem>
     )
   }
-  dropdownButtons.push(
-    <MenuItem key={"topics-filter"} onClick={handleShowFilters} hideMenuOnClick={true}>
-      <div className="flex flex-row gap-2 items-center justify-left">
-        <FunnelIcon/>
-        {t("filter")}
-      </div>
-    </MenuItem>
-  )
 
   return (
-    <Drawer id={CONTENT_FILTER_ID} right={true} alwaysOpenOnDesktop={false}>
-      <ContentFilter title={topicName}
-                     subscriptions={topicSubscriptions}
-                     providers={providers}
-                     filters={filters}
-                     showInteractions={isUserLogged}
-                     setFilters={setFilters}
-                     resetFilters={resetFilters}
-      />
+    <div className="flex flex-col w-full h-full min-h-0 overflow-hidden">
       <TopTitle>
-        <div className="flex flex-row items-center h-full w-full px-4">
+        <div className="flex flex-row items-center gap-4 h-full w-full px-4">
           {!topicIsLoading && <>
               <div className="w-10 shrink-0 flex items-center justify-start">
-                {isUserLogged && selectedTopic &&
-                    <Dropdown
-                        button={
-                          <Button primary={false} fitContent={true} stopPropagation={false}>
-                            <OptionsIcon/>
-                          </Button>
-                        }
-                        small={true}
-                        position="start"
-                        bottom={true}
-                        closeOnClickInside={true}
-                    >
-                        <Menu>
-                          {dropdownButtons}
-                        </Menu>
-                    </Dropdown>
-                }
+                  <FilterToggleButton isOpen={showFilters} isModified={areFiltersModified} onClick={toggleFilters}/>
               </div>
               <div className="flex-1 min-w-0 flex flex-col items-center gap-2 overflow-hidden">
                   <div className="w-full flex flex-row items-center justify-center gap-2 overflow-hidden">
@@ -302,14 +266,28 @@ const TopicPageComponent = ({topicId}: { topicId: string }) => {
                   </div>
               </div>
               <div className="w-10 shrink-0 flex items-center justify-end">
-                  <Button primary={false} fitContent={true} clickAction={handleShowFilters} tooltip={t("filter")}>
-                      <FunnelIcon/>
-                  </Button>
+                {isUserLogged && selectedTopic &&
+                    <Dropdown
+                        button={
+                          <Button primary={false} fitContent={true} stopPropagation={false}>
+                            <EllipsisHorizontalIcon/>
+                          </Button>
+                        }
+                        small={true}
+                        position="end"
+                        bottom={true}
+                        closeOnClickInside={true}
+                    >
+                        <Menu>
+                          {dropdownButtons}
+                        </Menu>
+                    </Dropdown>
+                }
               </div>
           </>}
         </div>
       </TopTitle>
-      <div className="flex flex-col h-full bg-base-300 overflow-auto">
+      <div className="flex flex-col flex-1 min-h-0 bg-base-300 overflow-auto">
         {
           topicIsError && !topicIsLoading &&
             <div className="flex flex-row gap-2 items-center justify-center">
@@ -332,6 +310,14 @@ const TopicPageComponent = ({topicId}: { topicId: string }) => {
                 scanningEntityName={selectedTopic.name}
                 showInteractions={isUserLogged}
                 subscriptions={topicSubscriptions}
+                filterBar={showFilters &&
+                    <ContentFilterBar subscriptions={topicSubscriptions}
+                                      providers={providers}
+                                      filters={filters}
+                                      showInteractions={isUserLogged}
+                                      setFilters={setFilters}
+                                      resetFilters={resetFilters}/>
+                }
             />
         }
         {
@@ -349,7 +335,7 @@ const TopicPageComponent = ({topicId}: { topicId: string }) => {
             <DeleteTopicConfirmationModal onDeleteTopic={() => deleteTopicAction(selectedTopic.uuid)}/>
         }
       </div>
-    </Drawer>
+    </div>
   )
     ;
 };

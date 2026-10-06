@@ -6,7 +6,7 @@ import {FunnelIcon, TrashIcon} from "../../../../../components/atoms/Icons";
 import ChatInput from "./ChatInput";
 import TopTitle from "../../../../../components/molecules/TopTitle";
 import {ChatMessage, ChatScope, getLatestScope, newTopicsWereCreated} from "../../../../../entities/Chat";
-import {defaultFilters, Filters} from "../../../../../entities/Filters";
+import {areFiltersEqual, defaultFilters, Filters} from "../../../../../entities/Filters";
 import {ChatRateLimitError, deleteChat, queryAgent} from "../../../../../services/chatService";
 import useChat from "../../../../../hooks/useChat";
 import {useQueryClient} from '@tanstack/react-query';
@@ -28,11 +28,12 @@ import useSubscriptions from "../../../../../hooks/useSubscriptions";
 import {useTopics} from "../../../../../hooks/useTopics";
 import useTopicsSubscriptions from "../../../../../hooks/useTopicsSubscriptions";
 import useUserFilter from "../../../../../hooks/useUserFilter";
+import useFilterBarVisibility from "../../../../../hooks/useFilterBarVisibility";
 import Divider from "../../../../../components/atoms/Divider";
 import HoverPopover from "../../../../../components/atoms/HoverPopover";
-import Drawer from "../../../../../components/molecules/Drawer";
-import ContentFilter, {CONTENT_FILTER_ID} from "../../../../../components/organism/ContentFilter";
-import ChatScopeTags, {SCOPE_KIND_ICONS} from "../../../../../components/organism/ChatScopeTags";
+import FilterToggleButton from "../../../../../components/molecules/FilterToggleButton";
+import ContentFilterBar from "../../../../../components/organism/ContentFilterBar";
+import ChatScopeTags from "../../../../../components/organism/ChatScopeTags";
 import TagsRow from "../../../../../components/atoms/TagsRow";
 import ChatScopeModal, {ChatScopeModalId} from "../../../../../components/organism/ChatScopeModal";
 import {PickedEntity} from "../../../../../components/organism/EntityPickerModal";
@@ -41,15 +42,12 @@ import {
   ChatScopeEntity,
   consumeChatScope,
   filtersFromScope,
-  getScopeEntities,
   isEntityInScope,
   removeScopeEntity,
-  SCOPE_KIND_LABEL_KEYS,
   scopeFromFilters,
   scopeHasKind,
   scopeUsesInteractions
 } from "../../../../../utilities/chatScope";
-import {showLateralMenu} from "../../../../../utilities/lateralMenuAction";
 
 const MESSAGE_LIMIT = 5;
 const CHARACTER_LIMIT = 500;
@@ -84,6 +82,7 @@ const ChatPageComponent = ({conversationId}: { conversationId: string }) => {
   const {topics} = useTopics(profile, profileIsLoading);
   const {subscriptions} = useSubscriptions(profile);
   const {userFilter} = useUserFilter();
+  const {showFilters, toggleFilters, openFilters} = useFilterBarVisibility();
 
   // Draft of the scope and filters the next message is sent with, starting from the latest used in the chat.
   // A scope without an entity is the "everything" scope.
@@ -96,11 +95,7 @@ const ChatPageComponent = ({conversationId}: { conversationId: string }) => {
     setScope(newScope);
     setFilters(newFilters);
   }, []);
-  const scopeEntities = getScopeEntities(scope);
-  // A single entity is named after its kind, several of them are just the chat scope.
-  const singleEntityKind = scopeEntities.length === 1 ? scopeEntities[0].kind : undefined;
-  const scopeTitleKey = scopeEntities.length === 0 ? 'chat_scope_none'
-    : singleEntityKind ? SCOPE_KIND_LABEL_KEYS[singleEntityKind] : 'chat_scope';
+  const areFiltersModified = !areFiltersEqual(filters, userFilter);
   // Interactions don't apply to guests or curators.
   const showInteractions = isLoggedIn && scopeUsesInteractions(scope);
   const {topicsSubscriptions} = useTopicsSubscriptions(scope?.topicIds ?? [], topics, subscriptions);
@@ -259,10 +254,6 @@ const ChatPageComponent = ({conversationId}: { conversationId: string }) => {
     openModal(ChatScopeModalId);
   };
 
-  const handleShowFilters = () => {
-    showLateralMenu(CONTENT_FILTER_ID);
-  };
-
   const handleSampleQuestionClick = (question: string) => {
     setInputMessage(question);
   };
@@ -288,19 +279,21 @@ const ChatPageComponent = ({conversationId}: { conversationId: string }) => {
   }
 
   return (
-    <Drawer id={CONTENT_FILTER_ID} right={true} alwaysOpenOnDesktop={false}>
-      <ContentFilter title={t(scopeTitleKey)}
-                     icon={singleEntityKind ? SCOPE_KIND_ICONS[singleEntityKind] : undefined}
-                     subscriptions={scopeHasKind(scope, 'topic') ? topicsSubscriptions : undefined}
-                     providers={providers}
-                     filters={filters}
-                     showInteractions={showInteractions}
-                     setFilters={handleFiltersChange}
-                     resetFilters={() => handleFiltersChange(userFilter)}
-      />
+    <div className="flex flex-col w-full h-full min-h-0 overflow-hidden">
       <TopTitle>
-        <div className="flex flex-row items-center h-full w-full px-4">
+        <div className="flex flex-row items-center gap-4 h-full w-full px-4">
           <div className="w-10 shrink-0 flex items-center justify-start">
+            <FilterToggleButton isOpen={showFilters} isModified={areFiltersModified} onClick={toggleFilters}/>
+          </div>
+          <div className="flex-1 min-w-0 flex justify-center items-center overflow-hidden h-full">
+            <h1 className="text-xl font-bold min-w-0 whitespace-nowrap truncate">
+              {conversationLoading
+                ? t('loading')
+                : conversation?.title || t('new_chat')
+              }
+            </h1>
+          </div>
+          <div className="w-10 shrink-0 flex items-center justify-end">
             {localMessages.length > 0 && (
               <Button
                 fitContent={true}
@@ -313,28 +306,10 @@ const ChatPageComponent = ({conversationId}: { conversationId: string }) => {
               </Button>
             )}
           </div>
-          <div className="flex-1 min-w-0 flex justify-center items-center overflow-hidden h-full">
-            <h1 className="text-xl font-bold min-w-0 whitespace-nowrap truncate">
-              {conversationLoading
-                ? t('loading')
-                : conversation?.title || t('new_chat')
-              }
-            </h1>
-          </div>
-          <div className="w-10 shrink-0 flex items-center justify-end">
-            <Button
-              fitContent={true}
-              clickAction={handleShowFilters}
-              primary={false}
-              tooltip={t("filter")}
-            >
-              <FunnelIcon/>
-            </Button>
-          </div>
         </div>
       </TopTitle>
 
-      <div className="flex flex-col flex-1 h-full bg-base-300 overflow-hidden">
+      <div className="flex flex-col flex-1 min-h-0 bg-base-300 overflow-hidden">
         {/* What the next message is searched with. Guests have no entities to pick from. */}
         <TagsRow>
           <ChatScopeTags scope={scope}
@@ -343,8 +318,16 @@ const ChatPageComponent = ({conversationId}: { conversationId: string }) => {
                          onAddEntity={isLoggedIn ? handleShowScopeModal : undefined}
                          onRemoveEntity={isLoggedIn ? handleRemoveEntity : undefined}
                          onChangeFilters={handleFiltersChange}
-                         onOpenFilters={handleShowFilters}/>
+                         onOpenFilters={openFilters}/>
         </TagsRow>
+        {showFilters &&
+            <ContentFilterBar subscriptions={scopeHasKind(scope, 'topic') ? topicsSubscriptions : undefined}
+                              providers={providers}
+                              filters={filters}
+                              showInteractions={showInteractions}
+                              setFilters={handleFiltersChange}
+                              resetFilters={() => handleFiltersChange(userFilter)}/>
+        }
         {/* Messages Area */}
         <div className="flex-1 overflow-y-auto p-4 space-y-4">
           {localMessages.length === 0 && !conversationLoading && (
@@ -469,7 +452,7 @@ const ChatPageComponent = ({conversationId}: { conversationId: string }) => {
         message={errorMessage.message}
       />
       {isLoggedIn && <ChatScopeModal scope={scope} onToggleEntity={handleToggleEntity} onClearScope={handleClearScope}/>}
-    </Drawer>
+    </div>
   );
 };
 

@@ -64,6 +64,22 @@ export function isItemShown(item: SubscriptionItem, filters: Filters) {
   );
 }
 
+export function areFiltersEqual(a: Filters, b: Filters): boolean {
+  const excludedA = new Set(a.excludedSubscriptions);
+  const excludedB = new Set(b.excludedSubscriptions);
+  return a.displayWithoutInteraction === b.displayWithoutInteraction &&
+    a.displayHidden === b.displayHidden &&
+    a.displayViewed === b.displayViewed &&
+    a.displayDiscouraged === b.displayDiscouraged &&
+    a.displayRecommended === b.displayRecommended &&
+    a.textSearch === b.textSearch &&
+    a.durationGroup === b.durationGroup &&
+    a.minDuration === b.minDuration &&
+    a.maxDuration === b.maxDuration &&
+    excludedA.size === excludedB.size &&
+    a.excludedSubscriptions.every(uuid => excludedB.has(uuid));
+}
+
 export const durationOptions: { key: DurationGroup, label: string }[] = [
   {key: "short", label: "short_duration"},
   {key: "medium", label: "medium_duration"},
