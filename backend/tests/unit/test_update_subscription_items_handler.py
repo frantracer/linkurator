@@ -11,6 +11,7 @@ from linkurator_core.application.subscriptions.update_subscription_items_handler
 from linkurator_core.domain.common.mock_factory import mock_sub
 from linkurator_core.domain.common.utils import parse_url
 from linkurator_core.domain.items.item import Item
+from linkurator_core.domain.items.item_embedding_queue_repository import ItemEmbeddingQueueRepository
 from linkurator_core.domain.items.item_repository import ItemFilterCriteria, ItemRepository
 from linkurator_core.domain.subscriptions.subscription_repository import SubscriptionRepository
 from linkurator_core.domain.subscriptions.subscription_service import SubscriptionService
@@ -38,11 +39,13 @@ async def test_update_subscriptions_items_with_an_item_that_is_not_registered() 
     subscription_repository.get.return_value = copy(sub1)
 
     item_repository = MagicMock(spec=ItemRepository)
+    item_embedding_queue_repository = AsyncMock(spec=ItemEmbeddingQueueRepository)
     item_repository.find_items.return_value = []
 
     handler = UpdateSubscriptionItemsHandler(subscription_service=subscription_service,
                                              subscription_repository=subscription_repository,
-                                             item_repository=item_repository)
+                                             item_repository=item_repository,
+                                             item_embedding_queue_repository=item_embedding_queue_repository)
 
     await handler.handle(sub1.uuid)
 
@@ -54,6 +57,7 @@ async def test_update_subscriptions_items_with_an_item_that_is_not_registered() 
     assert item_repository.find_items.call_count == 1
     assert item_repository.upsert_items.call_count == 1
     assert item_repository.upsert_items.call_args == call([item1])
+    assert item_embedding_queue_repository.enqueue.call_args == call([item1.uuid])
     assert subscription_repository.update.call_count == 1
     updated_sub = subscription_repository.update.call_args[0][0]
     assert updated_sub.scanned_at > sub1.scanned_at
@@ -90,11 +94,13 @@ async def test_update_subscriptions_items_with_items_that_are_already_registered
     subscription_repository.get.return_value = copy(sub1)
 
     item_repository = MagicMock(spec=ItemRepository)
+    item_embedding_queue_repository = AsyncMock(spec=ItemEmbeddingQueueRepository)
     item_repository.find_items.return_value = [item2]
 
     handler = UpdateSubscriptionItemsHandler(subscription_service=subscription_service,
                                              subscription_repository=subscription_repository,
-                                             item_repository=item_repository)
+                                             item_repository=item_repository,
+                                             item_embedding_queue_repository=item_embedding_queue_repository)
 
     await handler.handle(sub1.uuid)
 
@@ -113,6 +119,7 @@ async def test_update_subscriptions_items_with_items_that_are_already_registered
         limit=1)
     assert item_repository.upsert_items.call_count == 1
     assert item_repository.upsert_items.call_args == call([])
+    assert item_embedding_queue_repository.enqueue.call_args == call([])
     assert subscription_repository.update.call_count == 1
     updated_sub = subscription_repository.update.call_args[0][0]
     assert updated_sub.scanned_at > sub1.scanned_at
@@ -135,10 +142,12 @@ async def test_only_one_concurrent_update_is_allowed_to_run_per_subscription() -
     subscription_repository.get.return_value = copy(sub1)
 
     item_repository = MagicMock(spec=ItemRepository)
+    item_embedding_queue_repository = AsyncMock(spec=ItemEmbeddingQueueRepository)
 
     handler = UpdateSubscriptionItemsHandler(subscription_service=subscription_service,
                                              subscription_repository=subscription_repository,
-                                             item_repository=item_repository)
+                                             item_repository=item_repository,
+                                             item_embedding_queue_repository=item_embedding_queue_repository)
     await run_parallel(
         handler.handle(sub1.uuid),
         run_sequence(

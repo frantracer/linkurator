@@ -5,6 +5,7 @@ import uuid
 from datetime import datetime, timezone
 
 from linkurator_core.domain.items.item import Item
+from linkurator_core.domain.items.item_embedding_queue_repository import ItemEmbeddingQueueRepository
 from linkurator_core.domain.items.item_repository import ItemFilterCriteria, ItemRepository
 from linkurator_core.domain.subscriptions.general_subscription_service import GeneralSubscriptionService
 from linkurator_core.domain.subscriptions.subscription_repository import SubscriptionRepository
@@ -17,10 +18,12 @@ class UpdateSubscriptionItemsHandler:
                  subscription_service: GeneralSubscriptionService,
                  subscription_repository: SubscriptionRepository,
                  item_repository: ItemRepository,
+                 item_embedding_queue_repository: ItemEmbeddingQueueRepository,
     ) -> None:
         self.subscription_service = subscription_service
         self.subscription_repository = subscription_repository
         self.item_repository = item_repository
+        self.item_embedding_queue_repository = item_embedding_queue_repository
 
     async def handle(self, subscription_id: uuid.UUID) -> None:
         now = datetime.now(tz=timezone.utc)
@@ -58,6 +61,7 @@ class UpdateSubscriptionItemsHandler:
                     new_filtered_items.append(new_item)
 
             await self.item_repository.upsert_items(new_filtered_items)
+            await self.item_embedding_queue_repository.enqueue([item.uuid for item in new_filtered_items])
 
             subscription.scanned_at = now
             if len(new_items) > 0:

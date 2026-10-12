@@ -91,6 +91,7 @@ pytest tests/integration/infrastructure/
 - `users`: User profiles and authentication
 - `subscriptions`: YouTube/Spotify channels
 - `items`: Video/podcast content
+- `item_embeddings`: OpenAI embedding per item (pgvector), filled in batches by the processor
 - `topics`: User-defined categories
 - `sessions`: User sessions
 - `credentials`: OAuth tokens

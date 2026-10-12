@@ -3,14 +3,21 @@ from __future__ import annotations
 import logging
 from uuid import UUID
 
+from linkurator_core.domain.items.item_embedding_queue_repository import ItemEmbeddingQueueRepository
 from linkurator_core.domain.items.item_repository import ItemFilterCriteria, ItemRepository
 from linkurator_core.domain.subscriptions.general_subscription_service import GeneralSubscriptionService
 
 
 class RefreshItemsHandler:
-    def __init__(self, item_repository: ItemRepository, subscription_service: GeneralSubscriptionService) -> None:
+    def __init__(
+            self,
+            item_repository: ItemRepository,
+            subscription_service: GeneralSubscriptionService,
+            item_embedding_queue_repository: ItemEmbeddingQueueRepository,
+    ) -> None:
         self.item_repository = item_repository
         self.subscription_service = subscription_service
+        self.item_embedding_queue_repository = item_embedding_queue_repository
 
     async def handle(self, item_uuids: set[UUID]) -> None:
         logging.info("Refreshing information for %s items", len(item_uuids))
@@ -21,6 +28,7 @@ class RefreshItemsHandler:
         updated_items = await self.subscription_service.get_items({item.uuid for item in items})
 
         await self.item_repository.upsert_items(list(updated_items))
+        await self.item_embedding_queue_repository.enqueue([item.uuid for item in updated_items])
 
         updated_item_uuids = {item.uuid for item in updated_items}
         for item in items:
