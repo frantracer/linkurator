@@ -1,0 +1,13 @@
+# PostgreSQL 16 on Alpine plus the pgvector extension.
+FROM postgres:16.15-alpine3.24
+
+ARG PGVECTOR_VERSION=0.8.1
+
+RUN apk add --no-cache --virtual .build-deps git build-base \
+ && git clone --branch "v${PGVECTOR_VERSION}" --depth 1 https://github.com/pgvector/pgvector.git /tmp/pgvector \
+ && cd /tmp/pgvector \
+ && make OPTFLAGS="" with_llvm=no \
+ && make install with_llvm=no \
+ && cd / \
+ && rm -rf /tmp/pgvector \
+ && apk del .build-deps

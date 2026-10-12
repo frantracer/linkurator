@@ -4,7 +4,9 @@ DOMAIN := api.linkurator.com
 CERTBOT_ACCOUNT ?=
 CERTBOT_EMAIL ?=
 
-DOCKER_IMAGE := frantracer/linkurator-api
+DOCKER_USER := frantracer
+DOCKER_IMAGE := $(DOCKER_USER)/linkurator-api
+DOCKER_IMAGE_POSTGRES := $(DOCKER_USER)/linkurator-postgres:16-alpine-pgvector-0.8.1
 DOCKER_CONTAINER_API := linkurator-api
 DOCKER_CONTAINER_PROCESSOR := linkurator-processor
 DOCKER_CONTAINER_LINTING := linkurator-api-check-linting
@@ -155,8 +157,15 @@ check-docker-token:
 	fi
 
 docker-push: check-docker-token
-	@docker login -u frantracer -p ${LINKURATOR_DOCKER_TOKEN}
+	@docker login -u $(DOCKER_USER) -p ${LINKURATOR_DOCKER_TOKEN}
 	docker push $(DOCKER_IMAGE)
+
+docker-build-postgres:
+	docker build --platform linux/amd64 -t $(DOCKER_IMAGE_POSTGRES) -f Dockerfile.postgres .
+
+docker-push-postgres: check-docker-token docker-build-postgres
+	@docker login -u $(DOCKER_USER) -p ${LINKURATOR_DOCKER_TOKEN}
+	docker push $(DOCKER_IMAGE_POSTGRES)
 
 ####################
 # Provision

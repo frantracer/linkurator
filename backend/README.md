@@ -175,6 +175,21 @@ Docker Hub access token and the target will log in for you:
 export LINKURATOR_DOCKER_TOKEN=your_docker_hub_token
 ```
 
+### 🐘 PostgreSQL image
+
+PostgreSQL runs from a custom image (`Dockerfile.postgres`: `postgres:16-alpine` plus
+pgvector). CI does not build it, it pulls it, so it must be pushed before
+the pipeline runs whenever `Dockerfile.postgres` changes:
+```bash
+make docker-build-postgres
+make docker-push-postgres
+```
+
+The image keeps the same major version (16), base (Alpine) and data volume as the
+previous `postgres:16-alpine` image, so `make deploy-db` reuses the existing data
+directory without any upgrade or restore. To change the image, bump the tag in both
+`DOCKER_IMAGE_POSTGRES` (Makefile) and `docker-compose.yml`.
+
 Define the ip address and the vault password to deploy the image to the server:
 ```bash
 echo "YOUR_PASSWORD" > secrets/vault_password.txt

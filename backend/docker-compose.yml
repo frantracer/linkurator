@@ -42,7 +42,10 @@ services:
     command: ["make", "run-processor"]
 
   postgres:
-    image: postgres:16-alpine
+    image: frantracer/linkurator-postgres:16-alpine-pgvector-0.8.1
+    build:
+      context: .
+      dockerfile: Dockerfile.postgres
     container_name: linkurator-postgres
     restart: always
     profiles: ["infra"]
