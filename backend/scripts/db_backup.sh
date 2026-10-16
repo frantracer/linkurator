@@ -1,25 +1,40 @@
 #!/usr/bin/env bash
 # Usage:
-#   db_backup.sh backup <env_file>
+#   db_backup.sh backup <env_file> [--with-embeddings]
 #   db_backup.sh restore <env_file> [backup_file_name]
 # If no file name is given to restore, the most recent backup in the bucket is used.
+# By default the backup skips the data of the item embedding tables (their schema is kept),
+# so a restored database re-embeds every item from scratch. Pass --with-embeddings to keep it.
 set -euo pipefail
 
 log() {
   echo "[$(date '+%Y-%m-%d %H:%M:%S')] $*"
 }
 
+usage() {
+  echo "Usage: $0 backup <env_file> [--with-embeddings]" >&2
+  echo "       $0 restore <env_file> [backup_file_name]" >&2
+  exit 1
+}
+
 ACTION="${1:-}"
 ENV_FILE="${2:-}"
 
 if [ "$ACTION" != "backup" ] && [ "$ACTION" != "restore" ]; then
-  echo "Usage: $0 backup|restore <env_file> [backup_file_name]" >&2
-  exit 1
+  usage
 fi
 
 if [ -z "$ENV_FILE" ]; then
-  echo "Usage: $0 backup|restore <env_file> [backup_file_name]" >&2
-  exit 1
+  usage
+fi
+
+WITH_EMBEDDINGS=false
+if [ "$ACTION" = "backup" ]; then
+  case "${3:-}" in
+    "") ;;
+    --with-embeddings) WITH_EMBEDDINGS=true ;;
+    *) usage ;;
+  esac
 fi
 
 log "Loading environment from $ENV_FILE"
@@ -54,9 +69,20 @@ if [ "$ACTION" = "backup" ]; then
   FILE_NAME="linkurator_db_dump_$(date +%Y%m%d%H%M%S).dump"
   KEY="${R2_PREFIX}${FILE_NAME}"
 
-  log "Dumping database 'main' to $FILE_NAME"
+  # The cursor and queue are skipped along with the embeddings, otherwise a restored
+  # database would consider the backfill done and never embed the items again.
+  EXCLUDE_ARGS=()
+  if [ "$WITH_EMBEDDINGS" = false ]; then
+    EXCLUDE_ARGS=(
+      --exclude-table-data=item_embeddings
+      --exclude-table-data=item_embedding_queue
+      --exclude-table-data=item_embedding_cursor
+    )
+  fi
+
+  log "Dumping database 'main' to $FILE_NAME (with embeddings: $WITH_EMBEDDINGS)"
   docker exec -e PGPASSWORD="$POSTGRES_PASS" linkurator-postgres \
-    pg_dump --username "$POSTGRES_USER" --format custom --dbname main > "$FILE_NAME"
+    pg_dump --username "$POSTGRES_USER" --format custom --dbname main "${EXCLUDE_ARGS[@]}" > "$FILE_NAME"
 
   log "Uploading backup to s3://${R2_BUCKET}/${KEY}"
   aws s3 cp "$FILE_NAME" "s3://${R2_BUCKET}/${KEY}" --endpoint-url "$R2_ENDPOINT"
