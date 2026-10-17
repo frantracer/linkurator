@@ -1,5 +1,5 @@
 import {configuration} from "../configuration";
-import axios from "axios";
+import axios, {HttpStatusCode} from "axios";
 import * as crypto from 'crypto';
 
 export type Profile = {
@@ -35,25 +35,30 @@ export async function deleteProfile(): Promise<void> {
   }
 }
 
-export async function updateFirstName(firstName: string): Promise<void> {
-  const {status} = await axios.patch(configuration.PROFILE_URL, {first_name: firstName}, {withCredentials: true});
+export type PersonalDataChanges = {
+  first_name?: string
+  last_name?: string
+}
+
+export async function updatePersonalData(changes: PersonalDataChanges): Promise<void> {
+  const {status} = await axios.patch(configuration.PROFILE_URL, changes, {withCredentials: true});
   if (status !== 204) {
-    throw new Error("Error updating first name");
+    throw new Error("Error updating personal data");
   }
 }
 
-export async function updateLastName(lastName: string): Promise<void> {
-  const {status} = await axios.patch(configuration.PROFILE_URL, {last_name: lastName}, {withCredentials: true});
-  if (status !== 204) {
-    throw new Error("Error updating last name");
-  }
-}
+export type UpdateUsernameResult = "updated" | "already_in_use";
 
-export async function updateUsername(username: string): Promise<void> {
-  const {status} = await axios.patch(configuration.PROFILE_URL, {username: username}, {withCredentials: true});
-  if (status !== 204) {
-    throw new Error("Error updating username");
+export async function updateUsername(username: string): Promise<UpdateUsernameResult> {
+  try {
+    await axios.patch(configuration.PROFILE_URL, {username: username}, {withCredentials: true});
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response?.status === HttpStatusCode.Conflict) {
+      return "already_in_use";
+    }
+    throw error;
   }
+  return "updated";
 }
 
 function hashPassword(password: string): string {

@@ -7,6 +7,7 @@ from fastapi import APIRouter, Depends, Request, status
 from linkurator_core.application.users.delete_user_handler import DeleteUserHandler
 from linkurator_core.application.users.edit_user_profile import EditUserProfile, NewProfileAttributes
 from linkurator_core.application.users.get_user_profile_handler import GetUserProfileHandler
+from linkurator_core.domain.common.exceptions import UsernameAlreadyInUseError
 from linkurator_core.domain.users.session import Session
 from linkurator_core.infrastructure.fastapi.models import default_responses
 from linkurator_core.infrastructure.fastapi.models.default_responses import EmptyResponse
@@ -42,6 +43,7 @@ def get_router(
                   status_code=status.HTTP_204_NO_CONTENT,
                   responses={
                       status.HTTP_401_UNAUTHORIZED: {"model": None},
+                      status.HTTP_409_CONFLICT: {"model": None},
                   })
     async def edit_user_profile(
             new_attributes: NewProfileAttributes,
@@ -50,7 +52,11 @@ def get_router(
         if session is None:
             raise default_responses.not_authenticated()
 
-        await edit_user_profile_handler.handle(user_id=session.user_id, new_attributes=new_attributes)
+        try:
+            await edit_user_profile_handler.handle(user_id=session.user_id, new_attributes=new_attributes)
+        except UsernameAlreadyInUseError as error:
+            msg = "Username already in use"
+            raise default_responses.conflict(msg) from error
         return EmptyResponse()
 
     @router.delete("/",

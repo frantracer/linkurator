@@ -3,7 +3,7 @@
 import type {NextPage} from "next";
 import useProfile from "../../../hooks/useProfile";
 import {useRouter} from "next/navigation";
-import React, {useCallback, useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {configuration, paths} from "../../../configuration";
 import Button from "../../../components/atoms/Button";
 import FlexColumn from "../../../components/atoms/FlexColumn";
@@ -11,103 +11,67 @@ import TopTitle from "../../../components/molecules/TopTitle";
 import FlexRow from "../../../components/atoms/FlexRow";
 import Avatar from "../../../components/atoms/Avatar";
 import Box from "../../../components/atoms/Box";
-import {deleteProfile, updateFirstName, updateLastName, updateUsername} from "../../../services/profileService";
+import {deleteProfile, PersonalDataChanges} from "../../../services/profileService";
 import DeleteAccountModal, {DeleteAccountModalId} from "../../../components/organism/DeleteAccountModal";
 import {openModal} from "../../../utilities/modalAction";
 import InputText from "../../../components/atoms/InputText";
 import Divider from "../../../components/atoms/Divider";
-import {ErrorBanner} from "../../../components/atoms/ErrorBanner";
-import {InfoBanner} from "../../../components/atoms/InfoBanner";
-import {useDebounce} from "../../../hooks/useDebounce";
 import FlexItem from "../../../components/atoms/FlexItem";
 import {useTranslations} from "next-intl";
 import {ProfileIcon} from "../../../components/atoms/Icons";
-
-const NOTIFICATION_TIMEOUT = 3000;
-const INPUT_DEBOUNCE_TIMEOUT = 500;
+import {useToast} from "../../../contexts/ToastContext";
 
 const ProfilePage: NextPage = () => {
   const t = useTranslations("common");
   const router = useRouter();
-  const {profile, profileIsLoading, refreshProfile} = useProfile();
+  const {
+    profile,
+    profileIsLoading,
+    updatePersonalData,
+    isSavingPersonalData,
+    updateUsername,
+    isSavingUsername
+  } = useProfile();
+  const {showToast, showErrorToast} = useToast();
 
   const email = profile ? profile.email : "";
   const avatarUrl = profile ? profile.avatar_url : "";
 
-  // Change first name
-  const [changeFirstNameOk, setChangeFirstNameOk] = useState<boolean | null>(null);
   const [firstName, setFirstName] = useState<string | null>(null);
-  const debouncedFirstName = useDebounce<string | null>(firstName, INPUT_DEBOUNCE_TIMEOUT);
-
-  const handleUpdateFirstName = useCallback((value: string) => {
-    setChangeFirstNameOk(null);
-    updateFirstName(value).then(() => {
-      setChangeFirstNameOk(true);
-      refreshProfile().then(() => {
-        setTimeout(() => {
-          setChangeFirstNameOk(null);
-        }, NOTIFICATION_TIMEOUT);
-      });
-    }).catch(() => {
-      setChangeFirstNameOk(false);
-    })
-  }, [refreshProfile]);
-
-  useEffect(() => {
-    if (profile != null && debouncedFirstName !== null && debouncedFirstName !== profile.first_name) {
-      handleUpdateFirstName(debouncedFirstName);
-    }
-  }, [debouncedFirstName, profile, handleUpdateFirstName]);
-
-  // Change last name
-  const [changeLastNameOk, setChangeLastNameOk] = useState<boolean | null>(null);
   const [lastName, setLastName] = useState<string | null>(null);
-  const debouncedLastName = useDebounce<string | null>(lastName, INPUT_DEBOUNCE_TIMEOUT);
-
-  const handleUpdateLastName = useCallback((value: string) => {
-    setChangeLastNameOk(null);
-    updateLastName(value).then(() => {
-      setChangeLastNameOk(true);
-      refreshProfile().then(() => {
-        setTimeout(() => {
-          setChangeLastNameOk(null);
-        }, NOTIFICATION_TIMEOUT);
-      });
-    }).catch(() => {
-      setChangeLastNameOk(false);
-    })
-  }, [refreshProfile]);
-
-  useEffect(() => {
-    if (profile != null && debouncedLastName !== null && debouncedLastName !== profile.last_name) {
-      handleUpdateLastName(debouncedLastName);
-    }
-  }, [debouncedLastName, profile, handleUpdateLastName]);
-
-  // Change username
-  const [changeUsernameOk, setChangeUsernameOk] = useState<boolean | null>(null);
   const [username, setUsername] = useState<string | null>(null);
-  const debouncedUsername = useDebounce<string | null>(username, INPUT_DEBOUNCE_TIMEOUT);
 
-  const handleUpdateUsername = useCallback((value: string) => {
-    setChangeUsernameOk(null);
-    updateUsername(value).then(() => {
-      setChangeUsernameOk(true);
-      refreshProfile().then(() => {
-        setTimeout(() => {
-          setChangeUsernameOk(null);
-        }, NOTIFICATION_TIMEOUT);
-      });
-    }).catch(() => {
-      setChangeUsernameOk(false);
-    })
-  }, [refreshProfile]);
+  const hasFirstNameChanged = profile != null && firstName !== null && firstName !== profile.first_name;
+  const hasLastNameChanged = profile != null && lastName !== null && lastName !== profile.last_name;
+  const hasPersonalDataChanges = hasFirstNameChanged || hasLastNameChanged;
+  const hasUsernameChanged = profile != null && username !== null && username !== profile.username;
 
-  useEffect(() => {
-    if (profile != null && debouncedUsername !== null && debouncedUsername !== profile.username) {
-      handleUpdateUsername(debouncedUsername);
+  const handleSavePersonalData = () => {
+    const changes: PersonalDataChanges = {
+      first_name: hasFirstNameChanged && firstName !== null ? firstName : undefined,
+      last_name: hasLastNameChanged && lastName !== null ? lastName : undefined,
+    };
+    updatePersonalData(changes, {
+      onSuccess: () => showToast(t("personal_data_saved_successfully")),
+      onError: () => showErrorToast(t("error_saving_personal_data")),
+    });
+  };
+
+  const handleSaveUsername = () => {
+    if (username === null) {
+      return;
     }
-  }, [debouncedUsername, profile, handleUpdateUsername]);
+    updateUsername(username, {
+      onSuccess: (result) => {
+        if (result === "already_in_use") {
+          showErrorToast(t("username_already_in_use", {username: username}));
+          return;
+        }
+        showToast(t("username_changed_successfully"));
+      },
+      onError: () => showErrorToast(t("error_changing_username")),
+    });
+  };
 
   // Redirect to login if not logged in
   useEffect(() => {
@@ -151,48 +115,28 @@ const ProfilePage: NextPage = () => {
                         <InputText value={firstName === null ? "" : firstName} onChange={(value) => {
                           setFirstName(value)
                         }}/>
-                        {changeFirstNameOk === false &&
-                            <ErrorBanner>
-                              {t("error_changing_first_name")}
-                            </ErrorBanner>
-                        }
-                        {changeFirstNameOk === true &&
-                            <InfoBanner>
-                              {t("first_name_changed_successfully")}
-                            </InfoBanner>
-                        }
                         <span className={"font-bold"}>{t("last_name")}</span>
                         <InputText value={lastName === null ? "" : lastName} onChange={(value) => {
                           setLastName(value)
                         }}/>
-                        {changeLastNameOk === false &&
-                            <ErrorBanner>
-                              {t("error_changing_last_name")}
-                            </ErrorBanner>
-                        }
-                        {changeLastNameOk === true &&
-                            <InfoBanner>
-                              {t("last_name_changed_successfully")}
-                            </InfoBanner>
-                        }
-
+                        <Button fitContent={true} clickAction={handleSavePersonalData}
+                                disabled={!hasPersonalDataChanges || isSavingPersonalData}>
+                          {t("save")}
+                        </Button>
+                      </FlexColumn>
+                    </Box>
+                    <Box title={t("account_data")}>
+                      <FlexColumn>
+                        <span className={"font-bold"}>{t("email")}</span>
+                        <InputText value={email} disabled={true}/>
                         <span className={"font-bold"}>{t("username")}</span>
                         <InputText value={username === null ? "" : username} onChange={(value) => {
                           setUsername(value.toLowerCase())
                         }}/>
-                        {changeUsernameOk === false &&
-                            <ErrorBanner>
-                              {t("error_changing_username")}
-                            </ErrorBanner>
-                        }
-                        {changeUsernameOk === true &&
-                            <InfoBanner>
-                              {t("username_changed_successfully")}
-                            </InfoBanner>
-                        }
-
-                        <span className={"font-bold"}>{t("email")}</span>
-                        <InputText value={email} disabled={true}/>
+                        <Button fitContent={true} clickAction={handleSaveUsername}
+                                disabled={!hasUsernameChanged || isSavingUsername}>
+                          {t("save")}
+                        </Button>
                       </FlexColumn>
                     </Box>
                     <Divider/>

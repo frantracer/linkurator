@@ -3,7 +3,7 @@
 import type {NextPage} from "next";
 import useProfile from "../../../hooks/useProfile";
 import {useRouter} from "next/navigation";
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import {paths} from "../../../configuration";
 import Button from "../../../components/atoms/Button";
 import FlexColumn from "../../../components/atoms/FlexColumn";
@@ -11,14 +11,12 @@ import TopTitle from "../../../components/molecules/TopTitle";
 import FlexRow from "../../../components/atoms/FlexRow";
 import Box from "../../../components/atoms/Box";
 import FlexItem from "../../../components/atoms/FlexItem";
-import {useTranslations} from "next-intl";
+import {useLocale, useTranslations} from "next-intl";
 import useUserFilter from "../../../hooks/useUserFilter";
 import LanguageSelector from "../../../components/molecules/LanguageSelector";
 import ThemeToggleButton from "../../../components/molecules/ThemeToggleButton";
 import Checkbox from "../../../components/atoms/Checkbox";
 import NumberInput from "../../../components/atoms/NumberInput";
-import {InfoBanner} from "../../../components/atoms/InfoBanner";
-import {ErrorBanner} from "../../../components/atoms/ErrorBanner";
 import {Filters, durationOptions} from "../../../entities/Filters";
 import {
   ArchiveBoxFilledIcon,
@@ -28,8 +26,8 @@ import {
   ThumbsUpFilledIcon
 } from "../../../components/atoms/Icons";
 import Divider from "../../../components/atoms/Divider";
-
-const NOTIFICATION_TIMEOUT = 3000;
+import {useToast} from "../../../contexts/ToastContext";
+import {Theme} from "../../../utilities/themeConfig";
 
 const SettingsPage: NextPage = () => {
   const t = useTranslations("common");
@@ -37,9 +35,17 @@ const SettingsPage: NextPage = () => {
   const {profile, profileIsLoading} = useProfile();
   const {userFilter, isLoading, refreshUserFilter, upsertUserFilter, deleteUserFilter} = useUserFilter();
   const [localFilter, setLocalFilter] = useState<Filters>(userFilter);
+  const {showToast, showErrorToast} = useToast();
+  const locale = useLocale();
+  const previousLocale = useRef(locale);
 
-  const [saveSuccess, setSaveSuccess] = useState<boolean | null>(null);
-  const [deleteSuccess, setDeleteSuccess] = useState<boolean | null>(null);
+  // The toast is shown once the page re-renders with the new locale, so it is written in the new language
+  useEffect(() => {
+    if (previousLocale.current !== locale) {
+      previousLocale.current = locale;
+      showToast(t("language_changed"));
+    }
+  }, [locale, showToast, t]);
 
   useEffect(() => {
     if (!profileIsLoading && !profile) {
@@ -52,34 +58,19 @@ const SettingsPage: NextPage = () => {
   }, [userFilter]);
 
   const handleSave = () => {
-    setSaveSuccess(null);
-
     upsertUserFilter(localFilter, {
-      onSuccess: () => {
-        setSaveSuccess(true);
-        setDeleteSuccess(null);
-        setTimeout(() => setSaveSuccess(null), NOTIFICATION_TIMEOUT);
-      },
-      onError: () => {
-        setSaveSuccess(false);
-        setDeleteSuccess(null);
-      }
+      onSuccess: () => showToast(t("filter_saved_successfully")),
+      onError: () => showErrorToast(t("error_saving_filter"))
     });
   };
 
   const handleDelete = () => {
-    setDeleteSuccess(null);
     deleteUserFilter(undefined, {
       onSuccess: async () => {
-        setDeleteSuccess(true);
-        setSaveSuccess(null);
+        showToast(t("filter_reset_successfully"));
         await refreshUserFilter();
-        setTimeout(() => setDeleteSuccess(null), NOTIFICATION_TIMEOUT);
       },
-      onError: () => {
-        setDeleteSuccess(false);
-        setSaveSuccess(null);
-      }
+      onError: () => showErrorToast(t("error_resetting_filter"))
     });
   };
 
@@ -250,27 +241,6 @@ const SettingsPage: NextPage = () => {
                             {t("reset_to_default")}
                           </Button>
                         </FlexRow>
-
-                        {saveSuccess === true &&
-                            <InfoBanner>
-                              {t("filter_saved_successfully")}
-                            </InfoBanner>
-                        }
-                        {saveSuccess === false &&
-                            <ErrorBanner>
-                              {t("error_saving_filter")}
-                            </ErrorBanner>
-                        }
-                        {deleteSuccess === true &&
-                            <InfoBanner>
-                              {t("filter_reset_successfully")}
-                            </InfoBanner>
-                        }
-                        {deleteSuccess === false &&
-                            <ErrorBanner>
-                              {t("error_resetting_filter")}
-                            </ErrorBanner>
-                        }
                       </FlexColumn>
                     </Box>
                     <Divider/>
@@ -279,7 +249,9 @@ const SettingsPage: NextPage = () => {
                     </Box>
                     <Divider/>
                     <Box title={t("theme")}>
-                      <ThemeToggleButton/>
+                      <ThemeToggleButton onThemeChange={(theme) => {
+                        showToast(t(theme === Theme.DARK ? "dark_theme_enabled" : "light_theme_enabled"));
+                      }}/>
                     </Box>
                   </FlexColumn>
                 </div>

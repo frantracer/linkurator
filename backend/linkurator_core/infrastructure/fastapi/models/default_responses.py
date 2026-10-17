@@ -27,6 +27,12 @@ def not_found(message: str) -> HTTPException:
         detail=message)
 
 
+def conflict(message: str) -> HTTPException:
+    return HTTPException(
+        status_code=http.HTTPStatus.CONFLICT,
+        detail=message)
+
+
 def too_many_requests(message: str) -> HTTPException:
     return HTTPException(
         status_code=http.HTTPStatus.TOO_MANY_REQUESTS,

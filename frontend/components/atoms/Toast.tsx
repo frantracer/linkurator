@@ -3,16 +3,19 @@ import {CrossIcon, ArrowUturnLeft} from './Icons';
 import {useTranslations} from 'next-intl';
 import classNames from "classnames";
 
+export type ToastVariant = "success" | "error";
+
 type ToastProps = {
   id: string;
   title: string;
   subtitle?: string;
-  duration?: number;
+  variant: ToastVariant;
+  duration: number;
   onClose: (id: string) => void;
   onUndo?: () => void;
 }
 
-export const Toast = ({id, title, subtitle, duration = 2200, onClose, onUndo}: ToastProps) => {
+export const Toast = ({id, title, subtitle, variant, duration, onClose, onUndo}: ToastProps) => {
   const t = useTranslations("common");
   const [isVisible, setIsVisible] = useState(true);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
@@ -50,9 +53,11 @@ export const Toast = ({id, title, subtitle, duration = 2200, onClose, onUndo}: T
   };
 
   const toastClass = classNames(
-    "alert alert-success shadow-lg flex flex-row items-start gap-2 transition-opacity duration-300 " +
-    "bg-primary border-2 border-neutral w-80 md:w-96",
+    "alert shadow-lg flex flex-row items-start gap-2 transition-opacity duration-300 " +
+    "border-2 border-neutral w-80 md:w-96",
     {
+      "alert-success bg-primary": variant === "success",
+      "alert-error": variant === "error",
       "opacity-100": isVisible,
       "opacity-0": !isVisible
     }

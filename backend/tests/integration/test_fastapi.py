@@ -26,12 +26,14 @@ from linkurator_core.application.topics.get_curator_topics_as_user_handler impor
 )
 from linkurator_core.application.topics.get_topic_handler import GetTopicHandler, GetTopicResponse
 from linkurator_core.application.topics.get_user_topics_handler import CuratorTopic, GetUserTopicsHandler
+from linkurator_core.application.users.edit_user_profile import EditUserProfile
 from linkurator_core.application.users.get_user_profile_handler import GetUserProfileHandler
 from linkurator_core.domain.chats.chat import ChatScope
 from linkurator_core.domain.common import utils
 from linkurator_core.domain.common.exceptions import (
     SubscriptionNotFoundError,
     TopicNotFoundError,
+    UsernameAlreadyInUseError,
 )
 from linkurator_core.domain.common.mock_factory import (
     mock_chat,
@@ -175,6 +177,17 @@ def test_user_profile_returns_404_when_user_not_found(handlers: Handlers) -> Non
 
     response = client.get("/profile")
     assert response.status_code == 404
+
+
+def test_edit_user_profile_returns_409_when_username_already_in_use(handlers: Handlers) -> None:
+    dummy_edit_user_profile_handler = AsyncMock(spec=EditUserProfile)
+    dummy_edit_user_profile_handler.handle.side_effect = UsernameAlreadyInUseError("Username already in use")
+    handlers.edit_user_profile_handler = dummy_edit_user_profile_handler
+
+    client = TestClient(create_app_from_handlers(handlers), cookies={"token": "token"})
+
+    response = client.patch("/profile", json={"username": "taken"})
+    assert response.status_code == 409
 
 
 def test_item_pagination_returns_one_page(handlers: Handlers) -> None:

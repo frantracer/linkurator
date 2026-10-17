@@ -1,10 +1,12 @@
 import React from 'react';
-import { Toast } from '../atoms/Toast';
+import { Toast, ToastVariant } from '../atoms/Toast';
 
 export type ToastData = {
   id: string;
   title: string;
   subtitle?: string;
+  variant: ToastVariant;
+  duration: number;
   onUndo?: () => void;
 }
 
@@ -22,6 +24,8 @@ export const ToastContainer = ({ toasts, onRemoveToast }: ToastContainerProps) =
           id={toast.id}
           title={toast.title}
           subtitle={toast.subtitle}
+          variant={toast.variant}
+          duration={toast.duration}
           onClose={onRemoveToast}
           onUndo={toast.onUndo}
         />

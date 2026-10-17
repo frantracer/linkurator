@@ -4,7 +4,11 @@ import {MoonIcon, SunIcon} from "../atoms/Icons";
 import {setUserTheme} from "../../utilities/theme";
 import {Theme} from "../../utilities/themeConfig";
 
-const ThemeToggleButton: React.FC = () => {
+type ThemeToggleButtonProps = {
+  onThemeChange?: (theme: Theme) => void;
+}
+
+const ThemeToggleButton = ({onThemeChange}: ThemeToggleButtonProps) => {
   const [theme, setTheme] = useState<Theme>(Theme.DARK);
 
   useEffect(() => {
@@ -17,6 +21,7 @@ const ThemeToggleButton: React.FC = () => {
     const newTheme = e.target.checked ? Theme.LIGHT : Theme.DARK;
     await setUserTheme(newTheme);
     setTheme(newTheme);
+    onThemeChange?.(newTheme);
   };
 
   return (
