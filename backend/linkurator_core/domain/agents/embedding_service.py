@@ -13,3 +13,7 @@ class EmbeddingService(ABC):
     @abstractmethod
     def related_similarity_threshold(self) -> float:
         """Similarity from which two embedded texts are considered to be about the same concept"""
+
+    @abstractmethod
+    def unrelated_similarity_threshold(self) -> float:
+        """Similarity below which two embedded texts are considered unrelated"""

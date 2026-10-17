@@ -41,7 +41,15 @@ def _matches(item: Item, filters: SimilarItemsFilter) -> bool:
         return False
     if filters.published_before is not None and item.published_at >= filters.published_before:
         return False
-    return len(filters.providers) == 0 or item.provider in filters.providers
+    if len(filters.providers) > 0 and item.provider not in filters.providers:
+        return False
+    return _matches_ids(item, filters)
+
+
+def _matches_ids(item: Item, filters: SimilarItemsFilter) -> bool:
+    if filters.subscription_ids is not None and item.subscription_uuid not in filters.subscription_ids:
+        return False
+    return filters.item_ids is None or item.uuid in filters.item_ids
 
 
 class InMemoryItemRepository(ItemRepository):

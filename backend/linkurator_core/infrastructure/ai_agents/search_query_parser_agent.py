@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from datetime import date, datetime, time, timezone
+from datetime import date, datetime
 from typing import Callable
 
 from pydantic import BaseModel, Field, ValidationInfo, model_validator
@@ -10,7 +10,7 @@ from pydantic_ai.settings import ModelSettings
 from linkurator_core.domain.agents.search_query_parser_service import SearchQuery, SearchQueryParserService
 from linkurator_core.domain.common.utils import datetime_now
 from linkurator_core.domain.items.item import ItemProvider
-from linkurator_core.domain.items.item_repository import SimilarItemsFilter
+from linkurator_core.infrastructure.ai_agents.utils import build_similar_items_filter, clean_concepts
 
 
 @dataclass
@@ -59,18 +59,6 @@ class SearchQueryOutput(BaseModel):
         return self
 
 
-def _start_of_day(day: date | None) -> datetime | None:
-    if day is None:
-        return None
-    return datetime.combine(day, time.min, tzinfo=timezone.utc)
-
-
-def _minutes_to_seconds(minutes: int | None) -> int | None:
-    if minutes is None:
-        return None
-    return minutes * 60
-
-
 class SearchQueryParserAgent(SearchQueryParserService):
     def __init__(
             self,
@@ -85,13 +73,13 @@ class SearchQueryParserAgent(SearchQueryParserService):
         output = result.output
         return SearchQuery(
             positive=output.positive.strip(),
-            negatives=[negative.strip() for negative in output.negatives if negative.strip() != ""],
-            filters=SimilarItemsFilter(
-                min_duration=_minutes_to_seconds(output.min_duration_minutes),
-                max_duration=_minutes_to_seconds(output.max_duration_minutes),
-                published_after=_start_of_day(output.published_after),
-                published_before=_start_of_day(output.published_before),
-                providers=list(dict.fromkeys(output.providers)),
+            negatives=clean_concepts(output.negatives),
+            filters=build_similar_items_filter(
+                min_duration_minutes=output.min_duration_minutes,
+                max_duration_minutes=output.max_duration_minutes,
+                published_after=output.published_after,
+                published_before=output.published_before,
+                providers=output.providers,
             ),
         )
 

@@ -3,7 +3,7 @@ from unittest.mock import AsyncMock
 
 import pytest
 
-from linkurator_core.infrastructure.ai_agents.embeddings import OpenAIEmbeddingService
+from linkurator_core.infrastructure.ai_agents.embeddings import OpenAIEmbeddingService, create_embedding_service
 
 
 def _embedding_service(chunk_size: int, max_concurrent_chunks: int = 5) -> tuple[OpenAIEmbeddingService, AsyncMock]:
@@ -45,3 +45,8 @@ async def test_does_not_call_the_api_when_there_are_no_documents() -> None:
 
     assert await service.embed_documents([]) == []
     embedder.embed_documents.assert_not_called()
+
+
+def test_create_embedding_service_needs_an_api_key() -> None:
+    assert create_embedding_service(openai_api_key=None) is None
+    assert isinstance(create_embedding_service(openai_api_key="test"), OpenAIEmbeddingService)

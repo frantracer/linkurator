@@ -22,6 +22,8 @@ def _make_agent() -> MainQueryAgent:
         chat_repository=AsyncMock(),
         base_url="https://linkurator.com",
         model=None,
+        embedding_service=None,
+        providers=[],
     )
 
 
@@ -29,11 +31,11 @@ def _make_agent() -> MainQueryAgent:
 async def test_perform_query_bypasses_router_when_chat_is_scoped() -> None:
     agent = _make_agent()
     router_agent = AsyncMock()
-    recommendations_agent = AsyncMock()
-    recommendations_agent.query.return_value = Mock(response="ok", items_uuids=[])
+    content_assistant_agent = AsyncMock()
+    content_assistant_agent.query.return_value = Mock(response="ok", items_uuids=[])
     agents = MainQueryAgentSubAgents(
         router_agent=router_agent,
-        recommendations_agent=recommendations_agent,
+        content_assistant_agent=content_assistant_agent,
         topic_manager_agent=AsyncMock(),
     )
     scoped_chat = mock_chat(messages=[mock_chat_message(scope=ChatScope(topic_ids=[uuid.uuid4()]))])
@@ -41,19 +43,19 @@ async def test_perform_query_bypasses_router_when_chat_is_scoped() -> None:
     await agent._perform_query(uuid.uuid4(), "hello", scoped_chat, RunUsage(), agents)
 
     router_agent.query.assert_not_called()
-    recommendations_agent.query.assert_called_once()
+    content_assistant_agent.query.assert_called_once()
 
 
 @pytest.mark.asyncio()
 async def test_perform_query_routes_normally_when_chat_is_not_scoped() -> None:
     agent = _make_agent()
     router_agent = AsyncMock()
-    router_agent.query.return_value = Mock(agent_type="recommendations")
-    recommendations_agent = AsyncMock()
-    recommendations_agent.query.return_value = Mock(response="ok", items_uuids=[])
+    router_agent.query.return_value = Mock(agent_type="content_assistant")
+    content_assistant_agent = AsyncMock()
+    content_assistant_agent.query.return_value = Mock(response="ok", items_uuids=[])
     agents = MainQueryAgentSubAgents(
         router_agent=router_agent,
-        recommendations_agent=recommendations_agent,
+        content_assistant_agent=content_assistant_agent,
         topic_manager_agent=AsyncMock(),
     )
     unscoped_chat = mock_chat()
@@ -61,19 +63,19 @@ async def test_perform_query_routes_normally_when_chat_is_not_scoped() -> None:
     await agent._perform_query(uuid.uuid4(), "hello", unscoped_chat, RunUsage(), agents)
 
     router_agent.query.assert_called_once()
-    recommendations_agent.query.assert_called_once()
+    content_assistant_agent.query.assert_called_once()
 
 
 @pytest.mark.asyncio()
 async def test_perform_query_routes_normally_when_chat_is_none() -> None:
     agent = _make_agent()
     router_agent = AsyncMock()
-    router_agent.query.return_value = Mock(agent_type="recommendations")
-    recommendations_agent = AsyncMock()
-    recommendations_agent.query.return_value = Mock(response="ok", items_uuids=[])
+    router_agent.query.return_value = Mock(agent_type="content_assistant")
+    content_assistant_agent = AsyncMock()
+    content_assistant_agent.query.return_value = Mock(response="ok", items_uuids=[])
     agents = MainQueryAgentSubAgents(
         router_agent=router_agent,
-        recommendations_agent=recommendations_agent,
+        content_assistant_agent=content_assistant_agent,
         topic_manager_agent=AsyncMock(),
     )
 
@@ -86,12 +88,12 @@ async def test_perform_query_routes_normally_when_chat_is_none() -> None:
 async def test_perform_query_routes_normally_when_scope_has_no_entity_restriction() -> None:
     agent = _make_agent()
     router_agent = AsyncMock()
-    router_agent.query.return_value = Mock(agent_type="recommendations")
-    recommendations_agent = AsyncMock()
-    recommendations_agent.query.return_value = Mock(response="ok", items_uuids=[])
+    router_agent.query.return_value = Mock(agent_type="content_assistant")
+    content_assistant_agent = AsyncMock()
+    content_assistant_agent.query.return_value = Mock(response="ok", items_uuids=[])
     agents = MainQueryAgentSubAgents(
         router_agent=router_agent,
-        recommendations_agent=recommendations_agent,
+        content_assistant_agent=content_assistant_agent,
         topic_manager_agent=AsyncMock(),
     )
     chat_with_empty_scope = mock_chat(messages=[mock_chat_message(scope=ChatScope())])
@@ -105,12 +107,12 @@ async def test_perform_query_routes_normally_when_scope_has_no_entity_restrictio
 async def test_perform_query_uses_the_scope_of_the_latest_question_only() -> None:
     agent = _make_agent()
     router_agent = AsyncMock()
-    router_agent.query.return_value = Mock(agent_type="recommendations")
-    recommendations_agent = AsyncMock()
-    recommendations_agent.query.return_value = Mock(response="ok", items_uuids=[])
+    router_agent.query.return_value = Mock(agent_type="content_assistant")
+    content_assistant_agent = AsyncMock()
+    content_assistant_agent.query.return_value = Mock(response="ok", items_uuids=[])
     agents = MainQueryAgentSubAgents(
         router_agent=router_agent,
-        recommendations_agent=recommendations_agent,
+        content_assistant_agent=content_assistant_agent,
         topic_manager_agent=AsyncMock(),
     )
     # The first question was scoped to a topic, the latest one is not: the router must run again.

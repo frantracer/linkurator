@@ -41,7 +41,7 @@ from linkurator_core.domain.common.event import (
 from linkurator_core.domain.notifications.email_sender import EmailSender
 from linkurator_core.domain.subscriptions.general_subscription_service import GeneralSubscriptionService
 from linkurator_core.domain.subscriptions.subscription_service import SubscriptionService
-from linkurator_core.infrastructure.ai_agents.embeddings import OpenAIEmbeddingService
+from linkurator_core.infrastructure.ai_agents.embeddings import create_embedding_service
 from linkurator_core.infrastructure.ai_agents.main_query_agent import MainQueryAgent
 from linkurator_core.infrastructure.ai_agents.model import create_agent_model
 from linkurator_core.infrastructure.ai_agents.subscription_summarizer import SubscriptionSummarizerService
@@ -223,6 +223,10 @@ async def run_processor() -> None:  # pylint: disable=too-many-locals
         mistral_api_key=settings.ai_agent.mistral_ai.api_key if settings.ai_agent.mistral_ai.enabled else None,
     )
 
+    embedding_service = create_embedding_service(
+        openai_api_key=settings.ai_agent.openai.api_key if settings.ai_agent.openai.enabled else None,
+    )
+
     ai_agent_service = MainQueryAgent(
         chat_repository=chat_repository,
         user_repository=user_repository,
@@ -231,6 +235,8 @@ async def run_processor() -> None:  # pylint: disable=too-many-locals
         subscription_repository=subscription_repository,
         base_url=settings.ai_agent.base_url,
         model=agent_model,
+        embedding_service=embedding_service,
+        providers=[service.provider_name() for service in subscription_providers],
     )
 
     subscription_summarizer_service: SubscriptionSummarizerService | None = None
@@ -309,7 +315,7 @@ async def run_processor() -> None:  # pylint: disable=too-many-locals
     )
     enqueue_items_to_embed_handler: EnqueueItemsToEmbedHandler | None = None
     embed_items_handler: EmbedItemsHandler | None = None
-    if settings.ai_agent.openai.enabled and settings.ai_agent.openai.api_key is not None:
+    if embedding_service is not None:
         enqueue_items_to_embed_handler = EnqueueItemsToEmbedHandler(
             item_repository=item_repository,
             item_embedding_queue_repository=item_embedding_queue_repository,
@@ -317,7 +323,7 @@ async def run_processor() -> None:  # pylint: disable=too-many-locals
         embed_items_handler = EmbedItemsHandler(
             item_repository=item_repository,
             item_embedding_queue_repository=item_embedding_queue_repository,
-            embedding_service=OpenAIEmbeddingService(api_key=settings.ai_agent.openai.api_key),
+            embedding_service=embedding_service,
         )
 
     event_handler = EventHandler(

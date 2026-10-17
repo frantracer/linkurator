@@ -5,6 +5,7 @@ from uuid import uuid4
 import logfire
 
 from linkurator_core.domain.common.mock_factory import mock_user
+from linkurator_core.infrastructure.ai_agents.embeddings import create_embedding_service
 from linkurator_core.infrastructure.ai_agents.main_query_agent import MainQueryAgent
 from linkurator_core.infrastructure.ai_agents.model import create_agent_model
 from linkurator_core.infrastructure.config.settings import ApplicationSettings
@@ -13,6 +14,7 @@ from linkurator_core.infrastructure.postgres.chat_repository import PostgresChat
 from linkurator_core.infrastructure.postgres.item_repository import PostgresItemRepository
 from linkurator_core.infrastructure.postgres.subscription_repository import PostgresSubscriptionRepository
 from linkurator_core.infrastructure.postgres.topic_repository import PostgresTopicRepository
+from linkurator_core.infrastructure.provider_names import ALL_PROVIDER_NAMES
 
 
 async def main() -> None:
@@ -54,6 +56,10 @@ async def main() -> None:
             openai_api_key=settings.ai_agent.openai.api_key if settings.ai_agent.openai.enabled else None,
             mistral_api_key=settings.ai_agent.mistral_ai.api_key if settings.ai_agent.mistral_ai.enabled else None,
         ),
+        embedding_service=create_embedding_service(
+            openai_api_key=settings.ai_agent.openai.api_key if settings.ai_agent.openai.enabled else None,
+        ),
+        providers=ALL_PROVIDER_NAMES,
     )
 
     result = await agent.query(
@@ -65,7 +71,7 @@ async def main() -> None:
 
     result = await agent.query(
         user_id=user.uuid,
-        query="Recommend some content for me in Spanish or English",
+        query="What have my subscriptions published about artificial intelligence?",
         chat_id=uuid4(),
     )
     logging.info(result.message)

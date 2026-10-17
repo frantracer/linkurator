@@ -18,6 +18,8 @@ DEFAULT_MAX_CONCURRENT_CHUNKS = 5
 # on-topic texts 0.45 and up, so 0.4 separates texts about the same concept from those that
 # only share some vocabulary.
 RELATED_SIMILARITY_THRESHOLD = 0.4
+# Below 0.3 a text shares little more than vocabulary with the query, so it is not worth showing.
+UNRELATED_SIMILARITY_THRESHOLD = 0.3
 
 
 class OpenAIEmbeddingService(EmbeddingService):
@@ -61,3 +63,12 @@ class OpenAIEmbeddingService(EmbeddingService):
 
     def related_similarity_threshold(self) -> float:
         return RELATED_SIMILARITY_THRESHOLD
+
+    def unrelated_similarity_threshold(self) -> float:
+        return UNRELATED_SIMILARITY_THRESHOLD
+
+
+def create_embedding_service(openai_api_key: str | None) -> EmbeddingService | None:
+    if openai_api_key is None:
+        return None
+    return OpenAIEmbeddingService(api_key=openai_api_key)

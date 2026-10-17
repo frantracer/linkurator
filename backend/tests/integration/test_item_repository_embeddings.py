@@ -205,6 +205,41 @@ async def test_find_similar_items_only_returns_items_matching_the_filters(
 
 
 @pytest.mark.asyncio()
+async def test_find_similar_items_restricted_to_subscriptions_and_items(item_repo: ItemRepository) -> None:
+    await _clean(item_repo)
+    sub_uuid = uuid4()
+    other_sub_uuid = uuid4()
+    first_item = mock_item(name="first", sub_uuid=sub_uuid)
+    second_item = mock_item(name="second", sub_uuid=sub_uuid)
+    other_item = mock_item(name="other", sub_uuid=other_sub_uuid)
+    items = [first_item, second_item, other_item]
+    await item_repo.upsert_items(items)
+    await item_repo.upsert_embeddings([
+        ItemEmbedding.new(item_uuid=item.uuid, vector=_vector(1.0, index / 10), text_hash=uuid4())
+        for index, item in enumerate(items)
+    ])
+
+    by_subscription = await item_repo.find_similar_items(
+        vector=_vector(1.0, 0.0), limit=10, filters=SimilarItemsFilter(subscription_ids=[sub_uuid]),
+    )
+    by_items = await item_repo.find_similar_items(
+        vector=_vector(1.0, 0.0), limit=10, filters=SimilarItemsFilter(item_ids={second_item.uuid, other_item.uuid}),
+    )
+    by_both = await item_repo.find_similar_items(
+        vector=_vector(1.0, 0.0), limit=10,
+        filters=SimilarItemsFilter(subscription_ids=[sub_uuid], item_ids={second_item.uuid, other_item.uuid}),
+    )
+    by_no_items = await item_repo.find_similar_items(
+        vector=_vector(1.0, 0.0), limit=10, filters=SimilarItemsFilter(item_ids=set()),
+    )
+
+    assert [similar_item.item.name for similar_item in by_subscription] == ["first", "second"]
+    assert [similar_item.item.name for similar_item in by_items] == ["second", "other"]
+    assert [similar_item.item.name for similar_item in by_both] == ["second"]
+    assert by_no_items == []
+
+
+@pytest.mark.asyncio()
 async def test_creation_batches_resume_with_tied_timestamps(item_repo: ItemRepository) -> None:
     await _clean(item_repo)
     now = datetime.now(timezone.utc) - timedelta(days=1)

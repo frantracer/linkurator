@@ -7,10 +7,12 @@ from pydantic_ai.exceptions import UnexpectedModelBehavior
 from pydantic_ai.models import Model
 from pydantic_ai.usage import RunUsage
 
+from linkurator_core.domain.agents.embedding_service import EmbeddingService
 from linkurator_core.domain.agents.query_agent_service import AgentQueryResult, QueryAgentService
 from linkurator_core.domain.chats.chat import Chat
 from linkurator_core.domain.chats.chat_repository import ChatRepository
 from linkurator_core.domain.common.exceptions import QueryAgentError
+from linkurator_core.domain.items.item import ItemProvider
 from linkurator_core.domain.items.item_repository import (
     ItemFilterCriteria,
     ItemRepository,
@@ -20,9 +22,7 @@ from linkurator_core.domain.subscriptions.subscription_repository import (
 )
 from linkurator_core.domain.topics.topic_repository import TopicRepository
 from linkurator_core.domain.users.user_repository import UserRepository
-from linkurator_core.infrastructure.ai_agents.recommendations_agent import (
-    RecommendationsAgent,
-)
+from linkurator_core.infrastructure.ai_agents.content_assistant_agent import ContentAssistantAgent
 from linkurator_core.infrastructure.ai_agents.router_agent import RouterAgent
 from linkurator_core.infrastructure.ai_agents.topic_manager_agent import (
     TopicManagerAgent,
@@ -35,7 +35,7 @@ NO_LLM_CONFIGURED_MESSAGE = "Configure any LLM credential to start chatting"
 @dataclass
 class MainQueryAgentSubAgents:
     router_agent: RouterAgent
-    recommendations_agent: RecommendationsAgent
+    content_assistant_agent: ContentAssistantAgent
     topic_manager_agent: TopicManagerAgent
 
 
@@ -49,6 +49,8 @@ class MainQueryAgent(QueryAgentService):
             chat_repository: ChatRepository,
             base_url: str,
             model: Model | None,
+            embedding_service: EmbeddingService | None,
+            providers: list[ItemProvider],
     ) -> None:
         self.user_repository = user_repository
         self.subscription_repository = subscription_repository
@@ -63,13 +65,15 @@ class MainQueryAgent(QueryAgentService):
                 router_agent=RouterAgent(
                     model=model,
                 ),
-                recommendations_agent=RecommendationsAgent(
+                content_assistant_agent=ContentAssistantAgent(
                     model=model,
                     base_url=base_url,
                     user_repository=user_repository,
                     subscription_repository=subscription_repository,
                     item_repository=item_repository,
                     topic_repository=topic_repository,
+                    embedding_service=embedding_service,
+                    providers=providers,
                 ),
                 topic_manager_agent=TopicManagerAgent(
                     model=model,
@@ -118,7 +122,7 @@ class MainQueryAgent(QueryAgentService):
 
         # A scoped chat is an explicit "search these items" request: skip routing.
         if chat is not None and chat.latest_entity_scope() is not None:
-            return await self._handle_recommendations_query(user_id, prompt, chat, usage, agents)
+            return await self._handle_content_assistant_query(user_id, prompt, chat, usage, agents)
 
         # Step 1: Route the query to the appropriate agent
         routing_result = await agents.router_agent.query(
@@ -127,14 +131,14 @@ class MainQueryAgent(QueryAgentService):
         )
 
         # Step 2: Handle the query with the appropriate specialized agent
-        if routing_result.agent_type == "recommendations":
-            return await self._handle_recommendations_query(user_id, prompt, chat, usage, agents)
+        if routing_result.agent_type == "content_assistant":
+            return await self._handle_content_assistant_query(user_id, prompt, chat, usage, agents)
         if routing_result.agent_type == "topic_manager" and user_id is not None:
             return await self._handle_topic_manager_query(user_id, prompt, chat, usage, agents)
-        # Default to recommendations if routing fails
-        return await self._handle_recommendations_query(user_id, prompt, chat, usage, agents)
+        # Default to the content assistant if routing fails
+        return await self._handle_content_assistant_query(user_id, prompt, chat, usage, agents)
 
-    async def _handle_recommendations_query(
+    async def _handle_content_assistant_query(
             self,
             user_id: UUID | None,
             query: str,
@@ -142,7 +146,7 @@ class MainQueryAgent(QueryAgentService):
             usage: RunUsage,
             agents: MainQueryAgentSubAgents,
     ) -> AgentQueryResult:
-        result = await agents.recommendations_agent.query(
+        result = await agents.content_assistant_agent.query(
             query=query,
             previous_chat=chat,
             user_id=user_id,

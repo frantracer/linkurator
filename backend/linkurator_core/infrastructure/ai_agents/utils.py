@@ -1,8 +1,11 @@
 import logging
+from datetime import date, datetime, time, timezone
 from uuid import UUID
 
 from linkurator_core.domain.chats.chat import Chat
 from linkurator_core.domain.common.units import Seconds
+from linkurator_core.domain.items.item import ItemProvider
+from linkurator_core.domain.items.item_repository import SimilarItemsFilter
 
 
 def format_duration(seconds: Seconds | None) -> str | None:
@@ -21,6 +24,38 @@ def format_duration(seconds: Seconds | None) -> str | None:
     if secs > 0:
         parts.append(f"{secs}s")
     return " ".join(parts)
+
+
+def start_of_day_utc(day: date | None) -> datetime | None:
+    if day is None:
+        return None
+    return datetime.combine(day, time.min, tzinfo=timezone.utc)
+
+
+def minutes_to_seconds(minutes: int | None) -> Seconds | None:
+    if minutes is None:
+        return None
+    return minutes * 60
+
+
+def build_similar_items_filter(
+    min_duration_minutes: int | None,
+    max_duration_minutes: int | None,
+    published_after: date | None,
+    published_before: date | None,
+    providers: list[ItemProvider],
+) -> SimilarItemsFilter:
+    return SimilarItemsFilter(
+        min_duration=minutes_to_seconds(min_duration_minutes),
+        max_duration=minutes_to_seconds(max_duration_minutes),
+        published_after=start_of_day_utc(published_after),
+        published_before=start_of_day_utc(published_before),
+        providers=list(dict.fromkeys(providers)),
+    )
+
+
+def clean_concepts(concepts: list[str]) -> list[str]:
+    return [concept.strip() for concept in concepts if concept.strip() != ""]
 
 
 def parse_ids_to_uuids(ids: list[str] | None) -> list[UUID]:

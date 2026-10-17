@@ -8,7 +8,7 @@ from pydantic_ai.usage import RunUsage
 
 
 class RouterOutput(BaseModel):
-    agent_type: Literal["recommendations", "topic_manager"] = Field(
+    agent_type: Literal["content_assistant", "topic_manager"] = Field(
         description="The type of agent that should handle this query",
     )
     reasoning: str = Field(
@@ -36,9 +36,10 @@ def create_router_agent(model: Model) -> Agent[None, RouterOutput]:
         system_prompt=(
             "You are a router agent that determines which specialized agent should handle a user query. "
             "Your job is to analyze the query and route it to the appropriate agent:\n\n"
-            "- 'recommendations': For queries asking for content recommendations, searching for specific videos/podcasts, "
-            "finding items by keywords, or general content discovery requests.\n"
+            "- 'content_assistant': For queries asking for content recommendations, searching for specific "
+            "videos/podcasts, questions about the content (what an item or channel talks about, comparisons, "
+            "summaries, what is new), or general content discovery requests.\n"
             "- 'topic_manager': For queries about creating, managing, organizing topics, or managing subscriptions within topics.\n\n"
-            "Always choose 'recommendations' as the default unless the query explicitly mentions topics management."
+            "Always choose 'content_assistant' as the default unless the query explicitly mentions topics management."
         ),
     )

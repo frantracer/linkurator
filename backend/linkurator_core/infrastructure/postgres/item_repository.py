@@ -181,6 +181,12 @@ def _filter_conditions(filters: SimilarItemsFilter) -> tuple[str, list[Any]]:
     if len(filters.providers) > 0:
         conditions += " AND items.provider = ANY(%s)"
         params.append(filters.providers)
+    if filters.subscription_ids is not None:
+        conditions += " AND items.subscription_uuid = ANY(%s::uuid[])"
+        params.append(filters.subscription_ids)
+    if filters.item_ids is not None:
+        conditions += " AND items.uuid = ANY(%s::uuid[])"
+        params.append(list(filters.item_ids))
     return conditions, params
 
 

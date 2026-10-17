@@ -66,6 +66,8 @@ class SimilarItemsFilter:
     published_after: datetime | None = None
     published_before: datetime | None = None
     providers: list[ItemProvider] = field(default_factory=list)
+    subscription_ids: list[UUID] | None = None
+    item_ids: set[UUID] | None = None
 
 
 class ItemRepository(abc.ABC):

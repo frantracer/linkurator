@@ -7,6 +7,30 @@ from linkurator_core.domain.agents.search_query_parser_service import SearchQuer
 from linkurator_core.domain.items.item_repository import ItemRepository, SimilarItem
 
 
+async def find_items_similar_to_query(
+        item_repository: ItemRepository,
+        embedding_service: EmbeddingService,
+        search_query: SearchQuery,
+        limit: int,
+        discard_unrelated: bool,
+) -> list[SimilarItem]:
+    positive_vector, *negative_vectors = await asyncio.gather(
+        embedding_service.embed_query(search_query.positive),
+        *(embedding_service.embed_query(negative) for negative in search_query.negatives),
+    )
+    similar_items = await item_repository.find_similar_items(
+        vector=positive_vector,
+        limit=limit,
+        excluded_vectors=negative_vectors,
+        max_excluded_similarity=embedding_service.related_similarity_threshold(),
+        filters=search_query.filters,
+    )
+    if not discard_unrelated:
+        return similar_items
+    unrelated_threshold = embedding_service.unrelated_similarity_threshold()
+    return [similar_item for similar_item in similar_items if similar_item.similarity >= unrelated_threshold]
+
+
 @dataclass
 class FindSimilarItemsResponse:
     search_query: SearchQuery
@@ -32,17 +56,12 @@ class FindSimilarItemsHandler:
         if search_query.positive == "":
             return FindSimilarItemsResponse(search_query=search_query, items=[])
 
-        positive_vector, *negative_vectors = await asyncio.gather(
-            self.embedding_service.embed_query(search_query.positive),
-            *(self.embedding_service.embed_query(negative) for negative in search_query.negatives),
-        )
-        items = await self.item_repository.find_similar_items(
-            vector=positive_vector,
+        items = await find_items_similar_to_query(
+            item_repository=self.item_repository,
+            embedding_service=self.embedding_service,
+            search_query=search_query,
             limit=limit,
-            excluded_vectors=negative_vectors,
-            # Items about any excluded concept are discarded
-            max_excluded_similarity=self.embedding_service.related_similarity_threshold(),
-            filters=search_query.filters,
+            discard_unrelated=False,
         )
         return FindSimilarItemsResponse(search_query=search_query, items=items)
 
