@@ -17,7 +17,7 @@ import LanguageSelector from "../../../components/molecules/LanguageSelector";
 import ThemeToggleButton from "../../../components/molecules/ThemeToggleButton";
 import Checkbox from "../../../components/atoms/Checkbox";
 import NumberInput from "../../../components/atoms/NumberInput";
-import {Filters, durationOptions} from "../../../entities/Filters";
+import {Filters, areFiltersEqual, durationOptions} from "../../../entities/Filters";
 import {
   ArchiveBoxFilledIcon,
   CheckCircleFilledIcon,
@@ -35,6 +35,7 @@ const SettingsPage: NextPage = () => {
   const {profile, profileIsLoading} = useProfile();
   const {userFilter, isLoading, refreshUserFilter, upsertUserFilter, deleteUserFilter} = useUserFilter();
   const [localFilter, setLocalFilter] = useState<Filters>(userFilter);
+  const hasFilterChanged = !areFiltersEqual(localFilter, userFilter);
   const {showToast, showErrorToast} = useToast();
   const locale = useLocale();
   const previousLocale = useRef(locale);
@@ -227,7 +228,7 @@ const SettingsPage: NextPage = () => {
                           <Button
                             fitContent={true}
                             clickAction={handleSave}
-                            disabled={isLoading}
+                            disabled={isLoading || !hasFilterChanged}
                             primary={true}
                           >
                             {t("save_filter")}
