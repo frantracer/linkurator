@@ -52,8 +52,9 @@ class OpenAIEmbeddingService(EmbeddingService):
         async with semaphore:
             try:
                 result = await self.embedder.embed_documents(documents)
-            except Exception:
+            except Exception as e:
                 logging.exception("Failed to embed a chunk of %d documents", len(documents))
+                logging.debug("Embedding error: %s", e)
                 return [None] * len(documents)
             return [list(embedding) for embedding in result.embeddings]
 
