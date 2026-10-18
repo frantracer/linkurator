@@ -21,5 +21,6 @@ jinja2==3.1.4
 google-auth==2.49.2
 cryptography==46.0.7
 pydantic_ai==1.88.0
+tiktoken==0.14.0
 logfire==4.32.1
 watchdog==6.0.0

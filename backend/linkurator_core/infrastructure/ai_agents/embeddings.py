@@ -1,6 +1,7 @@
 import asyncio
 import logging
 
+import tiktoken
 from pydantic_ai.embeddings import Embedder, EmbeddingSettings
 from pydantic_ai.embeddings.openai import OpenAIEmbeddingModel
 from pydantic_ai.providers.openai import OpenAIProvider
@@ -9,9 +10,11 @@ from linkurator_core.domain.agents.embedding_service import EmbeddingService
 
 OPENAI_EMBEDDING_MODEL_NAME = "text-embedding-3-small"
 EMBEDDING_DIMENSIONS = 1536
-# OpenAI accepts at most 2048 inputs and 300k tokens per embeddings request. Descriptions are
-# truncated to ~1k tokens, so 200 documents per request stays well below both limits.
-DEFAULT_EMBEDDING_CHUNK_SIZE = 200
+# OpenAI accepts at most 8191 tokens per input, and 2048 inputs and 300k tokens per request. A character
+# can be anything from 0.2 to 2+ tokens, so chunks are filled by token count, with some margin.
+MAX_INPUT_TOKENS = 8191
+MAX_CHUNK_DOCUMENTS = 2048
+DEFAULT_MAX_CHUNK_TOKENS = 250_000
 DEFAULT_MAX_CONCURRENT_CHUNKS = 5
 # OpenAI embeddings do not spread over the whole [-1, 1] range. As a rough guide, unrelated
 # texts usually score around 0.1-0.25, loosely related texts around 0.3-0.4 and clearly
@@ -26,7 +29,7 @@ class OpenAIEmbeddingService(EmbeddingService):
     def __init__(
             self,
             api_key: str,
-            chunk_size: int = DEFAULT_EMBEDDING_CHUNK_SIZE,
+            max_chunk_tokens: int = DEFAULT_MAX_CHUNK_TOKENS,
             max_concurrent_chunks: int = DEFAULT_MAX_CONCURRENT_CHUNKS,
     ) -> None:
         self.embedder = Embedder(
@@ -36,16 +39,36 @@ class OpenAIEmbeddingService(EmbeddingService):
             ),
             settings=EmbeddingSettings(dimensions=EMBEDDING_DIMENSIONS),
         )
-        self.chunk_size = chunk_size
+        self.encoding = tiktoken.encoding_for_model(OPENAI_EMBEDDING_MODEL_NAME)
+        self.max_chunk_tokens = max_chunk_tokens
         self.max_concurrent_chunks = max_concurrent_chunks
 
     async def embed_documents(self, documents: list[str]) -> list[list[float] | None]:
         if len(documents) == 0:
             return []
         semaphore = asyncio.Semaphore(self.max_concurrent_chunks)
-        chunks = [documents[i:i + self.chunk_size] for i in range(0, len(documents), self.chunk_size)]
+        chunks = await self._split_in_chunks(documents)
         chunk_vectors = await asyncio.gather(*(self._embed_chunk(chunk, semaphore) for chunk in chunks))
         return [vector for vectors in chunk_vectors for vector in vectors]
+
+    async def _split_in_chunks(self, documents: list[str]) -> list[list[str]]:
+        """Split the documents, in order, into chunks that fit in one request, truncating the too long ones"""
+        tokenized_documents = await asyncio.to_thread(self.encoding.encode_ordinary_batch, documents)
+        chunks: list[list[str]] = []
+        chunk: list[str] = []
+        chunk_tokens = 0
+        for document, tokens in zip(documents, tokenized_documents, strict=True):
+            input_tokens = tokens[:MAX_INPUT_TOKENS]
+            input_document = document if len(tokens) <= MAX_INPUT_TOKENS else self.encoding.decode(input_tokens)
+            chunk_is_full = chunk_tokens + len(input_tokens) > self.max_chunk_tokens
+            if len(chunk) == MAX_CHUNK_DOCUMENTS or (len(chunk) > 0 and chunk_is_full):
+                chunks.append(chunk)
+                chunk = []
+                chunk_tokens = 0
+            chunk.append(input_document)
+            chunk_tokens += len(input_tokens)
+        chunks.append(chunk)
+        return chunks
 
     async def _embed_chunk(self, documents: list[str], semaphore: asyncio.Semaphore) -> list[list[float] | None]:
         """Embed a chunk of documents. Failures are logged and yield None so the other chunks are still returned."""
