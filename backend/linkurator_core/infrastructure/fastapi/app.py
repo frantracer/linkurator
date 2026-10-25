@@ -25,6 +25,13 @@ from linkurator_core.application.items.get_followed_subscriptions_items_handler 
 from linkurator_core.application.items.get_item_handler import GetItemHandler
 from linkurator_core.application.items.get_subscription_items_handler import GetSubscriptionItemsHandler
 from linkurator_core.application.items.get_topic_items_handler import GetTopicItemsHandler
+from linkurator_core.application.notifications.count_unread_notifications_handler import (
+    CountUnreadNotificationsHandler,
+)
+from linkurator_core.application.notifications.get_user_notifications_handler import GetUserNotificationsHandler
+from linkurator_core.application.notifications.mark_all_notifications_as_read_handler import (
+    MarkAllNotificationsAsReadHandler,
+)
 from linkurator_core.application.statistics.get_platform_statistics import GetPlatformStatisticsHandler
 from linkurator_core.application.subscriptions.find_subscription_by_name_or_url_handler import (
     FindSubscriptionsByNameOrUrlHandler,
@@ -88,6 +95,7 @@ from linkurator_core.infrastructure.patreon.patreon_api_client import PatreonApi
 from linkurator_core.infrastructure.patreon.patreon_service import PatreonSubscriptionService
 from linkurator_core.infrastructure.postgres.chat_repository import PostgresChatRepository
 from linkurator_core.infrastructure.postgres.item_repository import PostgresItemRepository
+from linkurator_core.infrastructure.postgres.notification_repository import PostgresNotificationRepository
 from linkurator_core.infrastructure.postgres.password_change_request_repository import (
     PostgresPasswordChangeRequestRepository,
 )
@@ -147,6 +155,9 @@ def app_handlers() -> Handlers:
         ip=db_settings.ip_address, port=db_settings.port, db_name=db_settings.database,
         username=db_settings.user, password=db_settings.password)
     rss_data_repository = PostgresRssDataRepository(
+        ip=db_settings.ip_address, port=db_settings.port, db_name=db_settings.database,
+        username=db_settings.user, password=db_settings.password)
+    notification_repository = PostgresNotificationRepository(
         ip=db_settings.ip_address, port=db_settings.port, db_name=db_settings.database,
         username=db_settings.user, password=db_settings.password)
 
@@ -287,7 +298,8 @@ def app_handlers() -> Handlers:
         get_user_profile_handler=GetUserProfileHandler(user_repository),
         edit_user_profile_handler=EditUserProfile(user_repository),
         find_user_handler=FindCuratorHandler(user_repository),
-        delete_user_handler=DeleteUserHandler(user_repository, session_repository, account_service),
+        delete_user_handler=DeleteUserHandler(
+            user_repository, session_repository, account_service, notification_repository),
         get_curators_handler=GetCuratorsHandler(user_repository),
         find_subscriptions_by_name_handler=FindSubscriptionsByNameOrUrlHandler(
             subscription_repository=subscription_repository,
@@ -366,7 +378,8 @@ def app_handlers() -> Handlers:
             subscription_repository=subscription_repository,
         ),
         create_item_interaction_handler=CreateItemInteractionHandler(
-            item_repository=item_repository),
+            item_repository=item_repository,
+            event_bus=event_bus),
         delete_item_interaction_handler=DeleteItemInteractionHandler(
             item_repository=item_repository),
         get_followed_subscriptions_items_handler=GetFollowedSubscriptionsItemsHandler(
@@ -407,6 +420,12 @@ def app_handlers() -> Handlers:
         get_user_filter_handler=GetUserFilterHandler(user_filter_repository=user_filter_repository),
         upsert_user_filter_handler=UpsertUserFilterHandler(user_filter_repository=user_filter_repository),
         delete_user_filter_handler=DeleteUserFilterHandler(user_filter_repository=user_filter_repository),
+        get_user_notifications_handler=GetUserNotificationsHandler(
+            notification_repository=notification_repository),
+        count_unread_notifications_handler=CountUnreadNotificationsHandler(
+            notification_repository=notification_repository),
+        mark_all_notifications_as_read_handler=MarkAllNotificationsAsReadHandler(
+            notification_repository=notification_repository),
     )
 
 

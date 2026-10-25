@@ -178,6 +178,11 @@ class PostgresUserRepository(UserRepository):
         )
         return [_row_to_domain(row) for row in rows]
 
+    async def find_followers_of_curator(self, curator_id: UUID) -> list[User]:
+        pool = await self._connector.pool()
+        rows = await pool.fetch("SELECT * FROM users WHERE curators @> ARRAY[%s]::uuid[]", curator_id)
+        return [_row_to_domain(row) for row in rows]
+
     async def count_registered_users(self) -> int:
         pool = await self._connector.pool()
         return await pool.fetchval("SELECT COUNT(*) FROM users")

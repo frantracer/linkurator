@@ -8,6 +8,7 @@ from linkurator_core.domain.common import utils
 from linkurator_core.domain.common.utils import parse_url
 from linkurator_core.domain.items.interaction import Interaction, InteractionType
 from linkurator_core.domain.items.item import Item, ItemProvider
+from linkurator_core.domain.notifications.notification import Notification
 from linkurator_core.domain.subscriptions.subscription import Subscription
 from linkurator_core.domain.topics.topic import Topic
 from linkurator_core.domain.users.user import User, Username
@@ -221,4 +222,22 @@ def mock_user_filter(
         include_discouraged_items=include_discouraged_items,
         include_viewed_items=include_viewed_items,
         include_hidden_items=include_hidden_items,
+    )
+
+
+def mock_notification(
+        uuid: UUID | None = None,
+        user_id: UUID | None = None,
+        curator_id: UUID | None = None,
+        item_id: UUID | None = None,
+        created_at: datetime | None = None,
+) -> Notification:
+    subscription = mock_sub()
+    return Notification.new_curator_recommended_item(
+        uuid=uuid or uuid4(),
+        user_id=user_id or uuid4(),
+        curator=mock_user(uuid=curator_id),
+        item=mock_item(item_uuid=item_id, sub_uuid=subscription.uuid, duration=60),
+        subscription=subscription,
+        created_at=created_at or datetime.now(tz=timezone.utc),
     )

@@ -19,6 +19,13 @@ from linkurator_core.application.items.get_subscription_items_handler import (
     GetSubscriptionItemsResponse,
 )
 from linkurator_core.application.items.get_topic_items_handler import GetTopicItemsHandler
+from linkurator_core.application.notifications.count_unread_notifications_handler import (
+    CountUnreadNotificationsHandler,
+)
+from linkurator_core.application.notifications.get_user_notifications_handler import GetUserNotificationsHandler
+from linkurator_core.application.notifications.mark_all_notifications_as_read_handler import (
+    MarkAllNotificationsAsReadHandler,
+)
 from linkurator_core.application.subscriptions.import_opml_subscriptions_handler import ImportOpmlResult
 from linkurator_core.application.topics.get_curator_topics_as_user_handler import (
     GetCuratorTopicsHandler,
@@ -38,6 +45,7 @@ from linkurator_core.domain.common.exceptions import (
 from linkurator_core.domain.common.mock_factory import (
     mock_chat,
     mock_chat_message,
+    mock_notification,
     mock_sub,
     mock_topic,
     mock_user,
@@ -118,6 +126,9 @@ def dummy_handlers() -> Handlers:
         get_user_filter_handler=AsyncMock(),
         upsert_user_filter_handler=AsyncMock(),
         delete_user_filter_handler=AsyncMock(),
+        get_user_notifications_handler=AsyncMock(),
+        count_unread_notifications_handler=AsyncMock(),
+        mark_all_notifications_as_read_handler=AsyncMock(),
     )
 
 
@@ -893,3 +904,71 @@ def test_get_curator_topics_without_authentication_returns_200(handlers: Handler
     assert topics[0]["uuid"] == str(topic.uuid)
     assert topics[0]["followed"] is False
     assert topics[0]["is_owner"] is False
+
+
+def test_get_notifications_returns_curator_and_item(handlers: Handlers) -> None:
+    notification = mock_notification(user_id=USER_UUID)
+    dummy_handler = AsyncMock(spec=GetUserNotificationsHandler)
+    dummy_handler.handle.return_value = [notification]
+    handlers.get_user_notifications_handler = dummy_handler
+
+    client = TestClient(create_app_from_handlers(handlers), cookies={"token": "token"})
+
+    response = client.get("/notifications?page_number=0&page_size=1")
+    assert response.status_code == 200
+    elements = response.json()["elements"]
+    assert len(elements) == 1
+    assert elements[0]["id"] == str(notification.uuid)
+    assert elements[0]["type"] == "curator_recommended_item"
+    assert elements[0]["curator"] == {
+        "id": str(notification.curator.uuid),
+        "username": notification.curator.username,
+        "avatar_url": str(notification.curator.avatar_url),
+    }
+    assert elements[0]["item"] == {
+        "id": str(notification.item.uuid),
+        "name": notification.item.name,
+        "url": str(notification.item.url),
+        "thumbnail": str(notification.item.thumbnail),
+        "duration": notification.item.duration,
+        "published_at": notification.item.published_at.isoformat(),
+        "subscription": {
+            "id": str(notification.item.subscription.uuid),
+            "name": notification.item.subscription.name,
+            "thumbnail": str(notification.item.subscription.thumbnail),
+            "provider": notification.item.subscription.provider,
+        },
+    }
+    assert elements[0]["read"] is False
+    assert response.json()["next_page"] is not None
+    dummy_handler.handle.assert_called_once_with(user_id=USER_UUID, page_number=0, page_size=1)
+
+
+def test_count_unread_notifications(handlers: Handlers) -> None:
+    dummy_handler = AsyncMock(spec=CountUnreadNotificationsHandler)
+    dummy_handler.handle.return_value = 3
+    handlers.count_unread_notifications_handler = dummy_handler
+
+    client = TestClient(create_app_from_handlers(handlers), cookies={"token": "token"})
+
+    response = client.get("/notifications/unread/count")
+    assert response.status_code == 200
+    assert response.json() == {"count": 3}
+
+
+def test_mark_all_notifications_as_read(handlers: Handlers) -> None:
+    mark_all_handler = AsyncMock(spec=MarkAllNotificationsAsReadHandler)
+    handlers.mark_all_notifications_as_read_handler = mark_all_handler
+
+    client = TestClient(create_app_from_handlers(handlers), cookies={"token": "token"})
+
+    assert client.post("/notifications/read").status_code == 204
+    mark_all_handler.handle.assert_called_once_with(USER_UUID)
+
+
+def test_notifications_without_authentication_return_401(handlers: Handlers) -> None:
+    client = TestClient(create_app_from_handlers(handlers))
+
+    assert client.get("/notifications").status_code == 401
+    assert client.get("/notifications/unread/count").status_code == 401
+    assert client.post("/notifications/read").status_code == 401

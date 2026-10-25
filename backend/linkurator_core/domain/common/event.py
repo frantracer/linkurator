@@ -135,3 +135,17 @@ class SubscriptionNeedsSummarizationEvent(Event):
             created_at=datetime.now(timezone.utc),
             subscription_id=subscription_id,
         )
+
+
+class ItemRecommendedEvent(Event):
+    curator_id: UUID
+    item_id: UUID
+
+    @classmethod
+    def new(cls, curator_id: UUID, item_id: UUID) -> ItemRecommendedEvent:
+        return cls(
+            id=uuid4(),
+            created_at=datetime.now(timezone.utc),
+            curator_id=curator_id,
+            item_id=item_id,
+        )

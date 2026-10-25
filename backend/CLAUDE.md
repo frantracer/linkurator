@@ -93,6 +93,7 @@ pytest tests/integration/infrastructure/
 - `items`: Video/podcast content
 - `item_embeddings`: OpenAI embedding per item (pgvector), filled in batches by the processor
 - `topics`: User-defined categories
+- `notifications`: Per-user notifications (e.g. a followed curator recommended an item from a followed subscription), created by the processor. Each one stores a JSONB snapshot of the curator, item and subscription so it survives their deletion
 - `sessions`: User sessions
 - `credentials`: OAuth tokens
 

@@ -16,6 +16,9 @@ from linkurator_core.application.items.enqueue_items_to_embed_handler import Enq
 from linkurator_core.application.items.find_deprecated_items_handler import FindDeprecatedItemsHandler
 from linkurator_core.application.items.find_zero_duration_items import FindZeroDurationItems
 from linkurator_core.application.items.refresh_items_handler import RefreshItemsHandler
+from linkurator_core.application.notifications.notify_followers_of_recommendation_handler import (
+    NotifyFollowersOfRecommendationHandler,
+)
 from linkurator_core.application.subscriptions.find_outdated_subscriptions_handler import (
     FindOutdatedSubscriptionsHandler,
 )
@@ -30,6 +33,7 @@ from linkurator_core.application.subscriptions.update_subscription_handler impor
 from linkurator_core.application.subscriptions.update_subscription_items_handler import UpdateSubscriptionItemsHandler
 from linkurator_core.application.users.update_user_subscriptions_handler import UpdateYoutubeUserSubscriptionsHandler
 from linkurator_core.domain.common.event import (
+    ItemRecommendedEvent,
     ItemsBecameOutdatedEvent,
     NewChatQueryEvent,
     SubscriptionBecameOutdatedEvent,
@@ -63,6 +67,7 @@ from linkurator_core.infrastructure.postgres.item_embedding_queue_repository imp
     PostgresItemEmbeddingQueueRepository,
 )
 from linkurator_core.infrastructure.postgres.item_repository import PostgresItemRepository
+from linkurator_core.infrastructure.postgres.notification_repository import PostgresNotificationRepository
 from linkurator_core.infrastructure.postgres.registration_request_repository import (
     PostgresRegistrationRequestRepository,
 )
@@ -129,6 +134,10 @@ async def run_processor() -> None:  # pylint: disable=too-many-locals
         username=db_settings.user, password=db_settings.password,
     )
     item_embedding_queue_repository = PostgresItemEmbeddingQueueRepository(
+        ip=db_settings.ip_address, port=db_settings.port, db_name=db_settings.database,
+        username=db_settings.user, password=db_settings.password,
+    )
+    notification_repository = PostgresNotificationRepository(
         ip=db_settings.ip_address, port=db_settings.port, db_name=db_settings.database,
         username=db_settings.user, password=db_settings.password,
     )
@@ -326,6 +335,13 @@ async def run_processor() -> None:  # pylint: disable=too-many-locals
             embedding_service=embedding_service,
         )
 
+    notify_followers_of_recommendation_handler = NotifyFollowersOfRecommendationHandler(
+        user_repository=user_repository,
+        item_repository=item_repository,
+        subscription_repository=subscription_repository,
+        notification_repository=notification_repository,
+    )
+
     event_handler = EventHandler(
         update_youtube_user_subscriptions_handler=update_youtube_user_subscriptions,
         update_subscription_items_handler=update_subscriptions_items,
@@ -335,6 +351,7 @@ async def run_processor() -> None:  # pylint: disable=too-many-locals
         send_welcome_email=send_welcome_email,
         process_user_query_handler=process_user_query_handler,
         summarize_subscription_handler=summarize_subscription_handler,
+        notify_followers_of_recommendation_handler=notify_followers_of_recommendation_handler,
     )
 
     event_bus.subscribe(SubscriptionItemsBecameOutdatedEvent, event_handler.handle)
@@ -344,6 +361,7 @@ async def run_processor() -> None:  # pylint: disable=too-many-locals
     event_bus.subscribe(UserRegisteredEvent, event_handler.handle)
     event_bus.subscribe(NewChatQueryEvent, event_handler.handle)
     event_bus.subscribe(SubscriptionNeedsSummarizationEvent, event_handler.handle)
+    event_bus.subscribe(ItemRecommendedEvent, event_handler.handle)
 
     # Task scheduler
     scheduler = TaskScheduler()

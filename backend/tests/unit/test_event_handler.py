@@ -6,6 +6,7 @@ import pytest
 
 from linkurator_core.application.common.event_handler import EventHandler
 from linkurator_core.domain.common.event import (
+    ItemRecommendedEvent,
     SubscriptionBecameOutdatedEvent,
     SubscriptionItemsBecameOutdatedEvent,
     SubscriptionNeedsSummarizationEvent,
@@ -24,6 +25,7 @@ def dummy_event_handler() -> EventHandler:
         send_welcome_email=AsyncMock(),
         process_user_query_handler=AsyncMock(),
         summarize_subscription_handler=AsyncMock(),
+        notify_followers_of_recommendation_handler=AsyncMock(),
     )
 
 
@@ -113,3 +115,20 @@ async def test_subscription_needs_summarization_event_is_ignored_when_summarizat
 
     await event_handler.handle(SubscriptionNeedsSummarizationEvent.new(
         subscription_id=uuid.UUID("4d00e658-2947-4781-a045-691f0ef57831")))
+
+
+@pytest.mark.asyncio()
+async def test_item_recommended_event_triggers_notify_followers_of_recommendation_handler() -> None:
+    notify_followers_of_recommendation_handler = AsyncMock()
+    event_handler = dummy_event_handler()
+    event_handler.notify_followers_of_recommendation_handler = notify_followers_of_recommendation_handler
+
+    await event_handler.handle(ItemRecommendedEvent.new(
+        curator_id=uuid.UUID("0e3b6a3b-9b6c-4b8f-9d1a-1c1f5f2d3a01"),
+        item_id=uuid.UUID("5a6f1b9e-2c4d-4e8f-8a1b-3c2d1e0f9a02")))
+
+    handle_calls = notify_followers_of_recommendation_handler.handle.call_args_list
+    assert len(handle_calls) == 1
+    assert handle_calls[0] == call(
+        uuid.UUID("0e3b6a3b-9b6c-4b8f-9d1a-1c1f5f2d3a01"),
+        uuid.UUID("5a6f1b9e-2c4d-4e8f-8a1b-3c2d1e0f9a02"))

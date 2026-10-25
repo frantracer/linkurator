@@ -6,6 +6,9 @@ from linkurator_core.application.auth.send_validate_new_user_email import (
 from linkurator_core.application.auth.send_welcome_email import SendWelcomeEmail
 from linkurator_core.application.chats.process_user_query_handler import ProcessUserQueryHandler
 from linkurator_core.application.items.refresh_items_handler import RefreshItemsHandler
+from linkurator_core.application.notifications.notify_followers_of_recommendation_handler import (
+    NotifyFollowersOfRecommendationHandler,
+)
 from linkurator_core.application.subscriptions.summarize_subscription_handler import SummarizeSubscriptionHandler
 from linkurator_core.application.subscriptions.update_subscription_handler import UpdateSubscriptionHandler
 from linkurator_core.application.subscriptions.update_subscription_items_handler import (
@@ -16,6 +19,7 @@ from linkurator_core.application.users.update_user_subscriptions_handler import 
 )
 from linkurator_core.domain.common.event import (
     Event,
+    ItemRecommendedEvent,
     ItemsBecameOutdatedEvent,
     NewChatQueryEvent,
     SubscriptionBecameOutdatedEvent,
@@ -36,6 +40,7 @@ class EventHandler:
     send_welcome_email: SendWelcomeEmail
     process_user_query_handler: ProcessUserQueryHandler
     summarize_subscription_handler: SummarizeSubscriptionHandler | None
+    notify_followers_of_recommendation_handler: NotifyFollowersOfRecommendationHandler
 
     async def handle(self, event: Event) -> None:
         if isinstance(event, SubscriptionItemsBecameOutdatedEvent):
@@ -53,5 +58,7 @@ class EventHandler:
         elif isinstance(event, SubscriptionNeedsSummarizationEvent):
             if self.summarize_subscription_handler is not None:
                 await self.summarize_subscription_handler.handle(event.subscription_id)
+        elif isinstance(event, ItemRecommendedEvent):
+            await self.notify_followers_of_recommendation_handler.handle(event.curator_id, event.item_id)
         else:
             pass

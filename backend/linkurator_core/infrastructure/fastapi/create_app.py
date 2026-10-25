@@ -30,6 +30,13 @@ from linkurator_core.application.items.get_followed_subscriptions_items_handler 
 from linkurator_core.application.items.get_item_handler import GetItemHandler
 from linkurator_core.application.items.get_subscription_items_handler import GetSubscriptionItemsHandler
 from linkurator_core.application.items.get_topic_items_handler import GetTopicItemsHandler
+from linkurator_core.application.notifications.count_unread_notifications_handler import (
+    CountUnreadNotificationsHandler,
+)
+from linkurator_core.application.notifications.get_user_notifications_handler import GetUserNotificationsHandler
+from linkurator_core.application.notifications.mark_all_notifications_as_read_handler import (
+    MarkAllNotificationsAsReadHandler,
+)
 from linkurator_core.application.statistics.get_platform_statistics import (
     GetPlatformStatisticsHandler,
     PlatformStatistics,
@@ -83,6 +90,7 @@ from linkurator_core.infrastructure.fastapi.routers import (
     chats,
     curators,
     items,
+    notifications,
     profile,
     providers,
     subscriptions,
@@ -154,6 +162,9 @@ class Handlers:  # pylint: disable=too-many-instance-attributes
     get_user_filter_handler: GetUserFilterHandler
     upsert_user_filter_handler: UpsertUserFilterHandler
     delete_user_filter_handler: DeleteUserFilterHandler
+    get_user_notifications_handler: GetUserNotificationsHandler
+    count_unread_notifications_handler: CountUnreadNotificationsHandler
+    mark_all_notifications_as_read_handler: MarkAllNotificationsAsReadHandler
 
 
 def create_app_from_handlers(handlers: Handlers, cors_origins: list[str] | None = None) -> FastAPI:
@@ -297,6 +308,16 @@ def create_app_from_handlers(handlers: Handlers, cors_origins: list[str] | None 
             delete_user_filter_handler=handlers.delete_user_filter_handler,
         ),
         prefix="/filters",
+    )
+    app.include_router(
+        tags=["Notifications"],
+        router=notifications.get_router(
+            get_session=get_current_session,
+            get_user_notifications_handler=handlers.get_user_notifications_handler,
+            count_unread_notifications_handler=handlers.count_unread_notifications_handler,
+            mark_all_notifications_as_read_handler=handlers.mark_all_notifications_as_read_handler,
+        ),
+        prefix="/notifications",
     )
 
     app.add_middleware(

@@ -1,5 +1,7 @@
 from uuid import uuid4
 
+from linkurator_core.domain.common.event import ItemRecommendedEvent
+from linkurator_core.domain.common.event_bus_service import EventBusService
 from linkurator_core.domain.common.exceptions import ItemNotFoundError
 from linkurator_core.domain.common.types import DateGenerator, UuidGenerator
 from linkurator_core.domain.common.utils import datetime_now
@@ -13,10 +15,12 @@ class CreateItemInteractionHandler:
     def __init__(
             self,
             item_repository: ItemRepository,
+            event_bus: EventBusService,
             uuid_generator: UuidGenerator = uuid4,
             date_generator: DateGenerator = datetime_now,
     ) -> None:
         self.item_repository = item_repository
+        self.event_bus = event_bus
         self.uuid_generator = uuid_generator
         self.date_generator = date_generator
 
@@ -59,3 +63,9 @@ class CreateItemInteractionHandler:
                 created_at=self.date_generator(),
             )
             await self.item_repository.add_interaction(viewed_interaction)
+
+        if new_interaction.type == InteractionType.RECOMMENDED:
+            await self.event_bus.publish(ItemRecommendedEvent.new(
+                curator_id=new_interaction.user_uuid,
+                item_id=new_interaction.item_uuid,
+            ))

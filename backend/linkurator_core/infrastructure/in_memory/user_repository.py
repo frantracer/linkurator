@@ -73,6 +73,9 @@ class InMemoryUserRepository(UserRepository):
 
         return found_users
 
+    async def find_followers_of_curator(self, curator_id: UUID) -> list[User]:
+        return [copy(user) for user in self.users.values() if curator_id in user.curators]
+
     async def count_registered_users(self) -> int:
         return len(self.users)
 

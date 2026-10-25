@@ -4,10 +4,11 @@ import pytest
 
 from linkurator_core.application.users.delete_user_handler import DeleteUserHandler
 from linkurator_core.domain.common.exceptions import FailToRevokeCredentialsError
-from linkurator_core.domain.common.mock_factory import mock_user
+from linkurator_core.domain.common.mock_factory import mock_notification, mock_user
 from linkurator_core.domain.users.account_service import AccountService
 from linkurator_core.domain.users.session import Session
 from linkurator_core.domain.users.session_repository import SessionRepository
+from linkurator_core.infrastructure.in_memory.notification_repository import InMemoryNotificationRepository
 from linkurator_core.infrastructure.in_memory.user_repository import InMemoryUserRepository
 
 
@@ -22,13 +23,17 @@ async def test_delete_user_handler() -> None:
     user = mock_user()
     await user_repository.add(user)
 
+    notification_repository = InMemoryNotificationRepository()
+    await notification_repository.add([mock_notification(user_id=user.uuid)])
+
     session = Session.new(user_id=user.uuid, seconds_to_expire=3600)
 
-    handler = DeleteUserHandler(user_repository, session_repository, account_service)
+    handler = DeleteUserHandler(user_repository, session_repository, account_service, notification_repository)
 
     await handler.handle(session)
 
     assert await user_repository.get(user.uuid) is None
+    assert await notification_repository.count_unread(user.uuid) == 0
     assert len(account_service.revoke_credentials.call_args_list) == 1
     assert len(session_repository.delete.call_args_list) == 1
 
@@ -42,7 +47,7 @@ async def test_delete_user_handler_user_not_found() -> None:
     user = mock_user()
     session = Session.new(user_id=user.uuid, seconds_to_expire=3600)
 
-    handler = DeleteUserHandler(user_repository, session_repository, account_service)
+    handler = DeleteUserHandler(user_repository, session_repository, account_service, InMemoryNotificationRepository())
 
     await handler.handle(session)
 
@@ -62,7 +67,7 @@ async def test_delete_user_handler_fail_to_revoke_credentials() -> None:
 
     session = Session.new(user_id=user.uuid, seconds_to_expire=3600)
 
-    handler = DeleteUserHandler(user_repository, session_repository, account_service)
+    handler = DeleteUserHandler(user_repository, session_repository, account_service, InMemoryNotificationRepository())
 
     await handler.handle(session)
 

@@ -42,6 +42,9 @@ class UserRepository(abc.ABC):
     async def find_users_subscribed_to_subscription(self, subscription_id: UUID) -> List[User]: ...
 
     @abc.abstractmethod
+    async def find_followers_of_curator(self, curator_id: UUID) -> List[User]: ...
+
+    @abc.abstractmethod
     async def count_registered_users(self) -> int: ...
 
     @abc.abstractmethod

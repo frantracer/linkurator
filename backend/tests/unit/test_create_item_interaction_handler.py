@@ -1,10 +1,13 @@
 from datetime import datetime, timezone
+from unittest.mock import AsyncMock
 from uuid import UUID
 
 import pytest
 
 from linkurator_core.application.items.create_item_interaction_handler import CreateItemInteractionHandler
 from linkurator_core.domain.common import utils
+from linkurator_core.domain.common.event import ItemRecommendedEvent
+from linkurator_core.domain.common.event_bus_service import EventBusService
 from linkurator_core.domain.common.exceptions import ItemNotFoundError
 from linkurator_core.domain.common.mock_factory import mock_item
 from linkurator_core.domain.items.interaction import Interaction, InteractionType
@@ -38,6 +41,7 @@ async def test_recommend_item_creates_interaction_and_mark_as_viewed() -> None:
 
     handler = CreateItemInteractionHandler(
         item_repository=item_repo,
+        event_bus=AsyncMock(spec=EventBusService),
         uuid_generator=lambda: viewed_interaction.uuid,
         date_generator=lambda: viewed_interaction.created_at,
     )
@@ -79,6 +83,7 @@ async def test_discourage_item_creates_interaction_and_mark_as_viewed() -> None:
 
     handler = CreateItemInteractionHandler(
         item_repository=item_repo,
+        event_bus=AsyncMock(spec=EventBusService),
         uuid_generator=lambda: viewed_interaction.uuid,
         date_generator=lambda: viewed_interaction.created_at,
     )
@@ -128,6 +133,7 @@ async def test_recommend_item_that_already_is_viewed_only_creates_one_interactio
 
     handler = CreateItemInteractionHandler(
         item_repository=item_repo,
+        event_bus=AsyncMock(spec=EventBusService),
         uuid_generator=lambda: viewed_interaction.uuid,
         date_generator=lambda: viewed_interaction.created_at,
     )
@@ -173,7 +179,7 @@ async def test_create_item_interaction_handler_with_existing_interaction_does_no
         user_uuid=user_id,
         interaction_type=InteractionType.RECOMMENDED)
 
-    handler = CreateItemInteractionHandler(item_repository=item_repo)
+    handler = CreateItemInteractionHandler(item_repository=item_repo, event_bus=AsyncMock(spec=EventBusService))
 
     await handler.handle(new_interaction)
 
@@ -194,7 +200,7 @@ async def test_create_item_interaction_handler_with_non_existing_item_raises_an_
         user_uuid=UUID("3b434473-c6b4-4c6a-a5f8-a5c22021ee3b"),
         interaction_type=InteractionType.RECOMMENDED)
 
-    handler = CreateItemInteractionHandler(item_repository=item_repo)
+    handler = CreateItemInteractionHandler(item_repository=item_repo, event_bus=AsyncMock(spec=EventBusService))
 
     with pytest.raises(ItemNotFoundError):
         await handler.handle(new_interaction)
@@ -226,6 +232,7 @@ async def test_recommend_an_item_removes_discouraged_interaction() -> None:
 
     handler = CreateItemInteractionHandler(
         item_repository=item_repo,
+        event_bus=AsyncMock(spec=EventBusService),
     )
 
     await handler.handle(recommend_interaction)
@@ -266,6 +273,7 @@ async def test_discourage_an_item_removes_recommended_interaction() -> None:
 
     handler = CreateItemInteractionHandler(
         item_repository=item_repo,
+        event_bus=AsyncMock(spec=EventBusService),
     )
 
     await handler.handle(discourage_interaction)
@@ -278,3 +286,65 @@ async def test_discourage_an_item_removes_recommended_interaction() -> None:
     interaction_types = [interaction.type for interaction in stored_recommended.get(dummy_item.uuid, [])]
     assert InteractionType.RECOMMENDED not in interaction_types
     assert InteractionType.DISCOURAGED in interaction_types
+
+
+@pytest.mark.asyncio()
+async def test_recommend_item_publishes_item_recommended_event() -> None:
+    dummy_item = mock_item()
+    curator_id = UUID("9d1f3f5c-1b2a-4e7c-8f3d-2a1b0c9d8e7f")
+    item_repo = InMemoryItemRepository()
+    await item_repo.upsert_items([dummy_item])
+    event_bus = AsyncMock(spec=EventBusService)
+
+    handler = CreateItemInteractionHandler(item_repository=item_repo, event_bus=event_bus)
+    await handler.handle(Interaction.new(
+        uuid=UUID("e1f2a3b4-c5d6-4e7f-8a9b-0c1d2e3f4a5b"),
+        item_uuid=dummy_item.uuid,
+        user_uuid=curator_id,
+        interaction_type=InteractionType.RECOMMENDED))
+
+    event_bus.publish.assert_called_once()
+    published_event = event_bus.publish.call_args[0][0]
+    assert isinstance(published_event, ItemRecommendedEvent)
+    assert published_event.curator_id == curator_id
+    assert published_event.item_id == dummy_item.uuid
+
+
+@pytest.mark.asyncio()
+async def test_non_recommendation_interactions_do_not_publish_events() -> None:
+    dummy_item = mock_item()
+    item_repo = InMemoryItemRepository()
+    await item_repo.upsert_items([dummy_item])
+    event_bus = AsyncMock(spec=EventBusService)
+
+    handler = CreateItemInteractionHandler(item_repository=item_repo, event_bus=event_bus)
+    await handler.handle(Interaction.new(
+        uuid=UUID("4c1d2e3f-5a6b-4c7d-8e9f-0a1b2c3d4e5f"),
+        item_uuid=dummy_item.uuid,
+        user_uuid=UUID("9d1f3f5c-1b2a-4e7c-8f3d-2a1b0c9d8e7f"),
+        interaction_type=InteractionType.VIEWED))
+
+    event_bus.publish.assert_not_called()
+
+
+@pytest.mark.asyncio()
+async def test_repeated_recommendation_does_not_publish_event() -> None:
+    dummy_item = mock_item()
+    curator_id = UUID("9d1f3f5c-1b2a-4e7c-8f3d-2a1b0c9d8e7f")
+    item_repo = InMemoryItemRepository()
+    await item_repo.upsert_items([dummy_item])
+    await item_repo.add_interaction(Interaction.new(
+        uuid=UUID("7a8b9c0d-1e2f-4a3b-8c4d-5e6f7a8b9c0d"),
+        item_uuid=dummy_item.uuid,
+        user_uuid=curator_id,
+        interaction_type=InteractionType.RECOMMENDED))
+    event_bus = AsyncMock(spec=EventBusService)
+
+    handler = CreateItemInteractionHandler(item_repository=item_repo, event_bus=event_bus)
+    await handler.handle(Interaction.new(
+        uuid=UUID("e1f2a3b4-c5d6-4e7f-8a9b-0c1d2e3f4a5b"),
+        item_uuid=dummy_item.uuid,
+        user_uuid=curator_id,
+        interaction_type=InteractionType.RECOMMENDED))
+
+    event_bus.publish.assert_not_called()

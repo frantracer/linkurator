@@ -585,3 +585,16 @@ async def test_search_by_username_special_characters(user_repo: UserRepository) 
     assert user1.uuid in result_uuids
     assert user2.uuid in result_uuids
     assert user3.uuid not in result_uuids
+
+
+@pytest.mark.asyncio()
+async def test_find_followers_of_curator(user_repo: UserRepository) -> None:
+    curator_id = uuid.UUID("a1f0e9d8-c7b6-4a5f-9e4d-3c2b1a0f9e8d")
+    follower = mock_user(uuid=uuid.UUID("b2e1d0c9-b8a7-4f6e-8d5c-4b3a2f1e0d9c"), curators={curator_id})
+    not_follower = mock_user(uuid=uuid.UUID("c3d2c1b0-a9f8-4e7d-9c6b-5a4f3e2d1c0b"))
+    await user_repo.add(follower)
+    await user_repo.add(not_follower)
+
+    followers = await user_repo.find_followers_of_curator(curator_id)
+
+    assert [user.uuid for user in followers] == [follower.uuid]
