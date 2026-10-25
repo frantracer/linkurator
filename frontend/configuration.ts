@@ -25,6 +25,9 @@ const PRIVACY_POLICY_URL = `${WEB_BASE_URL}/privacy`;
 const REGISTER_VALIDATE_BASE_URL = `${WEB_BASE_URL}/register/validate`;
 const FORGOT_PASSWORD_BASE_URL = `${WEB_BASE_URL}/login/forgot-password`;
 const CHATS_URL = `${API_BASE_URL}/chats`;
+const NOTIFICATIONS_URL = `${API_BASE_URL}/notifications/`;
+const NOTIFICATIONS_UNREAD_COUNT_URL = `${API_BASE_URL}/notifications/unread/count`;
+const NOTIFICATIONS_READ_URL = `${API_BASE_URL}/notifications/read`;
 
 const configuration = {
   SUBSCRIPTIONS_URL,
@@ -50,7 +53,10 @@ const configuration = {
   EXAMPLE_VIDEO_GAMES_NEWS_TOPIC_URL: `${WEB_BASE_URL}/topics/ffd2f348-6e99-413b-be75-0f7b01ea9b01`,
   REGISTER_VALIDATE_BASE_URL,
   FORGOT_PASSWORD_BASE_URL,
-  CHATS_URL
+  CHATS_URL,
+  NOTIFICATIONS_URL,
+  NOTIFICATIONS_UNREAD_COUNT_URL,
+  NOTIFICATIONS_READ_URL
 };
 
 const paths = {
@@ -65,6 +71,7 @@ const paths = {
   CURATORS: '/curators',
   CHATS: '/chats',
   SETTINGS: '/settings',
+  NOTIFICATIONS: '/notifications',
   FORGOT_PASSWORD: '/login/forgot-password',
   REGISTER_EMAIL_SENT: '/register/email-sent',
   REGISTER_VALIDATE: '/register/validate',

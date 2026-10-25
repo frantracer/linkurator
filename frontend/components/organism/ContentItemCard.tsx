@@ -1,7 +1,8 @@
 import React, {useEffect, useState} from "react";
 import classNames from "classnames";
 import {SubscriptionItem} from "../../entities/SubscriptionItem";
-import {readableAgoUnits} from "../../utilities/dateFormatter";
+import useAgoText from "../../hooks/useAgoText";
+import {formatDuration} from "../../utilities/duration";
 import {InteractionType, interactWithItem, removeInteractionWithItem,} from "../../services/interactionService";
 import {paths} from "../../configuration";
 import Link from "next/link";
@@ -37,21 +38,6 @@ type ContentItemCardProps = {
   onChangeSwapButton?: (itemUuid: string, interactionType: InteractionType, checked: boolean) => Promise<void>;
   limitTitleLength?: boolean;
 };
-
-const convert_seconds_to_hh_mm_ss = (seconds: number) => {
-  const hours = Math.floor(seconds / 3600);
-  const minutes = Math.floor((seconds - (hours * 3600)) / 60);
-  const seconds_left = seconds - (hours * 3600) - (minutes * 60);
-  let result = "";
-  if (hours > 0) {
-    result += hours.toString() + ":";
-    result += minutes.toString().padStart(2, "0") + ":";
-  } else {
-    result += minutes.toString() + ":";
-  }
-  result += seconds_left.toString().padStart(2, "0");
-  return result;
-}
 
 async function defaultOnChangeSwapButton(itemUuid: string, interactionType: InteractionType, checked: boolean) {
   if (checked) {
@@ -121,10 +107,7 @@ const ContentItemCard = (
   useEffect(() => setDiscouraged(item.discouraged), [item.discouraged]);
   useEffect(() => setHidden(item.hidden), [item.hidden]);
 
-  const convertPublishedToAgoText = (date: Date) => {
-    const ago = readableAgoUnits(date);
-    return t("ago_label", {value: ago.value, unit: t(ago.unit)});
-  }
+  const agoText = useAgoText();
 
   const handleLoad = (event: React.SyntheticEvent<HTMLImageElement, Event>): void => {
     const {naturalWidth, naturalHeight} = event.currentTarget;
@@ -204,7 +187,7 @@ const ContentItemCard = (
           />
           {item.duration != undefined &&
               <span className="absolute top-0 right-0 m-1 p-1 bg-black bg-opacity-90 rounded">
-                <p className="text-white">{convert_seconds_to_hh_mm_ss(item.duration)}</p>
+                <p className="text-white">{formatDuration(item.duration)}</p>
             </span>
           }
         </figure>
@@ -226,7 +209,7 @@ const ContentItemCard = (
                     </Link>
                 </div>
             }
-            <p className="flex-none ml-auto whitespace-nowrap">{convertPublishedToAgoText(item.published_at)}</p>
+            <p className="flex-none ml-auto whitespace-nowrap">{agoText(item.published_at)}</p>
           </div>
           {item.recommended_by && item.recommended_by.length > 0 &&
               <div className="flex gap-x-2 items-center">

@@ -34,6 +34,7 @@ import FindCuratorModal from "./FindCuratorModal";
 import FindSubscriptionModal from "./FindSubscriptionModal";
 import FlexItem from "../atoms/FlexItem";
 import ProfileDropdown from "./ProfileDropdown";
+import NotificationsDropdown from "./NotificationsDropdown";
 import {useTranslations} from "next-intl";
 import QuickAccessesModal, {QuickAccessesModalId} from "./QuickAccessesModal";
 import LateralTopicList from "./LateralTopicList";
@@ -253,10 +254,11 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
                 <Divider/>
                 <div className="flex flex-row items-center gap-3 px-1">
                     <ProfileDropdown profile={profile} bottom={false} position="start" showProfileInfo={false}/>
-                    <div className="flex flex-col">
-                        <span className="font-semibold">{profile.first_name} {profile.last_name}</span>
-                        <span className="text-sm text-base-content/60">@{profile.username}</span>
+                    <div className="flex flex-col min-w-0 flex-1">
+                        <span className="font-semibold truncate">{profile.first_name} {profile.last_name}</span>
+                        <span className="text-sm text-base-content/60 truncate">@{profile.username}</span>
                     </div>
+                    <NotificationsDropdown profile={profile} bottom={false} position="end"/>
                 </div>
             </div>
         }

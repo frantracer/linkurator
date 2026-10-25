@@ -128,7 +128,7 @@ const BottomMenuMobile = () => {
       </Dropdown>
 
       {profileIsLoading && <AvatarPlaceholder/>}
-      {!profileIsLoading && profile && <ProfileDropdown profile={profile} bottom={false}/>}
+      {!profileIsLoading && profile && <ProfileDropdown profile={profile} bottom={false} withNotifications={true}/>}
       {!profileIsLoading && !profile && <GuestAvatarDropdown bottom={false}/>}
     </div>
   );
