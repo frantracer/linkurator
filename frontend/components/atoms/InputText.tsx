@@ -45,7 +45,9 @@ const InputText = (
       placeholder={placeholder}
       value={searchValue}
       disabled={disabled}
-      autoFocus={autofocus}
+      // Focused by openModal when its modal opens
+      // data- prefix: a custom marker React renders as-is, unlike autoFocus
+      data-autofocus={autofocus || undefined}
       onChange={(e) => {
         setSearchValue(e.target.value);
         if (onChange) {
