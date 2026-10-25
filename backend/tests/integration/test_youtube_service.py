@@ -188,6 +188,26 @@ async def test_youtube_service_returns_subscription_by_channel_url_with_name() -
 
 
 @pytest.mark.asyncio()
+async def test_youtube_service_returns_subscription_by_legacy_custom_channel_url() -> None:
+    client_mock = AsyncMock(spec=YoutubeApiClient)
+    client_mock.get_youtube_channel_from_name.return_value = mock_youtube_channel()
+
+    service = YoutubeService(youtube_client=client_mock,
+                             youtube_rss_client=AsyncMock(spec=YoutubeRssClient),
+                             api_keys=["api_key"],
+                             user_repository=InMemoryUserRepository(),
+                             subscription_repository=InMemorySubscriptionRepository(),
+                             item_repository=MagicMock(spec=ItemRepository))
+
+    subscription = await service.get_subscription_from_url(
+        url=parse_url("https://www.youtube.com/c/ElComidistaenELPAÍS"))
+
+    assert (client_mock.get_youtube_channel_from_name.call_args_list ==
+            [call(api_key="api_key", channel_name="ElComidistaenELPAÍS")])
+    assert subscription is not None
+
+
+@pytest.mark.asyncio()
 async def test_youtube_service_returns_subscription_by_channel_url_with_id() -> None:
     subs_repo_mock = InMemorySubscriptionRepository()
 

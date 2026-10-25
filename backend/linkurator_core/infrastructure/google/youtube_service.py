@@ -5,6 +5,7 @@ import uuid
 from copy import deepcopy
 from datetime import datetime, timedelta, timezone
 from random import randint
+from urllib.parse import unquote
 
 import isodate  # type: ignore
 from pydantic import AnyUrl
@@ -161,10 +162,15 @@ class YoutubeService(SubscriptionService):
 
         try:
             youtube_channel: YoutubeChannel | None = None
-            path = "" if url.path is None else url.path
+            path = "" if url.path is None else unquote(url.path)
             path_segments = path.split("/")
             if len(path_segments) == 2 and path_segments[1] != "":
                 channel_name = path_segments[1]
+                youtube_channel = await self.youtube_client.get_youtube_channel_from_name(
+                    api_key=self._get_api_key(),
+                    channel_name=channel_name)
+            elif len(path_segments) == 3 and path_segments[1] == "c" and path_segments[2] != "":
+                channel_name = path_segments[2]
                 youtube_channel = await self.youtube_client.get_youtube_channel_from_name(
                     api_key=self._get_api_key(),
                     channel_name=channel_name)
