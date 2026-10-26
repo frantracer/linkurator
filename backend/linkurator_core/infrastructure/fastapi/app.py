@@ -33,6 +33,7 @@ from linkurator_core.application.notifications.mark_all_notifications_as_read_ha
     MarkAllNotificationsAsReadHandler,
 )
 from linkurator_core.application.statistics.get_platform_statistics import GetPlatformStatisticsHandler
+from linkurator_core.application.subscriptions.allow_spotify_import_handler import AllowSpotifyImportHandler
 from linkurator_core.application.subscriptions.find_subscription_by_name_or_url_handler import (
     FindSubscriptionsByNameOrUrlHandler,
 )
@@ -42,6 +43,9 @@ from linkurator_core.application.subscriptions.get_subscription_handler import G
 from linkurator_core.application.subscriptions.get_user_subscriptions_handler import GetUserSubscriptionsHandler
 from linkurator_core.application.subscriptions.import_opml_subscriptions_handler import (
     ImportOpmlSubscriptionsHandler,
+)
+from linkurator_core.application.subscriptions.import_spotify_subscriptions_handler import (
+    ImportSpotifySubscriptionsHandler,
 )
 from linkurator_core.application.subscriptions.refresh_subscription_handler import RefreshSubscriptionHandler
 from linkurator_core.application.subscriptions.unfollow_subscription_handler import UnfollowSubscriptionHandler
@@ -112,7 +116,11 @@ from linkurator_core.infrastructure.rabbitmq_event_bus import RabbitMQEventBus
 from linkurator_core.infrastructure.rss.rss_feed_client import RssFeedClient
 from linkurator_core.infrastructure.rss.rss_service import RssSubscriptionService
 from linkurator_core.infrastructure.spotify.spotify_api_client import SpotifyApiClient, SpotifyCredentials
+from linkurator_core.infrastructure.spotify.spotify_developer_dashboard_allowlist import (
+    SpotifyDeveloperDashboardAllowlist,
+)
 from linkurator_core.infrastructure.spotify.spotify_service import SpotifySubscriptionService
+from linkurator_core.infrastructure.spotify.spotify_user_auth_client import SpotifyUserAuthClient
 
 
 def app_handlers() -> Handlers:
@@ -214,6 +222,31 @@ def app_handlers() -> Handlers:
             item_repository=item_repository,
         )
         subscription_services.append(spotify_service)
+
+    # Add Spotify user import for the credentials that enable it
+    spotify_import_credentials = [
+        credentials for credentials in settings.providers.spotify.credentials if credentials.user_import.enabled
+    ] if settings.providers.spotify.enabled else []
+    spotify_user_auth_client: SpotifyUserAuthClient | None = None
+    allow_spotify_import_handler: AllowSpotifyImportHandler | None = None
+    if len(spotify_import_credentials) > 0:
+        spotify_user_auth_client = SpotifyUserAuthClient(
+            credentials=[
+                SpotifyCredentials(client_id=credentials.client_id, client_secret=credentials.client_secret)
+                for credentials in spotify_import_credentials
+            ],
+            http_client=http_client,
+        )
+        allow_spotify_import_handler = AllowSpotifyImportHandler(
+            spotify_allowlists=[
+                SpotifyDeveloperDashboardAllowlist(
+                    client_id=credentials.client_id,
+                    dashboard_client_id=credentials.user_import.dashboard_client_id,
+                    sp_dc=credentials.user_import.dashboard_sp_dc,
+                )
+                for credentials in spotify_import_credentials
+            ],
+        )
 
     # Add Patreon service if enabled
     patreon_client: PatreonApiClient | None = None
@@ -404,6 +437,13 @@ def app_handlers() -> Handlers:
             user_repository=user_repository,
             subscription_repository=subscription_repository,
             event_bus_service=event_bus) if patreon_service is not None else None,
+        spotify_user_auth_client=spotify_user_auth_client,
+        allow_spotify_import_handler=allow_spotify_import_handler,
+        import_spotify_subscriptions_handler=ImportSpotifySubscriptionsHandler(
+            spotify_subscription_service=spotify_service,
+            user_repository=user_repository,
+            subscription_repository=subscription_repository,
+            event_bus_service=event_bus) if spotify_service is not None and spotify_user_auth_client is not None else None,
         query_agent_handler=QueryAgentHandler(
             chat_repository=chat_repository,
             event_bus=event_bus,

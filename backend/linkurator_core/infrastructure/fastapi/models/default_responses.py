@@ -46,6 +46,13 @@ def rate_limit_exceeded(message: str) -> HTTPException:
     )
 
 
+def service_unavailable(message: str) -> HTTPException:
+    return HTTPException(
+        status_code=http.HTTPStatus.SERVICE_UNAVAILABLE,
+        detail=message,
+    )
+
+
 class EmptyResponse(Response):
     """
     A custom response class that represents an empty response with a 204 No Content status code.

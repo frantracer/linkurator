@@ -6,7 +6,7 @@ from typing import Annotated, Any, Callable, Coroutine
 from urllib.parse import urljoin
 from uuid import UUID
 
-from fastapi import Depends, Form, Query, Request, UploadFile, status
+from fastapi import Depends, Form, Query, Request, Response, UploadFile, status
 from fastapi.responses import RedirectResponse
 from fastapi.routing import APIRouter
 from pydantic.types import NonNegativeInt, PositiveInt
@@ -16,6 +16,7 @@ from linkurator_core.application.items.get_followed_subscriptions_items_handler 
     GetFollowedSubscriptionsItemsHandler,
 )
 from linkurator_core.application.items.get_subscription_items_handler import GetSubscriptionItemsHandler
+from linkurator_core.application.subscriptions.allow_spotify_import_handler import AllowSpotifyImportHandler
 from linkurator_core.application.subscriptions.find_subscription_by_name_or_url_handler import (
     FindSubscriptionsByNameOrUrlHandler,
 )
@@ -25,6 +26,9 @@ from linkurator_core.application.subscriptions.get_user_subscriptions_handler im
 from linkurator_core.application.subscriptions.import_opml_subscriptions_handler import (
     ImportOpmlSubscriptionsHandler,
 )
+from linkurator_core.application.subscriptions.import_spotify_subscriptions_handler import (
+    ImportSpotifySubscriptionsHandler,
+)
 from linkurator_core.application.subscriptions.refresh_subscription_handler import RefreshSubscriptionHandler
 from linkurator_core.application.subscriptions.unfollow_subscription_handler import UnfollowSubscriptionHandler
 from linkurator_core.application.users.get_user_profile_handler import GetUserProfileHandler
@@ -33,6 +37,7 @@ from linkurator_core.application.users.update_patreon_user_subscriptions_handler
 )
 from linkurator_core.application.users.update_user_subscriptions_handler import UpdateYoutubeUserSubscriptionsHandler
 from linkurator_core.domain.common.exceptions import (
+    SpotifyAllowlistUnavailableError,
     SubscriptionAlreadyUpdatedError,
     SubscriptionNotFoundError,
 )
@@ -42,12 +47,24 @@ from linkurator_core.infrastructure.fastapi.models import default_responses
 from linkurator_core.infrastructure.fastapi.models.default_responses import EmptyResponse
 from linkurator_core.infrastructure.fastapi.models.item import VALID_INTERACTIONS, InteractionFilterSchema, ItemSchema
 from linkurator_core.infrastructure.fastapi.models.page import FullPage, Page
-from linkurator_core.infrastructure.fastapi.models.subscription import ImportOpmlResultSchema, SubscriptionSchema
+from linkurator_core.infrastructure.fastapi.models.subscription import (
+    ImportOpmlResultSchema,
+    SpotifyImportAuthorizationSchema,
+    SpotifyImportRequestSchema,
+    SubscriptionSchema,
+)
 from linkurator_core.infrastructure.google.account_service import GoogleAccountService
 from linkurator_core.infrastructure.patreon.patreon_api_client import PatreonApiClient
+from linkurator_core.infrastructure.spotify.spotify_user_auth_client import (
+    SpotifyAuthorizationState,
+    SpotifyUserAuthClient,
+)
 
 REDIRECT_URI_COOKIE_NAME = "redirect_uri_youtube_sync"
 REDIRECT_URI_PATREON_COOKIE_NAME = "redirect_uri_patreon_sync"
+REDIRECT_URI_SPOTIFY_COOKIE_NAME = "redirect_uri_spotify_sync"
+SPOTIFY_STATE_COOKIE_NAME = "spotify_sync_state"
+SPOTIFY_AUTH_CALLBACK_PATH = "/subscriptions/sync/spotify_auth"
 
 
 async def get_user_profile(session: Session | None, handler: GetUserProfileHandler) -> User | None:
@@ -73,6 +90,9 @@ def get_router(  # pylint: disable=too-many-statements
         get_followed_subscriptions_items_handler: GetFollowedSubscriptionsItemsHandler,
         patreon_client: PatreonApiClient | None = None,
         update_patreon_user_subscriptions_handler: UpdatePatreonUserSubscriptionsHandler | None = None,
+        spotify_user_auth_client: SpotifyUserAuthClient | None = None,
+        allow_spotify_import_handler: AllowSpotifyImportHandler | None = None,
+        import_spotify_subscriptions_handler: ImportSpotifySubscriptionsHandler | None = None,
 ) -> APIRouter:
     router = APIRouter()
 
@@ -564,6 +584,85 @@ def get_router(  # pylint: disable=too-many-statements
 
         response = RedirectResponse(url=redirect_uri or "/subscriptions")
         response.delete_cookie(REDIRECT_URI_PATREON_COOKIE_NAME)
+        return response
+
+    @router.post("/sync/spotify",
+                 status_code=status.HTTP_200_OK,
+                 responses={
+                     status.HTTP_401_UNAUTHORIZED: {"model": None},
+                     status.HTTP_404_NOT_FOUND: {"model": None},
+                     status.HTTP_503_SERVICE_UNAVAILABLE: {"model": None},
+                 })
+    async def sync_spotify_subscriptions(
+        request: Request,
+        response: Response,
+        spotify_account: SpotifyImportRequestSchema,
+        session: Session | None = Depends(get_session),
+    ) -> SpotifyImportAuthorizationSchema:
+        """
+        Allow the Spotify account to authorize Linkurator, so its saved shows can be imported.
+        :param spotify_account: Name and email of the Spotify account, and where to redirect after the import
+        :param session: The session of the logged user
+        :return: The Spotify URL to authorize the import. SERVICE_UNAVAILABLE status code if Spotify doesn't
+        accept more users for now.
+        """
+        if session is None:
+            raise default_responses.not_authenticated()
+
+        if spotify_user_auth_client is None or allow_spotify_import_handler is None:
+            msg = "Spotify import is not available"
+            raise default_responses.not_found(msg)
+
+        try:
+            client_id = await allow_spotify_import_handler.handle(
+                name=spotify_account.name, email=spotify_account.email)
+        except SpotifyAllowlistUnavailableError as error:
+            msg = "Spotify import is not available right now, try again tomorrow"
+            raise default_responses.service_unavailable(msg) from error
+
+        state = SpotifyAuthorizationState.new(client_id)
+        response.set_cookie(REDIRECT_URI_SPOTIFY_COOKIE_NAME, spotify_account.redirect_uri or "/")
+        response.set_cookie(SPOTIFY_STATE_COOKIE_NAME, state.encode())
+        return SpotifyImportAuthorizationSchema(
+            authorization_url=spotify_user_auth_client.authorization_url(
+                client_id=client_id,
+                redirect_uri=urljoin(str(request.base_url), SPOTIFY_AUTH_CALLBACK_PATH),
+                state=state,
+            ),
+        )
+
+    @router.get("/sync/spotify_auth",
+                status_code=status.HTTP_204_NO_CONTENT)
+    async def sync_spotify_auth(
+        request: Request,
+        code: str | None = None,
+        state: str | None = None,
+        error: str | None = None,
+        session: Session | None = Depends(get_session),
+    ) -> RedirectResponse:
+        """Import the Spotify saved shows."""
+        redirect_uri = request.cookies.get(REDIRECT_URI_SPOTIFY_COOKIE_NAME, "")
+        expected_state = request.cookies.get(SPOTIFY_STATE_COOKIE_NAME)
+        authorization_state: SpotifyAuthorizationState | None = None
+        if state is not None and state == expected_state:
+            authorization_state = SpotifyAuthorizationState.decode(state)
+
+        if session is None:
+            return RedirectResponse(url=redirect_uri or "/login")
+
+        if (spotify_user_auth_client is not None and import_spotify_subscriptions_handler is not None
+                and authorization_state is not None and error is None and code is not None):
+            access_token = await spotify_user_auth_client.exchange_code_for_token(
+                client_id=authorization_state.client_id,
+                code=code,
+                redirect_uri=urljoin(str(request.base_url), SPOTIFY_AUTH_CALLBACK_PATH))
+            if access_token is not None:
+                await import_spotify_subscriptions_handler.handle(
+                    user_id=session.user_id, access_token=access_token)
+
+        response = RedirectResponse(url=redirect_uri or "/subscriptions")
+        response.delete_cookie(REDIRECT_URI_SPOTIFY_COOKIE_NAME)
+        response.delete_cookie(SPOTIFY_STATE_COOKIE_NAME)
         return response
 
     return router

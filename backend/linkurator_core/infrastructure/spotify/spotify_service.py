@@ -59,9 +59,20 @@ class SpotifySubscriptionService(SubscriptionService):
     async def get_subscriptions(
             self,
             user_id: UUID,  # noqa: ARG002
-            access_token: str,  # noqa: ARG002
+            access_token: str,
     ) -> list[Subscription]:
-        return []
+        """Get the shows saved in the library of the Spotify user the access token belongs to."""
+        shows: list[Show] = []
+        limit = 50
+        offset = 0
+        while True:
+            response = await self.spotify_client.get_saved_shows(access_token, offset, limit)
+            shows += response.items
+            offset += limit
+            if len(response.items) == 0 or offset >= response.total:
+                break
+
+        return [map_spotify_show_to_subscription(show) for show in shows if len(show.images) > 0]
 
     async def get_subscription(
             self,

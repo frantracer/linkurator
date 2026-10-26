@@ -84,3 +84,7 @@ class MessageIsBeingProcessedError(Exception):
 
 class QueryAgentError(Exception):
     pass
+
+
+class SpotifyAllowlistUnavailableError(Exception):
+    pass

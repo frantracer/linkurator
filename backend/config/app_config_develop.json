@@ -71,7 +71,12 @@
       "credentials": [
         {
           "client_id": "",
-          "client_secret": ""
+          "client_secret": "",
+          "user_import": {
+            "enabled": false,
+            "dashboard_client_id": "",
+            "dashboard_sp_dc": ""
+          }
         }
       ]
     },

@@ -97,9 +97,33 @@ class YoutubeSettings(BaseModel):
         return self
 
 
+class SpotifyUserImportSettings(BaseModel):
+    """
+    Lets users authorize the Spotify app of a credential pair to import their saved shows.
+
+    dashboard_client_id is the OAuth client the Spotify developer dashboard itself logs in with, and
+    dashboard_sp_dc the sp_dc session cookie of the app owner, both used to add users to the app allowlist while
+    the app is in development mode.
+    """
+
+    enabled: bool = False
+    dashboard_client_id: str = ""
+    dashboard_sp_dc: str = ""
+
+    @model_validator(mode="after")
+    def check_dashboard_credentials_not_empty_when_enabled(self) -> "SpotifyUserImportSettings":
+        if self.enabled and (not self.dashboard_client_id or not self.dashboard_sp_dc):
+            msg = "dashboard_client_id and dashboard_sp_dc must be provided when Spotify user import is enabled."
+            raise ValueError(msg)
+        return self
+
+
 class SpotifyCredentialPair(BaseModel):
+    """Credentials of a Spotify app, whose client_id is the app (project) id in the Spotify developer dashboard."""
+
     client_id: str
     client_secret: str
+    user_import: SpotifyUserImportSettings = SpotifyUserImportSettings()
 
 
 class SpotifySettings(BaseModel):
@@ -110,6 +134,13 @@ class SpotifySettings(BaseModel):
     def check_credentials_not_empty_when_enabled(self) -> "SpotifySettings":
         if self.enabled and len(self.credentials) == 0:
             msg = "At least one Spotify credential pair must be provided when Spotify is enabled."
+            raise ValueError(msg)
+        return self
+
+    @model_validator(mode="after")
+    def check_spotify_enabled_when_user_import_enabled(self) -> "SpotifySettings":
+        if not self.enabled and any(credentials.user_import.enabled for credentials in self.credentials):
+            msg = "Spotify must be enabled when Spotify user import is enabled."
             raise ValueError(msg)
         return self
 

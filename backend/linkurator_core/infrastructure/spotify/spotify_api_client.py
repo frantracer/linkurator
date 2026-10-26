@@ -46,6 +46,20 @@ class GetEpisodesResponse(BaseModel):
     total: int
 
 
+class SavedShow(BaseModel):
+    show: Show
+
+
+class SavedShowsPage(BaseModel):
+    items: list[SavedShow]
+    total: int
+
+
+class GetSavedShowsResponse(BaseModel):
+    items: list[Show]
+    total: int
+
+
 class SpotifyApiHttpError(Exception):
     pass
 
@@ -203,6 +217,33 @@ class SpotifyApiClient:
                     raise SpotifyApiRateLimitError(msg)
 
                 msg = f"Failed to retrieve episodes: {response.status} -> {await response.text()}"
+                raise SpotifyApiHttpError(msg)
+
+    async def get_saved_shows(self, access_token: str, offset: int = 0, limit: int = 50) -> GetSavedShowsResponse:
+        """Get the shows saved in the library of the user the access token belongs to."""
+        if limit > 50:
+            msg = "Cannot retrieve more than 50 saved shows at once"
+            raise SpotifyApiHttpError(msg)
+
+        saved_shows_url = "https://api.spotify.com/v1/me/shows"
+        headers = {
+            "Authorization": f"Bearer {access_token}",
+        }
+        params = {
+            "limit": limit,
+            "offset": offset,
+        }
+
+        async with aiohttp.ClientSession() as session:
+            async with session.get(saved_shows_url, headers=headers, params=params) as response:
+                if response.status == 200:
+                    page = SavedShowsPage.model_validate(await response.json())
+                    return GetSavedShowsResponse(
+                        items=[saved_show.show for saved_show in page.items],
+                        total=page.total,
+                    )
+
+                msg = f"Failed to retrieve saved shows: {response.status} -> {await response.text()}"
                 raise SpotifyApiHttpError(msg)
 
     async def get_episodes(self, episode_ids: list[str]) -> list[Episode]:

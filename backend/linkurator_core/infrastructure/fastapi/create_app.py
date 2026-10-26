@@ -41,6 +41,7 @@ from linkurator_core.application.statistics.get_platform_statistics import (
     GetPlatformStatisticsHandler,
     PlatformStatistics,
 )
+from linkurator_core.application.subscriptions.allow_spotify_import_handler import AllowSpotifyImportHandler
 from linkurator_core.application.subscriptions.find_subscription_by_name_or_url_handler import (
     FindSubscriptionsByNameOrUrlHandler,
 )
@@ -50,6 +51,9 @@ from linkurator_core.application.subscriptions.get_subscription_handler import G
 from linkurator_core.application.subscriptions.get_user_subscriptions_handler import GetUserSubscriptionsHandler
 from linkurator_core.application.subscriptions.import_opml_subscriptions_handler import (
     ImportOpmlSubscriptionsHandler,
+)
+from linkurator_core.application.subscriptions.import_spotify_subscriptions_handler import (
+    ImportSpotifySubscriptionsHandler,
 )
 from linkurator_core.application.subscriptions.refresh_subscription_handler import RefreshSubscriptionHandler
 from linkurator_core.application.subscriptions.unfollow_subscription_handler import UnfollowSubscriptionHandler
@@ -100,6 +104,7 @@ from linkurator_core.infrastructure.fastapi.routers import (
 from linkurator_core.infrastructure.fastapi.routers.authentication import check_basic_auth
 from linkurator_core.infrastructure.google.account_service import GoogleAccountService
 from linkurator_core.infrastructure.patreon.patreon_api_client import PatreonApiClient
+from linkurator_core.infrastructure.spotify.spotify_user_auth_client import SpotifyUserAuthClient
 
 
 @dataclass
@@ -155,6 +160,9 @@ class Handlers:  # pylint: disable=too-many-instance-attributes
     update_youtube_user_subscriptions_handler: UpdateYoutubeUserSubscriptionsHandler | None
     patreon_client: PatreonApiClient | None
     update_patreon_user_subscriptions_handler: UpdatePatreonUserSubscriptionsHandler | None
+    spotify_user_auth_client: SpotifyUserAuthClient | None
+    allow_spotify_import_handler: AllowSpotifyImportHandler | None
+    import_spotify_subscriptions_handler: ImportSpotifySubscriptionsHandler | None
     query_agent_handler: QueryAgentHandler
     get_user_chats_handler: GetUserChatsHandler
     get_chat_handler: GetChatHandler
@@ -271,6 +279,9 @@ def create_app_from_handlers(handlers: Handlers, cors_origins: list[str] | None 
             get_followed_subscriptions_items_handler=handlers.get_followed_subscriptions_items_handler,
             patreon_client=handlers.patreon_client,
             update_patreon_user_subscriptions_handler=handlers.update_patreon_user_subscriptions_handler,
+            spotify_user_auth_client=handlers.spotify_user_auth_client,
+            allow_spotify_import_handler=handlers.allow_spotify_import_handler,
+            import_spotify_subscriptions_handler=handlers.import_spotify_subscriptions_handler,
         ),
         prefix="/subscriptions")
     app.include_router(

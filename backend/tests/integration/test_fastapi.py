@@ -38,6 +38,7 @@ from linkurator_core.application.users.get_user_profile_handler import GetUserPr
 from linkurator_core.domain.chats.chat import ChatScope
 from linkurator_core.domain.common import utils
 from linkurator_core.domain.common.exceptions import (
+    SpotifyAllowlistUnavailableError,
     SubscriptionNotFoundError,
     TopicNotFoundError,
     UsernameAlreadyInUseError,
@@ -119,6 +120,9 @@ def dummy_handlers() -> Handlers:
         update_youtube_user_subscriptions_handler=AsyncMock(),
         patreon_client=AsyncMock(),
         update_patreon_user_subscriptions_handler=AsyncMock(),
+        spotify_user_auth_client=None,
+        allow_spotify_import_handler=AsyncMock(),
+        import_spotify_subscriptions_handler=AsyncMock(),
         query_agent_handler=AsyncMock(),
         get_user_chats_handler=AsyncMock(),
         get_chat_handler=AsyncMock(),
@@ -656,6 +660,150 @@ def test_import_opml_subscriptions_without_authentication_returns_401(handlers: 
     )
 
     assert response.status_code == 401
+
+
+SPOTIFY_ACCOUNT = {"name": "John Doe", "email": "john@example.com", "redirect_uri": "https://linkurator.com/subs"}
+SPOTIFY_STATE = "app:nonce"
+
+
+def _spotify_user_auth_client(access_token: str | None) -> MagicMock:
+    spotify_user_auth_client = MagicMock()
+    spotify_user_auth_client.authorization_url.return_value = "https://accounts.spotify.com/authorize?x=y"
+    spotify_user_auth_client.exchange_code_for_token = AsyncMock(return_value=access_token)
+    return spotify_user_auth_client
+
+
+def test_sync_spotify_allows_the_account_and_the_callback_imports_its_saved_shows(handlers: Handlers) -> None:
+    spotify_user_auth_client = _spotify_user_auth_client(access_token="access_token")
+    handlers.spotify_user_auth_client = spotify_user_auth_client
+    allow_handler = AsyncMock()
+    allow_handler.handle.return_value = "chosen_app"
+    handlers.allow_spotify_import_handler = allow_handler
+    import_handler = AsyncMock()
+    handlers.import_spotify_subscriptions_handler = import_handler
+    client = TestClient(create_app_from_handlers(handlers), cookies={"token": "token"})
+
+    response = client.post("/subscriptions/sync/spotify", json=SPOTIFY_ACCOUNT)
+
+    assert response.status_code == 200
+    assert response.json() == {"authorization_url": "https://accounts.spotify.com/authorize?x=y"}
+    allow_handler.handle.assert_called_once_with(name="John Doe", email="john@example.com")
+    authorization_kwargs = spotify_user_auth_client.authorization_url.call_args.kwargs
+    assert authorization_kwargs["client_id"] == "chosen_app"
+    assert authorization_kwargs["redirect_uri"] == "http://testserver/subscriptions/sync/spotify_auth"
+    assert authorization_kwargs["state"].client_id == "chosen_app"
+    state = response.cookies["spotify_sync_state"]
+    assert state == authorization_kwargs["state"].encode()
+
+    response = client.get(f"/subscriptions/sync/spotify_auth?code=the_code&state={state}", follow_redirects=False)
+
+    assert response.status_code == 307
+    assert response.headers["location"] == "https://linkurator.com/subs"
+    assert spotify_user_auth_client.exchange_code_for_token.call_args.kwargs == {
+        "client_id": "chosen_app", "code": "the_code",
+        "redirect_uri": "http://testserver/subscriptions/sync/spotify_auth"}
+    import_handler.handle.assert_called_once_with(user_id=USER_UUID, access_token="access_token")
+
+
+def test_sync_spotify_returns_503_when_the_allowlist_is_unavailable(handlers: Handlers) -> None:
+    allow_handler = AsyncMock()
+    allow_handler.handle.side_effect = SpotifyAllowlistUnavailableError("full")
+    handlers.allow_spotify_import_handler = allow_handler
+    handlers.spotify_user_auth_client = _spotify_user_auth_client(access_token="access_token")
+    client = TestClient(create_app_from_handlers(handlers), cookies={"token": "token"})
+
+    response = client.post("/subscriptions/sync/spotify", json=SPOTIFY_ACCOUNT)
+
+    assert response.status_code == 503
+    assert "tomorrow" in response.json()["detail"]
+    assert "spotify_sync_state" not in response.cookies
+
+
+def test_sync_spotify_returns_404_when_the_import_is_disabled(handlers: Handlers) -> None:
+    handlers.spotify_user_auth_client = None
+    handlers.allow_spotify_import_handler = None
+    client = TestClient(create_app_from_handlers(handlers), cookies={"token": "token"})
+
+    response = client.post("/subscriptions/sync/spotify", json=SPOTIFY_ACCOUNT)
+
+    assert response.status_code == 404
+
+
+def test_sync_spotify_without_authentication_returns_401(handlers: Handlers) -> None:
+    client = TestClient(create_app_from_handlers(handlers))
+
+    response = client.post("/subscriptions/sync/spotify", json=SPOTIFY_ACCOUNT)
+
+    assert response.status_code == 401
+
+
+def test_sync_spotify_rejects_an_invalid_email(handlers: Handlers) -> None:
+    client = TestClient(create_app_from_handlers(handlers), cookies={"token": "token"})
+
+    response = client.post("/subscriptions/sync/spotify", json={"name": "John Doe", "email": "not-an-email"})
+
+    assert response.status_code == 422
+
+
+def test_sync_spotify_auth_does_not_import_when_the_user_cancels(handlers: Handlers) -> None:
+    spotify_user_auth_client = _spotify_user_auth_client(access_token="access_token")
+    handlers.spotify_user_auth_client = spotify_user_auth_client
+    import_handler = AsyncMock()
+    handlers.import_spotify_subscriptions_handler = import_handler
+    client = TestClient(create_app_from_handlers(handlers),
+                        cookies={"token": "token", "spotify_sync_state": SPOTIFY_STATE})
+
+    response = client.get(f"/subscriptions/sync/spotify_auth?error=access_denied&state={SPOTIFY_STATE}",
+                          follow_redirects=False)
+
+    assert response.status_code == 307
+    assert response.headers["location"] == "/subscriptions"
+    spotify_user_auth_client.exchange_code_for_token.assert_not_called()
+    import_handler.handle.assert_not_called()
+
+
+def test_sync_spotify_auth_does_not_import_when_the_code_cannot_be_exchanged(handlers: Handlers) -> None:
+    handlers.spotify_user_auth_client = _spotify_user_auth_client(access_token=None)
+    import_handler = AsyncMock()
+    handlers.import_spotify_subscriptions_handler = import_handler
+    client = TestClient(create_app_from_handlers(handlers),
+                        cookies={"token": "token", "spotify_sync_state": SPOTIFY_STATE})
+
+    response = client.get(f"/subscriptions/sync/spotify_auth?code=the_code&state={SPOTIFY_STATE}",
+                          follow_redirects=False)
+
+    assert response.status_code == 307
+    import_handler.handle.assert_not_called()
+
+
+@pytest.mark.parametrize("query", ["code=the_code", "code=the_code&state=app:other_nonce"])
+def test_sync_spotify_auth_does_not_import_when_the_state_does_not_match_the_cookie(
+    handlers: Handlers, query: str,
+) -> None:
+    spotify_user_auth_client = _spotify_user_auth_client(access_token="access_token")
+    handlers.spotify_user_auth_client = spotify_user_auth_client
+    import_handler = AsyncMock()
+    handlers.import_spotify_subscriptions_handler = import_handler
+    client = TestClient(create_app_from_handlers(handlers),
+                        cookies={"token": "token", "spotify_sync_state": SPOTIFY_STATE})
+
+    response = client.get(f"/subscriptions/sync/spotify_auth?{query}", follow_redirects=False)
+
+    assert response.status_code == 307
+    spotify_user_auth_client.exchange_code_for_token.assert_not_called()
+    import_handler.handle.assert_not_called()
+
+
+def test_sync_spotify_auth_without_authentication_redirects_to_login(handlers: Handlers) -> None:
+    import_handler = AsyncMock()
+    handlers.import_spotify_subscriptions_handler = import_handler
+    client = TestClient(create_app_from_handlers(handlers))
+
+    response = client.get("/subscriptions/sync/spotify_auth?code=the_code", follow_redirects=False)
+
+    assert response.status_code == 307
+    assert response.headers["location"] == "/login"
+    import_handler.handle.assert_not_called()
 
 
 def test_favorite_topic_returns_201(handlers: Handlers) -> None:

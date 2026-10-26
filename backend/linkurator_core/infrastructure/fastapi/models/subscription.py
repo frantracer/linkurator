@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from uuid import UUID
 
-from pydantic import AnyUrl, BaseModel
+from pydantic import AnyUrl, BaseModel, EmailStr
 
 from linkurator_core.application.subscriptions.import_opml_subscriptions_handler import ImportOpmlResult
 from linkurator_core.domain.items.item import ItemProvider
@@ -23,6 +23,20 @@ class ImportOpmlResultSchema(BaseModel):
     def from_domain(cls, result: ImportOpmlResult) -> ImportOpmlResultSchema:
         return cls(imported=result.imported, already_followed=result.already_followed,
                    failed=result.failed, topics_created=result.topics_created)
+
+
+class SpotifyImportRequestSchema(BaseModel):
+    """Spotify account to import the saved shows from."""
+
+    name: str
+    email: EmailStr
+    redirect_uri: str | None = None
+
+
+class SpotifyImportAuthorizationSchema(BaseModel):
+    """Spotify URL the user has to visit to authorize the import of their saved shows."""
+
+    authorization_url: str
 
 
 class SubscriptionSchema(BaseModel):
