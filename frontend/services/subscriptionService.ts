@@ -217,6 +217,31 @@ export async function importOpmlSubscriptions(file: File, createTopics: boolean)
   return undefined;
 }
 
+export type SpotifyImportRequestResult =
+  | { status: "authorize"; authorizationUrl: string }
+  | { status: "unavailable" }
+  | { status: "error" };
+
+type SpotifyImportAuthorizationResponse = {
+  authorization_url: string;
+}
+
+export async function requestSpotifyImport(name: string, email: string): Promise<SpotifyImportRequestResult> {
+  try {
+    const {data} = await axios.post<SpotifyImportAuthorizationResponse>(
+      configuration.SUBSCRIPTIONS_SPOTIFY_IMPORT_URL,
+      {name: name, email: email, redirect_uri: configuration.SUBSCRIPTIONS_WEB_URL},
+      {withCredentials: true});
+    return {status: "authorize", authorizationUrl: data.authorization_url};
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error) && error.response?.status === 503) {
+      return {status: "unavailable"};
+    }
+    console.error("Error requesting the Spotify import", error);
+  }
+  return {status: "error"};
+}
+
 export async function refreshSubscription(uuid: string): Promise<boolean> {
   try {
     const url = configuration.SUBSCRIPTIONS_URL + uuid + "/refresh";

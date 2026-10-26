@@ -2,7 +2,8 @@ import { useState, useEffect } from "react";
 
 export enum InputType {
   TEXT = "text",
-  PASSWORD = "password"
+  PASSWORD = "password",
+  EMAIL = "email"
 }
 
 type InputTextProps = {

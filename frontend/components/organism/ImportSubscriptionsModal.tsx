@@ -10,6 +10,7 @@ import {useRouter} from "next/navigation";
 import {useTranslations} from "next-intl";
 import Box from "../atoms/Box";
 import {ImportOpmlModalId} from "./ImportOpmlModal";
+import {ImportSpotifyModalId} from "./ImportSpotifyModal";
 
 export const ImportSubscriptionsModalId = "import-subscriptions-modal";
 
@@ -28,6 +29,11 @@ const ImportSubscriptionsModal = () => {
   const handlePatreonImport = () => {
     router.push(configuration.SUBSCRIPTIONS_PATREON_IMPORT_URL);
     closeModal(ImportSubscriptionsModalId);
+  }
+
+  const handleSpotifyImport = () => {
+    closeModal(ImportSubscriptionsModalId);
+    openModal(ImportSpotifyModalId);
   }
 
   const handleOpmlImport = () => {
@@ -58,6 +64,14 @@ const ImportSubscriptionsModal = () => {
               <Button clickAction={handlePatreonImport}>
                 <Miniature src={getProviderIcon(providers, "patreon")} alt={"patreon logo"}/>
                 {t("import_from_patreon")}
+              </Button>
+            </div>
+          )}
+          {isProviderAvailable("spotify") && (
+            <div className={"flex flex-row items-center justify-center gap-4 w-full"}>
+              <Button clickAction={handleSpotifyImport}>
+                <Miniature src={getProviderIcon(providers, "spotify")} alt={"spotify logo"}/>
+                {t("import_from_spotify")}
               </Button>
             </div>
           )}

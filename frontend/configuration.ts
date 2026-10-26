@@ -19,6 +19,7 @@ const REGISTER_URL = `${API_BASE_URL}/register/?redirect_uri=${encodeURI(WEB_HOM
 const SUBSCRIPTIONS_WEB_URL = `${WEB_BASE_URL}/subscriptions`;
 const SUBSCRIPTIONS_YOUTUBE_IMPORT_URL = `${API_BASE_URL}/subscriptions/sync/youtube?redirect_uri=${encodeURI(SUBSCRIPTIONS_WEB_URL)}`;
 const SUBSCRIPTIONS_PATREON_IMPORT_URL = `${API_BASE_URL}/subscriptions/sync/patreon?redirect_uri=${encodeURI(SUBSCRIPTIONS_WEB_URL)}`;
+const SUBSCRIPTIONS_SPOTIFY_IMPORT_URL = `${API_BASE_URL}/subscriptions/sync/spotify`;
 
 const TERMS_OF_SERVICE_URL = `${WEB_BASE_URL}/tos`;
 const PRIVACY_POLICY_URL = `${WEB_BASE_URL}/privacy`;
@@ -33,6 +34,8 @@ const configuration = {
   SUBSCRIPTIONS_URL,
   SUBSCRIPTIONS_YOUTUBE_IMPORT_URL,
   SUBSCRIPTIONS_PATREON_IMPORT_URL,
+  SUBSCRIPTIONS_SPOTIFY_IMPORT_URL,
+  SUBSCRIPTIONS_WEB_URL,
   PROFILE_URL,
   LOGIN_URL,
   LOGIN_EMAIL_URL,
