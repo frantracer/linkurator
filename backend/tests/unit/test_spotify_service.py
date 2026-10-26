@@ -86,7 +86,10 @@ async def test_get_subscription_items_uses_subscription_thumbnail_for_episodes_w
         release_date_precision=ReleaseDataPrecision.DAY,
     )
     spotify_api_client = AsyncMock(spec=SpotifyApiClient)
-    spotify_api_client.get_show_episodes.return_value = GetEpisodesResponse(items=[episode], total=1)
+    spotify_api_client.get_show_episodes.side_effect = [
+        GetEpisodesResponse(items=[episode], total=1),
+        GetEpisodesResponse(items=[], total=1),
+    ]
 
     sub_repo = InMemorySubscriptionRepository()
     sub = mock_sub(provider="spotify", url="https://open.spotify.com/show/abc123")
