@@ -118,6 +118,7 @@ class SpotifySubscriptionService(SubscriptionService):
             map_episode_to_item(
                 episode=episode,
                 sub_id=episode_index[episode.id].subscription_uuid,
+                fallback_thumbnail=episode_index[episode.id].thumbnail,
                 item_id=episode_index[episode.id].uuid,
             )
             for episode in episodes
@@ -145,7 +146,10 @@ class SpotifySubscriptionService(SubscriptionService):
         try:
             while True:
                 response = await self.spotify_client.get_show_episodes(show_id, offset, limit)
-                new_items = [map_episode_to_item(episode, sub_id) for episode in response.items]
+                new_items = [
+                    map_episode_to_item(episode=episode, sub_id=sub_id, fallback_thumbnail=subscription.thumbnail)
+                    for episode in response.items
+                ]
                 filtered_new_items = [item for item in new_items if item.published_at >= from_date]
                 items += filtered_new_items
 
@@ -226,11 +230,14 @@ def map_spotify_show_to_subscription(spotify_show: Show, sub: Subscription | Non
     return updated_sub
 
 
-def map_episode_to_item(episode: Episode, sub_id: UUID, item_id: UUID | None = None) -> Item:
-    thumbnail = get_most_similar_image(episode.images, 320, 200)
-    if thumbnail is None:
-        msg = "No thumbnail found"
-        raise ValueError(msg)
+def map_episode_to_item(
+        episode: Episode,
+        sub_id: UUID,
+        fallback_thumbnail: AnyUrl,
+        item_id: UUID | None = None,
+) -> Item:
+    image = get_most_similar_image(episode.images, 320, 200)
+    thumbnail = image.url if image is not None else fallback_thumbnail
 
     return Item.new(
         uuid=item_id or uuid4(),
@@ -238,7 +245,7 @@ def map_episode_to_item(episode: Episode, sub_id: UUID, item_id: UUID | None = N
         name=episode.name,
         description=episode.description,
         url=AnyUrl(f"https://open.spotify.com/episode/{episode.id}"),
-        thumbnail=thumbnail.url,
+        thumbnail=thumbnail,
         provider=SPOTIFY_PROVIDER_NAME,
         version=SPOTIFY_PROVIDER_VERSION,
         published_at=calculate_date(episode.release_date, episode.release_date_precision),

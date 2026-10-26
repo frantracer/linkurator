@@ -10,7 +10,10 @@ from linkurator_core.infrastructure.in_memory.item_repository import InMemoryIte
 from linkurator_core.infrastructure.in_memory.subscription_repository import InMemorySubscriptionRepository
 from linkurator_core.infrastructure.in_memory.user_repository import InMemoryUserRepository
 from linkurator_core.infrastructure.spotify.spotify_api_client import (
+    Episode,
+    GetEpisodesResponse,
     GetSavedShowsResponse,
+    ReleaseDataPrecision,
     Show,
     ShowImage,
     SpotifyApiClient,
@@ -69,6 +72,41 @@ async def test_get_subscription_items_returns_empty_when_rate_limited() -> None:
     )
 
     assert items == []
+
+
+@pytest.mark.asyncio()
+async def test_get_subscription_items_uses_subscription_thumbnail_for_episodes_without_images() -> None:
+    episode = Episode(
+        description="An episode",
+        duration_ms=60000,
+        id="episode1",
+        images=[],
+        name="Episode 1",
+        release_date="2024-01-01",
+        release_date_precision=ReleaseDataPrecision.DAY,
+    )
+    spotify_api_client = AsyncMock(spec=SpotifyApiClient)
+    spotify_api_client.get_show_episodes.return_value = GetEpisodesResponse(items=[episode], total=1)
+
+    sub_repo = InMemorySubscriptionRepository()
+    sub = mock_sub(provider="spotify", url="https://open.spotify.com/show/abc123")
+    sub.external_data = {"show_id": "abc123"}
+    await sub_repo.add(sub)
+
+    spotify_service = SpotifySubscriptionService(
+        spotify_client=spotify_api_client,
+        user_repository=InMemoryUserRepository(),
+        item_repository=InMemoryItemRepository(),
+        subscription_repository=sub_repo,
+    )
+
+    items = await spotify_service.get_subscription_items(
+        sub_id=sub.uuid,
+        from_date=datetime.datetime(2020, 1, 1, tzinfo=datetime.timezone.utc),
+    )
+
+    assert len(items) == 1
+    assert items[0].thumbnail == sub.thumbnail
 
 
 def _show(show_id: str, images: list[ShowImage]) -> Show:
