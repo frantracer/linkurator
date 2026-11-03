@@ -6,6 +6,23 @@
     }
 }
 
+/* Solid green surfaces with white text use a darker shade of the brand green so the label reaches
+   4.5:1 contrast; text, icons, borders and tints keep the brand green. :root raises specificity
+   above DaisyUI's own component rules, which load after this file. */
+:root .btn-primary,
+:root .badge-primary,
+:root .bg-primary-filled,
+:root .bg-primary-filled:hover {
+    background-color: #047a3d;
+    border-color: #047a3d;
+    color: #ffffff;
+}
+
+:root .btn-primary:hover {
+    background-color: #03652f;
+    border-color: #03652f;
+}
+
 :focus-visible {
     outline: 2px solid oklch(var(--p));
     outline-offset: 2px;

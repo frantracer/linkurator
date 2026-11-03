@@ -260,7 +260,7 @@ const ChatPageComponent = ({conversationId}: { conversationId: string }) => {
 
   const getMessageClass = (message: ChatMessage) => {
     if (message.sender === 'user') {
-      return 'max-w-[80%] p-3 rounded-lg bg-primary text-primary-content';
+      return 'max-w-[80%] p-3 rounded-lg bg-primary-filled';
     }
     if (message.sender === 'assistant') {
       return 'w-full text-base-content';

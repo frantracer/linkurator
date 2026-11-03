@@ -7,7 +7,7 @@ type TopicIconProps = {
 
 // Deep tones so the white initials stay above 4.5:1 contrast
 const PALETTE = [
-  "#047a3d", // green
+  "#06974c", // green
   "#0a6fb0", // blue
   "#be185d", // pink
   "#b45309", // amber

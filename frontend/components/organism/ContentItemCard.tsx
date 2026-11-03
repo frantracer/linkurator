@@ -58,7 +58,7 @@ const ActionButton = ({active, onClick, label, children}: ActionButtonProps) => 
     "btn btn-sm btn-circle border-0 shadow",
     {
       "bg-black/70 text-white hover:bg-black/90": !active,
-      "bg-primary text-primary-content hover:bg-primary": active,
+      "bg-primary-filled": active,
     }
   );
 
