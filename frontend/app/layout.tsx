@@ -4,7 +4,7 @@ import "tailwindcss/tailwind.css";
 import ReactQueryProvider from "../providers/ReactQueryProvider";
 import { Metadata } from "next";
 import { NextIntlClientProvider } from 'next-intl';
-import { getMessages } from 'next-intl/server';
+import { getLocale, getMessages } from 'next-intl/server';
 import { Analytics } from '@vercel/analytics/next';
 import { ToastProvider } from '../contexts/ToastContext';
 import { getUserTheme } from '../utilities/theme';
@@ -27,10 +27,11 @@ export default async function RootLayout(
     children: React.ReactNode
   }) {
   const messages = await getMessages();
+  const locale = await getLocale();
   const theme = await getUserTheme();
 
   return (
-    <html lang="es" className="scroll-smooth" data-theme={theme}>
+    <html lang={locale} className="scroll-smooth" data-theme={theme}>
       <head>
         <link rel="preconnect" href="https://fonts.bunny.net" />
         <link href="https://fonts.bunny.net/css?family=inter:400,500,600,700&display=swap" rel="stylesheet" />
