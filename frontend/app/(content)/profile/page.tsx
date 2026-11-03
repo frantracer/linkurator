@@ -88,7 +88,7 @@ const ProfilePage: NextPage = () => {
   return (
     <main className="flex flex-col h-full bg-base-300">
       <PageHeader title={t("my_profile")} icon={<ProfileIcon/>}/>
-      <div className="h-full overflow-y-auto">
+      <div className="h-full overflow-y-auto pb-mobile-nav">
         <div className="flex flex-col gap-4 w-full max-w-2xl mx-auto px-4 py-6">
           <SettingsSection title={t("personal_data")}>
             <div className="flex flex-row items-center gap-4">

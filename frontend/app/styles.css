@@ -1,3 +1,11 @@
+/* Room for the floating mobile tab bar at the end of each page's scroll area, so the page itself can
+   run down behind the bar. The id selector outranks Tailwind padding utilities on the same element. */
+@media (max-width: 1023px) {
+    #main-content .pb-mobile-nav {
+        padding-bottom: calc(5.5rem + env(safe-area-inset-bottom));
+    }
+}
+
 :focus-visible {
     outline: 2px solid oklch(var(--p));
     outline-offset: 2px;

@@ -92,7 +92,7 @@ const SettingsPage: NextPage = () => {
   return (
     <main className="flex flex-col h-full overflow-hidden bg-base-300">
       <PageHeader title={t("settings")} icon={<SettingsIcon/>}/>
-      <div className="h-full overflow-y-auto">
+      <div className="h-full overflow-y-auto pb-mobile-nav">
         <div className="flex flex-col gap-4 w-full max-w-2xl mx-auto px-4 py-6">
           <SettingsSection title={t("appearance")}>
             <div className="flex flex-row items-center justify-between gap-4">

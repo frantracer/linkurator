@@ -237,7 +237,7 @@ const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
         )}
 
         {selectedSection === "topics" && (
-          <div className="flex-1 min-h-0 overflow-x-hidden overflow-y-auto">
+          <div className="flex-1 min-h-0 overflow-x-hidden overflow-y-auto pb-mobile-nav">
             <div className="flex flex-col gap-6 p-4 max-w-7xl w-full mx-auto">
               <CuratorTopicsList
                 topics={topics}
@@ -249,7 +249,7 @@ const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
         )}
 
         {selectedSection === "subscriptions" && (
-          <div className="flex-1 min-h-0 overflow-x-hidden overflow-y-auto">
+          <div className="flex-1 min-h-0 overflow-x-hidden overflow-y-auto pb-mobile-nav">
             <div className="flex flex-col gap-6 p-4 max-w-7xl w-full mx-auto">
               <CuratorSubscriptionsList
                 subscriptions={subscriptions}

@@ -56,7 +56,7 @@ const NotificationsPageComponent = () => {
       <div
         ref={containerRef}
         onScroll={handleContainerScroll}
-        className="flex flex-col h-full bg-base-300 overflow-y-auto overflow-x-hidden"
+        className="flex flex-col h-full bg-base-300 overflow-y-auto overflow-x-hidden pb-mobile-nav"
       >
         <div className="flex flex-col gap-3 p-4 max-w-3xl w-full mx-auto">
           {hasNoNotifications &&

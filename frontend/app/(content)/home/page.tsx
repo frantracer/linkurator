@@ -204,7 +204,7 @@ const HomePageComponent = () => {
                                 resetFilters={resetFilters}/>}
 
             {showEmptyState
-              ? <div className="flex-1 overflow-y-auto p-4 flex items-center justify-center">
+              ? <div className="flex-1 overflow-y-auto p-4 flex items-center justify-center pb-mobile-nav">
                 {activeSection.emptyState}
               </div>
               : <div className="flex-1 min-h-0">

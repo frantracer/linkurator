@@ -46,7 +46,7 @@ const ChatInput = ({
 
   if (isMessageLimitReached) {
     return (
-      <div className="p-4">
+      <div className="p-4 pb-mobile-nav">
         <div className="max-w-3xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 rounded-2xl border border-neutral bg-base-100 px-4 py-3">
           <p className="text-sm text-base-content/80">{t('message_limit_reached')}</p>
           <Button clickAction={onNewConversation}>{t('new_chat')}</Button>
@@ -56,7 +56,7 @@ const ChatInput = ({
   }
 
   return (
-    <div className="p-4 pt-2">
+    <div className="p-4 pt-2 pb-mobile-nav">
       <div className="max-w-3xl mx-auto flex flex-row items-end gap-2 rounded-2xl border border-neutral bg-base-100 shadow-sm px-3 py-2 focus-within:border-primary">
         <textarea
           value={value}

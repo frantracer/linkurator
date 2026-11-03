@@ -146,7 +146,7 @@ const ContentItemCardGrid = (
           </TagsRow>
       }
       {filterBar}
-      <div ref={containerRef} onScroll={handleGridScroll} className="flex-1 min-h-0 overflow-auto flex flex-col">
+      <div ref={containerRef} onScroll={handleGridScroll} className="flex-1 min-h-0 overflow-auto flex flex-col pb-mobile-nav">
         {isBeingScanned &&
             <div className="flex items-center justify-center h-full">
                 <FlexRow position={"center"}>

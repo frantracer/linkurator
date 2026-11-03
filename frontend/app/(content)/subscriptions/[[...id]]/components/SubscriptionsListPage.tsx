@@ -83,7 +83,7 @@ const SubscriptionsListPageComponent = () => {
   return (
     <>
       <PageHeader title={t("subscriptions")} icon={<SubscriptionIcon/>}/>
-      <div className="flex flex-col h-full bg-base-300 overflow-y-auto overflow-x-hidden">
+      <div className="flex flex-col h-full bg-base-300 overflow-y-auto overflow-x-hidden pb-mobile-nav">
         <div className="flex flex-col gap-6 p-4 max-w-7xl w-full mx-auto">
           <div className="flex flex-row gap-2 w-full items-center justify-center">
             <Button fitContent={true} clickAction={openDiscoverModal} primary={false}>
