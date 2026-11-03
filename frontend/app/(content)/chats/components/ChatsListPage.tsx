@@ -1,11 +1,12 @@
 'use client';
 
 import React, {useEffect, useRef, useState} from "react";
+import EmptyStateBox from "../../../../components/atoms/EmptyStateBox";
+import EndOfList from "../../../../components/atoms/EndOfList";
 import {useRouter} from "next/navigation";
 import {useLocale, useTranslations} from "next-intl";
 import {v4 as uuidv4} from 'uuid';
 import Button from "../../../../components/atoms/Button";
-import {InfoBanner} from "../../../../components/atoms/InfoBanner";
 import {Spinner} from "../../../../components/atoms/Spinner";
 import {AddIcon, ChatBubbleIcon} from "../../../../components/atoms/Icons";
 import SearchBar from "../../../../components/molecules/SearchBar";
@@ -81,9 +82,7 @@ const ChatsListPageComponent = () => {
           </div>
 
           {!isLoading && !hasAnyConversations && !isFiltering && (
-            <InfoBanner>
-              <span>{t("no_conversations_yet")}</span>
-            </InfoBanner>
+            <EmptyStateBox icon={<ChatBubbleIcon/>} title={t("no_conversations_yet")} message={t("start_conversation")}/>
           )}
 
           {!isLoading && !hasAnyConversations && isFiltering && (
@@ -130,7 +129,7 @@ const ChatsListPageComponent = () => {
           )}
 
           {hasAnyConversations && isFinished && !isLoading && (
-            <InfoBanner>{t("no_more_content")}</InfoBanner>
+            <EndOfList text={t("all_caught_up")}/>
           )}
         </div>
       </div>

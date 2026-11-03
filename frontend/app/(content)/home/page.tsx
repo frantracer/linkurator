@@ -22,7 +22,7 @@ import {
 } from "../../../components/atoms/Icons";
 import Tag from "../../../components/atoms/Tag";
 import TagsRow from "../../../components/atoms/TagsRow";
-import ContentItemCardGrid from "../../../components/organism/ContentItemCardGrid";
+import ContentItemCardGrid, {ContentItemCardGridSkeleton} from "../../../components/organism/ContentItemCardGrid";
 import ContentFilterBar from "../../../components/organism/ContentFilterBar";
 import EmptyStateNoFavoriteTopics from "../../../components/organism/EmptyStateNoFavoriteTopics";
 import EmptyStateNoFollowedCurators from "../../../components/organism/EmptyStateNoFollowedCurators";
@@ -91,6 +91,8 @@ const HomePageComponent = () => {
   const isLoading = profileIsLoading || subscriptionsAreLoading || topicsAreLoading;
   const hasSubscriptions = subscriptions.length > 0;
   const hasTopics = topics.length > 0;
+  const hasFavoriteTopics = topics.some(topic => topic.is_favorite);
+  const noMatches = <EmptyStateNoMatches onClearFilters={areFiltersModified ? resetFilters : undefined}/>;
   const hasFollowedCurators = curators.length > 0;
 
   const sections: {
@@ -115,9 +117,11 @@ const HomePageComponent = () => {
       fetchMoreItems: fetchMoreFavoriteTopicItems,
       emptyState: !hasSubscriptions
         ? <EmptyStateImportSubscriptions/>
-        : hasTopics
-          ? <EmptyStateNoFavoriteTopics/>
-          : <EmptyStateOrganizeSubscriptions/>,
+        : !hasTopics
+          ? <EmptyStateOrganizeSubscriptions/>
+          : !hasFavoriteTopics
+            ? <EmptyStateNoFavoriteTopics/>
+            : noMatches,
     },
     {
       key: "curators",
@@ -128,7 +132,7 @@ const HomePageComponent = () => {
       isFinished: latestCuratorItemsFinished,
       refetch: refetchCuratorItems,
       fetchMoreItems: fetchMoreCuratorItems,
-      emptyState: hasFollowedCurators ? <EmptyStateNoMatches/> : <EmptyStateNoFollowedCurators/>,
+      emptyState: hasFollowedCurators ? noMatches : <EmptyStateNoFollowedCurators/>,
     },
     {
       key: "subscriptions",
@@ -140,7 +144,7 @@ const HomePageComponent = () => {
       refetch: refetchSubscriptionItems,
       fetchMoreItems: fetchMoreSubscriptionItems,
       emptyState: hasSubscriptions
-        ? <EmptyStateNoMatches/>
+        ? noMatches
         : <EmptyStateImportSubscriptions/>,
     },
   ];
@@ -173,11 +177,7 @@ const HomePageComponent = () => {
     <div className="flex flex-col w-full h-full min-h-0 overflow-hidden bg-base-300">
       <PageHeader title={t("home")} icon={<HomeIcon/>}/>
 
-      {isLoading &&
-          <div className="flex items-center justify-center h-full">
-              <span className="loading loading-spinner loading-lg"></span>
-          </div>
-      }
+      {isLoading && <ContentItemCardGridSkeleton/>}
 
       {!isLoading &&
           <>

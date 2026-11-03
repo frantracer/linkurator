@@ -1,10 +1,10 @@
 'use client';
 
 import React, {useEffect, useRef} from "react";
+import EndOfList from "../../../../components/atoms/EndOfList";
 import {useTranslations} from "next-intl";
 import EmptyStateBox from "../../../../components/atoms/EmptyStateBox";
 import {BellIcon} from "../../../../components/atoms/Icons";
-import {InfoBanner} from "../../../../components/atoms/InfoBanner";
 import {Spinner} from "../../../../components/atoms/Spinner";
 import PageHeader from "../../../../components/molecules/PageHeader";
 import NotificationCard from "../../../../components/organism/NotificationCard";
@@ -60,7 +60,7 @@ const NotificationsPageComponent = () => {
       >
         <div className="flex flex-col gap-3 p-4 max-w-3xl w-full mx-auto">
           {hasNoNotifications &&
-              <EmptyStateBox title={t("no_notifications_title")} message={t("no_notifications_message")}/>
+              <EmptyStateBox icon={<BellIcon/>} title={t("no_notifications_title")} message={t("no_notifications_message")}/>
           }
           {notifications.map(notification => (
             <NotificationCard key={notification.id} notification={notification} providers={providers}/>
@@ -72,9 +72,7 @@ const NotificationsPageComponent = () => {
               </div>
           }
           {isFinished && notifications.length > 0 &&
-              <div className="flex items-center justify-center p-4">
-                  <InfoBanner>{t("no_more_content")}</InfoBanner>
-              </div>
+              <EndOfList text={t("all_caught_up")}/>
           }
         </div>
       </div>

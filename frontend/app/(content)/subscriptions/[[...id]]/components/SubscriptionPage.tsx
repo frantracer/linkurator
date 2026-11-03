@@ -1,6 +1,7 @@
 'use client';
 
 import {useTranslations} from 'next-intl';
+import EmptyStateBox from "../../../../../components/atoms/EmptyStateBox";
 import {useRouter} from "next/navigation";
 import React, {useEffect, useState} from "react";
 import Button from "../../../../../components/atoms/Button";
@@ -201,9 +202,7 @@ const SubscriptionPageComponent = ({subscriptionId}: { subscriptionId: string })
           <div className="h-14 shrink-0 border-b border-neutral bg-base-100"/>}
       <div className="flex flex-col flex-1 min-h-0 bg-base-300 overflow-auto">
         {isSubscriptionError &&
-            <div className="flex items-center justify-center h-dvh">
-                <span>{t("subscription_not_exist")}</span>
-            </div>
+            <EmptyStateBox title={t("subscription_not_exist")} message={t("not_found_message")}/>
         }
         {selectedSubscription &&
             <ContentItemCardGrid

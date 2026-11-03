@@ -1,6 +1,7 @@
 'use client';
 
 import React, {useState} from "react";
+import EntityCardGridSkeleton from "../../../../../components/molecules/EntityCardGridSkeleton";
 import {useTranslations} from "next-intl";
 import Button from "../../../../../components/atoms/Button";
 import Collapse from "../../../../../components/atoms/Collapse";
@@ -93,6 +94,8 @@ const CuratorsListPageComponent = () => {
               />
             </div>
           </div>
+
+          {curatorsAreLoading && <EntityCardGridSkeleton/>}
 
           {!curatorsAreLoading && profile && !hasAnyCurators && (
             <EmptyStateNoFollowedCurators/>

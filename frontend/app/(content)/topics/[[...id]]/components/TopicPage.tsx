@@ -1,10 +1,10 @@
 'use client';
 
 import {useTranslations} from "next-intl";
+import EmptyStateBox from "../../../../../components/atoms/EmptyStateBox";
 import {useRouter} from "next/navigation";
 import React, {useEffect, useState} from "react";
 import Button from "../../../../../components/atoms/Button";
-import {ErrorBanner} from "../../../../../components/atoms/ErrorBanner";
 import {
   ChatBubbleIcon,
   EllipsisHorizontalIcon,
@@ -242,11 +242,9 @@ const TopicPageComponent = ({topicId}: { topicId: string }) => {
       <div className="flex flex-col flex-1 min-h-0 bg-base-300 overflow-auto">
         {
           topicIsError && !topicIsLoading &&
-            <div className="flex flex-row gap-2 items-center justify-center">
-                <ErrorBanner>
-                    <span>{t("topic_not_found")}</span>
-                </ErrorBanner>
-            </div>
+            <EmptyStateBox title={t("topic_not_found")} message={t("not_found_message")}>
+                <Button href={paths.TOPICS}>{t("browse_topics")}</Button>
+            </EmptyStateBox>
         }
         {
           selectedTopic &&

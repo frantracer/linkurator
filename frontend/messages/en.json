@@ -400,7 +400,12 @@
     "ask_ai": "Ask AI",
     "copy_link": "Copy link",
     "link_copied": "Link copied",
-    "open_source_page": "Open on {provider}"
+    "open_source_page": "Open on {provider}",
+    "all_caught_up": "You're all caught up",
+    "no_content_yet_title": "Nothing here yet",
+    "no_content_yet_message": "New videos and episodes will show up here as soon as they are published.",
+    "loading_more": "Loading more…",
+    "not_found_message": "It may have been deleted or the link may be wrong."
   },
   "legal": {
     "tos_title": "Terms of Service",

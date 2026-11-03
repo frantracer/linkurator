@@ -1,9 +1,7 @@
 import React from "react";
+import EntityCardGridSkeleton from "../molecules/EntityCardGridSkeleton";
 import {Topic} from "../../entities/Topic";
 import {useTranslations} from "next-intl";
-import FlexRow from "../atoms/FlexRow";
-import {InfoBanner} from "../atoms/InfoBanner";
-import {Spinner} from "../atoms/Spinner";
 import TopicCard from "./TopicCard";
 import {useFavoriteTopics} from "../../hooks/useFavoriteTopics";
 import {followTopic, unfollowTopic} from "../../services/topicService";
@@ -40,18 +38,9 @@ const CuratorTopicsList = (
 
   return (
     <div className="w-full">
-      {isLoading && (
-        <FlexRow position={"center"}>
-          <Spinner/>
-          <span>{t("loading")}</span>
-        </FlexRow>
-      )}
+      {isLoading && <EntityCardGridSkeleton/>}
       {!isLoading && topics.length === 0 && (
-        <div className={"flex flex-col items-center space-y-2"}>
-          <InfoBanner>
-            <span className="text-sm">{t("no_topics_found")}</span>
-          </InfoBanner>
-        </div>
+        <p className="py-10 text-center text-sm text-base-content/60">{t("no_topics_found")}</p>
       )}
       {!isLoading && topics.length > 0 && (
         <div className="grid grid-cols-[repeat(auto-fill,minmax(275px,1fr))] gap-4 justify-items-center">

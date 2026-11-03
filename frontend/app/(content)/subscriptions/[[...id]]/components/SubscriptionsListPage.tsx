@@ -1,12 +1,13 @@
 'use client';
 
 import React, {useState} from "react";
+import EntityCardGridSkeleton from "../../../../../components/molecules/EntityCardGridSkeleton";
 import {flushSync} from "react-dom";
 import {useTranslations} from "next-intl";
 import Button from "../../../../../components/atoms/Button";
 import Collapse from "../../../../../components/atoms/Collapse";
 import {ImportIcon, MagnifyingGlassIcon, SubscriptionIcon} from "../../../../../components/atoms/Icons";
-import EmptyStateNoSubscriptions from "../../../../../components/organism/EmptyStateNoSubscriptions";
+import EmptyStateImportSubscriptions from "../../../../../components/organism/EmptyStateImportSubscriptions";
 import EmptyStateNoMatches from "../../../../../components/organism/EmptyStateNoMatches";
 import Miniature from "../../../../../components/atoms/Miniature";
 import SearchBar from "../../../../../components/molecules/SearchBar";
@@ -106,8 +107,10 @@ const SubscriptionsListPageComponent = () => {
             )}
           </div>
 
+          {subscriptionsAreLoading && <EntityCardGridSkeleton/>}
+
           {!subscriptionsAreLoading && profile && !hasAnySubscriptions && (
-            <EmptyStateNoSubscriptions/>
+            <EmptyStateImportSubscriptions/>
           )}
 
           {!subscriptionsAreLoading && hasNoMatches && (

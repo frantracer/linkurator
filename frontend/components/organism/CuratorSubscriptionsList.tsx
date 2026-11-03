@@ -1,10 +1,8 @@
 import React, {useState} from "react";
+import EntityCardGridSkeleton from "../molecules/EntityCardGridSkeleton";
 import {flushSync} from "react-dom";
 import {useTranslations} from "next-intl";
 import {Subscription} from "../../entities/Subscription";
-import FlexRow from "../atoms/FlexRow";
-import {InfoBanner} from "../atoms/InfoBanner";
-import {Spinner} from "../atoms/Spinner";
 import SubscriptionCard from "./SubscriptionCard";
 import AssignTopicModal, {AssignTopicModalId} from "./AssignTopicModal";
 import useProfile from "../../hooks/useProfile";
@@ -71,18 +69,9 @@ const CuratorSubscriptionsList = (
 
   return (
     <div className="w-full">
-      {isLoading && (
-        <FlexRow position={"center"}>
-          <Spinner/>
-          <span>{t("loading")}</span>
-        </FlexRow>
-      )}
+      {isLoading && <EntityCardGridSkeleton/>}
       {!isLoading && subscriptions.length === 0 && (
-        <div className={"flex flex-col items-center space-y-2"}>
-          <InfoBanner>
-            <span className="text-sm">{t("no_subscriptions_found")}</span>
-          </InfoBanner>
-        </div>
+        <p className="py-10 text-center text-sm text-base-content/60">{t("no_subscriptions_found")}</p>
       )}
       {!isLoading && subscriptions.length > 0 && (
         <div className="grid grid-cols-[repeat(auto-fill,minmax(275px,1fr))] gap-4 justify-items-center">

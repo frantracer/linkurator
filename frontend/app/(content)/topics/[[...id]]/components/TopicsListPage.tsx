@@ -1,6 +1,7 @@
 'use client';
 
 import React, {useState} from "react";
+import EntityCardGridSkeleton from "../../../../../components/molecules/EntityCardGridSkeleton";
 import {useTranslations} from "next-intl";
 import Button from "../../../../../components/atoms/Button";
 import Collapse from "../../../../../components/atoms/Collapse";
@@ -145,6 +146,8 @@ const TopicsListPageComponent = () => {
               </Button>
             )}
           </div>
+
+          {topicsAreLoading && <EntityCardGridSkeleton/>}
 
           {!topicsAreLoading && profile && !hasAnyTopics && (
             <EmptyStateNoTopics/>

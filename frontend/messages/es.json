@@ -400,7 +400,12 @@
         "ask_ai": "Preguntar a la IA",
         "copy_link": "Copiar enlace",
         "link_copied": "Enlace copiado",
-        "open_source_page": "Abrir en {provider}"
+        "open_source_page": "Abrir en {provider}",
+        "all_caught_up": "Estás al día",
+        "no_content_yet_title": "Todavía no hay nada",
+        "no_content_yet_message": "Los nuevos vídeos y episodios aparecerán aquí en cuanto se publiquen.",
+        "loading_more": "Cargando más…",
+        "not_found_message": "Puede que se haya eliminado o que el enlace no sea correcto."
     },
     "legal": {
         "tos_title": "Términos del servicio",
