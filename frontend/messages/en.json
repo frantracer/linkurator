@@ -422,7 +422,11 @@
     "onboarding_step_import": "Import your sources",
     "onboarding_step_group": "Group them into topics",
     "onboarding_step_follow": "Follow a curator",
-    "opml_file": "OPML file"
+    "opml_file": "OPML file",
+    "show_password": "Show password",
+    "hide_password": "Hide password",
+    "password_hint": "At least 8 characters.",
+    "username_hint": "Between 4 and 16 characters."
   },
   "legal": {
     "tos_title": "Terms of Service",

@@ -2,53 +2,47 @@
 
 import type {NextPage} from "next";
 import React, {useState} from "react";
-import FlexColumn from "../../../components/atoms/FlexColumn";
-import Box from "../../../components/atoms/Box";
-import InputText from "../../../components/atoms/InputText";
+import Link from "next/link";
 import Button from "../../../components/atoms/Button";
-import LinkuratorHeader from "../../../components/organism/LinkuratorHeader";
+import {InputType} from "../../../components/atoms/InputText";
+import FormField from "../../../components/molecules/FormField";
+import AuthLayout from "../../../components/organism/AuthLayout";
 import {forgotPassword} from "../../../services/profileService";
-import {InfoBanner} from "../../../components/atoms/InfoBanner";
+import {paths} from "../../../configuration";
 import {useTranslations} from "next-intl";
 
 const ForgotPassword: NextPage = () => {
+  const t = useTranslations("common");
   const [email, setEmail] = useState("");
   const [emailSent, setEmailSent] = useState(false);
-  const t = useTranslations("common");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleForgotPassword = () => {
+  const handleForgotPassword = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setIsSubmitting(true);
     forgotPassword(email).then(() => {
       setEmailSent(true);
+    }).finally(() => {
+      setIsSubmitting(false);
     });
   }
 
   return (
-    <main className="hero min-h-dvh bg-base-200">
-      <div className="hero-content">
-        <div className="max-w-md">
-          <LinkuratorHeader/>
-
-          <FlexColumn>
-            <h2 className="text-3xl font-bold py-5">{t("reset_password")}</h2>
-            <Box>
-              <FlexColumn>
-                <span className={"font-bold"}>{t("email")}</span>
-                <InputText placeholder={t("enter_email")} value={email}
-                           onChange={(value) => setEmail(value)}/>
-                <Button fitContent={false} clickAction={handleForgotPassword}>
-                  {t("reset_password_button")}
-                </Button>
-              </FlexColumn>
-            </Box>
-            {emailSent &&
-                <InfoBanner>
-                    <p>{t("email_sent")}</p>
-                </InfoBanner>
-            }
-          </FlexColumn>
-        </div>
-      </div>
-    </main>
+    <AuthLayout
+      title={t("reset_password")}
+      footer={<Link href={paths.LOGIN} className="link link-hover">{t("log_in")}</Link>}
+    >
+      {emailSent
+        ? <p role="status" className="text-sm">{t("email_sent")}</p>
+        : <form className="flex flex-col gap-4" onSubmit={handleForgotPassword}>
+          <FormField label={t("email")} placeholder={t("enter_email")} value={email} onChange={setEmail}
+                     inputType={InputType.EMAIL} autoComplete={"email"} name={"email"} required={true}/>
+          <Button submit={true} fitContent={false} disabled={isSubmitting || email.length === 0}>
+            {t("reset_password_button")}
+          </Button>
+        </form>
+      }
+    </AuthLayout>
   )
 };
 

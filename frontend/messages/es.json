@@ -422,7 +422,11 @@
         "onboarding_step_import": "Importa tus fuentes",
         "onboarding_step_group": "Agrúpalas en categorías",
         "onboarding_step_follow": "Sigue a un curador",
-        "opml_file": "Archivo OPML"
+        "opml_file": "Archivo OPML",
+        "show_password": "Mostrar contraseña",
+        "hide_password": "Ocultar contraseña",
+        "password_hint": "Mínimo 8 caracteres.",
+        "username_hint": "Entre 4 y 16 caracteres."
     },
     "legal": {
         "tos_title": "Términos del servicio",
