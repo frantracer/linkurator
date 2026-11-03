@@ -4,7 +4,7 @@ import EmptyStateBox from "../atoms/EmptyStateBox";
 import Button from "../atoms/Button";
 import {AddIcon, MagnifyingGlassIcon} from "../atoms/Icons";
 import {NewTopicModalId} from "./NewTopicModal";
-import {FindTopicModalId} from "./FindTopicModal";
+import {openSearchPalette} from "../../utilities/searchPaletteAction";
 import {openModal} from "../../utilities/modalAction";
 import Divider from "../atoms/Divider";
 
@@ -27,7 +27,7 @@ const EmptyStateNoTopics = () => {
         </Button>
         <Divider text={t("or")}/>
         <Button
-          clickAction={() => openModal(FindTopicModalId)}
+          clickAction={() => openSearchPalette("topics")}
           primary={false}
           fitContent={true}
         >

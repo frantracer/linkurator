@@ -5,7 +5,7 @@ import Button from "../atoms/Button";
 import {ImportIcon, MagnifyingGlassIcon} from "../atoms/Icons";
 import {ImportSubscriptionsModalId} from "./ImportSubscriptionsModal";
 import {openModal} from "../../utilities/modalAction";
-import {FindSubscriptionModalId} from "./FindSubscriptionModal";
+import {openSearchPalette} from "../../utilities/searchPaletteAction";
 import Divider from "../atoms/Divider";
 
 const EmptyStateNoSubscriptions = () => {
@@ -27,7 +27,7 @@ const EmptyStateNoSubscriptions = () => {
         </Button>
         <Divider text={t("or")}/>
         <Button
-          clickAction={() => openModal(FindSubscriptionModalId)}
+          clickAction={() => openSearchPalette("subscriptions")}
           primary={false}
           fitContent={true}
         >

@@ -12,7 +12,7 @@ import Miniature from "../../../../../components/atoms/Miniature";
 import SearchBar from "../../../../../components/molecules/SearchBar";
 import TopTitle from "../../../../../components/molecules/TopTitle";
 import AssignTopicModal, {AssignTopicModalId} from "../../../../../components/organism/AssignTopicModal";
-import {FindSubscriptionModalId} from "../../../../../components/organism/FindSubscriptionModal";
+import {openSearchPalette} from "../../../../../utilities/searchPaletteAction";
 import {ImportSubscriptionsModalId} from "../../../../../components/organism/ImportSubscriptionsModal";
 import SubscriptionCard from "../../../../../components/organism/SubscriptionCard";
 import {getProviderIcon, getProviderPrettyName} from "../../../../../entities/Provider";
@@ -50,7 +50,7 @@ const SubscriptionsListPageComponent = () => {
     ? subscriptions
     : subscriptions.filter(subscription => subscriptionFiltering(subscription, filterText.trim()));
 
-  const openDiscoverModal = () => openModal(FindSubscriptionModalId);
+  const openDiscoverModal = () => openSearchPalette("subscriptions");
   const openImportModal = () => openModal(ImportSubscriptionsModalId);
 
   const handleAssign = (subscription: Subscription) => {

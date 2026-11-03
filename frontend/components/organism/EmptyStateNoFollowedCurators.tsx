@@ -3,8 +3,7 @@ import {useTranslations} from "next-intl";
 import EmptyStateBox from "../atoms/EmptyStateBox";
 import Button from "../atoms/Button";
 import {MagnifyingGlassIcon} from "../atoms/Icons";
-import {FindCuratorModalId} from "./FindCuratorModal";
-import {openModal} from "../../utilities/modalAction";
+import {openSearchPalette} from "../../utilities/searchPaletteAction";
 
 const EmptyStateNoFollowedCurators = () => {
   const t = useTranslations("common");
@@ -15,7 +14,7 @@ const EmptyStateNoFollowedCurators = () => {
       message={t("no_followed_curators_message")}
     >
       <Button
-        clickAction={() => openModal(FindCuratorModalId)}
+        clickAction={() => openSearchPalette("curators")}
         primary={false}
         fitContent={true}
       >

@@ -378,7 +378,13 @@
         "close": "Cerrar",
         "delete_account_failed": "No hemos podido eliminar tu cuenta. Inténtalo de nuevo.",
         "delete_topic_failed": "No hemos podido eliminar la categoría. Inténtalo de nuevo.",
-        "main_navigation": "Navegación principal"
+        "main_navigation": "Navegación principal",
+        "all": "Todo",
+        "your_library": "Tu biblioteca",
+        "by_curator": "de @{username}",
+        "search_keyboard_hint": "↑↓ para moverte · Intro para abrir · Esc para cerrar",
+        "searching": "Buscando…",
+        "open": "Abrir"
     },
     "legal": {
         "tos_title": "Términos del servicio",

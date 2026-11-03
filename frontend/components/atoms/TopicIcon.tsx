@@ -1,4 +1,4 @@
-export type TopicIconSize = "xs" | "md" | "lg";
+export type TopicIconSize = "xs" | "sm" | "md" | "lg";
 
 type TopicIconProps = {
   name: string;
@@ -19,6 +19,7 @@ const PALETTE = [
 
 const sizeClasses: Record<TopicIconSize, string> = {
   xs: "w-5 h-5 rounded text-[0.55rem]",
+  sm: "w-8 h-8 rounded-md text-xs",
   md: "w-10 h-10 rounded-lg text-sm",
   lg: "w-14 h-14 rounded-xl text-lg",
 };

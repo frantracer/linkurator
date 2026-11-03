@@ -11,7 +11,7 @@ import ConfirmDialog from "../../../../../components/organism/ConfirmDialog";
 import EditTopicModal, {EditTopicModalId} from "../../../../../components/organism/EditTopicModal";
 import EmptyStateNoMatches from "../../../../../components/organism/EmptyStateNoMatches";
 import EmptyStateNoTopics from "../../../../../components/organism/EmptyStateNoTopics";
-import {FindTopicModalId} from "../../../../../components/organism/FindTopicModal";
+import {openSearchPalette} from "../../../../../utilities/searchPaletteAction";
 import {NewTopicModalId} from "../../../../../components/organism/NewTopicModal";
 import TopicCard from "../../../../../components/organism/TopicCard";
 import {Topic} from "../../../../../entities/Topic";
@@ -82,7 +82,7 @@ const TopicsListPageComponent = () => {
     }
   }
 
-  const openDiscoverModal = () => openModal(FindTopicModalId);
+  const openDiscoverModal = () => openSearchPalette("topics");
   const openNewModal = () => openModal(NewTopicModalId);
 
   const renderSection = (key: string, title: string, icon: React.ReactNode, sectionTopics: Topic[]) => {

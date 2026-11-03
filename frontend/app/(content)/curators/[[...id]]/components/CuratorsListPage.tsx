@@ -8,14 +8,13 @@ import {CuratorIcon, MagnifyingGlassIcon} from "../../../../../components/atoms/
 import SearchBar from "../../../../../components/molecules/SearchBar";
 import TopTitle from "../../../../../components/molecules/TopTitle";
 import CuratorCard from "../../../../../components/organism/CuratorCard";
-import FindCuratorModal, {FindCuratorModalId} from "../../../../../components/organism/FindCuratorModal";
+import {openSearchPalette} from "../../../../../utilities/searchPaletteAction";
 import EmptyStateNoFollowedCurators from "../../../../../components/organism/EmptyStateNoFollowedCurators";
 import EmptyStateNoMatches from "../../../../../components/organism/EmptyStateNoMatches";
 import {Curator, curatorSorting} from "../../../../../entities/Curators";
 import {useCurators} from "../../../../../hooks/useCurators";
 import useProfile from "../../../../../hooks/useProfile";
 import {followCurator, unfollowCurator} from "../../../../../services/curatorService";
-import {openModal} from "../../../../../utilities/modalAction";
 
 const CuratorsListPageComponent = () => {
   const t = useTranslations("common");
@@ -32,7 +31,7 @@ const CuratorsListPageComponent = () => {
   const followedCurators = filteredCurators.filter(curator => curator.followed).sort(curatorSorting);
   const otherCurators = filteredCurators.filter(curator => !curator.followed).sort(curatorSorting);
 
-  const openDiscoverModal = () => openModal(FindCuratorModalId);
+  const openDiscoverModal = () => openSearchPalette("curators");
 
   const handleFollow = (curator: Curator) => {
     followCurator(curator.id).then(() => refreshCurators());
@@ -117,7 +116,6 @@ const CuratorsListPageComponent = () => {
         </div>
       </div>
 
-      <FindCuratorModal curators={curators} refreshCurators={refreshCurators}/>
     </>
   );
 }

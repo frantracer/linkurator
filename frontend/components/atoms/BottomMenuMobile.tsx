@@ -5,9 +5,8 @@ import classNames from "classnames";
 import {useTranslations} from "next-intl";
 import {ChatBubbleIcon, HomeIcon, MagnifyingGlassIcon, MenuIcon, RectangleGroup} from "./Icons";
 import {showLateralMenu} from "../../utilities/lateralMenuAction";
-import {openModal} from "../../utilities/modalAction";
 import {LATERAL_NAVIGATION_MENU_ID} from "../organism/LateralNavigationMenu";
-import {QuickAccessesModalId} from "../organism/QuickAccessesModal";
+import {openSearchPalette} from "../../utilities/searchPaletteAction";
 import {paths} from "../../configuration";
 import useProfile from "../../hooks/useProfile";
 import useUnreadNotificationsCount from "../../hooks/useUnreadNotificationsCount";
@@ -47,7 +46,7 @@ const BottomMenuMobile = () => {
         <span className={iconClass(isTopics)}><RectangleGroup/></span>
         {t("topics")}
       </Link>
-      <button type="button" className={tabClass(false)} onClick={() => openModal(QuickAccessesModalId)}>
+      <button type="button" className={tabClass(false)} onClick={() => openSearchPalette()}>
         <span className={iconClass(false)}><MagnifyingGlassIcon/></span>
         {t("search")}
       </button>

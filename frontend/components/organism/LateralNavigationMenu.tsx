@@ -15,23 +15,19 @@ import {
   RectangleGroup,
   SubscriptionIcon
 } from "../atoms/Icons";
-import {closeModal, openModal} from "../../utilities/modalAction";
 import NewTopicModal from "./NewTopicModal";
-import FindTopicModal from "./FindTopicModal";
 import Button from "../atoms/Button";
 import ALink from "../atoms/ALink";
 import {LogoImage} from "../atoms/LogoImage";
 import {LogoTitle} from "../atoms/LogoTitle";
 import {hideLateralMenu} from "../../utilities/lateralMenuAction";
 import {paths} from "../../configuration";
-import {useCurators} from "../../hooks/useCurators";
 import useProviders from "../../hooks/useProviders";
-import FindCuratorModal from "./FindCuratorModal";
-import FindSubscriptionModal from "./FindSubscriptionModal";
 import ProfileDropdown from "./ProfileDropdown";
 import NotificationsDropdown from "./NotificationsDropdown";
 import {useTranslations} from "next-intl";
-import QuickAccessesModal, {QuickAccessesModalId} from "./QuickAccessesModal";
+import SearchPalette from "./SearchPalette";
+import {openSearchPalette} from "../../utilities/searchPaletteAction";
 import LateralTopicList from "./LateralTopicList";
 import {v4 as uuidv4} from 'uuid';
 import ImportSubscriptionsModal from "./ImportSubscriptionsModal";
@@ -73,7 +69,6 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
 
   const {profile, profileIsLoading} = useProfile();
   const {subscriptions, refreshSubscriptions} = useSubscriptions(profile);
-  const {curators, refreshCurators} = useCurators(profile, profileIsLoading);
   const {topics, refreshTopics} = useTopics(profile, profileIsLoading);
   const {providers} = useProviders();
 
@@ -94,8 +89,8 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
     scrollToDrawerTop();
   }
 
-  const openQuickAccessesModal = () => {
-    openModal(QuickAccessesModalId);
+  const openSearch = () => {
+    openSearchPalette();
     closeMenu();
   }
 
@@ -127,11 +122,12 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
         {profile &&
             <button
                 type="button"
-                onClick={openQuickAccessesModal}
+                onClick={openSearch}
                 className="flex flex-row items-center gap-2 mx-1 px-3 h-9 rounded-lg border border-neutral text-sm text-base-content/60 hover:border-primary hover:text-base-content"
             >
                 <MagnifyingGlassIcon/>
                 <span className="flex-1 text-left">{t("search")}</span>
+                <kbd className="hidden lg:inline kbd kbd-xs">⌘K</kbd>
             </button>
         }
         {profile &&
@@ -182,10 +178,7 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
         }
       </Sidebar>
       <NewTopicModal refreshTopics={refreshTopics} subscriptions={subscriptions} providers={providers}/>
-      <FindTopicModal refreshTopics={refreshTopics}/>
-      <FindSubscriptionModal refreshSubscriptions={refreshSubscriptions}/>
-      <FindCuratorModal refreshCurators={refreshCurators} curators={curators}/>
-      <QuickAccessesModal onClose={() => closeModal(QuickAccessesModalId)}/>
+      <SearchPalette/>
       <ImportSubscriptionsModal/>
       <ImportOpmlModal refreshSubscriptions={refreshSubscriptions}/>
       <ImportSpotifyModal/>
