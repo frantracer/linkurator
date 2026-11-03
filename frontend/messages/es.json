@@ -377,7 +377,8 @@
         "skip_to_content": "Saltar al contenido",
         "close": "Cerrar",
         "delete_account_failed": "No hemos podido eliminar tu cuenta. Inténtalo de nuevo.",
-        "delete_topic_failed": "No hemos podido eliminar la categoría. Inténtalo de nuevo."
+        "delete_topic_failed": "No hemos podido eliminar la categoría. Inténtalo de nuevo.",
+        "main_navigation": "Navegación principal"
     },
     "legal": {
         "tos_title": "Términos del servicio",

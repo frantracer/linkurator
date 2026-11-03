@@ -1,17 +1,27 @@
+export type TopicIconSize = "xs" | "md" | "lg";
+
 type TopicIconProps = {
   name: string;
+  size?: TopicIconSize;
 }
 
+// Deep tones so the white initials stay above 4.5:1 contrast
 const PALETTE = [
-  "#06974c", // primary
-  "#0c93e8", // secondary
-  "#db2777", // pink
-  "#d97706", // amber
-  "#7c3aed", // violet
-  "#dc2626", // red
-  "#0d9488", // teal
-  "#4f46e5", // indigo
+  "#047a3d", // green
+  "#0a6fb0", // blue
+  "#be185d", // pink
+  "#b45309", // amber
+  "#6d28d9", // violet
+  "#b91c1c", // red
+  "#0f766e", // teal
+  "#4338ca", // indigo
 ];
+
+const sizeClasses: Record<TopicIconSize, string> = {
+  xs: "w-5 h-5 rounded text-[0.55rem]",
+  md: "w-10 h-10 rounded-lg text-sm",
+  lg: "w-14 h-14 rounded-xl text-lg",
+};
 
 function hashName(name: string): number {
   let hash = 0;
@@ -41,12 +51,13 @@ function getInitials(name: string): string {
   return (splitCharacters(words[0])[0] + splitCharacters(words[1])[0]).toUpperCase();
 }
 
-const TopicIcon = ({name}: TopicIconProps) => {
+const TopicIcon = ({name, size = "lg"}: TopicIconProps) => {
   const color = PALETTE[hashName(name) % PALETTE.length];
 
   return (
     <div
-      className="flex items-center justify-center w-14 h-14 rounded-xl text-white font-semibold text-lg shrink-0"
+      aria-hidden="true"
+      className={`flex items-center justify-center text-white font-semibold shrink-0 ${sizeClasses[size]}`}
       style={{backgroundColor: color}}
     >
       {getInitials(name)}

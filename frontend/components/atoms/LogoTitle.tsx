@@ -1,6 +1,6 @@
 export const LogoTitle = () => {
   return (
-    <span className={"text-2xl font-semibold tracking-widest uppercase rounded-lg"}>
+    <span className={"text-lg font-bold tracking-tight"}>
       Linkurator
     </span>
   )

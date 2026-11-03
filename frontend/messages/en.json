@@ -377,7 +377,8 @@
     "skip_to_content": "Skip to content",
     "close": "Close",
     "delete_account_failed": "We couldn't delete your account. Please try again.",
-    "delete_topic_failed": "We couldn't delete the topic. Please try again."
+    "delete_topic_failed": "We couldn't delete the topic. Please try again.",
+    "main_navigation": "Main navigation"
   },
   "legal": {
     "tos_title": "Terms of Service",
