@@ -49,6 +49,13 @@ const CuratorSubscriptionsList = (
     openModal(AssignTopicModalId);
   }
 
+  const handleFollow = (subscription: Subscription) => {
+    followSubscription(subscription.uuid).then(() => {
+      refreshSubscriptions();
+      refreshUserSubscriptions();
+    });
+  }
+
   const handleUnfollow = (subscription: Subscription) => {
     unfollowSubscription(subscription.uuid).then(() => {
       refreshSubscriptions();
@@ -85,6 +92,7 @@ const CuratorSubscriptionsList = (
               subscription={subscription}
               topicsCount={topicsCountBySubscription.get(subscription.uuid) ?? 0}
               onAssign={profile ? handleAssign : undefined}
+              onFollow={profile ? handleFollow : undefined}
               onUnfollow={profile ? handleUnfollow : undefined}
             />
           ))}

@@ -13,15 +13,22 @@ type SubscriptionCardProps = {
   subscription: Subscription;
   topicsCount: number;
   onAssign?: (subscription: Subscription) => void;
+  onFollow?: (subscription: Subscription) => void;
   onUnfollow?: (subscription: Subscription) => void;
 }
 
-const SubscriptionCard = ({subscription, topicsCount, onAssign, onUnfollow}: SubscriptionCardProps) => {
+const SubscriptionCard = ({subscription, topicsCount, onAssign, onFollow, onUnfollow}: SubscriptionCardProps) => {
   const t = useTranslations("common");
 
   const handleAssign = () => {
     if (onAssign) {
       onAssign(subscription);
+    }
+  }
+
+  const handleFollow = () => {
+    if (onFollow) {
+      onFollow(subscription);
     }
   }
 
@@ -71,6 +78,13 @@ const SubscriptionCard = ({subscription, topicsCount, onAssign, onUnfollow}: Sub
                 <span className="text-xs">{t("following")}</span>
                 <CrossButton onClick={handleUnfollow}/>
               </Tag>
+            </div>
+          )}
+          {!subscription.followed && onFollow && (
+            <div className="relative z-10">
+              <Button primary={true} fitContent={true} clickAction={handleFollow}>
+                {t("follow")}
+              </Button>
             </div>
           )}
         </div>
