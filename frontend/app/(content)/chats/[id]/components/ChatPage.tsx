@@ -2,9 +2,9 @@
 
 import React, {useCallback, useEffect, useRef, useState} from "react";
 import Button from "../../../../../components/atoms/Button";
-import {FunnelIcon, TrashIcon} from "../../../../../components/atoms/Icons";
+import {ChatBubbleIcon, FunnelIcon, TrashIcon} from "../../../../../components/atoms/Icons";
 import ChatInput from "./ChatInput";
-import TopTitle from "../../../../../components/molecules/TopTitle";
+import PageHeader from "../../../../../components/molecules/PageHeader";
 import {ChatMessage, ChatScope, getLatestScope, newTopicsWereCreated} from "../../../../../entities/Chat";
 import {areFiltersEqual, defaultFilters, Filters} from "../../../../../entities/Filters";
 import {ChatRateLimitError, deleteChat, queryAgent} from "../../../../../services/chatService";
@@ -254,33 +254,23 @@ const ChatPageComponent = ({conversationId}: { conversationId: string }) => {
 
   return (
     <div className="flex flex-col w-full h-full min-h-0 overflow-hidden">
-      <TopTitle>
-        <div className="flex flex-row items-center gap-4 h-full w-full px-4">
-          <div className="w-10 shrink-0 flex items-center justify-start">
-            <FilterToggleButton isOpen={showFilters} isModified={areFiltersModified} onClick={toggleFilters}/>
-          </div>
-          <div className="flex-1 min-w-0 flex justify-center items-center overflow-hidden h-full">
-            <h1 className="text-xl font-bold min-w-0 whitespace-nowrap truncate">
-              {conversationLoading
-                ? t('loading')
-                : conversation?.title || t('new_chat')
-              }
-            </h1>
-          </div>
-          <div className="w-10 shrink-0 flex items-center justify-end">
-            {localMessages.length > 0 && (
-              <Button
-                fitContent={true}
-                clickAction={handleDeleteButtonClick}
-                primary={false}
-                tooltip={t("delete_conversation")}
-              >
-                <TrashIcon/>
-              </Button>
-            )}
-          </div>
-        </div>
-      </TopTitle>
+      <PageHeader
+        title={conversationLoading ? t('loading') : conversation?.title || t('new_chat')}
+        icon={<ChatBubbleIcon/>}
+        actions={<>
+          <FilterToggleButton isOpen={showFilters} isModified={areFiltersModified} onClick={toggleFilters}/>
+          {localMessages.length > 0 && (
+            <Button
+              fitContent={true}
+              clickAction={handleDeleteButtonClick}
+              primary={false}
+              tooltip={t("delete_conversation")}
+            >
+              <TrashIcon/>
+            </Button>
+          )}
+        </>}
+      />
 
       <div className="flex flex-col flex-1 min-h-0 bg-base-300 overflow-hidden">
         {/* What the next message is searched with. Guests have no entities to pick from. */}

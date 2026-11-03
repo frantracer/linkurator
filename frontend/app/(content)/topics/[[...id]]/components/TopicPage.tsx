@@ -5,20 +5,16 @@ import {useRouter} from "next/navigation";
 import React, {useEffect, useState} from "react";
 import Button from "../../../../../components/atoms/Button";
 import {ErrorBanner} from "../../../../../components/atoms/ErrorBanner";
-import CrossButton from "../../../../../components/atoms/CrossButton";
 import {
-  AddIcon,
   ChatBubbleIcon,
   EllipsisHorizontalIcon,
-  MinusIcon,
   PencilIcon,
   StarFilledIcon,
+  ShareIcon,
   StarIcon,
   TrashIcon
 } from "../../../../../components/atoms/Icons";
 import {MenuItem} from "../../../../../components/atoms/MenuItem";
-import Miniature from "../../../../../components/atoms/Miniature";
-import Tag from "../../../../../components/atoms/Tag";
 import ConfirmDialog from "../../../../../components/organism/ConfirmDialog";
 import EditTopicModal, {EditTopicModalId} from "../../../../../components/organism/EditTopicModal";
 import ContentFilterBar from "../../../../../components/organism/ContentFilterBar";
@@ -38,9 +34,13 @@ import {openModal} from "../../../../../utilities/modalAction";
 import {newScopedChatPath, scopeFromFilters} from "../../../../../utilities/chatScope";
 import Dropdown from "../../../../../components/atoms/Dropdown";
 import Menu from "../../../../../components/atoms/Menu";
-import TopTitle from "../../../../../components/molecules/TopTitle";
+import PageHeader from "../../../../../components/molecules/PageHeader";
+import FollowToggleButton from "../../../../../components/molecules/FollowToggleButton";
+import ShareLinkButton from "../../../../../components/molecules/ShareLinkButton";
+import useShareLink from "../../../../../hooks/useShareLink";
+import TopicIcon from "../../../../../components/atoms/TopicIcon";
+import Link from "next/link";
 import useProviders from "../../../../../hooks/useProviders";
-import ALink from "../../../../../components/atoms/ALink";
 
 const REFRESH_TOPICS_INTERVAL = 10000;
 
@@ -135,6 +135,8 @@ const TopicPageComponent = ({topicId}: { topicId: string }) => {
     }
   }, [debouncedFilters.textSearch, filters]);
 
+  const shareTopic = useShareLink(topicName);
+
   const dropdownButtons = []
   if (selectedTopic && isUserLogged) {
     if (selectedTopic.is_owner) {
@@ -155,58 +157,35 @@ const TopicPageComponent = ({topicId}: { topicId: string }) => {
         </MenuItem>
       )
     }
-    if (selectedTopic.followed && !selectedTopic.is_owner) {
-      dropdownButtons.push(
-        <MenuItem key={"topics-unfollow-topic"} onClick={() => handleUnfollowTopic(selectedTopic.uuid)}
-                  hideMenuOnClick={true}>
-          <div className="flex flex-row gap-2 items-center justify-left">
-            <MinusIcon/>
-            {t("unfollow")}
-          </div>
-        </MenuItem>
-      )
-    }
-    if (!selectedTopic.followed && !selectedTopic.is_owner) {
-      dropdownButtons.push(
-        <MenuItem key={"topics-follow-topic"} onClick={() => handleFollowTopic(selectedTopic.uuid)}
-                  hideMenuOnClick={true}>
-          <div className="flex flex-row gap-2 items-center justify-left">
-            <AddIcon/>
-            {t("follow")}
-          </div>
-        </MenuItem>
-      )
-    }
+  }
 
-    // Add favorite/unfavorite option for all topics (owner and followed)
-    if (selectedTopic.is_favorite) {
-      dropdownButtons.push(
-        <MenuItem key={"topics-unfavorite-topic"} onClick={() => handleFavoriteTopic(selectedTopic.uuid)}
-                  hideMenuOnClick={true}>
-          <div className="flex flex-row gap-2 items-center justify-left">
-            <StarFilledIcon/>
-            {t("remove_from_favorites")}
-          </div>
-        </MenuItem>
-      )
-    } else {
-      dropdownButtons.push(
-        <MenuItem key={"topics-favorite-topic"} onClick={() => handleFavoriteTopic(selectedTopic.uuid)}
-                  hideMenuOnClick={true}>
-          <div className="flex flex-row gap-2 items-center justify-left">
-            <StarIcon/>
-            {t("add_to_favorites")}
-          </div>
-        </MenuItem>
-      )
-    }
+  // On phones these header actions move into the overflow menu so the header keeps to one row
+  const mobileMenuButtons = []
+  if (selectedTopic && isUserLogged && (selectedTopic.is_owner || selectedTopic.followed)) {
+    mobileMenuButtons.push(
+      <MenuItem key={"topics-favorite-topic"} onClick={() => handleFavoriteTopic(selectedTopic.uuid)}
+                hideMenuOnClick={true}>
+        <div className="flex flex-row gap-2 items-center justify-left">
+          {selectedTopic.is_favorite ? <StarFilledIcon/> : <StarIcon/>}
+          {selectedTopic.is_favorite ? t("remove_from_favorites") : t("add_to_favorites")}
+        </div>
+      </MenuItem>
+    )
   }
   if (selectedTopic) {
-    dropdownButtons.push(
+    mobileMenuButtons.push(
       <MenuItem key={"topics-chat"} onClick={handleChatAboutThis} hideMenuOnClick={true}>
         <div className="flex flex-row gap-2 items-center justify-left">
           <ChatBubbleIcon/>
-          {t("chat_about_this")}
+          {t("ask_ai")}
+        </div>
+      </MenuItem>
+    )
+    mobileMenuButtons.push(
+      <MenuItem key={"topics-share"} onClick={shareTopic} hideMenuOnClick={true}>
+        <div className="flex flex-row gap-2 items-center justify-left">
+          <ShareIcon/>
+          {t("share")}
         </div>
       </MenuItem>
     )
@@ -214,70 +193,52 @@ const TopicPageComponent = ({topicId}: { topicId: string }) => {
 
   return (
     <div className="flex flex-col w-full h-full min-h-0 overflow-hidden">
-      <TopTitle>
-        <div className="flex flex-row items-center gap-4 h-full w-full px-4">
-          {!topicIsLoading && <>
-              <div className="w-10 shrink-0 flex items-center justify-start">
-              </div>
-              <div className="flex-1 min-w-0 flex flex-col items-center gap-2 overflow-hidden">
-                  <div className="w-full flex flex-row items-center justify-center gap-2 overflow-hidden">
-                      <h1 className="text-xl font-bold min-w-0 whitespace-nowrap truncate">
-                        {topicName}
-                      </h1>
-                  </div>
-                  <div className="flex flex-row gap-2 items-center justify-center">
-                    {selectedTopic && !selectedTopic.is_owner &&
-                        <Button primary={false} href={paths.CURATORS + "/" + selectedTopic.curator.username}>
-                            <Miniature src={selectedTopic.curator.avatar_url} alt={selectedTopic.curator.username}/>
-                            <span>{selectedTopic.curator.username}</span>
-                        </Button>
-                    }
-                    {selectedTopic && selectedTopic.followed && !selectedTopic.is_owner &&
-                        <Tag>
-                      <span>
-                        {t("following")}
-                      </span>
-                            <CrossButton onClick={() => handleUnfollowTopic(selectedTopic.uuid)}/>
-                        </Tag>
-                    }
-                    {selectedTopic && !selectedTopic.followed && !selectedTopic.is_owner && isUserLogged &&
-                        <Button primary={false} clickAction={() => handleFollowTopic(selectedTopic.uuid)}>
-                          {t("follow")}
-                        </Button>
-                    }
-                    {selectedTopic && !selectedTopic.followed && !selectedTopic.is_owner && !isUserLogged &&
-                        <Button primary={false} href={paths.LOGIN}>
-                          {t("follow")}
-                        </Button>
-                    }
-                    {selectedTopic && selectedTopic.is_owner &&
-                        <Tag>
-                            <ALink href={paths.TOPICS}>
-                                <span className="whitespace-nowrap text-nowrap">{t("my_topics")}</span>
-                            </ALink>
-                        </Tag>
-                    }
-                  </div>
-              </div>
-              <div className="w-10 shrink-0 flex items-center justify-end">
-                {isUserLogged && selectedTopic &&
-                    <Dropdown
-                        label={t("more")}
- button={<><EllipsisHorizontalIcon/></>}
-                        small={true}
-                        position="end"
-                        bottom={true}
-                        closeOnClickInside={true}
-                    >
-                        <Menu>
-                          {dropdownButtons}
-                        </Menu>
-                    </Dropdown>
+      {!topicIsLoading && selectedTopic &&
+          <PageHeader
+              title={topicName}
+              media={<TopicIcon name={topicName} size={"md"}/>}
+              subtitle={<>
+                {selectedTopic.is_owner
+                  ? t("your_topic")
+                  : <Link className="hover:text-primary" href={paths.CURATORS + "/" + selectedTopic.curator.username}>
+                    {t("by_curator", {username: selectedTopic.curator.username})}
+                  </Link>
                 }
-              </div>
-          </>}
-        </div>
-      </TopTitle>
+                {" · "}{t("subscriptions_count", {count: topicSubscriptions.length})}
+              </>}
+              actions={<>
+                {!selectedTopic.is_owner &&
+                    <FollowToggleButton followed={selectedTopic.followed} isLoggedIn={isUserLogged}
+                                        onFollow={() => handleFollowTopic(selectedTopic.uuid)}
+                                        onUnfollow={() => handleUnfollowTopic(selectedTopic.uuid)}/>
+                }
+                <div className="hidden sm:contents">
+                  {isUserLogged && (selectedTopic.is_owner || selectedTopic.followed) &&
+                      <Button primary={false} ariaPressed={selectedTopic.is_favorite}
+                              clickAction={() => handleFavoriteTopic(selectedTopic.uuid)}
+                              tooltip={selectedTopic.is_favorite ? t("remove_from_favorites") : t("add_to_favorites")}>
+                        {selectedTopic.is_favorite ? <StarFilledIcon/> : <StarIcon/>}
+                      </Button>
+                  }
+                  <Button primary={false} clickAction={handleChatAboutThis} tooltip={t("chat_about_this")}>
+                      <ChatBubbleIcon/>
+                      {t("ask_ai")}
+                  </Button>
+                  <ShareLinkButton title={topicName}/>
+                </div>
+                <div className={dropdownButtons.length > 0 ? "contents" : "contents sm:hidden"}>
+                  <Dropdown label={t("more")} button={<EllipsisHorizontalIcon/>} small={true} position="end"
+                            bottom={true} closeOnClickInside={true}>
+                      <Menu>
+                          <div className="sm:hidden">{mobileMenuButtons}</div>
+                        {dropdownButtons}
+                      </Menu>
+                  </Dropdown>
+                </div>
+              </>}
+          />
+      }
+      {topicIsLoading && <div className="h-14 shrink-0 border-b border-neutral bg-base-100"/>}
       <div className="flex flex-col flex-1 min-h-0 bg-base-300 overflow-auto">
         {
           topicIsError && !topicIsLoading &&

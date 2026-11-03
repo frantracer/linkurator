@@ -393,7 +393,14 @@
     "max_minutes": "Max (minutes)",
     "select_all": "Select all",
     "select_none": "Select none",
-    "clear_filters": "Clear"
+    "clear_filters": "Clear",
+    "your_topic": "Your topic",
+    "subscriptions_count": "{count, plural, one {# subscription} other {# subscriptions}}",
+    "topics_count": "{count, plural, one {# topic} other {# topics}}",
+    "ask_ai": "Ask AI",
+    "copy_link": "Copy link",
+    "link_copied": "Link copied",
+    "open_source_page": "Open on {provider}"
   },
   "legal": {
     "tos_title": "Terms of Service",

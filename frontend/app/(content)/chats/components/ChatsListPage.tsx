@@ -9,7 +9,7 @@ import {InfoBanner} from "../../../../components/atoms/InfoBanner";
 import {Spinner} from "../../../../components/atoms/Spinner";
 import {AddIcon, ChatBubbleIcon} from "../../../../components/atoms/Icons";
 import SearchBar from "../../../../components/molecules/SearchBar";
-import TopTitle from "../../../../components/molecules/TopTitle";
+import PageHeader from "../../../../components/molecules/PageHeader";
 import EmptyStateNoMatches from "../../../../components/organism/EmptyStateNoMatches";
 import {paths} from "../../../../configuration";
 import {ChatConversation} from "../../../../entities/Chat";
@@ -60,16 +60,7 @@ const ChatsListPageComponent = () => {
 
   return (
     <>
-      <TopTitle>
-        <div className="flex flex-row items-center h-full w-full px-4">
-          <div className="w-10 shrink-0"/>
-          <div className="flex-1 min-w-0 flex flex-row items-center justify-center gap-2">
-            <ChatBubbleIcon/>
-            <h1 className="text-xl font-bold truncate">{t("chats")}</h1>
-          </div>
-          <div className="w-10 shrink-0"/>
-        </div>
-      </TopTitle>
+      <PageHeader title={t("chats")} icon={<ChatBubbleIcon/>}/>
       <div
         ref={containerRef}
         onScroll={handleContainerScroll}

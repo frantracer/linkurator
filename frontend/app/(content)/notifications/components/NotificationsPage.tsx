@@ -6,7 +6,7 @@ import EmptyStateBox from "../../../../components/atoms/EmptyStateBox";
 import {BellIcon} from "../../../../components/atoms/Icons";
 import {InfoBanner} from "../../../../components/atoms/InfoBanner";
 import {Spinner} from "../../../../components/atoms/Spinner";
-import TopTitle from "../../../../components/molecules/TopTitle";
+import PageHeader from "../../../../components/molecules/PageHeader";
 import NotificationCard from "../../../../components/organism/NotificationCard";
 import useNotificationsAndMarkAsRead from "../../../../hooks/useNotificationsAndMarkAsRead";
 import useProfile from "../../../../hooks/useProfile";
@@ -52,16 +52,7 @@ const NotificationsPageComponent = () => {
 
   return (
     <>
-      <TopTitle>
-        <div className="flex flex-row items-center h-full w-full px-4">
-          <div className="w-10 shrink-0"/>
-          <div className="flex-1 min-w-0 flex flex-row items-center justify-center gap-2">
-            <BellIcon/>
-            <h1 className="text-xl font-bold truncate">{t("notifications")}</h1>
-          </div>
-          <div className="w-10 shrink-0"/>
-        </div>
-      </TopTitle>
+      <PageHeader title={t("notifications")} icon={<BellIcon/>}/>
       <div
         ref={containerRef}
         onScroll={handleContainerScroll}

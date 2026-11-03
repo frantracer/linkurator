@@ -2,7 +2,7 @@
 
 import Drawer from "../../components/molecules/Drawer";
 import ThemeToggleButton from "../../components/molecules/ThemeToggleButton";
-import TopTitle from "../../components/molecules/TopTitle";
+import PageHeader from "../../components/molecules/PageHeader";
 import Button from "../../components/atoms/Button";
 import ALink from "../../components/atoms/ALink";
 import Head1 from "../../components/atoms/Head1";
@@ -467,15 +467,15 @@ const DesignSystemPage = () => {
     <div className="h-dvh w-dvw">
       <Drawer id={SIDE_BAR_NAME}>
         <LateralMenu closeMenu={() => hideLateralMenu(SIDE_BAR_NAME)}/>
-        <TopTitle>
-          <Button clickAction={() => showLateralMenu(SIDE_BAR_NAME)} showOnlyOnMobile={true}>
-            <MenuIcon/>
-          </Button>
-          <h1 className="text-2xl font-bold whitespace-nowrap truncate text-center w-full">
-            Design System
-          </h1>
-          <ThemeToggleButton/>
-        </TopTitle>
+        <PageHeader
+          title={"Design System"}
+          actions={<>
+            <Button clickAction={() => showLateralMenu(SIDE_BAR_NAME)} showOnlyOnMobile={true} ariaLabel={"Menu"}>
+              <MenuIcon/>
+            </Button>
+            <ThemeToggleButton/>
+          </>}
+        />
         <MainContent/>
       </Drawer>
     </div>

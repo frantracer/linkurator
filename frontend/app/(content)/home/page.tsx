@@ -3,7 +3,7 @@
 import {useTranslations} from "next-intl";
 import {useRouter, useSearchParams} from "next/navigation";
 import React, {Suspense, useEffect, useState} from "react";
-import TopTitle from "../../../components/molecules/TopTitle";
+import PageHeader from "../../../components/molecules/PageHeader";
 import {paths} from "../../../configuration";
 import useProfile from "../../../hooks/useProfile";
 import useSubscriptions from "../../../hooks/useSubscriptions";
@@ -171,17 +171,7 @@ const HomePageComponent = () => {
 
   return (
     <div className="flex flex-col w-full h-full min-h-0 overflow-hidden bg-base-300">
-      <TopTitle>
-        <div className="flex flex-row items-center h-full w-full px-4">
-          <div className="w-10 shrink-0 flex items-center justify-start">
-          </div>
-          <h1 className="text-xl font-bold flex-1 min-w-0 flex items-center justify-center gap-2">
-            <HomeIcon/>
-            {t("home")}
-          </h1>
-          <div className="w-10 shrink-0 flex items-center justify-end"/>
-        </div>
-      </TopTitle>
+      <PageHeader title={t("home")} icon={<HomeIcon/>}/>
 
       {isLoading &&
           <div className="flex items-center justify-center h-full">

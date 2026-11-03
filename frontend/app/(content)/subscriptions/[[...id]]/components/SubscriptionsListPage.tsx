@@ -10,7 +10,7 @@ import EmptyStateNoSubscriptions from "../../../../../components/organism/EmptyS
 import EmptyStateNoMatches from "../../../../../components/organism/EmptyStateNoMatches";
 import Miniature from "../../../../../components/atoms/Miniature";
 import SearchBar from "../../../../../components/molecules/SearchBar";
-import TopTitle from "../../../../../components/molecules/TopTitle";
+import PageHeader from "../../../../../components/molecules/PageHeader";
 import AssignTopicModal, {AssignTopicModalId} from "../../../../../components/organism/AssignTopicModal";
 import {openSearchPalette} from "../../../../../utilities/searchPaletteAction";
 import {ImportSubscriptionsModalId} from "../../../../../components/organism/ImportSubscriptionsModal";
@@ -82,16 +82,7 @@ const SubscriptionsListPageComponent = () => {
 
   return (
     <>
-      <TopTitle>
-        <div className="flex flex-row items-center h-full w-full px-4">
-          <div className="w-10 shrink-0"/>
-          <div className="flex-1 min-w-0 flex flex-row items-center justify-center gap-2">
-            <SubscriptionIcon/>
-            <h1 className="text-xl font-bold truncate">{t("subscriptions")}</h1>
-          </div>
-          <div className="w-10 shrink-0"/>
-        </div>
-      </TopTitle>
+      <PageHeader title={t("subscriptions")} icon={<SubscriptionIcon/>}/>
       <div className="flex flex-col h-full bg-base-300 overflow-y-auto overflow-x-hidden">
         <div className="flex flex-col gap-6 p-4 max-w-7xl w-full mx-auto">
           <div className="flex flex-row gap-2 w-full items-center justify-center">

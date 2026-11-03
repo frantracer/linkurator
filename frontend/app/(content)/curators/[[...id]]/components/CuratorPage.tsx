@@ -4,22 +4,24 @@ import {useTranslations} from 'next-intl';
 import {useRouter, useSearchParams} from "next/navigation";
 import React, {Suspense, useEffect, useState} from "react";
 import Button from "../../../../../components/atoms/Button";
-import CrossButton from "../../../../../components/atoms/CrossButton";
 import {
-  AddIcon,
   ChatBubbleIcon,
   EllipsisHorizontalIcon,
-  MinusIcon,
   RectangleGroup,
   ShareIcon,
   SubscriptionIcon,
   ThumbsUpIcon
 } from "../../../../../components/atoms/Icons";
-import {MenuItem} from "../../../../../components/atoms/MenuItem";
-import Miniature from "../../../../../components/atoms/Miniature";
 import Tag from "../../../../../components/atoms/Tag";
 import TagsRow from "../../../../../components/atoms/TagsRow";
-import TopTitle from "../../../../../components/molecules/TopTitle";
+import PageHeader from "../../../../../components/molecules/PageHeader";
+import FollowToggleButton from "../../../../../components/molecules/FollowToggleButton";
+import ShareLinkButton from "../../../../../components/molecules/ShareLinkButton";
+import Dropdown from "../../../../../components/atoms/Dropdown";
+import Menu from "../../../../../components/atoms/Menu";
+import {MenuItem} from "../../../../../components/atoms/MenuItem";
+import useShareLink from "../../../../../hooks/useShareLink";
+import Avatar from "../../../../../components/atoms/Avatar";
 import ContentFilterBar from "../../../../../components/organism/ContentFilterBar";
 import ContentItemCardGrid from "../../../../../components/organism/ContentItemCardGrid";
 import {paths} from "../../../../../configuration";
@@ -35,8 +37,6 @@ import CuratorTopicsList from "../../../../../components/organism/CuratorTopicsL
 import CuratorSubscriptionsList from "../../../../../components/organism/CuratorSubscriptionsList";
 import {useCuratorSubscriptions} from "../../../../../hooks/useCuratorSubscriptions";
 import {useTopics} from "../../../../../hooks/useTopics";
-import Dropdown from "../../../../../components/atoms/Dropdown";
-import Menu from "../../../../../components/atoms/Menu";
 import ShareCuratorModal, {ShareCuratorModalId} from "../../../../../components/organism/ShareCuratorModal";
 import {openModal} from "../../../../../utilities/modalAction";
 import useProviders from "../../../../../hooks/useProviders";
@@ -123,39 +123,6 @@ const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
     openModal(ShareCuratorModalId);
   }
 
-  const dropdownButtons = []
-  if (curator) {
-    if (isLoggedIn) {
-      if (curator.followed) {
-        dropdownButtons.push(
-          <MenuItem key={"curators-unfollow"} onClick={() => handleUnfollowCurator(curator.id)} hideMenuOnClick={true}>
-            <div className="flex flex-row gap-2 items-center justify-left">
-              <MinusIcon/>
-              {t("unfollow")}
-            </div>
-          </MenuItem>
-        )
-      } else {
-        dropdownButtons.push(
-          <MenuItem key={"curators-follow"} onClick={() => handleFollowCurator(curator.id)} hideMenuOnClick={true}>
-            <div className="flex flex-row gap-2 items-center justify-left">
-              <AddIcon/>
-              {t("follow")}
-            </div>
-          </MenuItem>
-        )
-      }
-    }
-    dropdownButtons.push(
-      <MenuItem key={"curators-chat"} onClick={handleChatAboutThis} hideMenuOnClick={true}>
-        <div className="flex flex-row gap-2 items-center justify-left">
-          <ChatBubbleIcon/>
-          {t("chat_about_this")}
-        </div>
-      </MenuItem>
-    )
-  }
-
   useEffect(() => {
     if (filters.textSearch === debouncedFilters.textSearch) {
       setDebouncedFilters(filters)
@@ -167,6 +134,25 @@ const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
     }
   }, [debouncedFilters.textSearch, filters]);
 
+  const shareCuratorLink = useShareLink(curatorName);
+
+  // On phones Ask AI and Share live in an overflow menu so the header keeps to one row
+  const mobileMenuButtons = [
+    <MenuItem key={"curators-chat"} onClick={handleChatAboutThis} hideMenuOnClick={true}>
+      <div className="flex flex-row gap-2 items-center justify-left">
+        <ChatBubbleIcon/>
+        {t("ask_ai")}
+      </div>
+    </MenuItem>,
+    <MenuItem key={"curators-share"} onClick={isOwnCuratorProfile ? handleShareCurator : shareCuratorLink}
+              hideMenuOnClick={true}>
+      <div className="flex flex-row gap-2 items-center justify-left">
+        <ShareIcon/>
+        {t("share")}
+      </div>
+    </MenuItem>,
+  ];
+
   const sections: { key: SectionKey; title: string; icon: React.ReactNode }[] = [
     {key: "recommendations", title: t("recommendations"), icon: <ThumbsUpIcon/>},
     {key: "topics", title: t("topics"), icon: <RectangleGroup/>},
@@ -175,67 +161,42 @@ const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
 
   return (
     <div className="flex flex-col w-full h-full min-h-0 overflow-hidden">
-      <TopTitle>
-        <div className="flex flex-row items-center gap-4 h-full w-full px-4">
-          {!isMainDataLoading && curator &&
-              <>
-                  <div className="w-10 shrink-0"/>
-                  <div className="flex-1 min-w-0 flex flex-col items-center gap-2 overflow-hidden">
-                      <div className="w-full flex flex-row gap-2 items-center justify-center overflow-hidden">
-                          <div className="shrink-0">
-                              <Miniature src={curatorThumbnail} alt={curatorName}/>
-                          </div>
-                          <h1 className="text-xl font-bold min-w-0 whitespace-nowrap truncate">
-                            {curatorName}
-                          </h1>
-                      </div>
-                      <div className="flex flex-row gap-2 items-center justify-center">
-                        {curator && curator.followed &&
-                            <Tag>
-                    <span>
-                    {t("following")}
-                    </span>
-                                <CrossButton onClick={() => handleUnfollowCurator(curator.id)}/>
-                            </Tag>
-                        }
-                        {curator && !curator.followed && isLoggedIn && !isOwnCuratorProfile &&
-                            <Button primary={false} clickAction={() => handleFollowCurator(curator.id)}>
-                              {t("follow")}
-                            </Button>
-                        }
-                        {curator && !curator.followed && !isLoggedIn &&
-                            <Button primary={false} href={paths.LOGIN}>
-                              {t("follow")}
-                            </Button>
-                        }
-                        {isOwnCuratorProfile &&
-                            <Button primary={false} clickAction={handleShareCurator}>
-                                <ShareIcon/>
-                              {t("share")}
-                            </Button>
-                        }
-                      </div>
-                  </div>
-                  <div className="w-10 shrink-0 flex items-center justify-end">
-                    {isLoggedIn && !isOwnCuratorProfile && curator &&
-                        <Dropdown
-                            small={true}
-                            position="end"
-                            bottom={true}
-                            label={t("more")}
- button={<><EllipsisHorizontalIcon/></>}
-                            closeOnClickInside={true}
-                        >
-                            <Menu>
-                              {dropdownButtons}
-                            </Menu>
-                        </Dropdown>
-                    }
-                  </div>
-              </>
-          }
-        </div>
-      </TopTitle>
+      {!isMainDataLoading && curator &&
+          <PageHeader
+              title={curatorName}
+              media={<Avatar src={curatorThumbnail} alt=""/>}
+              subtitle={t("topics_count", {count: topics.length})}
+              actions={<>
+                {!isOwnCuratorProfile &&
+                    <FollowToggleButton followed={curator.followed} isLoggedIn={isLoggedIn}
+                                        onFollow={() => handleFollowCurator(curator.id)}
+                                        onUnfollow={() => handleUnfollowCurator(curator.id)}/>
+                }
+                <div className="hidden sm:contents">
+                  <Button primary={false} clickAction={handleChatAboutThis} tooltip={t("chat_about_this")}>
+                      <ChatBubbleIcon/>
+                      {t("ask_ai")}
+                  </Button>
+                  {isOwnCuratorProfile
+                    ? <Button primary={false} clickAction={handleShareCurator} tooltip={t("share")}>
+                      <ShareIcon/>
+                      {t("share")}
+                    </Button>
+                    : <ShareLinkButton title={curatorName}/>
+                  }
+                </div>
+                <div className="contents sm:hidden">
+                  <Dropdown label={t("more")} button={<EllipsisHorizontalIcon/>} small={true} position="end"
+                            bottom={true} closeOnClickInside={true}>
+                      <Menu>
+                        {mobileMenuButtons}
+                      </Menu>
+                  </Dropdown>
+                </div>
+              </>}
+          />
+      }
+      {(isMainDataLoading || !curator) && <div className="h-14 shrink-0 border-b border-neutral bg-base-100"/>}
 
       <div className="flex flex-col flex-1 min-h-0 bg-base-300 overflow-hidden">
         <TagsRow>

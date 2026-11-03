@@ -7,7 +7,7 @@ import React, {useEffect, useState} from "react";
 import {configuration, paths} from "../../../configuration";
 import Button from "../../../components/atoms/Button";
 import FlexColumn from "../../../components/atoms/FlexColumn";
-import TopTitle from "../../../components/molecules/TopTitle";
+import PageHeader from "../../../components/molecules/PageHeader";
 import FlexRow from "../../../components/atoms/FlexRow";
 import Avatar from "../../../components/atoms/Avatar";
 import Box from "../../../components/atoms/Box";
@@ -90,16 +90,7 @@ const ProfilePage: NextPage = () => {
 
   return (
     <main className="flex flex-col h-full bg-base-200">
-      <TopTitle>
-        <div className="flex flex-row items-center h-full w-full px-4">
-          <div className="w-10 shrink-0 flex items-center justify-start"/>
-          <h1 className="text-xl font-bold flex-1 min-w-0 flex items-center justify-center gap-2">
-            <ProfileIcon/>
-            {t("my_profile")}
-          </h1>
-          <div className="w-10 shrink-0"/>
-        </div>
-      </TopTitle>
+      <PageHeader title={t("my_profile")} icon={<ProfileIcon/>}/>
       <div className="h-full overflow-y-auto">
         <FlexRow position={"center"}>
           <FlexItem grow={true}>
