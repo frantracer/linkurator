@@ -388,10 +388,10 @@ const SelectSection = () => {
 const DropdownSection = () => {
   const DropdownButton = ({text}: { text: string }) => {
     return (
-      <Button primary={false} fitContent={true} stopPropagation={false}>
+      <>
         <MenuIcon/>
         <span>{text}</span>
-      </Button>
+      </>
     )
   }
 
@@ -399,19 +399,19 @@ const DropdownSection = () => {
     <Section>
       <Head1># Dropdown</Head1>
       <FlexColumn position={"center"}>
-        <Dropdown button={<DropdownButton text={"Bottom start"}/>}>
+        <Dropdown label={"Bottom start"} button={<DropdownButton text={"Bottom start"}/>}>
           <Button fitContent={false}>Item 1</Button>
           <Button fitContent={false}>Item 2</Button>
         </Dropdown>
-        <Dropdown button={<DropdownButton text={"Bottom end"}/>} position="end">
+        <Dropdown label={"Bottom end"} button={<DropdownButton text={"Bottom end"}/>} position="end">
           <Button fitContent={false}>Item 1</Button>
           <Button fitContent={false}>Item 2</Button>
         </Dropdown>
-        <Dropdown button={<DropdownButton text={"Top start"}/>} bottom={false}>
+        <Dropdown label={"Top start"} button={<DropdownButton text={"Top start"}/>} bottom={false}>
           <Button fitContent={false}>Item 1</Button>
           <Button fitContent={false}>Item 2</Button>
         </Dropdown>
-        <Dropdown button={<DropdownButton text={"Top end"}/>} bottom={false} position="end">
+        <Dropdown label={"Top end"} button={<DropdownButton text={"Top end"}/>} bottom={false} position="end">
           <Button fitContent={false}>Item 1</Button>
           <Button fitContent={false}>Item 2</Button>
         </Dropdown>

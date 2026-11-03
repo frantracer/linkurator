@@ -167,12 +167,8 @@ const ContentFilterBar = (
         }
         {showInteractions &&
             <Dropdown
-                button={
-                  <Button primary={false} fitContent={true} stopPropagation={false}>
-                    <span>{t("interactions")}: {selectedInteractionsCount}</span>
-                    <ChevronDownIcon/>
-                  </Button>
-                }
+                label={t("interactions")}
+ button={<><span>{t("interactions")}: {selectedInteractionsCount}</span><ChevronDownIcon/></>}
                 small={true}
                 position="start"
                 bottom={true}

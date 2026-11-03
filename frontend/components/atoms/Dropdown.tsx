@@ -1,8 +1,13 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, {useEffect, useId, useRef, useState} from "react";
 import classNames from "classnames";
+
+export type DropdownTriggerStyle = "outline" | "ghost" | "bare";
 
 type DropdownProps = {
   button: React.ReactNode
+  label: string
+  triggerStyle?: DropdownTriggerStyle
+  fullWidth?: boolean
   small?: boolean
   bottom?: boolean
   position?: "start" | "center" | "end"
@@ -13,6 +18,9 @@ type DropdownProps = {
 const Dropdown = (
   {
     button,
+    label,
+    triggerStyle = "outline",
+    fullWidth = false,
     small = false,
     bottom = true,
     position = "start",
@@ -22,8 +30,9 @@ const Dropdown = (
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const menuContentRef = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const menuId = useId();
 
-  // Close dropdown when clicking
   useEffect(() => {
     const handleClick = (event: MouseEvent) => {
       if (dropdownRef.current) {
@@ -45,6 +54,14 @@ const Dropdown = (
     };
   }, [closeOnClickInside]);
 
+  const handleKeyDown = (event: React.KeyboardEvent) => {
+    if (event.key === "Escape" && isOpen) {
+      event.stopPropagation();
+      setIsOpen(false);
+      triggerRef.current?.focus();
+    }
+  };
+
   const contentPositionClass = classNames(
     "absolute z-50 mt-1",
     {
@@ -62,22 +79,36 @@ const Dropdown = (
     "w-72": !small,
   });
 
+  const triggerClass = classNames({
+    "btn btn-sm rounded-md px-2 gap-1.5 font-medium flex-nowrap btn-outline border-neutral text-base-content hover:!bg-base-content/5 hover:!text-primary hover:!border-primary": triggerStyle === "outline",
+    "btn btn-sm rounded-md px-2 gap-1.5 font-medium flex-nowrap btn-ghost hover:!bg-base-content/10 hover:!text-primary": triggerStyle === "ghost",
+    "rounded-full": triggerStyle === "bare",
+    "btn-active !border-primary !text-primary": isOpen && triggerStyle !== "bare",
+    "w-full": fullWidth,
+  });
+
   return (
-    <div className="flex-none flex justify-center">
-      <div className="relative" ref={dropdownRef}>
-        <div
-          tabIndex={0}
-          role="button"
+    <div className={classNames("flex-none flex justify-center", {"w-full": fullWidth})} onKeyDown={handleKeyDown}>
+      <div className={classNames("relative", {"w-full": fullWidth})} ref={dropdownRef}>
+        <button
+          type="button"
+          ref={triggerRef}
+          className={triggerClass}
+          aria-label={label}
+          title={label}
+          aria-haspopup="true"
+          aria-expanded={isOpen}
+          aria-controls={menuId}
           onClick={() => setIsOpen(!isOpen)}
         >
           {button}
-        </div>
+        </button>
         <div
-          tabIndex={0}
+          id={menuId}
           className={classNames(
             contentPositionClass,
             sizeClass,
-            "bg-base-200 rounded-lg p-0 shadow-lg max-h-96 overflow-y-auto border border-neutral"
+            "bg-base-100 rounded-lg p-1 shadow-lg max-h-96 overflow-y-auto border border-neutral"
           )}
           ref={menuContentRef}
         >

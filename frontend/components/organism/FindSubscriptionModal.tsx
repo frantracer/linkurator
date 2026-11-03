@@ -121,12 +121,11 @@ const FindSubscriptionModal = (props: FindSubscriptionModalProps) => {
       <FlexColumn>
         <div className={`flex flex-row gap-2 items-center h-fit w-full`}>
           <Dropdown
-            button={
-              <Button primary={false} fitContent={true} stopPropagation={false}>
-                {selectedProvider && <Miniature src={selectedProvider.iconUrl} alt={selectedProvider.name}/>}
-                {selectedProvider && <span>{selectedProvider.prettyName}</span>}
-              </Button>
-            }
+            label={selectedProvider ? selectedProvider.prettyName : t("search")}
+            button={<>
+              {selectedProvider && <Miniature src={selectedProvider.iconUrl} alt=""/>}
+              {selectedProvider && <span>{selectedProvider.prettyName}</span>}
+            </>}
             closeOnClickInside={true}
           >
             {providers.map((p) => (

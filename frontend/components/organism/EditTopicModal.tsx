@@ -128,12 +128,8 @@ const EditTopicModal = ({providers, ...props}: EditTopicModalProps) => {
         <Dropdown
           position={"center"}
           bottom={false}
-          button={
-            <Button primary={false} fitContent={true} stopPropagation={false}>
-              <AddIcon/>
-              {t("add_subscriptions")}
-            </Button>
-          }>
+          label={t("add_subscriptions")}
+          button={<><AddIcon/>{t("add_subscriptions")}</>}>
           <div className={"h-60"}>
             <Menu>
               {subscriptionsMenuItems.length === 0 &&

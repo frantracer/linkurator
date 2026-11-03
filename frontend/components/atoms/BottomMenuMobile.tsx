@@ -95,17 +95,9 @@ const BottomMenuMobile = () => {
         bottom={false}
         position={"end"}
         closeOnClickInside={true}
-        button={
-          <Button
-            fitContent={true}
-            primary={false}
-            borderless={true}
-            tooltip={t("search")}
-            stopPropagation={false}
-          >
-            <MagnifyingGlassIcon/>
-          </Button>
-        }
+        label={t("search")}
+        triggerStyle={"ghost"}
+        button={<MagnifyingGlassIcon/>}
       >
         <MenuItem onClick={openFindTopicModal}>
           <div className="flex flex-row items-center gap-2">

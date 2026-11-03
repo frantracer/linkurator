@@ -114,12 +114,8 @@ const NewTopicModal = ({providers, ...props}: NewTopicModalProps) => {
         <Dropdown
           position={"center"}
           bottom={false}
-          button={
-            <Button primary={false} fitContent={false} stopPropagation={false}>
-              <AddIcon/>
-              {t("add_subscriptions")}
-            </Button>
-          }>
+          label={t("add_subscriptions")} fullWidth={true}
+ button={<><AddIcon/>{t("add_subscriptions")}</>}>
           <div className={"h-60"}>
             <Menu>
               {subscriptionsMenuItems.length === 0 &&

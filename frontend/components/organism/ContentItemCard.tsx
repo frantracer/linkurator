@@ -244,21 +244,8 @@ const ContentItemCard = (
                       bottom={false}
                       position="end"
                       closeOnClickInside={true}
-                      button={
-                        <span
-                          className={classNames(
-                            "btn btn-sm btn-outline px-2 rounded-md",
-                            "hover:!bg-base-300 hover:!border-primary hover:!text-primary",
-                            {
-                              "border-neutral text-base-content": !discouraged && !hidden,
-                              "border-primary text-primary": discouraged || hidden,
-                            }
-                          )}
-                          title={t("more_actions")}
-                          aria-label={t("more_actions")}>
-                          <EllipsisHorizontalIcon/>
-                        </span>
-                      }>
+                      label={t("more_actions")}
+                      button={<EllipsisHorizontalIcon/>}>
                       <li>
                           <MenuItem onClick={toggleDiscouraged} selected={discouraged}>
                               <span className="flex items-center gap-2">

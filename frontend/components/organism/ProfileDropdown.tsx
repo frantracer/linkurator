@@ -32,6 +32,8 @@ const ProfileDropdown = (
   return (
     <>
       <Dropdown
+        label={t("my_profile")}
+        triggerStyle={"bare"}
         button={
           <div className="relative">
             {withNotifications && unreadCount > 0 &&

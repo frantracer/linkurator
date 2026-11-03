@@ -141,12 +141,8 @@ const AssignTopicModal = (props: AssignTopicModalProps) => {
           <Dropdown
             position={"center"}
             bottom={false}
-            button={
-              <Button primary={false} fitContent={true} stopPropagation={false}>
-                <AddIcon/>
-                {t("assign_topic")}
-              </Button>
-            }>
+            label={t("assign_topic")}
+ button={<><AddIcon/>{t("assign_topic")}</>}>
             <div className={"h-60"}>
               <Menu>
                 {topicsMenuItems}

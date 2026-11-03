@@ -229,11 +229,8 @@ const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
                             small={true}
                             position="end"
                             bottom={true}
-                            button={
-                              <Button primary={false} fitContent={true} stopPropagation={false}>
-                                <EllipsisHorizontalIcon/>
-                              </Button>
-                            }
+                            label={t("more")}
+ button={<><EllipsisHorizontalIcon/></>}
                             closeOnClickInside={true}
                         >
                             <Menu>

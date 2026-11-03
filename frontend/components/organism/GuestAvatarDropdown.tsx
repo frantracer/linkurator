@@ -17,6 +17,8 @@ const GuestAvatarDropdown = ({bottom = true, position = "end"}: GuestAvatarDropd
 
   return (
     <Dropdown
+      label={t("menu")}
+      triggerStyle={"bare"}
       button={
         <div
           className="w-fit h-fit border-transparent hover:border-primary border-2 rounded-full overflow-hidden p-0">

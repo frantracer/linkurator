@@ -233,11 +233,8 @@ const SubscriptionPageComponent = ({subscriptionId}: { subscriptionId: string })
               <div className="w-10 shrink-0 flex items-center justify-end">
                 {isUserLogged && selectedSubscription &&
                     <Dropdown
-                        button={
-                          <Button primary={false} fitContent={true} stopPropagation={false}>
-                            <EllipsisHorizontalIcon/>
-                          </Button>
-                        }
+                        label={t("more")}
+ button={<><EllipsisHorizontalIcon/></>}
                         small={true}
                         position="end"
                         bottom={true}
