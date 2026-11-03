@@ -298,10 +298,12 @@ const CardSection = () => {
       <Head1 id={CARDS_REF}># Cards</Head1>
       <div className="flex flex-col md:flex-row gap-12 m-auto p-4 w-full
       border-base-100 border-solid border-2 rounded justify-center items-center">
-        <ItemCardSkeleton/>
-        <ContentItemCard item={item} providers={[]} onChange={undefined} onChangeSwapButton={async () => {
-        }}/>
-        <ContentItemCard item={item} providers={[]} withInteractions={false}/>
+        <div className="w-72"><ItemCardSkeleton/></div>
+        <div className="w-72">
+          <ContentItemCard item={item} providers={[]} onChange={undefined} onChangeSwapButton={async () => {
+          }}/>
+        </div>
+        <div className="w-72"><ContentItemCard item={item} providers={[]} withInteractions={false}/></div>
       </div>
     </Section>
   );

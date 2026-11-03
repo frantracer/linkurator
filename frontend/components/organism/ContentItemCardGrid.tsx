@@ -86,8 +86,8 @@ const ContentItemCardGrid = (
 
     if (shouldShowItem && !invalidCards.has(item.uuid)) {
       cards.push(
-        <div className="m-4" key={item.uuid}>
-          <ContentItemCard
+        <ContentItemCard
+            key={item.uuid}
             item={item}
             providers={providers}
             withSubscription={withSubscription}
@@ -96,7 +96,6 @@ const ContentItemCardGrid = (
             onChangeSwapButton={onChangeSwapButton}
             addInvalidCard={addInvalidCard}
           />
-        </div>
       );
     }
   }
@@ -144,8 +143,7 @@ const ContentItemCardGrid = (
             </div>
         }
         {!isBeingScanned &&
-            <div className="grid grid-cols-[repeat(auto-fill,minmax(320px,1fr))] gap-4
-            justify-items-center justify-content-center">
+            <div className="grid grid-cols-[repeat(auto-fill,minmax(min(100%,17.5rem),1fr))] gap-x-4 gap-y-6 p-4">
               {cards}
             </div>
         }

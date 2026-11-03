@@ -44,7 +44,7 @@ const ItemCarousel = ({
         <h2 className={`${titleClass}`}>{title}</h2>
         <div className={`flex gap-3 overflow-x-auto`}>
           {Array.from({ length: skeletonCount }).map((_, index) => (
-            <ItemCardSkeleton key={index} />
+            <div key={index} className="flex-shrink-0 w-72"><ItemCardSkeleton/></div>
           ))}
         </div>
       </div>
@@ -83,14 +83,13 @@ const ItemCarousel = ({
             onTouchStart={handleTouchStart}
           >
             {items.map((item) => (
-              <div key={item.uuid} className="flex-shrink-0">
+              <div key={item.uuid} className="flex-shrink-0 w-72">
                 <ContentItemCard
                   item={item}
                   providers={providers}
                   withSubscription={true}
                   withInteractions={true}
                   onChange={() => refreshItem(item.uuid)}
-                  limitTitleLength={true}
                 />
               </div>
             ))}
