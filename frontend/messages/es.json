@@ -375,7 +375,9 @@
         "dark_theme": "Tema oscuro",
         "light_theme": "Tema claro",
         "skip_to_content": "Saltar al contenido",
-        "close": "Cerrar"
+        "close": "Cerrar",
+        "delete_account_failed": "No hemos podido eliminar tu cuenta. Inténtalo de nuevo.",
+        "delete_topic_failed": "No hemos podido eliminar la categoría. Inténtalo de nuevo."
     },
     "legal": {
         "tos_title": "Términos del servicio",

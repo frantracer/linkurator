@@ -375,7 +375,9 @@
     "dark_theme": "Dark theme",
     "light_theme": "Light theme",
     "skip_to_content": "Skip to content",
-    "close": "Close"
+    "close": "Close",
+    "delete_account_failed": "We couldn't delete your account. Please try again.",
+    "delete_topic_failed": "We couldn't delete the topic. Please try again."
   },
   "legal": {
     "tos_title": "Terms of Service",

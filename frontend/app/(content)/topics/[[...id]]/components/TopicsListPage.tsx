@@ -7,9 +7,7 @@ import Collapse from "../../../../../components/atoms/Collapse";
 import {AddIcon, MagnifyingGlassIcon, RectangleGroup, StarIcon} from "../../../../../components/atoms/Icons";
 import SearchBar from "../../../../../components/molecules/SearchBar";
 import TopTitle from "../../../../../components/molecules/TopTitle";
-import DeleteTopicConfirmationModal, {
-  DeleteTopicConfirmationModalId
-} from "../../../../../components/organism/DeleteTopicConfirmationModal";
+import ConfirmDialog from "../../../../../components/organism/ConfirmDialog";
 import EditTopicModal, {EditTopicModalId} from "../../../../../components/organism/EditTopicModal";
 import EmptyStateNoMatches from "../../../../../components/organism/EmptyStateNoMatches";
 import EmptyStateNoTopics from "../../../../../components/organism/EmptyStateNoTopics";
@@ -26,6 +24,8 @@ import {deleteTopic, followTopic, unfollowTopic} from "../../../../../services/t
 import {openModal} from "../../../../../utilities/modalAction";
 import {flushSync} from "react-dom";
 import {useToast} from "../../../../../contexts/ToastContext";
+
+const DeleteTopicDialogId = "delete-topic-dialog";
 
 const TopicsListPageComponent = () => {
   const t = useTranslations("common");
@@ -60,7 +60,7 @@ const TopicsListPageComponent = () => {
 
   const handleDeleteTopic = (topic: Topic) => {
     setDeletingTopic(topic);
-    openModal(DeleteTopicConfirmationModalId);
+    openModal(DeleteTopicDialogId);
   }
 
   const handleFollowTopic = (topic: Topic) => {
@@ -74,11 +74,11 @@ const TopicsListPageComponent = () => {
     });
   }
 
-  const confirmDeleteTopic = () => {
+  const confirmDeleteTopic = async () => {
     if (deletingTopic) {
-      const topicId = deletingTopic.uuid;
+      await deleteTopic(deletingTopic.uuid);
       setDeletingTopic(null);
-      deleteTopic(topicId).then(() => refreshTopics());
+      refreshTopics();
     }
   }
 
@@ -180,7 +180,14 @@ const TopicsListPageComponent = () => {
         />
       )}
 
-      <DeleteTopicConfirmationModal onDeleteTopic={confirmDeleteTopic}/>
+      <ConfirmDialog
+        id={DeleteTopicDialogId}
+        title={t("delete_topic_confirmation")}
+        message={t("delete_topic_confirmation_message")}
+        confirmLabel={t("delete")}
+        errorMessage={t("delete_topic_failed")}
+        onConfirm={confirmDeleteTopic}
+      />
     </>
   );
 }

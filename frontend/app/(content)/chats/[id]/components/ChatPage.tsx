@@ -13,11 +13,8 @@ import {useQueryClient} from '@tanstack/react-query';
 import useProfile from "../../../../../hooks/useProfile";
 import {v4 as uuidv4} from 'uuid';
 import {useRouter} from 'next/navigation';
-import DeleteChatConfirmationModal, {
-  DeleteChatConfirmationModalId
-} from "../../../../../components/organism/DeleteChatConfirmationModal";
-import ErrorModal, {ErrorModalId} from "../../../../../components/organism/ErrorModal";
-import {closeModal, openModal} from "../../../../../utilities/modalAction";
+import ConfirmDialog from "../../../../../components/organism/ConfirmDialog";
+import {openModal} from "../../../../../utilities/modalAction";
 import {useTranslations} from 'next-intl';
 import ItemCarousel from "../../../../../components/molecules/ItemCarousel";
 import ReactMarkdown from 'react-markdown';
@@ -51,6 +48,7 @@ import {
 
 const MESSAGE_LIMIT = 5;
 const CHARACTER_LIMIT = 500;
+const DeleteChatDialogId = "delete-chat-dialog";
 
 const scopeEntityFromPicked = (entity: PickedEntity): ChatScopeEntity => {
   switch (entity.kind) {
@@ -66,8 +64,6 @@ const scopeEntityFromPicked = (entity: PickedEntity): ChatScopeEntity => {
 const ChatPageComponent = ({conversationId}: { conversationId: string }) => {
   const [inputMessage, setInputMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [isDeleting, setIsDeleting] = useState(false);
-  const [errorMessage, setErrorMessage] = useState({title: '', message: ''});
   const queryClient = useQueryClient();
   const router = useRouter();
   const t = useTranslations('common');
@@ -191,36 +187,14 @@ const ChatPageComponent = ({conversationId}: { conversationId: string }) => {
   };
 
   const handleDeleteChat = async () => {
-    if (isDeleting) return;
-
-    setIsDeleting(true);
-    try {
-      await deleteChat(conversationId);
-
-      // Close the modal and navigate
-      closeModal(DeleteChatConfirmationModalId);
-
-      // Invalidate and refetch the conversations list
-      queryClient.invalidateQueries({queryKey: ['chatConversations']});
-      queryClient.removeQueries({queryKey: ['chat', conversationId]});
-
-      // Navigate back to chat home
-      router.push(paths.CHATS + '/' + uuidv4());
-    } catch (error) {
-      console.error('Error deleting conversation:', error);
-      closeModal(DeleteChatConfirmationModalId);
-      setErrorMessage({
-        title: t('deletion_failed'),
-        message: t('delete_conversation_error')
-      });
-      openModal(ErrorModalId);
-    } finally {
-      setIsDeleting(false);
-    }
+    await deleteChat(conversationId);
+    queryClient.invalidateQueries({queryKey: ['chatConversations']});
+    queryClient.removeQueries({queryKey: ['chat', conversationId]});
+    router.push(paths.CHATS + '/' + uuidv4());
   };
 
   const handleDeleteButtonClick = () => {
-    openModal(DeleteChatConfirmationModalId);
+    openModal(DeleteChatDialogId);
   };
 
   const handleFiltersChange = (newFilters: Filters) => {
@@ -298,7 +272,6 @@ const ChatPageComponent = ({conversationId}: { conversationId: string }) => {
               <Button
                 fitContent={true}
                 clickAction={handleDeleteButtonClick}
-                disabled={isDeleting}
                 primary={false}
                 tooltip={t("delete_conversation")}
               >
@@ -443,13 +416,14 @@ const ChatPageComponent = ({conversationId}: { conversationId: string }) => {
       </div>
 
       {/* Modals */}
-      <DeleteChatConfirmationModal
-        onDeleteChat={handleDeleteChat}
-        isDeleting={isDeleting}
-      />
-      <ErrorModal
-        title={errorMessage.title}
-        message={errorMessage.message}
+      <ConfirmDialog
+        id={DeleteChatDialogId}
+        title={t('delete_conversation')}
+        message={t('delete_conversation_confirmation')}
+        confirmLabel={t('delete')}
+        busyLabel={t('deleting')}
+        errorMessage={t('delete_conversation_error')}
+        onConfirm={handleDeleteChat}
       />
       {isLoggedIn && <ChatScopeModal scope={scope} onToggleEntity={handleToggleEntity} onClearScope={handleClearScope}/>}
     </div>

@@ -19,9 +19,7 @@ import {
 import {MenuItem} from "../../../../../components/atoms/MenuItem";
 import Miniature from "../../../../../components/atoms/Miniature";
 import Tag from "../../../../../components/atoms/Tag";
-import DeleteTopicConfirmationModal, {
-  DeleteTopicConfirmationModalId
-} from "../../../../../components/organism/DeleteTopicConfirmationModal";
+import ConfirmDialog from "../../../../../components/organism/ConfirmDialog";
 import EditTopicModal, {EditTopicModalId} from "../../../../../components/organism/EditTopicModal";
 import ContentFilterBar from "../../../../../components/organism/ContentFilterBar";
 import ContentItemCardGrid from "../../../../../components/organism/ContentItemCardGrid";
@@ -47,6 +45,8 @@ import useProviders from "../../../../../hooks/useProviders";
 import ALink from "../../../../../components/atoms/ALink";
 
 const REFRESH_TOPICS_INTERVAL = 10000;
+
+const DeleteTopicDialogId = "delete-topic-dialog";
 
 const TopicPageComponent = ({topicId}: { topicId: string }) => {
   const t = useTranslations("common");
@@ -103,7 +103,7 @@ const TopicPageComponent = ({topicId}: { topicId: string }) => {
   }
 
   const handleDeleteTopic = () => {
-    openModal(DeleteTopicConfirmationModalId)
+    openModal(DeleteTopicDialogId)
   }
 
   const handleFavoriteTopic = (topicId: string) => {
@@ -112,12 +112,10 @@ const TopicPageComponent = ({topicId}: { topicId: string }) => {
     }
   }
 
-  const deleteTopicAction = (topicId: string) => {
-    deleteTopic(topicId)
-      .then(() => {
-        refreshTopics()
-        router.push(paths.TOPICS)
-      })
+  const deleteTopicAction = async (topicId: string) => {
+    await deleteTopic(topicId);
+    refreshTopics();
+    router.push(paths.TOPICS);
   }
 
   useEffect(() => {
@@ -329,7 +327,14 @@ const TopicPageComponent = ({topicId}: { topicId: string }) => {
         }
         {
           selectedTopic &&
-            <DeleteTopicConfirmationModal onDeleteTopic={() => deleteTopicAction(selectedTopic.uuid)}/>
+            <ConfirmDialog
+                id={DeleteTopicDialogId}
+                title={t("delete_topic_confirmation")}
+                message={t("delete_topic_confirmation_message")}
+                confirmLabel={t("delete")}
+                errorMessage={t("delete_topic_failed")}
+                onConfirm={() => deleteTopicAction(selectedTopic.uuid)}
+            />
         }
       </div>
     </div>

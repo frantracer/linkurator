@@ -12,7 +12,7 @@ import FlexRow from "../../../components/atoms/FlexRow";
 import Avatar from "../../../components/atoms/Avatar";
 import Box from "../../../components/atoms/Box";
 import {deleteProfile, PersonalDataChanges} from "../../../services/profileService";
-import DeleteAccountModal, {DeleteAccountModalId} from "../../../components/organism/DeleteAccountModal";
+import ConfirmDialog from "../../../components/organism/ConfirmDialog";
 import {openModal} from "../../../utilities/modalAction";
 import InputText from "../../../components/atoms/InputText";
 import Divider from "../../../components/atoms/Divider";
@@ -20,6 +20,8 @@ import FlexItem from "../../../components/atoms/FlexItem";
 import {useTranslations} from "next-intl";
 import {ProfileIcon} from "../../../components/atoms/Icons";
 import {useToast} from "../../../contexts/ToastContext";
+
+const DeleteAccountDialogId = "delete-account-dialog";
 
 const ProfilePage: NextPage = () => {
   const t = useTranslations("common");
@@ -141,7 +143,7 @@ const ProfilePage: NextPage = () => {
                     </Box>
                     <Divider/>
                     <Box title={t("privacy")}>
-                      <Button fitContent={true} clickAction={() => openModal(DeleteAccountModalId)}>
+                      <Button fitContent={true} clickAction={() => openModal(DeleteAccountDialogId)}>
                         <span>{t("delete_account")}</span>
                       </Button>
                     </Box>
@@ -153,13 +155,19 @@ const ProfilePage: NextPage = () => {
           </FlexItem>
         </FlexRow>
       </div>
-      <DeleteAccountModal userEmail={email} onDeleteAccount={() => {
-        deleteProfile().then(() => {
+      <ConfirmDialog
+        id={DeleteAccountDialogId}
+        title={t("delete_account_title")}
+        message={t("delete_account_warning")}
+        confirmLabel={t("delete")}
+        errorMessage={t("delete_account_failed")}
+        confirmationText={email}
+        confirmationInstruction={t("delete_account_instruction")}
+        onConfirm={async () => {
+          await deleteProfile();
           router.push(configuration.LOGOUT_URL);
-        }).catch((error) => {
-          console.error("Error deleting profile", error);
-        });
-      }}/>
+        }}
+      />
     </main>
   );
 };
