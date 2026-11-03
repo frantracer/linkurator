@@ -426,7 +426,10 @@
     "show_password": "Show password",
     "hide_password": "Hide password",
     "password_hint": "At least 8 characters.",
-    "username_hint": "Between 4 and 16 characters."
+    "username_hint": "Between 4 and 16 characters.",
+    "send_failed": "Couldn't send this message.",
+    "message_input_label": "Message",
+    "characters_left": "{count} characters left"
   },
   "legal": {
     "tos_title": "Terms of Service",

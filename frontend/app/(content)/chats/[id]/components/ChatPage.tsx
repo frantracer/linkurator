@@ -40,6 +40,7 @@ import {
   consumeChatScope,
   filtersFromScope,
   isEntityInScope,
+  newScopedChatPath,
   removeScopeEntity,
   scopeFromFilters,
   scopeHasKind,
@@ -72,6 +73,7 @@ const ChatPageComponent = ({conversationId}: { conversationId: string }) => {
 
   const {conversation, isLoading: conversationLoading} = useChat(conversationId);
   const [localMessages, setLocalMessages] = useState<ChatMessage[]>([]);
+  const [failedMessageIds, setFailedMessageIds] = useState<string[]>([]);
   const consumedScopeRef = useRef(false);
   const {profile, profileIsLoading} = useProfile();
   const isLoggedIn = !!profile;
@@ -136,9 +138,38 @@ const ChatPageComponent = ({conversationId}: { conversationId: string }) => {
     scrollToBottom();
   }, [localMessages]);
 
-  // Count user messages
-  const userMessageCount = localMessages.filter(message => message.sender === 'user').length;
+  // Failed messages never reached the agent, so they don't count towards the limit
+  const userMessageCount = localMessages
+    .filter(message => message.sender === 'user' && !failedMessageIds.includes(message.id)).length;
   const isMessageLimitReached = userMessageCount >= MESSAGE_LIMIT;
+
+  const sendToAgent = async (userMessage: ChatMessage) => {
+    setFailedMessageIds(ids => ids.filter(id => id !== userMessage.id));
+    setIsLoading(true);
+
+    try {
+      await queryAgent(conversationId, userMessage.content, userMessage.scope ?? {});
+
+      // Invalidate and refetch the conversation data
+      await queryClient.invalidateQueries({queryKey: ['chat', conversationId]});
+      await queryClient.invalidateQueries({queryKey: ['chatConversations']});
+    } catch (error) {
+      if (error instanceof ChatRateLimitError) {
+        const rateLimitMessage: ChatMessage = {
+          id: uuidv4(),
+          content: "",
+          sender: 'rate_limit',
+          timestamp: new Date(),
+          items: [],
+          topicsWereCreated: false,
+        };
+        setLocalMessages(prev => [...prev, rateLimitMessage]);
+      } else {
+        setFailedMessageIds(ids => ids.concat(userMessage.id));
+      }
+      setIsLoading(false);
+    }
+  };
 
   const handleSendMessage = async () => {
     if (!inputMessage.trim() || isLoading || isMessageLimitReached || inputMessage.length > CHARACTER_LIMIT) return;
@@ -158,32 +189,17 @@ const ChatPageComponent = ({conversationId}: { conversationId: string }) => {
 
     setLocalMessages(prev => [...prev, userMessage]);
     setInputMessage('');
-    setIsLoading(true);
+    await sendToAgent(userMessage);
+  };
 
-    try {
-      await queryAgent(conversationId, userMessage.content, scopeForThisMessage);
+  const handleEditFailedMessage = (message: ChatMessage) => {
+    setLocalMessages(prev => prev.filter(localMessage => localMessage.id !== message.id));
+    setFailedMessageIds(ids => ids.filter(id => id !== message.id));
+    setInputMessage(message.content);
+  };
 
-      // Invalidate and refetch the conversation data
-      await queryClient.invalidateQueries({queryKey: ['chat', conversationId]});
-      await queryClient.invalidateQueries({queryKey: ['chatConversations']});
-    } catch (error) {
-      console.error('Error getting agent response:', error);
-      let sender: "error" | "rate_limit" = 'error';
-      if (error instanceof ChatRateLimitError) {
-        sender = 'rate_limit';
-      }
-
-      const errorMessage: ChatMessage = {
-        id: uuidv4(),
-        content: "",
-        sender: sender,
-        timestamp: new Date(),
-        items: [],
-        topicsWereCreated: false,
-      };
-      setLocalMessages(prev => [...prev, errorMessage]);
-      setIsLoading(false);
-    }
+  const handleNewConversation = () => {
+    router.push(newScopedChatPath(scopeFromFilters(filters, scope ?? {})));
   };
 
   const handleDeleteChat = async () => {
@@ -247,7 +263,7 @@ const ChatPageComponent = ({conversationId}: { conversationId: string }) => {
       return 'max-w-[80%] p-3 rounded-lg bg-primary text-primary-content';
     }
     if (message.sender === 'assistant') {
-      return 'w-full mt-4 text-base-content';
+      return 'w-full text-base-content';
     }
     return 'max-w-[80%] p-3 rounded-lg bg-base-200 text-base-content border border-neutral';
   }
@@ -292,7 +308,9 @@ const ChatPageComponent = ({conversationId}: { conversationId: string }) => {
                               resetFilters={() => handleFiltersChange(userFilter)}/>
         }
         {/* Messages Area */}
-        <div className="flex-1 overflow-y-auto p-4 space-y-4">
+        <div className="flex-1 overflow-y-auto p-4">
+          <div className="max-w-3xl mx-auto space-y-5" role="log" aria-live="polite"
+               aria-busy={isLoading || conversation?.isWaitingForResponse || false}>
           {localMessages.length === 0 && !conversationLoading && (
             <div className="flex flex-col items-center space-y-6 mt-8">
               <div className="text-center text-base-content/60">
@@ -303,14 +321,14 @@ const ChatPageComponent = ({conversationId}: { conversationId: string }) => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3 w-full max-w-2xl">
                 <button
                   onClick={() => handleSampleQuestionClick(isLoggedIn ? t('sample_question_1') : t('sample_question_guest_1'))}
-                  className="p-4 text-left bg-base-200 hover:bg-base-300 rounded-lg transition-colors duration-200 border border-base-300 hover:border-primary"
+                  className="p-4 text-left bg-base-100 rounded-xl transition-colors duration-200 border border-neutral hover:border-primary"
                 >
                   <span className="text-sm">{isLoggedIn ? t('sample_question_1') : t('sample_question_guest_1')}</span>
                 </button>
 
                 <button
                   onClick={() => handleSampleQuestionClick(isLoggedIn ? t('sample_question_2') : t('sample_question_guest_2'))}
-                  className="p-4 text-left bg-base-200 hover:bg-base-300 rounded-lg transition-colors duration-200 border border-base-300 hover:border-primary"
+                  className="p-4 text-left bg-base-100 rounded-xl transition-colors duration-200 border border-neutral hover:border-primary"
                 >
                   <span className="text-sm">{isLoggedIn ? t('sample_question_2') : t('sample_question_guest_2')}</span>
                 </button>
@@ -331,6 +349,12 @@ const ChatPageComponent = ({conversationId}: { conversationId: string }) => {
               className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
             >
               <div className={getMessageClass(message)}>
+                {message.sender === 'assistant' &&
+                    <p className="flex flex-row items-center gap-2 mb-1 text-xs font-semibold text-base-content/60">
+                        <img src="/logo_v1_medium.png" alt="" className="w-4 h-4"/>
+                        Linkurator
+                    </p>
+                }
                 <div className="markdown-content">
                   <ReactMarkdown>
                     {getMessageContent(message)}
@@ -356,6 +380,15 @@ const ChatPageComponent = ({conversationId}: { conversationId: string }) => {
                     refreshItem={() => queryClient.invalidateQueries({queryKey: ['chat', conversationId]})}
                   />
                 )}
+                {failedMessageIds.includes(message.id) &&
+                    <div role="alert" className="flex flex-row flex-wrap items-center gap-2 mt-2 pt-2 border-t border-primary-content/30 text-xs">
+                        <span>{t('send_failed')}</span>
+                        <button type="button" className="underline font-semibold"
+                                onClick={() => sendToAgent(message)}>{t('retry')}</button>
+                        <button type="button" className="underline font-semibold"
+                                onClick={() => handleEditFailedMessage(message)}>{t('edit')}</button>
+                    </div>
+                }
                 <div className="flex flex-row items-center gap-2 mt-1">
                   <p className="text-xs opacity-70">
                     {message.timestamp.toLocaleTimeString()}
@@ -391,12 +424,14 @@ const ChatPageComponent = ({conversationId}: { conversationId: string }) => {
             </div>
           )}
           <div ref={messagesEndRef}/>
+          </div>
         </div>
 
         <ChatInput
           value={inputMessage}
           onChange={setInputMessage}
           onSend={handleSendMessage}
+          onNewConversation={handleNewConversation}
           disabled={isLoading}
           characterLimit={CHARACTER_LIMIT}
           messageLimit={MESSAGE_LIMIT}
