@@ -315,7 +315,7 @@
     "faq_question_2": "Is there a mobile app?",
     "faq_answer_2": "No, for now it is only available as a web application. However, you can install it as a PWA on your mobile device.",
     "faq_question_3": "How can I get started?",
-    "faq_answer_3": "Simply sign up, connect your YouTube and Spotify accounts, and start exploring content.",
+    "faq_answer_3": "Simply sign up, import your YouTube and Spotify subscriptions, and start exploring content.",
     "faq_question_4": "Can I delete my account?",
     "faq_answer_4": "Yes, you can delete your account at any time from your profile settings.",
     "faq_question_5": "Can I share my recommendations and topics with my friends?",
@@ -411,7 +411,18 @@
     "save_changes": "Save changes",
     "topic_save_failed": "We couldn't save the topic. Please try again.",
     "changes_save_automatically": "Changes are saved as you tick each topic.",
-    "new_topic_with_subscription": "New topic with this subscription"
+    "new_topic_with_subscription": "New topic with this subscription",
+    "import_youtube_hint": "Import every channel you follow on YouTube.",
+    "import_patreon_hint": "Import the creators you support on Patreon.",
+    "import_spotify_hint": "Podcasts you follow. Spotify needs us to register your account first.",
+    "import_rss_hint": "Upload an OPML file from Feedly, Pocket Casts or any feed reader.",
+    "upload_file": "Upload file",
+    "back": "Back",
+    "view_subscriptions": "View subscriptions",
+    "onboarding_step_import": "Import your sources",
+    "onboarding_step_group": "Group them into topics",
+    "onboarding_step_follow": "Follow a curator",
+    "opml_file": "OPML file"
   },
   "legal": {
     "tos_title": "Terms of Service",

@@ -31,8 +31,6 @@ import {openSearchPalette} from "../../utilities/searchPaletteAction";
 import LateralTopicList from "./LateralTopicList";
 import {v4 as uuidv4} from 'uuid';
 import ImportSubscriptionsModal from "./ImportSubscriptionsModal";
-import ImportOpmlModal from "./ImportOpmlModal";
-import ImportSpotifyModal from "./ImportSpotifyModal";
 import {scrollToDrawerTop} from "../../utilities/scrollToDrawerTop";
 
 export const LATERAL_NAVIGATION_MENU_ID = 'lateral-navigation-menu';
@@ -179,9 +177,7 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
       </Sidebar>
       <TopicEditorModal onSaved={refreshTopics} subscriptions={subscriptions} providers={providers}/>
       <SearchPalette/>
-      <ImportSubscriptionsModal/>
-      <ImportOpmlModal refreshSubscriptions={refreshSubscriptions}/>
-      <ImportSpotifyModal/>
+      <ImportSubscriptionsModal refreshSubscriptions={refreshSubscriptions}/>
       {
         children
       }

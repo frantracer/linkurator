@@ -315,7 +315,7 @@
         "faq_question_2": "¿Hay aplicación móvil?",
         "faq_answer_2": "No, por el momento solo está disponible como aplicación web. Sin embargo, puedes instalarla como una PWA en tu dispositivo móvil.",
         "faq_question_3": "¿Cómo puedo empezar?",
-        "faq_answer_3": "Simplemente regístrate, conecta tus cuentas de YouTube y Spotify, y empieza a explorar el contenido.",
+        "faq_answer_3": "Simplemente regístrate, importa tus subscripciones de YouTube y Spotify, y empieza a explorar el contenido.",
         "faq_question_4": "¿Puedo eliminar mi cuenta?",
         "faq_answer_4": "Sí, puedes eliminar tu cuenta en cualquier momento desde la configuración de tu perfil.",
         "faq_question_5": "¿Puedo compartir mis recomendaciones y categorías con mis amigos?",
@@ -411,7 +411,18 @@
         "save_changes": "Guardar cambios",
         "topic_save_failed": "No hemos podido guardar la categoría. Inténtalo de nuevo.",
         "changes_save_automatically": "Los cambios se guardan al marcar cada categoría.",
-        "new_topic_with_subscription": "Nueva categoría con esta suscripción"
+        "new_topic_with_subscription": "Nueva categoría con esta suscripción",
+        "import_youtube_hint": "Importa todos los canales que sigues en YouTube.",
+        "import_patreon_hint": "Importa los creadores a los que apoyas en Patreon.",
+        "import_spotify_hint": "Los pódcasts que sigues. Spotify nos pide registrar tu cuenta primero.",
+        "import_rss_hint": "Sube un archivo OPML de Feedly, Pocket Casts o cualquier lector de feeds.",
+        "upload_file": "Subir archivo",
+        "back": "Volver",
+        "view_subscriptions": "Ver suscripciones",
+        "onboarding_step_import": "Importa tus fuentes",
+        "onboarding_step_group": "Agrúpalas en categorías",
+        "onboarding_step_follow": "Sigue a un curador",
+        "opml_file": "Archivo OPML"
     },
     "legal": {
         "tos_title": "Términos del servicio",

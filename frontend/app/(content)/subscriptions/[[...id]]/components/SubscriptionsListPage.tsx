@@ -14,7 +14,7 @@ import SearchBar from "../../../../../components/molecules/SearchBar";
 import PageHeader from "../../../../../components/molecules/PageHeader";
 import AssignTopicModal, {AssignTopicModalId} from "../../../../../components/organism/AssignTopicModal";
 import {openSearchPalette} from "../../../../../utilities/searchPaletteAction";
-import {ImportSubscriptionsModalId} from "../../../../../components/organism/ImportSubscriptionsModal";
+import {openImportModal} from "../../../../../utilities/importModalAction";
 import SubscriptionCard from "../../../../../components/organism/SubscriptionCard";
 import {getProviderIcon, getProviderPrettyName} from "../../../../../entities/Provider";
 import {Subscription, subscriptionFiltering, subscriptionSorting} from "../../../../../entities/Subscription";
@@ -52,8 +52,7 @@ const SubscriptionsListPageComponent = () => {
     : subscriptions.filter(subscription => subscriptionFiltering(subscription, filterText.trim()));
 
   const openDiscoverModal = () => openSearchPalette("subscriptions");
-  const openImportModal = () => openModal(ImportSubscriptionsModalId);
-
+  
   const handleAssign = (subscription: Subscription) => {
     flushSync(() => setAssigningSubscription(subscription));
     openModal(AssignTopicModalId);
@@ -100,7 +99,7 @@ const SubscriptionsListPageComponent = () => {
               />
             </div>
             {profile && (
-              <Button fitContent={true} clickAction={openImportModal} primary={false}>
+              <Button fitContent={true} clickAction={() => openImportModal()}>
                 <ImportIcon/>
                 {t("import")}
               </Button>
