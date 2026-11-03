@@ -120,7 +120,7 @@ const TopicEditorModal = ({topic, subscriptions, providers, onSaved}: TopicEdito
                             onChange={() => toggle(subscription.uuid)}/>
                   <Miniature src={subscription.thumbnail} alt=""
                              badgeImage={getProviderIcon(providers, subscription.provider)}/>
-                  <span className="flex-1 min-w-0 truncate" title={subscription.name}>{subscription.name}</span>
+                  <span className="flex-1 min-w-0 break-words">{subscription.name}</span>
                 </label>
               </li>
             ))}

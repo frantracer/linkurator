@@ -109,7 +109,7 @@ const EntityPickerModal = ({id, title, onSelect, onClose, selected = [], multipl
                                           onClick={() => handleSelect({kind: 'topic', topic})}>
                                   <FlexRow position="start">
                                     <Miniature src={topic.curator.avatar_url} alt={topic.curator.username}/>
-                                    <span>{topic.name}</span>
+                                    <span className="flex-1 min-w-0 break-words">{topic.name}</span>
                                   </FlexRow>
                                 </MenuItem>
                               ))}
@@ -131,7 +131,7 @@ const EntityPickerModal = ({id, title, onSelect, onClose, selected = [], multipl
                                       alt={sub.name}
                                       badgeImage={getProviderIcon(providers, sub.provider)}
                                     />
-                                    <span>{sub.name}</span>
+                                    <span className="flex-1 min-w-0 break-words">{sub.name}</span>
                                   </FlexRow>
                                 </MenuItem>
                               ))}

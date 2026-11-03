@@ -40,7 +40,7 @@ const Modal = ({id, title, size = "md", danger = false, onClose, children}: Moda
             </button>
           </form>
         </div>
-        <div className="overflow-y-auto px-5 py-4">
+        <div className="overflow-y-auto overflow-x-hidden px-5 py-4">
           {children}
         </div>
       </div>

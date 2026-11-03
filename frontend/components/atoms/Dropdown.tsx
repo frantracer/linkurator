@@ -109,7 +109,7 @@ const Dropdown = (
           className={classNames(
             contentPositionClass,
             sizeClass,
-            "bg-base-100 rounded-lg p-1 shadow-lg max-h-96 overflow-y-auto border border-neutral"
+            "bg-base-100 rounded-lg p-1 shadow-lg max-h-96 overflow-y-auto overflow-x-hidden border border-neutral"
           )}
           ref={menuContentRef}
         >

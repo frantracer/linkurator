@@ -76,13 +76,13 @@ const AssignTopicModal = ({topics, subscription, refreshTopics}: AssignTopicModa
             const pending = pendingTopicIds.includes(topic.uuid);
             return (
               <li key={topic.uuid}>
-                <label className="flex flex-row items-center gap-3 px-2 py-1.5 rounded-md cursor-pointer hover:bg-base-content/5 text-sm">
+                <label className="flex flex-row items-center gap-3 min-w-0 px-2 py-1.5 rounded-md cursor-pointer hover:bg-base-content/5 text-sm">
                   {pending
                     ? <span className="loading loading-spinner loading-xs"/>
                     : <Checkbox small={true} checked={assigned} onChange={() => toggleTopic(topic, assigned)}/>
                   }
                   <TopicIcon name={topic.name} size={"xs"}/>
-                  <span className="truncate">{topic.name}</span>
+                  <span className="flex-1 min-w-0 break-words">{topic.name}</span>
                 </label>
               </li>
             );

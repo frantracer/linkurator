@@ -236,7 +236,7 @@ const SearchPalette = () => {
     >
       <span className="shrink-0 flex items-center justify-center w-8 h-8">{row.media}</span>
       <span className="flex flex-col flex-1 min-w-0">
-        <span className="text-sm font-medium truncate">{row.title}</span>
+        <span className="text-sm font-medium break-words">{row.title}</span>
         <span className="text-xs text-base-content/60 truncate">{row.subtitle}</span>
       </span>
       {row.follow &&

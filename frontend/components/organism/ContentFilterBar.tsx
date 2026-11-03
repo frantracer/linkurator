@@ -122,7 +122,7 @@ const ContentFilterBar = (
     });
   }
 
-  const optionRowClass = "flex flex-row gap-2 items-center px-2 py-1.5 rounded-md cursor-pointer hover:bg-base-content/5 text-sm";
+  const optionRowClass = "flex flex-row gap-2 items-center min-w-0 px-2 py-1.5 rounded-md cursor-pointer hover:bg-base-content/5 text-sm";
 
   return (
     <div className="shrink-0 flex flex-col sm:flex-row gap-2 sm:items-center px-4 py-3 border-b border-neutral bg-base-100">
@@ -200,7 +200,7 @@ const ContentFilterBar = (
                               onChange={() => toggleSubscription(subscription.uuid)}/>
                     <Miniature src={subscription.thumbnail} alt=""
                                badgeImage={getProviderIcon(providers, subscription.provider)}/>
-                    <span className="truncate">{subscription.name}</span>
+                    <span className="flex-1 min-w-0 break-words">{subscription.name}</span>
                   </label>
                 </li>
               ))}
