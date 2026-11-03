@@ -240,7 +240,7 @@ const ContentItemCard = (
                   {viewed ? <CheckCircleFilledIcon/> : <CheckCircleIcon/>}
                 </ActionButton>
                 <Dropdown
-                    small={true}
+                    width={"narrow"}
                     bottom={false}
                     position="end"
                     closeOnClickInside={true}

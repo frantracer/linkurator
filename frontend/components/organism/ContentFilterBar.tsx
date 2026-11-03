@@ -132,7 +132,7 @@ const ContentFilterBar = (
                    placeholder={t("search_placeholder")}/>
       </div>
       <div className="flex flex-row flex-wrap gap-2 items-center">
-        <Dropdown label={t("duration")} small={true} position="start" bottom={true}
+        <Dropdown label={t("duration")} width={"narrow"} position="start" bottom={true}
                   button={<FilterChip active={durationIsActive}>{durationLabel}</FilterChip>}>
           <li role="radiogroup" aria-label={t("duration")} className="flex flex-col p-1">
             {durationOptions.map(option => (
@@ -160,7 +160,7 @@ const ContentFilterBar = (
           </li>
         </Dropdown>
         {showInteractions &&
-            <Dropdown label={t("show_items")} small={true} position="start" bottom={true}
+            <Dropdown label={t("show_items")} width={"narrow"} position="start" bottom={true}
                       button={<FilterChip active={interactionsAreActive}>{interactionsLabel}</FilterChip>}>
               {interactionOptions.map(option => (
                 <li key={option.key}>

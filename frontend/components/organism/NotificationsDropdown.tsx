@@ -24,6 +24,7 @@ const NotificationsDropdown = ({profile, bottom = true, position = "end"}: Notif
   return (
     <Dropdown
       label={t("notifications")}
+      width={"medium"}
       triggerStyle={"ghost"}
       button={
         <span onClick={loadAndMarkAsRead} className="indicator">

@@ -3,12 +3,14 @@ import classNames from "classnames";
 
 export type DropdownTriggerStyle = "outline" | "ghost" | "overlay" | "bare";
 
+export type DropdownWidth = "narrow" | "medium" | "wide";
+
 type DropdownProps = {
   button: React.ReactNode
   label: string
   triggerStyle?: DropdownTriggerStyle
   fullWidth?: boolean
-  small?: boolean
+  width?: DropdownWidth
   bottom?: boolean
   position?: "start" | "center" | "end"
   closeOnClickInside?: boolean
@@ -21,7 +23,7 @@ const Dropdown = (
     label,
     triggerStyle = "outline",
     fullWidth = false,
-    small = false,
+    width = "wide",
     bottom = true,
     position = "start",
     closeOnClickInside = false,
@@ -75,8 +77,9 @@ const Dropdown = (
   );
 
   const sizeClass = classNames({
-    "w-48": small,
-    "w-72": !small,
+    "w-48": width === "narrow",
+    "w-64": width === "medium",
+    "w-72": width === "wide",
   });
 
   const triggerClass = classNames({

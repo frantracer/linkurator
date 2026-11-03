@@ -190,7 +190,7 @@ const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
                   }
                 </div>
                 <div className="contents sm:hidden">
-                  <Dropdown label={t("more")} button={<EllipsisHorizontalIcon/>} small={true} position="end"
+                  <Dropdown label={t("more")} button={<EllipsisHorizontalIcon/>} width={"narrow"} position="end"
                             bottom={true} closeOnClickInside={true}>
                       <Menu>
                         {mobileMenuButtons}

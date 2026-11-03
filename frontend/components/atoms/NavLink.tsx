@@ -18,9 +18,11 @@ const NavLink = ({href, selected, icon, trailing, onClick, children}: NavLinkPro
       onClick={onClick}
       aria-current={selected ? "page" : undefined}
       className={classNames(
-        "flex flex-row items-center gap-3 px-3 min-h-10 rounded-lg text-sm transition-colors",
+        "relative flex flex-row items-center gap-3 px-3 min-h-10 rounded-lg text-sm transition-colors",
+        "before:absolute before:left-0 before:top-1/2 before:-translate-y-1/2 before:w-1 before:h-0",
+        "before:rounded-r-full before:bg-primary before:transition-all before:duration-200",
         {
-          "bg-base-content/10 font-semibold text-base-content": selected,
+          "bg-base-content/10 font-semibold text-base-content before:h-3/4": selected,
           "text-base-content/80 hover:bg-base-content/5 hover:text-base-content": !selected,
         }
       )}

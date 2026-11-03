@@ -231,7 +231,7 @@ const TopicPageComponent = ({topicId}: { topicId: string }) => {
                   <ShareLinkButton title={topicName}/>
                 </div>
                 <div className={dropdownButtons.length > 0 ? "contents" : "contents sm:hidden"}>
-                  <Dropdown label={t("more")} button={<EllipsisHorizontalIcon/>} small={true} position="end"
+                  <Dropdown label={t("more")} button={<EllipsisHorizontalIcon/>} width={"narrow"} position="end"
                             bottom={true} closeOnClickInside={true}>
                       <Menu>
                           <div className="sm:hidden">{mobileMenuButtons}</div>
