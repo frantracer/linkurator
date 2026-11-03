@@ -116,8 +116,7 @@ const FindSubscriptionModal = (props: FindSubscriptionModalProps) => {
   });
 
   return (
-    <Modal id={FindSubscriptionModalId} onClose={handleClose}>
-      <h1 className="font-bold text-xl w-full text-center pb-2">{t("find_subscriptions")}</h1>
+    <Modal id={FindSubscriptionModalId} title={t("find_subscriptions")} onClose={handleClose}>
       <FlexColumn>
         <div className={`flex flex-row gap-2 items-center h-fit w-full`}>
           <Dropdown

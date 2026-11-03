@@ -46,8 +46,7 @@ const ImportSubscriptionsModal = () => {
   }
 
   return (
-    <Modal id={ImportSubscriptionsModalId} onClose={handleClose}>
-      <h1 className="font-bold text-xl w-full text-center">{t("import_subscriptions")}</h1>
+    <Modal id={ImportSubscriptionsModalId} title={t("import_subscriptions")} onClose={handleClose}>
       <Box title="">
         <div className={"flex flex-col gap-5"}>
           <div/>

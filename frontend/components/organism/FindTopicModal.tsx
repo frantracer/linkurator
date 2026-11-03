@@ -121,8 +121,7 @@ const FindTopicModal = (props: FindTopicModalProps) => {
   }
 
   return (
-    <Modal id={FindTopicModalId} onClose={handleClose}>
-      <h1 className="font-bold text-xl w-full text-center pb-2">{t("find_topics")}</h1>
+    <Modal id={FindTopicModalId} title={t("find_topics")} onClose={handleClose}>
       <FlexColumn>
         <FlexItem grow={true}>
           <SearchBar placeholder={t("search_topic_placeholder")} value={topicSearch}

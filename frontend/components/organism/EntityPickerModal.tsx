@@ -72,10 +72,9 @@ const EntityPickerModal = ({id, title, onSelect, onClose, selected = [], multipl
   };
 
   return (
-    <Modal id={id} onClose={handleClose}>
+    <Modal id={id} title={title} onClose={handleClose}>
 
       <FlexColumn>
-        <h1 className="font-bold text-xl w-full text-center">{title}</h1>
         <SearchBar
           placeholder={t('search_topics_subscriptions_curators')}
           value={searchValue}

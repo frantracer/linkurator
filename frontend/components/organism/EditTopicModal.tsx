@@ -111,8 +111,7 @@ const EditTopicModal = ({providers, ...props}: EditTopicModalProps) => {
     })
 
   return (
-    <Modal id={EditTopicModalId} onClose={handleCancel}>
-      <h1 className="font-bold text-xl w-full text-center mb-4">{t("edit_topic")}</h1>
+    <Modal id={EditTopicModalId} title={t("edit_topic")} onClose={handleCancel}>
       <FlexColumn position={"center"}>
         <InputText placeholder={t("new_topic_name")} value={newTopicName}
                    onChange={(value) => setNewTopicName(value)}/>

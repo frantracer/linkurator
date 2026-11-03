@@ -15,9 +15,8 @@ const DeleteTopicConfirmationModal = (props: DeleteTopicConfirmationModalProps) 
   const t = useTranslations("common");
 
   return (
-    <Modal id={DeleteTopicConfirmationModalId}>
+    <Modal id={DeleteTopicConfirmationModalId} title={t("delete_topic_confirmation")}>
       <FlexColumn>
-        <h1 className="font-bold text-xl w-full text-center">{t("delete_topic_confirmation")}</h1>
         <p className="text-center mb-4">
           {t("delete_topic_confirmation_message")}
         </p>

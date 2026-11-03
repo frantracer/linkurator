@@ -27,8 +27,7 @@ const DeleteAccountModal = (props: DeleteAccountModalProps) => {
   };
 
   return (
-    <Modal id={DeleteAccountModalId} onClose={handleCancel}>
-      <h1 className="font-bold text-xl w-full text-center">{t("delete_account_title")}</h1>
+    <Modal id={DeleteAccountModalId} title={t("delete_account_title")} onClose={handleCancel}>
       <Box>
         <FlexColumn position={"center"}>
           <p className="text-center mb-2">{t("delete_account_warning")}</p>

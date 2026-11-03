@@ -57,8 +57,7 @@ const ImportOpmlModal = ({refreshSubscriptions}: ImportOpmlModalProps) => {
   }
 
   return (
-    <Modal id={ImportOpmlModalId} onClose={handleClose}>
-      <h1 className="font-bold text-xl w-full text-center mb-4">{t("import_opml_title")}</h1>
+    <Modal id={ImportOpmlModalId} title={t("import_opml_title")} onClose={handleClose}>
       <FlexColumn position={"center"}>
         {state.status === "loading" && (
           <>

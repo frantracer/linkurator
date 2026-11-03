@@ -57,9 +57,8 @@ const FindCuratorModal = (props: FindCuratorModalProps) => {
   }
 
   return (
-    <Modal id={FindCuratorModalId} onClose={handleClose}>
+    <Modal id={FindCuratorModalId} title={t("find_curators")} onClose={handleClose}>
       <FlexColumn>
-        <h1 className="font-bold text-xl w-full text-center">{t("find_curators")}</h1>
         <FlexItem grow={true}>
           <SearchBar placeholder={t("search_curator")} value={curatorSearch}
                      handleChange={setCuratorSearch}/>

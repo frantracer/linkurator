@@ -44,8 +44,7 @@ const ImportSpotifyModal = () => {
   }
 
   return (
-    <Modal id={ImportSpotifyModalId} onClose={handleClose}>
-      <h1 className="font-bold text-xl w-full text-center mb-4">{t("import_spotify_title")}</h1>
+    <Modal id={ImportSpotifyModalId} title={t("import_spotify_title")} onClose={handleClose}>
       <FlexColumn position={"center"}>
         {state.status === "loading"
           ? <Spinner/>

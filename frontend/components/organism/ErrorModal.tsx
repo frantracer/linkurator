@@ -16,9 +16,8 @@ const ErrorModal = (props: ErrorModalProps) => {
   const t = useTranslations('common');
   
   return (
-    <Modal id={ErrorModalId}>
+    <Modal id={ErrorModalId} title={props.title} danger={true}>
       <FlexColumn>
-        <h1 className="font-bold text-xl w-full text-center text-error">{props.title}</h1>
         <p className="text-center mb-4">
           {props.message}
         </p>

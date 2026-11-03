@@ -374,7 +374,8 @@
         "clear_search": "Borrar búsqueda",
         "dark_theme": "Tema oscuro",
         "light_theme": "Tema claro",
-        "skip_to_content": "Saltar al contenido"
+        "skip_to_content": "Saltar al contenido",
+        "close": "Cerrar"
     },
     "legal": {
         "tos_title": "Términos del servicio",

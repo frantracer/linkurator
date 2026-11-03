@@ -113,9 +113,8 @@ const AssignTopicModal = (props: AssignTopicModalProps) => {
     })
 
   return (
-    <Modal id={AssignTopicModalId}>
+    <Modal id={AssignTopicModalId} title={t("assign_subscription")}>
       <FlexColumn>
-        <h1 className="font-bold text-xl w-full text-center">{t("assign_subscription")}</h1>
         <FlexRow>
           <InputText placeholder={t("new_topic_name")}
                      value={topicName} onChange={(value) => setTopicName(value)}/>

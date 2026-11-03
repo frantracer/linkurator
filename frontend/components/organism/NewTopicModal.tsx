@@ -97,8 +97,7 @@ const NewTopicModal = ({providers, ...props}: NewTopicModalProps) => {
     })
 
   return (
-    <Modal id={NewTopicModalId} onClose={handleClose}>
-      <h1 className="font-bold text-xl w-full text-center mb-4">{t("create_topic")}</h1>
+    <Modal id={NewTopicModalId} title={t("create_topic")} onClose={handleClose}>
       <FlexColumn position={"center"}>
         <InputText placeholder={t("enter_new_topic_name")} value={newTopicName}
                    onChange={(value) => setNewTopicName(value)}/>

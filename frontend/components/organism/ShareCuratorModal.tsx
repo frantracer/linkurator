@@ -36,9 +36,8 @@ const ShareCuratorModal = (props: ShareCuratorModalProps) => {
   }
 
   return (
-    <Modal id={ShareCuratorModalId} onClose={handleClose}>
+    <Modal id={ShareCuratorModalId} title={t("share")} onClose={handleClose}>
       <FlexColumn position={"center"}>
-        <h1 className="font-bold text-xl w-full text-center">{t("share")}</h1>
         <p className="text-center mb-4">{t("share_curator_description")}</p>
         <FlexColumn gap={2}>
           <Button fitContent={false} clickAction={shareToTwitter} primary={true}>
