@@ -386,7 +386,14 @@
         "searching": "Buscando…",
         "open": "Abrir",
         "retry": "Reintentar",
-        "action_failed": "No se ha podido guardar el cambio"
+        "action_failed": "No se ha podido guardar el cambio",
+        "show_items": "Mostrar",
+        "sources": "Fuentes",
+        "min_minutes": "Mín. (minutos)",
+        "max_minutes": "Máx. (minutos)",
+        "select_all": "Seleccionar todo",
+        "select_none": "Quitar todo",
+        "clear_filters": "Limpiar"
     },
     "legal": {
         "tos_title": "Términos del servicio",

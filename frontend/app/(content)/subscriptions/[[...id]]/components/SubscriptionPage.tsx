@@ -17,7 +17,6 @@ import {MenuItem} from "../../../../../components/atoms/MenuItem";
 import Miniature from "../../../../../components/atoms/Miniature";
 import Tag from "../../../../../components/atoms/Tag";
 import TopTitle from "../../../../../components/molecules/TopTitle";
-import FilterToggleButton from "../../../../../components/molecules/FilterToggleButton";
 import AssignTopicModal, {AssignTopicModalId} from "../../../../../components/organism/AssignTopicModal";
 import ContentFilterBar from "../../../../../components/organism/ContentFilterBar";
 import ContentItemCardGrid from "../../../../../components/organism/ContentItemCardGrid";
@@ -25,7 +24,6 @@ import {paths} from "../../../../../configuration";
 import {getProviderIcon, getProviderPrettyName} from "../../../../../entities/Provider";
 import useProviders from "../../../../../hooks/useProviders";
 import useFilters from "../../../../../hooks/useFilters";
-import useFilterBarVisibility from "../../../../../hooks/useFilterBarVisibility";
 import useProfile from "../../../../../hooks/useProfile";
 import useSubscription from "../../../../../hooks/useSubscription";
 import useSubscriptionItems from "../../../../../hooks/useSubscriptionItems";
@@ -52,7 +50,6 @@ const SubscriptionPageComponent = ({subscriptionId}: { subscriptionId: string })
 
   const {filters, setFilters, resetFilters, isModified: areFiltersModified} = useFilters();
   const [debouncedFilters, setDebouncedFilters] = useState(filters);
-  const {showFilters, toggleFilters} = useFilterBarVisibility();
   const {profile, profileIsLoading} = useProfile();
   const {subscriptions, refreshSubscriptions} = useSubscriptions(profile);
   const {topics, refreshTopics} = useTopics(profile, profileIsLoading);
@@ -188,7 +185,6 @@ const SubscriptionPageComponent = ({subscriptionId}: { subscriptionId: string })
         <div className="flex flex-row items-center gap-4 h-full w-full px-4">
           {!profileIsLoading && <>
               <div className="w-10 shrink-0 flex items-center justify-start">
-                  <FilterToggleButton isOpen={showFilters} isModified={areFiltersModified} onClick={toggleFilters}/>
               </div>
               <div className="flex-1 min-w-0 flex flex-col items-center gap-2 overflow-hidden">
                   <div className="w-full flex flex-row items-center justify-center gap-2 overflow-hidden">
@@ -269,8 +265,8 @@ const SubscriptionPageComponent = ({subscriptionId}: { subscriptionId: string })
                 scanningEntityName={selectedSubscription.name}
                 withSubscription={false}
                 topics={topics.filter(topic => topic.subscriptions_ids.includes(selectedSubscription.uuid))}
-                filterBar={showFilters &&
-                    <ContentFilterBar filters={filters}
+                filterBar={
+                    <ContentFilterBar isModified={areFiltersModified} filters={filters}
                                       showInteractions={isUserLogged}
                                       setFilters={setFilters}
                                       resetFilters={resetFilters}/>

@@ -4,13 +4,11 @@ import {useTranslations} from "next-intl";
 import {useRouter, useSearchParams} from "next/navigation";
 import React, {Suspense, useEffect, useState} from "react";
 import TopTitle from "../../../components/molecules/TopTitle";
-import FilterToggleButton from "../../../components/molecules/FilterToggleButton";
 import {paths} from "../../../configuration";
 import useProfile from "../../../hooks/useProfile";
 import useSubscriptions from "../../../hooks/useSubscriptions";
 import {useTopics} from "../../../hooks/useTopics";
 import useFilters from "../../../hooks/useFilters";
-import useFilterBarVisibility from "../../../hooks/useFilterBarVisibility";
 import useLatestSubscriptionItems from "../../../hooks/useLatestSubscriptionItems";
 import useLatestFavoriteTopicItems from "../../../hooks/useLatestFavoriteTopicItems";
 import useLatestFollowedCuratorItems from "../../../hooks/useLatestFollowedCuratorItems";
@@ -67,7 +65,6 @@ const HomePageComponent = () => {
   const {topics, topicsAreLoading} = useTopics(profile, profileIsLoading);
   const {filters, setFilters, resetFilters, isModified: areFiltersModified} = useFilters();
   const [debouncedFilters, setDebouncedFilters] = useState(filters);
-  const {showFilters, toggleFilters} = useFilterBarVisibility();
   const {
     latestItems,
     isLoading: latestItemsLoading,
@@ -177,7 +174,6 @@ const HomePageComponent = () => {
       <TopTitle>
         <div className="flex flex-row items-center h-full w-full px-4">
           <div className="w-10 shrink-0 flex items-center justify-start">
-            <FilterToggleButton isOpen={showFilters} isModified={areFiltersModified} onClick={toggleFilters}/>
           </div>
           <h1 className="text-xl font-bold flex-1 min-w-0 flex items-center justify-center gap-2">
             <HomeIcon/>
@@ -209,12 +205,10 @@ const HomePageComponent = () => {
                   </Tag>
                 ))}
               </TagsRow>
-              {showFilters &&
-                  <ContentFilterBar filters={filters}
-                                    showInteractions={true}
-                                    setFilters={setFilters}
-                                    resetFilters={resetFilters}/>
-              }
+              <ContentFilterBar isModified={areFiltersModified} filters={filters}
+                                showInteractions={true}
+                                setFilters={setFilters}
+                                resetFilters={resetFilters}/>
 
             {showEmptyState
               ? <div className="flex-1 overflow-y-auto p-4 flex items-center justify-center">

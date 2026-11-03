@@ -20,7 +20,6 @@ import Miniature from "../../../../../components/atoms/Miniature";
 import Tag from "../../../../../components/atoms/Tag";
 import TagsRow from "../../../../../components/atoms/TagsRow";
 import TopTitle from "../../../../../components/molecules/TopTitle";
-import FilterToggleButton from "../../../../../components/molecules/FilterToggleButton";
 import ContentFilterBar from "../../../../../components/organism/ContentFilterBar";
 import ContentItemCardGrid from "../../../../../components/organism/ContentItemCardGrid";
 import {paths} from "../../../../../configuration";
@@ -29,7 +28,6 @@ import useCuratorItems from "../../../../../hooks/useCuratorItems";
 import {useCurators} from "../../../../../hooks/useCurators";
 import {useCuratorTopics} from "../../../../../hooks/useCuratorTopics";
 import useFilters from "../../../../../hooks/useFilters";
-import useFilterBarVisibility from "../../../../../hooks/useFilterBarVisibility";
 import useProfile from "../../../../../hooks/useProfile";
 import {followCurator, unfollowCurator} from "../../../../../services/curatorService";
 import {newScopedChatPath, scopeFromFilters} from "../../../../../utilities/chatScope";
@@ -55,7 +53,6 @@ const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
   const {providers} = useProviders();
   const {filters, setFilters, resetFilters, isModified: areFiltersModified} = useFilters();
   const [debouncedFilters, setDebouncedFilters] = useState(filters);
-  const {showFilters, toggleFilters} = useFilterBarVisibility();
   const [selectedSection, setSelectedSection] = useState<SectionKey>(DEFAULT_SECTION);
 
   const sectionParam = searchParams.get("section");
@@ -182,11 +179,7 @@ const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
         <div className="flex flex-row items-center gap-4 h-full w-full px-4">
           {!isMainDataLoading && curator &&
               <>
-                  <div className="w-10 shrink-0 flex items-center justify-start">
-                    {selectedSection === "recommendations" &&
-                        <FilterToggleButton isOpen={showFilters} isModified={areFiltersModified} onClick={toggleFilters}/>
-                    }
-                  </div>
+                  <div className="w-10 shrink-0"/>
                   <div className="flex-1 min-w-0 flex flex-col items-center gap-2 overflow-hidden">
                       <div className="w-full flex flex-row gap-2 items-center justify-center overflow-hidden">
                           <div className="shrink-0">
@@ -260,8 +253,8 @@ const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
           ))}
         </TagsRow>
 
-        {selectedSection === "recommendations" && showFilters && (
-          <ContentFilterBar filters={filters} setFilters={setFilters} resetFilters={resetFilters}/>
+        {selectedSection === "recommendations" && (
+          <ContentFilterBar isModified={areFiltersModified} filters={filters} setFilters={setFilters} resetFilters={resetFilters}/>
         )}
 
         {selectedSection === "recommendations" && (

@@ -2,6 +2,7 @@ type NumberInputProps = {
   placeholder?: string;
   value: number | undefined;
   onChange: (value: number | undefined) => void;
+  id?: string;
 }
 
 const NumberInput = (
@@ -9,7 +10,8 @@ const NumberInput = (
     placeholder = "",
     value = undefined,
     onChange = () => {
-    }
+    },
+    id = undefined,
   }: NumberInputProps
 ) => {
   const handleOnChange = (value: number | undefined) => {
@@ -18,8 +20,10 @@ const NumberInput = (
 
   return (
     <input type="number"
+           id={id}
+           min={0}
            placeholder={placeholder}
-           className="input input-sm border-2 border-neutral focus:border-primary bg-base-300 w-full"
+           className="input input-sm border border-neutral focus:border-primary bg-base-100 w-full"
            value={value ?? ""}
            onChange={(event) => {
              const parsed = parseInt(event.target.value);

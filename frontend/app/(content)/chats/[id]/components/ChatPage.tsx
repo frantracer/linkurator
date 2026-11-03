@@ -294,7 +294,7 @@ const ChatPageComponent = ({conversationId}: { conversationId: string }) => {
                          onOpenFilters={openFilters}/>
         </TagsRow>
         {showFilters &&
-            <ContentFilterBar subscriptions={scopeHasKind(scope, 'topic') ? topicsSubscriptions : undefined}
+            <ContentFilterBar isModified={areFiltersModified} subscriptions={scopeHasKind(scope, 'topic') ? topicsSubscriptions : undefined}
                               providers={providers}
                               filters={filters}
                               showInteractions={showInteractions}

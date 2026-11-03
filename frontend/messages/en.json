@@ -386,7 +386,14 @@
     "searching": "Searching…",
     "open": "Open",
     "retry": "Retry",
-    "action_failed": "Couldn't save the change"
+    "action_failed": "Couldn't save the change",
+    "show_items": "Show",
+    "sources": "Sources",
+    "min_minutes": "Min (minutes)",
+    "max_minutes": "Max (minutes)",
+    "select_all": "Select all",
+    "select_none": "Select none",
+    "clear_filters": "Clear"
   },
   "legal": {
     "tos_title": "Terms of Service",
