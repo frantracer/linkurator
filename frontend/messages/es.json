@@ -432,7 +432,9 @@
         "characters_left": "Quedan {count} caracteres",
         "danger_zone": "Zona de peligro",
         "appearance": "Apariencia",
-        "about_linkurator": "Acerca de"
+        "about_linkurator": "Acerca de",
+        "hero_cta_primary": "Empieza gratis",
+        "hero_cta_secondary": "Ver una categoría de ejemplo"
     },
     "legal": {
         "tos_title": "Términos del servicio",
