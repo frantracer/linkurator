@@ -1,5 +1,5 @@
 import {useTranslations} from "next-intl";
-import Button from "../atoms/Button";
+import classNames from "classnames";
 import {FunnelIcon} from "../atoms/Icons";
 
 type FilterToggleButtonProps = {
@@ -12,15 +12,23 @@ const FilterToggleButton = ({isOpen, isModified, onClick}: FilterToggleButtonPro
   const t = useTranslations("common");
 
   return (
-    <div className="relative w-fit">
-      <Button primary={isOpen} fitContent={true} clickAction={onClick} tooltip={t("filter")}>
-        <FunnelIcon/>
-      </Button>
+    <button
+      type="button"
+      onClick={onClick}
+      aria-pressed={isOpen}
+      title={t("filters")}
+      className={classNames("relative btn btn-sm rounded-md px-2 gap-1.5 font-medium flex-nowrap", {
+        "btn-outline border-neutral text-base-content hover:!bg-base-content/5 hover:!text-primary hover:!border-primary": !isOpen,
+        "bg-primary/15 border-primary text-primary hover:bg-primary/20 hover:border-primary": isOpen,
+      })}
+    >
+      <FunnelIcon/>
+      <span className="hidden sm:inline">{t("filters")}</span>
       {isModified &&
-          <span className="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-secondary border-2 border-base-100
-          pointer-events-none"/>
+          <span className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-primary border-2 border-base-100"
+                aria-hidden="true"/>
       }
-    </div>
+    </button>
   );
 }
 

@@ -22,6 +22,8 @@ import Menu from "../../../../../components/atoms/Menu";
 import {MenuItem} from "../../../../../components/atoms/MenuItem";
 import useShareLink from "../../../../../hooks/useShareLink";
 import Avatar from "../../../../../components/atoms/Avatar";
+import FilterToggleButton from "../../../../../components/molecules/FilterToggleButton";
+import useFilterBarVisibility from "../../../../../hooks/useFilterBarVisibility";
 import ContentFilterBar from "../../../../../components/organism/ContentFilterBar";
 import ContentItemCardGrid from "../../../../../components/organism/ContentItemCardGrid";
 import {paths} from "../../../../../configuration";
@@ -52,6 +54,7 @@ const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
   const searchParams = useSearchParams();
   const {providers} = useProviders();
   const {filters, setFilters, resetFilters, isModified: areFiltersModified} = useFilters();
+  const {showFilters, toggleFilters} = useFilterBarVisibility();
   const [debouncedFilters, setDebouncedFilters] = useState(filters);
   const [selectedSection, setSelectedSection] = useState<SectionKey>(DEFAULT_SECTION);
 
@@ -167,6 +170,7 @@ const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
               media={<Avatar src={curatorThumbnail} alt=""/>}
               subtitle={t("topics_count", {count: topics.length})}
               actions={<>
+                {selectedSection === "recommendations" && <FilterToggleButton isOpen={showFilters} isModified={areFiltersModified} onClick={toggleFilters}/>}
                 {!isOwnCuratorProfile &&
                     <FollowToggleButton followed={curator.followed} isLoggedIn={isLoggedIn}
                                         onFollow={() => handleFollowCurator(curator.id)}
@@ -214,7 +218,7 @@ const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
           ))}
         </TagsRow>
 
-        {selectedSection === "recommendations" && (
+        {selectedSection === "recommendations" && showFilters && (
           <ContentFilterBar isModified={areFiltersModified} filters={filters} setFilters={setFilters} resetFilters={resetFilters}/>
         )}
 

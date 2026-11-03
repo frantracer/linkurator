@@ -17,6 +17,8 @@ import {
 import {MenuItem} from "../../../../../components/atoms/MenuItem";
 import ConfirmDialog from "../../../../../components/organism/ConfirmDialog";
 import TopicEditorModal, {EditTopicModalId} from "../../../../../components/organism/TopicEditorModal";
+import FilterToggleButton from "../../../../../components/molecules/FilterToggleButton";
+import useFilterBarVisibility from "../../../../../hooks/useFilterBarVisibility";
 import ContentFilterBar from "../../../../../components/organism/ContentFilterBar";
 import ContentItemCardGrid from "../../../../../components/organism/ContentItemCardGrid";
 import {paths} from "../../../../../configuration";
@@ -51,6 +53,7 @@ const TopicPageComponent = ({topicId}: { topicId: string }) => {
   const router = useRouter()
 
   const {filters, setFilters, resetFilters, isModified: areFiltersModified} = useFilters();
+  const {showFilters, toggleFilters} = useFilterBarVisibility();
   const [debouncedFilters, setDebouncedFilters] = useState(filters);
   const {providers} = useProviders();
   const {profile, profileIsLoading} = useProfile();
@@ -207,6 +210,7 @@ const TopicPageComponent = ({topicId}: { topicId: string }) => {
                 {" · "}{t("subscriptions_count", {count: topicSubscriptions.length})}
               </>}
               actions={<>
+                <FilterToggleButton isOpen={showFilters} isModified={areFiltersModified} onClick={toggleFilters}/>
                 {!selectedTopic.is_owner &&
                     <FollowToggleButton followed={selectedTopic.followed} isLoggedIn={isUserLogged}
                                         onFollow={() => handleFollowTopic(selectedTopic.uuid)}
@@ -260,7 +264,7 @@ const TopicPageComponent = ({topicId}: { topicId: string }) => {
                 scanningEntityName={selectedTopic.name}
                 showInteractions={isUserLogged}
                 subscriptions={topicSubscriptions}
-                filterBar={
+                filterBar={showFilters &&
                     <ContentFilterBar isModified={areFiltersModified} subscriptions={topicSubscriptions}
                                       providers={providers}
                                       filters={filters}

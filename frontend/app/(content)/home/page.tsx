@@ -23,6 +23,8 @@ import {
 import Tag from "../../../components/atoms/Tag";
 import TagsRow from "../../../components/atoms/TagsRow";
 import ContentItemCardGrid, {ContentItemCardGridSkeleton} from "../../../components/organism/ContentItemCardGrid";
+import FilterToggleButton from "../../../components/molecules/FilterToggleButton";
+import useFilterBarVisibility from "../../../hooks/useFilterBarVisibility";
 import ContentFilterBar from "../../../components/organism/ContentFilterBar";
 import EmptyStateNoFavoriteTopics from "../../../components/organism/EmptyStateNoFavoriteTopics";
 import EmptyStateNoFollowedCurators from "../../../components/organism/EmptyStateNoFollowedCurators";
@@ -64,6 +66,7 @@ const HomePageComponent = () => {
   const {subscriptions, subscriptionsAreLoading} = useSubscriptions(profile);
   const {topics, topicsAreLoading} = useTopics(profile, profileIsLoading);
   const {filters, setFilters, resetFilters, isModified: areFiltersModified} = useFilters();
+  const {showFilters, toggleFilters} = useFilterBarVisibility();
   const [debouncedFilters, setDebouncedFilters] = useState(filters);
   const {
     latestItems,
@@ -175,7 +178,7 @@ const HomePageComponent = () => {
 
   return (
     <div className="flex flex-col w-full h-full min-h-0 overflow-hidden bg-base-300">
-      <PageHeader title={t("home")} icon={<HomeIcon/>}/>
+      <PageHeader title={t("home")} icon={<HomeIcon/>} actions={<FilterToggleButton isOpen={showFilters} isModified={areFiltersModified} onClick={toggleFilters}/>}/>
 
       {isLoading && <ContentItemCardGridSkeleton/>}
 
@@ -195,10 +198,10 @@ const HomePageComponent = () => {
                   </Tag>
                 ))}
               </TagsRow>
-              <ContentFilterBar isModified={areFiltersModified} filters={filters}
+              {showFilters && <ContentFilterBar isModified={areFiltersModified} filters={filters}
                                 showInteractions={true}
                                 setFilters={setFilters}
-                                resetFilters={resetFilters}/>
+                                resetFilters={resetFilters}/>}
 
             {showEmptyState
               ? <div className="flex-1 overflow-y-auto p-4 flex items-center justify-center">

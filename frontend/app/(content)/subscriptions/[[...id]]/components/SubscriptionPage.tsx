@@ -20,6 +20,8 @@ import FollowToggleButton from "../../../../../components/molecules/FollowToggle
 import ShareLinkButton from "../../../../../components/molecules/ShareLinkButton";
 import Avatar from "../../../../../components/atoms/Avatar";
 import AssignTopicModal, {AssignTopicModalId} from "../../../../../components/organism/AssignTopicModal";
+import FilterToggleButton from "../../../../../components/molecules/FilterToggleButton";
+import useFilterBarVisibility from "../../../../../hooks/useFilterBarVisibility";
 import ContentFilterBar from "../../../../../components/organism/ContentFilterBar";
 import ContentItemCardGrid from "../../../../../components/organism/ContentItemCardGrid";
 import {getProviderIcon, getProviderPrettyName} from "../../../../../entities/Provider";
@@ -50,6 +52,7 @@ const SubscriptionPageComponent = ({subscriptionId}: { subscriptionId: string })
   const {providers} = useProviders();
 
   const {filters, setFilters, resetFilters, isModified: areFiltersModified} = useFilters();
+  const {showFilters, toggleFilters} = useFilterBarVisibility();
   const [debouncedFilters, setDebouncedFilters] = useState(filters);
   const {profile, profileIsLoading} = useProfile();
   const {subscriptions, refreshSubscriptions} = useSubscriptions(profile);
@@ -176,6 +179,7 @@ const SubscriptionPageComponent = ({subscriptionId}: { subscriptionId: string })
                 </a>
               }
               actions={<>
+                <FilterToggleButton isOpen={showFilters} isModified={areFiltersModified} onClick={toggleFilters}/>
                 <FollowToggleButton followed={selectedSubscription.followed} isLoggedIn={isUserLogged}
                                     onFollow={() => handleFollowSubscription(selectedSubscription.uuid)}
                                     onUnfollow={() => handleUnfollowSubscription(selectedSubscription.uuid)}/>
@@ -218,7 +222,7 @@ const SubscriptionPageComponent = ({subscriptionId}: { subscriptionId: string })
                 scanningEntityName={selectedSubscription.name}
                 withSubscription={false}
                 topics={topics.filter(topic => topic.subscriptions_ids.includes(selectedSubscription.uuid))}
-                filterBar={
+                filterBar={showFilters &&
                     <ContentFilterBar isModified={areFiltersModified} filters={filters}
                                       showInteractions={isUserLogged}
                                       setFilters={setFilters}
