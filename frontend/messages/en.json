@@ -429,7 +429,10 @@
     "username_hint": "Between 4 and 16 characters.",
     "send_failed": "Couldn't send this message.",
     "message_input_label": "Message",
-    "characters_left": "{count} characters left"
+    "characters_left": "{count} characters left",
+    "danger_zone": "Danger zone",
+    "appearance": "Appearance",
+    "about_linkurator": "About"
   },
   "legal": {
     "tos_title": "Terms of Service",

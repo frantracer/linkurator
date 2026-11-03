@@ -6,17 +6,14 @@ import {useRouter} from "next/navigation";
 import React, {useEffect, useState} from "react";
 import {configuration, paths} from "../../../configuration";
 import Button from "../../../components/atoms/Button";
-import FlexColumn from "../../../components/atoms/FlexColumn";
 import PageHeader from "../../../components/molecules/PageHeader";
-import FlexRow from "../../../components/atoms/FlexRow";
+import FormField from "../../../components/molecules/FormField";
+import SettingsSection from "../../../components/molecules/SettingsSection";
+import {InputType} from "../../../components/atoms/InputText";
 import Avatar from "../../../components/atoms/Avatar";
-import Box from "../../../components/atoms/Box";
 import {deleteProfile, PersonalDataChanges} from "../../../services/profileService";
 import ConfirmDialog from "../../../components/organism/ConfirmDialog";
 import {openModal} from "../../../utilities/modalAction";
-import InputText from "../../../components/atoms/InputText";
-import Divider from "../../../components/atoms/Divider";
-import FlexItem from "../../../components/atoms/FlexItem";
 import {useTranslations} from "next-intl";
 import {ProfileIcon} from "../../../components/atoms/Icons";
 import {useToast} from "../../../contexts/ToastContext";
@@ -89,62 +86,60 @@ const ProfilePage: NextPage = () => {
   }, [profileIsLoading, router, profile]);
 
   return (
-    <main className="flex flex-col h-full bg-base-200">
+    <main className="flex flex-col h-full bg-base-300">
       <PageHeader title={t("my_profile")} icon={<ProfileIcon/>}/>
       <div className="h-full overflow-y-auto">
-        <FlexRow position={"center"}>
-          <FlexItem grow={true}>
-            <FlexRow>
-              <FlexItem grow={true}/>
-              <FlexItem grow={true}>
-                <div className={"px-2 py-4 min-w-80"}>
-                  <FlexColumn>
-                    <Box title={t("profile_picture")}>
-                      <Avatar src={avatarUrl} alt={username ? username : ""}/>
-                    </Box>
-                    <Box title={t("personal_data")}>
-                      <FlexColumn>
-                        <span className={"font-bold"}>{t("first_name")}</span>
-                        <InputText value={firstName === null ? "" : firstName} onChange={(value) => {
-                          setFirstName(value)
-                        }}/>
-                        <span className={"font-bold"}>{t("last_name")}</span>
-                        <InputText value={lastName === null ? "" : lastName} onChange={(value) => {
-                          setLastName(value)
-                        }}/>
-                        <Button fitContent={true} clickAction={handleSavePersonalData}
-                                disabled={!hasPersonalDataChanges || isSavingPersonalData}>
-                          {t("save")}
-                        </Button>
-                      </FlexColumn>
-                    </Box>
-                    <Box title={t("account_data")}>
-                      <FlexColumn>
-                        <span className={"font-bold"}>{t("email")}</span>
-                        <InputText value={email} disabled={true}/>
-                        <span className={"font-bold"}>{t("username")}</span>
-                        <InputText value={username === null ? "" : username} onChange={(value) => {
-                          setUsername(value.toLowerCase())
-                        }}/>
-                        <Button fitContent={true} clickAction={handleSaveUsername}
-                                disabled={!hasUsernameChanged || isSavingUsername}>
-                          {t("save")}
-                        </Button>
-                      </FlexColumn>
-                    </Box>
-                    <Divider/>
-                    <Box title={t("privacy")}>
-                      <Button fitContent={true} clickAction={() => openModal(DeleteAccountDialogId)}>
-                        <span>{t("delete_account")}</span>
-                      </Button>
-                    </Box>
-                  </FlexColumn>
-                </div>
-              </FlexItem>
-              <FlexItem grow={true}/>
-            </FlexRow>
-          </FlexItem>
-        </FlexRow>
+        <div className="flex flex-col gap-4 w-full max-w-2xl mx-auto px-4 py-6">
+          <SettingsSection title={t("personal_data")}>
+            <div className="flex flex-row items-center gap-4">
+              <Avatar src={avatarUrl} alt={t("profile_picture")} size={"lg"}/>
+              <div className="flex flex-col min-w-0">
+                <span className="font-semibold truncate">{profile?.first_name} {profile?.last_name}</span>
+                <span className="text-sm text-base-content/60 truncate">@{profile?.username}</span>
+              </div>
+            </div>
+            <form className="flex flex-col gap-4" onSubmit={(event) => {
+              event.preventDefault();
+              handleSavePersonalData();
+            }}>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <FormField label={t("first_name")} value={firstName === null ? "" : firstName}
+                           onChange={setFirstName} autoComplete={"given-name"}/>
+                <FormField label={t("last_name")} value={lastName === null ? "" : lastName}
+                           onChange={setLastName} autoComplete={"family-name"}/>
+              </div>
+              <div className="flex justify-end">
+                <Button submit={true} disabled={!hasPersonalDataChanges || isSavingPersonalData}>
+                  {t("save")}
+                </Button>
+              </div>
+            </form>
+          </SettingsSection>
+          <SettingsSection title={t("account_data")}>
+            <form className="flex flex-col gap-4" onSubmit={(event) => {
+              event.preventDefault();
+              handleSaveUsername();
+            }}>
+              <FormField label={t("email")} value={email} onChange={() => undefined} disabled={true}
+                         inputType={InputType.EMAIL}/>
+              <FormField label={t("username")} value={username === null ? "" : username}
+                         onChange={(value) => setUsername(value.toLowerCase())} autoComplete={"username"}
+                         hint={t("username_hint")}/>
+              <div className="flex justify-end">
+                <Button submit={true} disabled={!hasUsernameChanged || isSavingUsername}>
+                  {t("save")}
+                </Button>
+              </div>
+            </form>
+          </SettingsSection>
+          <SettingsSection title={t("danger_zone")} description={t("delete_account_warning")} danger={true}>
+            <div>
+              <Button danger={true} clickAction={() => openModal(DeleteAccountDialogId)}>
+                {t("delete_account")}
+              </Button>
+            </div>
+          </SettingsSection>
+        </div>
       </div>
       <ConfirmDialog
         id={DeleteAccountDialogId}
