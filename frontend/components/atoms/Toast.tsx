@@ -5,6 +5,11 @@ import classNames from "classnames";
 
 export type ToastVariant = "success" | "error";
 
+export type ToastAction = {
+  label: string;
+  onClick: () => void;
+};
+
 type ToastProps = {
   id: string;
   title: string;
@@ -12,12 +17,12 @@ type ToastProps = {
   variant: ToastVariant;
   duration: number;
   onClose: (id: string) => void;
-  onUndo?: () => void;
+  action?: ToastAction;
 }
 
 const FADE_OUT_MS = 300;
 
-export const Toast = ({id, title, subtitle, variant, duration, onClose, onUndo}: ToastProps) => {
+export const Toast = ({id, title, subtitle, variant, duration, onClose, action}: ToastProps) => {
   const t = useTranslations("common");
   const [isVisible, setIsVisible] = useState(true);
   const [isPaused, setIsPaused] = useState(false);
@@ -44,9 +49,9 @@ export const Toast = ({id, title, subtitle, variant, duration, onClose, onUndo}:
     };
   }, [duration, dismiss, isPaused]);
 
-  const handleUndo = () => {
-    if (onUndo) {
-      onUndo();
+  const handleAction = () => {
+    if (action) {
+      action.onClick();
     }
     dismiss();
   };
@@ -78,9 +83,9 @@ export const Toast = ({id, title, subtitle, variant, duration, onClose, onUndo}:
         <span className="text-sm font-semibold">{title}</span>
         {subtitle && <span className="text-xs text-base-content/70">{subtitle}</span>}
       </div>
-      {onUndo && (
-        <button onClick={handleUndo} className="btn btn-sm btn-ghost text-primary px-2">
-          {t("undo")}
+      {action && (
+        <button onClick={handleAction} className="btn btn-sm btn-ghost text-primary px-2">
+          {action.label}
         </button>
       )}
       <button

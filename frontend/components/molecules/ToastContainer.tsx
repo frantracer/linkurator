@@ -1,5 +1,5 @@
 import React from 'react';
-import { Toast, ToastVariant } from '../atoms/Toast';
+import { Toast, ToastAction, ToastVariant } from '../atoms/Toast';
 
 export type ToastData = {
   id: string;
@@ -7,7 +7,7 @@ export type ToastData = {
   subtitle?: string;
   variant: ToastVariant;
   duration: number;
-  onUndo?: () => void;
+  action?: ToastAction;
 }
 
 type ToastContainerProps = {
@@ -30,7 +30,7 @@ export const ToastContainer = ({ toasts, onRemoveToast }: ToastContainerProps) =
           variant={toast.variant}
           duration={toast.duration}
           onClose={onRemoveToast}
-          onUndo={toast.onUndo}
+          action={toast.action}
         />
       ))}
     </div>

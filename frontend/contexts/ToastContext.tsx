@@ -1,6 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useState, useCallback } from 'react';
+import { useTranslations } from 'next-intl';
 import { ToastContainer, ToastData } from '../components/molecules/ToastContainer';
 
 const SUCCESS_TOAST_DURATION = 2200;
@@ -8,7 +9,7 @@ const ERROR_TOAST_DURATION = 5000;
 
 type ToastContextType = {
   showToast: (title: string, subtitle?: string, onUndo?: () => void) => void;
-  showErrorToast: (title: string, subtitle?: string) => void;
+  showErrorToast: (title: string, subtitle?: string, onRetry?: () => void) => void;
 }
 
 const ToastContext = createContext<ToastContextType | undefined>(undefined);
@@ -22,6 +23,7 @@ export const useToast = () => {
 };
 
 export const ToastProvider = ({ children }: { children: React.ReactNode }) => {
+  const t = useTranslations("common");
   const [toasts, setToasts] = useState<ToastData[]>([]);
 
   const addToast = useCallback((toast: Omit<ToastData, 'id'>) => {
@@ -30,12 +32,14 @@ export const ToastProvider = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   const showToast = useCallback((title: string, subtitle?: string, onUndo?: () => void) => {
-    addToast({ title, subtitle, onUndo, variant: "success", duration: SUCCESS_TOAST_DURATION });
-  }, [addToast]);
+    const action = onUndo ? { label: t("undo"), onClick: onUndo } : undefined;
+    addToast({ title, subtitle, action, variant: "success", duration: SUCCESS_TOAST_DURATION });
+  }, [addToast, t]);
 
-  const showErrorToast = useCallback((title: string, subtitle?: string) => {
-    addToast({ title, subtitle, variant: "error", duration: ERROR_TOAST_DURATION });
-  }, [addToast]);
+  const showErrorToast = useCallback((title: string, subtitle?: string, onRetry?: () => void) => {
+    const action = onRetry ? { label: t("retry"), onClick: onRetry } : undefined;
+    addToast({ title, subtitle, action, variant: "error", duration: ERROR_TOAST_DURATION });
+  }, [addToast, t]);
 
   const removeToast = useCallback((id: string) => {
     setToasts((prev) => prev.filter((toast) => toast.id !== id));

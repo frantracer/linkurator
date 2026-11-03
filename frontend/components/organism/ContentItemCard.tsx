@@ -93,7 +93,7 @@ const ContentItemCard = (
   const {ref, inView} = useInView({threshold: 0, triggerOnce: true});
   const t = useTranslations("common");
   const router = useRouter();
-  const {showToast} = useToast();
+  const {showToast, showErrorToast} = useToast();
 
   const [recommended, setRecommended] = useState(item.recommended);
   const [viewed, setViewed] = useState(item.viewed);
@@ -125,6 +125,28 @@ const ContentItemCard = (
     }
   };
 
+  // Optimistic: the UI flips at once and rolls back with a retryable error toast if saving fails
+  const saveInteraction = (
+    interactionType: InteractionType,
+    previousValue: boolean,
+    newValue: boolean,
+    setActive: (active: boolean) => void,
+    onSaved: () => void,
+  ): Promise<void> => {
+    setActive(newValue);
+    return onChangeSwapButton(item.uuid, interactionType, newValue)
+      .then(() => {
+        onSaved();
+        onChange?.();
+      })
+      .catch(() => {
+        setActive(previousValue);
+        showErrorToast(t("action_failed"), item.name, () => {
+          saveInteraction(interactionType, previousValue, newValue, setActive, onSaved);
+        });
+      });
+  };
+
   const toggleInteraction = (
     interactionType: InteractionType,
     isActive: boolean,
@@ -133,16 +155,10 @@ const ContentItemCard = (
     unmarkedMessage: string
   ) => {
     const newValue = !isActive;
-    setActive(newValue);
-    showToast(
-      newValue ? markedMessage : unmarkedMessage,
-      item.name,
-      () => {
-        setActive(isActive);
-        onChangeSwapButton(item.uuid, interactionType, isActive).then(onChange);
-      }
-    );
-    return onChangeSwapButton(item.uuid, interactionType, newValue).then(onChange);
+    const undo = () => saveInteraction(interactionType, newValue, isActive, setActive, () => {});
+    return saveInteraction(interactionType, isActive, newValue, setActive, () => {
+      showToast(newValue ? markedMessage : unmarkedMessage, item.name, undo);
+    });
   };
 
   const toggleRecommended = () => toggleInteraction(

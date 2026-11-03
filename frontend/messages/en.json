@@ -384,7 +384,9 @@
     "by_curator": "by @{username}",
     "search_keyboard_hint": "↑↓ to move · Enter to open · Esc to close",
     "searching": "Searching…",
-    "open": "Open"
+    "open": "Open",
+    "retry": "Retry",
+    "action_failed": "Couldn't save the change"
   },
   "legal": {
     "tos_title": "Terms of Service",
