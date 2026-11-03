@@ -10,7 +10,7 @@ type MenuItemProps = {
 export const MenuItem = (props: MenuItemProps) => {
   const itemClassNames = classNames(
     "relative block p-2 text-sm w-full text-left rounded rounded-lg min-h-12",
-    "hover:text-primary focus:outline-none focus:shadow-outline",
+    "hover:text-primary hover:bg-base-content/5",
     "before:absolute before:left-0 before:top-1/2 before:-translate-y-1/2",
     "before:h-0 before:w-1 before:rounded-r-full before:bg-primary",
     "before:transition-all before:duration-200",

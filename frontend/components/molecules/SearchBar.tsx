@@ -1,6 +1,7 @@
 import InputText from "../atoms/InputText";
 import {CrossIcon, FunnelIcon, MagnifyingGlassIcon} from "../atoms/Icons";
 import {useEffect, useState} from "react";
+import {useTranslations} from "next-intl";
 
 export type SearchBarIcon = "search" | "filter";
 
@@ -23,6 +24,7 @@ const SearchBar = (
     icon = "search"
   }: SearchBarProps
 ) => {
+  const t = useTranslations("common");
   const [searchValue, setSearchValue] = useState(value);
 
   useEffect(() => {
@@ -38,16 +40,19 @@ const SearchBar = (
 
   return (
     <div className="relative flex flex-column w-full">
-      <div className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 bg-transparent">
+      <div className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 bg-transparent pointer-events-none">
         {icon === "filter" ? <FunnelIcon/> : <MagnifyingGlassIcon/>}
       </div>
-      <InputText placeholder={placeholder} onClick={handleClick} onChange={setValue} withLeftPadding={true} value={searchValue} autofocus={autofocus}/>
+      <InputText placeholder={placeholder} ariaLabel={placeholder} onClick={handleClick} onChange={setValue} withLeftPadding={true} value={searchValue} autofocus={autofocus}/>
       {searchValue !== "" &&
-          <div
-              className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 cursor-pointer bg-base-200 hover:bg-secondary rounded-full"
+          <button
+              type="button"
+              className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 bg-base-200 hover:text-primary rounded-full"
+              aria-label={t("clear_search")}
+              title={t("clear_search")}
               onClick={() => setValue("")}>
               <CrossIcon/>
-          </div>
+          </button>
       }
     </div>
   );

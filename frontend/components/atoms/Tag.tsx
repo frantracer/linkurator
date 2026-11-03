@@ -9,16 +9,28 @@ type TagProps = {
 const Tag = ({children, selected = false, onClick}: TagProps) => {
   const interactive = onClick !== undefined;
   const colorClasses = selected ? "badge-primary" : "badge-neutral badge-outline";
+
+  // A span with role=button instead of <button> so tags can contain their own remove button
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLSpanElement>) => {
+    if (onClick && e.target === e.currentTarget && (e.key === "Enter" || e.key === " ")) {
+      e.preventDefault();
+      onClick();
+    }
+  };
+
   return (
-    <div
+    <span
       className={`badge ${colorClasses} h-fit w-fit py-1 justify-start items-center text-wrap text-sm ${interactive ? "cursor-pointer hover:border-primary" : ""}`}
       onClick={onClick}
+      onKeyDown={interactive ? handleKeyDown : undefined}
       role={interactive ? "button" : undefined}
+      tabIndex={interactive ? 0 : undefined}
+      aria-pressed={interactive ? selected : undefined}
     >
-      <div className={`flex flex-row gap-2 items-center justify-center font-semibold ${selected ? "text-primary-content" : "text-base-content"}`}>
+      <span className={`flex flex-row gap-2 items-center justify-center font-semibold ${selected ? "text-primary-content" : "text-base-content"}`}>
         {children}
-      </div>
-    </div>
+      </span>
+    </span>
   )
 }
 

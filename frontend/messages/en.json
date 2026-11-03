@@ -369,7 +369,12 @@
     "filter_saved_successfully": "Filter saved successfully",
     "error_saving_filter": "Error saving filter",
     "filter_reset_successfully": "Filter reset successfully",
-    "error_resetting_filter": "Error resetting filter"
+    "error_resetting_filter": "Error resetting filter",
+    "remove": "Remove",
+    "clear_search": "Clear search",
+    "dark_theme": "Dark theme",
+    "light_theme": "Light theme",
+    "skip_to_content": "Skip to content"
   },
   "legal": {
     "tos_title": "Terms of Service",

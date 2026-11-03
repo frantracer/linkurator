@@ -23,7 +23,7 @@ const LanguageSelector = () => {
   return (
     <div className="flex cursor-pointer gap-2 w-fit">
       ES
-      <ToggleButton label={"Toggle"} value={language === 'en'} onChange={handleToggle}/>
+      <ToggleButton label={language === 'en' ? "English" : "Español"} value={language === 'en'} onChange={handleToggle}/>
       EN
     </div>
   );

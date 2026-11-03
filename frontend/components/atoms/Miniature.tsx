@@ -14,7 +14,7 @@ const Miniature = (props: MiniatureProps) => {
         <div className="absolute bottom-0 right-0 transform translate-x-1/3 translate-y-1/3 w-4 h-4">
           <img
             src={props.badgeImage}
-            alt="Badge"
+            alt=""
             className="rounded-full object-cover w-full h-full bg-transparent"
           />
         </div>

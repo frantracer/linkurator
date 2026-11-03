@@ -1,5 +1,6 @@
 import ToggleButton from "../atoms/ToggleButton";
 import React, {useEffect, useState} from "react";
+import {useTranslations} from "next-intl";
 import {MoonIcon, SunIcon} from "../atoms/Icons";
 import {setUserTheme} from "../../utilities/theme";
 import {Theme} from "../../utilities/themeConfig";
@@ -9,6 +10,7 @@ type ThemeToggleButtonProps = {
 }
 
 const ThemeToggleButton = ({onThemeChange}: ThemeToggleButtonProps) => {
+  const t = useTranslations("common");
   const [theme, setTheme] = useState<Theme>(Theme.DARK);
 
   useEffect(() => {
@@ -27,7 +29,7 @@ const ThemeToggleButton = ({onThemeChange}: ThemeToggleButtonProps) => {
   return (
     <label className="flex cursor-pointer gap-2">
       <MoonIcon/>
-      <ToggleButton label={"Toggle"} value={theme === Theme.LIGHT} onChange={handleToggle}/>
+      <ToggleButton label={theme === Theme.LIGHT ? t("light_theme") : t("dark_theme")} value={theme === Theme.LIGHT} onChange={handleToggle}/>
       <SunIcon/>
     </label>
   );
