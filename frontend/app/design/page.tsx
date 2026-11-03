@@ -4,12 +4,15 @@ import Drawer from "../../components/molecules/Drawer";
 import ThemeToggleButton from "../../components/molecules/ThemeToggleButton";
 import PageHeader from "../../components/molecules/PageHeader";
 import Button from "../../components/atoms/Button";
+import FollowToggleButton from "../../components/molecules/FollowToggleButton";
+import TopicIcon from "../../components/atoms/TopicIcon";
+import EmptyStateBox from "../../components/atoms/EmptyStateBox";
+import EndOfList from "../../components/atoms/EndOfList";
 import ALink from "../../components/atoms/ALink";
 import Head1 from "../../components/atoms/Head1";
 import Section from "../../components/atoms/Section";
 import SearchBar from "../../components/molecules/SearchBar";
 import InputText from "../../components/atoms/InputText";
-import {SwapButton} from "../../components/atoms/SwapButton";
 import ContentItemCard from "../../components/organism/ContentItemCard";
 import {
   AddIcon,
@@ -66,31 +69,26 @@ import Avatar from "../../components/atoms/Avatar";
 import Tag from "../../components/atoms/Tag";
 import Miniature from "../../components/atoms/Miniature";
 import Box from "../../components/atoms/Box";
-import Select from "../../components/atoms/Select";
 import Menu from "../../components/atoms/Menu";
 import {MenuItem} from "../../components/atoms/MenuItem";
 import Sidebar from "../../components/atoms/Sidebar";
 import Divider from "../../components/atoms/Divider";
 import {hideLateralMenu, showLateralMenu} from "../../utilities/lateralMenuAction";
-import {ErrorBanner} from "../../components/atoms/ErrorBanner";
-import {Tabs} from "../../components/atoms/Tabs";
 import Dropdown from "../../components/atoms/Dropdown";
 import FlexColumn from "../../components/atoms/FlexColumn";
 
 const SIDE_BAR_NAME = "main-menu";
 const ICONS_REF = "icons";
 const BUTTONS_REF = "buttons";
-const SWAP_BUTTONS_REF = "swap_buttons";
+const HEADERS_REF = "headers";
+const EMPTY_STATES_REF = "empty_states";
 const INPUTS_REF = "inputs";
 const CARDS_REF = "cards";
 const MINIATURES_REF = "miniatures";
 const AVATARS_REF = "avatars";
 const TAGS_REF = "tags";
 const BOX_REF = "box";
-const SELECT_REF = "select";
 const DROPDOWN_REF = "dropdown";
-const ERROR_BANNER_REF = "error_banner";
-const TABS_REF = "tabs";
 
 const LateralMenu = (
   {
@@ -106,8 +104,8 @@ const LateralMenu = (
     setAnchor(currentAnchor);
   }, []);
 
-  const refs = [ICONS_REF, BUTTONS_REF, SWAP_BUTTONS_REF, INPUTS_REF, MINIATURES_REF, AVATARS_REF,
-    TAGS_REF, CARDS_REF, BOX_REF, SELECT_REF, DROPDOWN_REF, ERROR_BANNER_REF, TABS_REF];
+  const refs = [ICONS_REF, BUTTONS_REF, HEADERS_REF, INPUTS_REF, MINIATURES_REF, AVATARS_REF,
+    TAGS_REF, CARDS_REF, EMPTY_STATES_REF, BOX_REF, DROPDOWN_REF];
 
   const handleClick = (ref: string) => {
     setAnchor(ref);
@@ -208,31 +206,22 @@ const ButtonsSection = () => {
       <Head1 id={BUTTONS_REF}># Buttons</Head1>
       <div className="flex flex-col gap-6 p-6 w-full
       border-base-100 border-solid border-2 rounded justify-items-center items-center">
-        <Button><MenuIcon/></Button>
-        <Button>Button</Button>
-        <Button><DownloadIcon/>Download</Button>
+        <div className="flex flex-row flex-wrap gap-3 items-center">
+          <Button>Primary</Button>
+          <Button primary={false}>Outline</Button>
+          <Button primary={false} borderless={true}>Ghost</Button>
+          <Button danger={true}>Danger</Button>
+          <Button disabled={true}>Disabled</Button>
+          <Button primary={false} tooltip={"Menu"}><MenuIcon/></Button>
+          <Button><DownloadIcon/>Download</Button>
+        </div>
+        <div className="flex flex-row flex-wrap gap-3 items-center">
+          <FollowToggleButton followed={false} isLoggedIn={true} onFollow={() => undefined} onUnfollow={() => undefined}/>
+          <FollowToggleButton followed={true} isLoggedIn={true} onFollow={() => undefined} onUnfollow={() => undefined}/>
+        </div>
       </div>
     </Section>
   );
-}
-
-const SwapButtonsSection = () => {
-  return (
-    <Section>
-      <Head1 id={SWAP_BUTTONS_REF}># Swap Buttons</Head1>
-      <div className="flex flex-col gap-6 p-6 w-full
-      border-base-100 border-solid border-2 rounded justify-items-center items-center">
-        <SwapButton defaultChecked={true}>
-          <span>ON</span>
-          <span>OFF</span>
-        </SwapButton>
-        <SwapButton defaultChecked={true}>
-          <MoonIcon/>
-          <SunIcon/>
-        </SwapButton>
-      </div>
-    </Section>
-  )
 }
 
 const InputsSection = () => {
@@ -369,24 +358,6 @@ const BoxSection = () => {
   );
 }
 
-const SelectSection = () => {
-  return (
-    <Section>
-      <Head1 id={SELECT_REF}># Select</Head1>
-      <div className="flex flex-col gap-6 p-6 w-full
-      border-base-100 border-solid border-2 rounded justify-items-center items-center">
-        <Select title={"Pick option"} options={
-          [
-            {key: "1", label: "Option 1"},
-            {key: "2", label: "Option 2"},
-            {key: "3", label: "Option 3"}
-          ]
-        } onChange={(key) => console.log(key)}/>
-      </div>
-    </Section>
-  );
-}
-
 const DropdownSection = () => {
   const DropdownButton = ({text}: { text: string }) => {
     return (
@@ -422,22 +393,37 @@ const DropdownSection = () => {
   );
 }
 
-const ErrorBannerSection = () => {
+const HeadersSection = () => {
   return (
     <Section>
-      <Head1 id={ERROR_BANNER_REF}># Error Banner</Head1>
-      <ErrorBanner>
-        Error Banner
-      </ErrorBanner>
+      <Head1 id={HEADERS_REF}># Page headers</Head1>
+      <div className="flex flex-col gap-6 w-full border-base-100 border-solid border-2 rounded overflow-hidden">
+        <PageHeader title={"Home"} icon={<HomeIcon/>}/>
+        <PageHeader
+          title={"Tech talks"}
+          media={<TopicIcon name={"Tech talks"} size={"md"}/>}
+          subtitle={"Your topic · 12 subscriptions"}
+          actions={<>
+            <Button primary={false}><StarIcon/></Button>
+            <Button primary={false}>Ask AI</Button>
+          </>}
+        />
+      </div>
     </Section>
   );
 }
 
-const TabsSection = () => {
+const EmptyStatesSection = () => {
   return (
     <Section>
-      <Head1># Tabs</Head1>
-      <Tabs tabsText={["Tab 1", "Tab 2", "Tab 3"]} selectedTab={"Tab 1"} onTabSelected={(tab) => console.log(tab)}/>
+      <Head1 id={EMPTY_STATES_REF}># Empty states</Head1>
+      <div className="flex flex-col gap-6 p-6 w-full border-base-100 border-solid border-2 rounded">
+        <EmptyStateBox icon={<StarIcon/>} title={"No favourite topics yet"}
+                       message={"Mark topics as favourites to see their latest content here."}>
+          <Button>Browse topics</Button>
+        </EmptyStateBox>
+        <EndOfList text={"You're all caught up"}/>
+      </div>
     </Section>
   );
 }
@@ -447,17 +433,15 @@ const MainContent = () => {
     <main className="bg-base-300 text-base-content w-full h-full z-0 p-2 overflow-auto">
       <IconsSection/>
       <ButtonsSection/>
-      <SwapButtonsSection/>
+      <HeadersSection/>
       <InputsSection/>
       <AvatarsSection/>
       <MiniaturesSection/>
       <TagSection/>
       <CardSection/>
+      <EmptyStatesSection/>
       <BoxSection/>
       <DropdownSection/>
-      <SelectSection/>
-      <ErrorBannerSection/>
-      <TabsSection/>
     </main>
   );
 }
