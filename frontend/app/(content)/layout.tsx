@@ -20,7 +20,7 @@ export default function DashboardLayout(
       </a>
       <div className="flex flex-1 overflow-y-hidden min-h-0">
         <LateralNavigationMenu>
-          <div id="main-content" tabIndex={-1} className="flex flex-col flex-1 min-h-0 pb-16 lg:pb-0 outline-none">
+          <div id="main-content" tabIndex={-1} className="flex flex-col flex-1 min-h-0 pb-[calc(5.5rem+env(safe-area-inset-bottom))] lg:pb-0 outline-none">
             {children}
           </div>
         </LateralNavigationMenu>

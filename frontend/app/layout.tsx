@@ -2,13 +2,19 @@ import "./styles.css";
 import "tailwindcss/tailwind.css";
 
 import ReactQueryProvider from "../providers/ReactQueryProvider";
-import { Metadata } from "next";
+import { Metadata, Viewport } from "next";
 import { NextIntlClientProvider } from 'next-intl';
 import { getLocale, getMessages } from 'next-intl/server';
 import { Analytics } from '@vercel/analytics/next';
 import { ToastProvider } from '../contexts/ToastContext';
 import { getUserTheme } from '../utilities/theme';
 import ClientOnly from '../components/atoms/ClientOnly';
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+}
 
 export const metadata: Metadata = {
   title: 'Linkurator',
