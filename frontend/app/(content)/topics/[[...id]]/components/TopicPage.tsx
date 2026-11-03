@@ -16,7 +16,7 @@ import {
 } from "../../../../../components/atoms/Icons";
 import {MenuItem} from "../../../../../components/atoms/MenuItem";
 import ConfirmDialog from "../../../../../components/organism/ConfirmDialog";
-import EditTopicModal, {EditTopicModalId} from "../../../../../components/organism/EditTopicModal";
+import TopicEditorModal, {EditTopicModalId} from "../../../../../components/organism/TopicEditorModal";
 import ContentFilterBar from "../../../../../components/organism/ContentFilterBar";
 import ContentItemCardGrid from "../../../../../components/organism/ContentItemCardGrid";
 import {paths} from "../../../../../configuration";
@@ -272,12 +272,14 @@ const TopicPageComponent = ({topicId}: { topicId: string }) => {
         }
         {
           selectedTopic &&
-            <EditTopicModal refreshTopics={refreshTopics}
-                            subscriptions={combinedSubscriptions}
-                            providers={providers}
-                            topic={selectedTopic}
-                            refreshTopicItems={refreshTopicItems}
-                            refreshSubscriptions={refreshSubscriptions}
+            <TopicEditorModal subscriptions={combinedSubscriptions}
+                              providers={providers}
+                              topic={selectedTopic}
+                              onSaved={() => {
+                                refreshTopics();
+                                refreshTopicItems();
+                                refreshSubscriptions();
+                              }}
             />
         }
         {

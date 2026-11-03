@@ -5,7 +5,7 @@ import {v4 as uuidv4} from 'uuid';
 import EmptyStateBox from "../atoms/EmptyStateBox";
 import Button from "../atoms/Button";
 import {AddIcon, RectangleGroup} from "../atoms/Icons";
-import {NewTopicModalId} from "./NewTopicModal";
+import {NewTopicModalId} from "./TopicEditorModal";
 import {openModal} from "../../utilities/modalAction";
 import {paths} from "../../configuration";
 

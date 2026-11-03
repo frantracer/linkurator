@@ -405,7 +405,13 @@
     "no_content_yet_title": "Nothing here yet",
     "no_content_yet_message": "New videos and episodes will show up here as soon as they are published.",
     "loading_more": "Loading more…",
-    "not_found_message": "It may have been deleted or the link may be wrong."
+    "not_found_message": "It may have been deleted or the link may be wrong.",
+    "topic_name": "Topic name",
+    "selected_count": "{count} selected",
+    "save_changes": "Save changes",
+    "topic_save_failed": "We couldn't save the topic. Please try again.",
+    "changes_save_automatically": "Changes are saved as you tick each topic.",
+    "new_topic_with_subscription": "New topic with this subscription"
   },
   "legal": {
     "tos_title": "Terms of Service",

@@ -15,7 +15,7 @@ import {
   RectangleGroup,
   SubscriptionIcon
 } from "../atoms/Icons";
-import NewTopicModal from "./NewTopicModal";
+import TopicEditorModal from "./TopicEditorModal";
 import Button from "../atoms/Button";
 import ALink from "../atoms/ALink";
 import {LogoImage} from "../atoms/LogoImage";
@@ -177,7 +177,7 @@ export const LateralNavigationMenu = ({children}: LateralNavigationMenuProps) =>
             </div>
         }
       </Sidebar>
-      <NewTopicModal refreshTopics={refreshTopics} subscriptions={subscriptions} providers={providers}/>
+      <TopicEditorModal onSaved={refreshTopics} subscriptions={subscriptions} providers={providers}/>
       <SearchPalette/>
       <ImportSubscriptionsModal/>
       <ImportOpmlModal refreshSubscriptions={refreshSubscriptions}/>

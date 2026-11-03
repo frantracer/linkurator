@@ -9,11 +9,11 @@ import {AddIcon, MagnifyingGlassIcon, RectangleGroup, StarIcon} from "../../../.
 import SearchBar from "../../../../../components/molecules/SearchBar";
 import PageHeader from "../../../../../components/molecules/PageHeader";
 import ConfirmDialog from "../../../../../components/organism/ConfirmDialog";
-import EditTopicModal, {EditTopicModalId} from "../../../../../components/organism/EditTopicModal";
+import TopicEditorModal, {EditTopicModalId} from "../../../../../components/organism/TopicEditorModal";
 import EmptyStateNoMatches from "../../../../../components/organism/EmptyStateNoMatches";
 import EmptyStateNoTopics from "../../../../../components/organism/EmptyStateNoTopics";
 import {openSearchPalette} from "../../../../../utilities/searchPaletteAction";
-import {NewTopicModalId} from "../../../../../components/organism/NewTopicModal";
+import {NewTopicModalId} from "../../../../../components/organism/TopicEditorModal";
 import TopicCard from "../../../../../components/organism/TopicCard";
 import {Topic} from "../../../../../entities/Topic";
 import {useFavoriteTopics} from "../../../../../hooks/useFavoriteTopics";
@@ -164,13 +164,14 @@ const TopicsListPageComponent = () => {
       </div>
 
       {editingTopic && (
-        <EditTopicModal
+        <TopicEditorModal
           topic={editingTopic}
           subscriptions={subscriptions}
           providers={providers}
-          refreshTopics={refreshTopics}
-          refreshTopicItems={() => undefined}
-          refreshSubscriptions={refreshSubscriptions}
+          onSaved={() => {
+            refreshTopics();
+            refreshSubscriptions();
+          }}
         />
       )}
 

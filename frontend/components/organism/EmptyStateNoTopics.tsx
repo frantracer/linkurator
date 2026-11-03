@@ -3,7 +3,7 @@ import {useTranslations} from "next-intl";
 import EmptyStateBox from "../atoms/EmptyStateBox";
 import Button from "../atoms/Button";
 import {AddIcon, MagnifyingGlassIcon, RectangleGroup} from "../atoms/Icons";
-import {NewTopicModalId} from "./NewTopicModal";
+import {NewTopicModalId} from "./TopicEditorModal";
 import {openSearchPalette} from "../../utilities/searchPaletteAction";
 import {openModal} from "../../utilities/modalAction";
 

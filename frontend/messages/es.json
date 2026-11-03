@@ -405,7 +405,13 @@
         "no_content_yet_title": "Todavía no hay nada",
         "no_content_yet_message": "Los nuevos vídeos y episodios aparecerán aquí en cuanto se publiquen.",
         "loading_more": "Cargando más…",
-        "not_found_message": "Puede que se haya eliminado o que el enlace no sea correcto."
+        "not_found_message": "Puede que se haya eliminado o que el enlace no sea correcto.",
+        "topic_name": "Nombre de la categoría",
+        "selected_count": "{count} seleccionadas",
+        "save_changes": "Guardar cambios",
+        "topic_save_failed": "No hemos podido guardar la categoría. Inténtalo de nuevo.",
+        "changes_save_automatically": "Los cambios se guardan al marcar cada categoría.",
+        "new_topic_with_subscription": "Nueva categoría con esta suscripción"
     },
     "legal": {
         "tos_title": "Términos del servicio",
