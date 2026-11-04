@@ -51,6 +51,17 @@
     border-color: oklch(var(--bc) / 0.45);
 }
 
+/* DaisyUI's .modal keeps closed dialogs rendered (only transparent), so keyboard focus and screen
+   readers could reach them. Hiding them still lets the opening transition run. */
+dialog.modal:not([open]) {
+    visibility: hidden;
+}
+
+/* Visibility must flip at once on open, otherwise the dialog is still hidden when openModal focuses its input */
+dialog.modal[open] {
+    transition-property: transform, opacity;
+}
+
 :focus-visible {
     outline: 2px solid oklch(var(--p));
     outline-offset: 2px;
