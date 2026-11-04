@@ -14,7 +14,6 @@ import {
   StarIcon,
   TrashIcon
 } from "../../../../../components/atoms/Icons";
-import {MenuItem} from "../../../../../components/atoms/MenuItem";
 import ConfirmDialog from "../../../../../components/organism/ConfirmDialog";
 import TopicEditorModal, {EditTopicModalId} from "../../../../../components/organism/TopicEditorModal";
 import FilterToggleButton from "../../../../../components/molecules/FilterToggleButton";
@@ -38,7 +37,7 @@ import Dropdown from "../../../../../components/atoms/Dropdown";
 import Menu from "../../../../../components/atoms/Menu";
 import PageHeader from "../../../../../components/molecules/PageHeader";
 import FollowToggleButton from "../../../../../components/molecules/FollowToggleButton";
-import ShareLinkButton from "../../../../../components/molecules/ShareLinkButton";
+import MenuAction from "../../../../../components/molecules/MenuAction";
 import useShareLink from "../../../../../hooks/useShareLink";
 import TopicIcon from "../../../../../components/atoms/TopicIcon";
 import Link from "next/link";
@@ -140,60 +139,6 @@ const TopicPageComponent = ({topicId}: { topicId: string }) => {
 
   const shareTopic = useShareLink(topicName);
 
-  const dropdownButtons = []
-  if (selectedTopic && isUserLogged) {
-    if (selectedTopic.is_owner) {
-      dropdownButtons.push(
-        <MenuItem key={"topics-edit-topic"} onClick={handleEditTopic} hideMenuOnClick={true}>
-          <div className="flex flex-row gap-2 items-center justify-left">
-            <PencilIcon/>
-            {t("edit")}
-          </div>
-        </MenuItem>
-      )
-      dropdownButtons.push(
-        <MenuItem key={"topics-delete-topic"} onClick={handleDeleteTopic} hideMenuOnClick={true}>
-          <div className="flex flex-row gap-2 items-center justify-left">
-            <TrashIcon/>
-            {t("delete")}
-          </div>
-        </MenuItem>
-      )
-    }
-  }
-
-  // On phones these header actions move into the overflow menu so the header keeps to one row
-  const mobileMenuButtons = []
-  if (selectedTopic && isUserLogged && (selectedTopic.is_owner || selectedTopic.followed)) {
-    mobileMenuButtons.push(
-      <MenuItem key={"topics-favorite-topic"} onClick={() => handleFavoriteTopic(selectedTopic.uuid)}
-                hideMenuOnClick={true}>
-        <div className="flex flex-row gap-2 items-center justify-left">
-          {selectedTopic.is_favorite ? <StarFilledIcon/> : <StarIcon/>}
-          {selectedTopic.is_favorite ? t("remove_from_favorites") : t("add_to_favorites")}
-        </div>
-      </MenuItem>
-    )
-  }
-  if (selectedTopic) {
-    mobileMenuButtons.push(
-      <MenuItem key={"topics-chat"} onClick={handleChatAboutThis} hideMenuOnClick={true}>
-        <div className="flex flex-row gap-2 items-center justify-left">
-          <ChatBubbleIcon/>
-          {t("ask_ai")}
-        </div>
-      </MenuItem>
-    )
-    mobileMenuButtons.push(
-      <MenuItem key={"topics-share"} onClick={shareTopic} hideMenuOnClick={true}>
-        <div className="flex flex-row gap-2 items-center justify-left">
-          <ShareIcon/>
-          {t("share")}
-        </div>
-      </MenuItem>
-    )
-  }
-
   return (
     <div className="flex flex-col w-full h-full min-h-0 overflow-hidden">
       {!topicIsLoading && selectedTopic &&
@@ -207,38 +152,40 @@ const TopicPageComponent = ({topicId}: { topicId: string }) => {
                     {t("by_curator", {username: selectedTopic.curator.username})}
                   </Link>
                 }
-                {" · "}{t("subscriptions_count", {count: topicSubscriptions.length})}
+                <span className="hidden sm:inline">{" · "}{t("subscriptions_count", {count: topicSubscriptions.length})}</span>
               </>}
               actions={<>
-                <FilterToggleButton isOpen={showFilters} isModified={areFiltersModified} onClick={toggleFilters}/>
-                {!selectedTopic.is_owner &&
-                    <FollowToggleButton followed={selectedTopic.followed} isLoggedIn={isUserLogged}
-                                        onFollow={() => handleFollowTopic(selectedTopic.uuid)}
-                                        onUnfollow={() => handleUnfollowTopic(selectedTopic.uuid)}/>
-                }
                 <div className="hidden sm:contents">
-                  {isUserLogged && (selectedTopic.is_owner || selectedTopic.followed) &&
-                      <Button primary={false} ariaPressed={selectedTopic.is_favorite}
-                              clickAction={() => handleFavoriteTopic(selectedTopic.uuid)}
-                              tooltip={selectedTopic.is_favorite ? t("remove_from_favorites") : t("add_to_favorites")}>
-                        {selectedTopic.is_favorite ? <StarFilledIcon/> : <StarIcon/>}
-                      </Button>
-                  }
                   <Button primary={false} clickAction={handleChatAboutThis} tooltip={t("chat_about_this")}>
                       <ChatBubbleIcon/>
                       {t("ask_ai")}
                   </Button>
-                  <ShareLinkButton title={topicName}/>
                 </div>
-                <div className={dropdownButtons.length > 0 ? "contents" : "contents sm:hidden"}>
-                  <Dropdown label={t("more")} button={<EllipsisHorizontalIcon/>} width={"narrow"} position="end"
-                            bottom={true} closeOnClickInside={true}>
-                      <Menu>
-                          <div className="sm:hidden">{mobileMenuButtons}</div>
-                        {dropdownButtons}
-                      </Menu>
-                  </Dropdown>
-                </div>
+                {!selectedTopic.is_owner &&
+                    <FollowToggleButton followed={selectedTopic.followed} isLoggedIn={isUserLogged}
+                                        iconOnlyOnMobile={true}
+                                        onFollow={() => handleFollowTopic(selectedTopic.uuid)}
+                                        onUnfollow={() => handleUnfollowTopic(selectedTopic.uuid)}/>
+                }
+                <Dropdown label={t("more")} button={<EllipsisHorizontalIcon/>} width={"narrow"} position="end"
+                          bottom={true} closeOnClickInside={true}>
+                    <Menu>
+                        <MenuAction icon={<ChatBubbleIcon/>} label={t("ask_ai")} onClick={handleChatAboutThis}
+                                    mobileOnly={true}/>
+                        <MenuAction icon={<ShareIcon/>} label={t("share")} onClick={shareTopic}/>
+                      {isUserLogged && (selectedTopic.is_owner || selectedTopic.followed) &&
+                          <MenuAction icon={selectedTopic.is_favorite ? <StarFilledIcon/> : <StarIcon/>}
+                                      label={selectedTopic.is_favorite ? t("remove_from_favorites") : t("add_to_favorites")}
+                                      onClick={() => handleFavoriteTopic(selectedTopic.uuid)}/>
+                      }
+                      {isUserLogged && selectedTopic.is_owner &&
+                          <MenuAction icon={<PencilIcon/>} label={t("edit")} onClick={handleEditTopic}/>
+                      }
+                      {isUserLogged && selectedTopic.is_owner &&
+                          <MenuAction icon={<TrashIcon/>} label={t("delete")} onClick={handleDeleteTopic}/>
+                      }
+                    </Menu>
+                </Dropdown>
               </>}
           />
       }
@@ -264,6 +211,8 @@ const TopicPageComponent = ({topicId}: { topicId: string }) => {
                 scanningEntityName={selectedTopic.name}
                 showInteractions={isUserLogged}
                 subscriptions={topicSubscriptions}
+                stripLeading={<FilterToggleButton isOpen={showFilters} isModified={areFiltersModified}
+                                                  onClick={toggleFilters}/>}
                 filterBar={showFilters &&
                     <ContentFilterBar isModified={areFiltersModified} subscriptions={topicSubscriptions}
                                       providers={providers}

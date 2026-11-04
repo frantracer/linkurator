@@ -16,10 +16,9 @@ import Tag from "../../../../../components/atoms/Tag";
 import TagsRow from "../../../../../components/atoms/TagsRow";
 import PageHeader from "../../../../../components/molecules/PageHeader";
 import FollowToggleButton from "../../../../../components/molecules/FollowToggleButton";
-import ShareLinkButton from "../../../../../components/molecules/ShareLinkButton";
+import MenuAction from "../../../../../components/molecules/MenuAction";
 import Dropdown from "../../../../../components/atoms/Dropdown";
 import Menu from "../../../../../components/atoms/Menu";
-import {MenuItem} from "../../../../../components/atoms/MenuItem";
 import useShareLink from "../../../../../hooks/useShareLink";
 import Avatar from "../../../../../components/atoms/Avatar";
 import FilterToggleButton from "../../../../../components/molecules/FilterToggleButton";
@@ -139,23 +138,6 @@ const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
 
   const shareCuratorLink = useShareLink(curatorName);
 
-  // On phones Ask AI and Share live in an overflow menu so the header keeps to one row
-  const mobileMenuButtons = [
-    <MenuItem key={"curators-chat"} onClick={handleChatAboutThis} hideMenuOnClick={true}>
-      <div className="flex flex-row gap-2 items-center justify-left">
-        <ChatBubbleIcon/>
-        {t("ask_ai")}
-      </div>
-    </MenuItem>,
-    <MenuItem key={"curators-share"} onClick={isOwnCuratorProfile ? handleShareCurator : shareCuratorLink}
-              hideMenuOnClick={true}>
-      <div className="flex flex-row gap-2 items-center justify-left">
-        <ShareIcon/>
-        {t("share")}
-      </div>
-    </MenuItem>,
-  ];
-
   const sections: { key: SectionKey; title: string; icon: React.ReactNode }[] = [
     {key: "recommendations", title: t("recommendations"), icon: <ThumbsUpIcon/>},
     {key: "topics", title: t("topics"), icon: <RectangleGroup/>},
@@ -170,40 +152,35 @@ const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
               media={<Avatar src={curatorThumbnail} alt=""/>}
               subtitle={t("topics_count", {count: topics.length})}
               actions={<>
-                {selectedSection === "recommendations" && <FilterToggleButton isOpen={showFilters} isModified={areFiltersModified} onClick={toggleFilters}/>}
-                {!isOwnCuratorProfile &&
-                    <FollowToggleButton followed={curator.followed} isLoggedIn={isLoggedIn}
-                                        onFollow={() => handleFollowCurator(curator.id)}
-                                        onUnfollow={() => handleUnfollowCurator(curator.id)}/>
-                }
                 <div className="hidden sm:contents">
                   <Button primary={false} clickAction={handleChatAboutThis} tooltip={t("chat_about_this")}>
                       <ChatBubbleIcon/>
                       {t("ask_ai")}
                   </Button>
-                  {isOwnCuratorProfile
-                    ? <Button primary={false} clickAction={handleShareCurator} tooltip={t("share")}>
-                      <ShareIcon/>
-                      {t("share")}
-                    </Button>
-                    : <ShareLinkButton title={curatorName}/>
-                  }
                 </div>
-                <div className="contents sm:hidden">
-                  <Dropdown label={t("more")} button={<EllipsisHorizontalIcon/>} width={"narrow"} position="end"
-                            bottom={true} closeOnClickInside={true}>
-                      <Menu>
-                        {mobileMenuButtons}
-                      </Menu>
-                  </Dropdown>
-                </div>
+                {!isOwnCuratorProfile &&
+                    <FollowToggleButton followed={curator.followed} isLoggedIn={isLoggedIn}
+                                        iconOnlyOnMobile={true}
+                                        onFollow={() => handleFollowCurator(curator.id)}
+                                        onUnfollow={() => handleUnfollowCurator(curator.id)}/>
+                }
+                <Dropdown label={t("more")} button={<EllipsisHorizontalIcon/>} width={"narrow"} position="end"
+                          bottom={true} closeOnClickInside={true}>
+                    <Menu>
+                        <MenuAction icon={<ChatBubbleIcon/>} label={t("ask_ai")} onClick={handleChatAboutThis}
+                                    mobileOnly={true}/>
+                        <MenuAction icon={<ShareIcon/>} label={t("share")}
+                                    onClick={isOwnCuratorProfile ? handleShareCurator : shareCuratorLink}/>
+                    </Menu>
+                </Dropdown>
               </>}
           />
       }
       {(isMainDataLoading || !curator) && <div className="h-14 shrink-0 border-b border-neutral bg-base-100"/>}
 
       <div className="flex flex-col flex-1 min-h-0 bg-base-300 overflow-hidden">
-        <TagsRow>
+        <TagsRow leading={selectedSection === "recommendations" &&
+            <FilterToggleButton isOpen={showFilters} isModified={areFiltersModified} onClick={toggleFilters}/>}>
           {sections.map(section => (
             <Tag
               key={section.key}

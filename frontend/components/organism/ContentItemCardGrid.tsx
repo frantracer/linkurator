@@ -35,6 +35,7 @@ type ContentItemCardGridProps = {
   topics?: Topic[] | null;
   filterBar?: React.ReactNode;
   emptyState?: React.ReactNode;
+  stripLeading?: React.ReactNode;
 }
 
 const GRID_CLASS = "grid grid-cols-[repeat(auto-fill,minmax(min(100%,17.5rem),1fr))] gap-4 p-4";
@@ -63,6 +64,7 @@ const ContentItemCardGrid = (
     topics = null,
     filterBar = null,
     emptyState = null,
+    stripLeading = null,
   }: ContentItemCardGridProps
 ) => {
   const {set: invalidCards, add: addInvalidCard} = useSet<string>();
@@ -115,12 +117,12 @@ const ContentItemCardGrid = (
 
   const sortedSubscriptions = subscriptions ? [...subscriptions].sort(subscriptionSorting) : [];
   const sortedTopics = topics ? [...topics].sort(topicSorting) : [];
-  const showTagsRow = sortedSubscriptions.length > 0 || sortedTopics.length > 0;
+  const showTagsRow = stripLeading !== null || sortedSubscriptions.length > 0 || sortedTopics.length > 0;
 
   return (
     <div className="flex flex-col h-full w-full bg-base-300">
       {showTagsRow &&
-          <TagsRow>
+          <TagsRow leading={stripLeading}>
             {sortedSubscriptions.map(subscription => (
               <Tag key={subscription.uuid}>
                 <ALink href={paths.SUBSCRIPTIONS + "/" + subscription.uuid}>

@@ -2,7 +2,10 @@
 
 import React, {useCallback, useEffect, useRef, useState} from "react";
 import Button from "../../../../../components/atoms/Button";
-import {ChatBubbleIcon, FunnelIcon, TrashIcon} from "../../../../../components/atoms/Icons";
+import {AddIcon, ChatBubbleIcon, EllipsisHorizontalIcon, FunnelIcon, TrashIcon} from "../../../../../components/atoms/Icons";
+import Dropdown from "../../../../../components/atoms/Dropdown";
+import Menu from "../../../../../components/atoms/Menu";
+import MenuAction from "../../../../../components/molecules/MenuAction";
 import ChatInput from "./ChatInput";
 import PageHeader from "../../../../../components/molecules/PageHeader";
 import {ChatMessage, ChatScope, getLatestScope, newTopicsWereCreated} from "../../../../../entities/Chat";
@@ -198,6 +201,9 @@ const ChatPageComponent = ({conversationId}: { conversationId: string }) => {
     setInputMessage(message.content);
   };
 
+  // Generated once per page so the link stays stable between renders
+  const [newChatId] = useState(() => uuidv4());
+
   const handleNewConversation = () => {
     router.push(newScopedChatPath(scopeFromFilters(filters, scope ?? {})));
   };
@@ -274,23 +280,25 @@ const ChatPageComponent = ({conversationId}: { conversationId: string }) => {
         title={conversationLoading ? t('loading') : conversation?.title || t('new_chat')}
         icon={<ChatBubbleIcon/>}
         actions={<>
-          <FilterToggleButton isOpen={showFilters} isModified={areFiltersModified} onClick={toggleFilters}/>
-          {localMessages.length > 0 && (
-            <Button
-              fitContent={true}
-              clickAction={handleDeleteButtonClick}
-              primary={false}
-              tooltip={t("delete_conversation")}
-            >
-              <TrashIcon/>
-            </Button>
-          )}
+          <Button primary={false} href={paths.CHATS + '/' + newChatId} tooltip={t("new_chat")}>
+            <AddIcon/>
+            <span className="hidden sm:inline">{t("new_chat")}</span>
+          </Button>
+          {localMessages.length > 0 &&
+              <Dropdown label={t("more")} button={<EllipsisHorizontalIcon/>} width={"narrow"} position="end"
+                        bottom={true} closeOnClickInside={true}>
+                  <Menu>
+                      <MenuAction icon={<TrashIcon/>} label={t("delete_conversation")} onClick={handleDeleteButtonClick}/>
+                  </Menu>
+              </Dropdown>
+          }
         </>}
       />
 
       <div className="flex flex-col flex-1 min-h-0 bg-base-300 overflow-hidden">
         {/* What the next message is searched with. Guests have no entities to pick from. */}
-        <TagsRow>
+        <TagsRow leading={<FilterToggleButton isOpen={showFilters} isModified={areFiltersModified}
+                                              onClick={toggleFilters}/>}>
           <ChatScopeTags scope={scope}
                          filters={filters}
                          showInteractions={showInteractions}

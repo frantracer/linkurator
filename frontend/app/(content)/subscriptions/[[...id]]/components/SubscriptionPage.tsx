@@ -13,11 +13,10 @@ import {
   ShareIcon
 } from "../../../../../components/atoms/Icons";
 import useShareLink from "../../../../../hooks/useShareLink";
-import {MenuItem} from "../../../../../components/atoms/MenuItem";
 import Miniature from "../../../../../components/atoms/Miniature";
 import PageHeader from "../../../../../components/molecules/PageHeader";
 import FollowToggleButton from "../../../../../components/molecules/FollowToggleButton";
-import ShareLinkButton from "../../../../../components/molecules/ShareLinkButton";
+import MenuAction from "../../../../../components/molecules/MenuAction";
 import Avatar from "../../../../../components/atoms/Avatar";
 import AssignTopicModal, {AssignTopicModalId} from "../../../../../components/organism/AssignTopicModal";
 import FilterToggleButton from "../../../../../components/molecules/FilterToggleButton";
@@ -127,44 +126,6 @@ const SubscriptionPageComponent = ({subscriptionId}: { subscriptionId: string })
 
   const shareSubscription = useShareLink(subscriptionName);
 
-  // On phones Ask AI and Share move into the overflow menu so the header keeps to one row
-  const mobileMenuButtons = [
-    <MenuItem key={"subscriptions-chat"} onClick={handleChatAboutThis} hideMenuOnClick={true}>
-      <div className="flex flex-row gap-2 items-center justify-left">
-        <ChatBubbleIcon/>
-        {t("ask_ai")}
-      </div>
-    </MenuItem>,
-    <MenuItem key={"subscriptions-share"} onClick={shareSubscription} hideMenuOnClick={true}>
-      <div className="flex flex-row gap-2 items-center justify-left">
-        <ShareIcon/>
-        {t("share")}
-      </div>
-    </MenuItem>,
-  ];
-
-  const dropdownButtons = []
-  if (selectedSubscription && isUserLogged) {
-    dropdownButtons.push(
-      <MenuItem key={"subscriptions-assign"} onClick={handleAssignSubscription} hideMenuOnClick={true}>
-        <div className="flex flex-row gap-2 items-center justify-left">
-          <PencilIcon/>
-          {t("assign")}
-        </div>
-      </MenuItem>
-    )
-    dropdownButtons.push(
-      <MenuItem key={"subscriptions-refresh"} onClick={() => {
-        handleRefreshSubscription(selectedSubscription.uuid, selectedSubscription.name)
-      }} hideMenuOnClick={true}>
-        <div className="flex flex-row gap-2 items-center justify-left">
-          <RefreshIcon/>
-          {t("refresh")}
-        </div>
-      </MenuItem>
-    )
-  }
-
   return (
     <div className="flex flex-col w-full h-full min-h-0 overflow-hidden">
       {!profileIsLoading && selectedSubscription &&
@@ -179,26 +140,31 @@ const SubscriptionPageComponent = ({subscriptionId}: { subscriptionId: string })
                 </a>
               }
               actions={<>
-                <FilterToggleButton isOpen={showFilters} isModified={areFiltersModified} onClick={toggleFilters}/>
-                <FollowToggleButton followed={selectedSubscription.followed} isLoggedIn={isUserLogged}
-                                    onFollow={() => handleFollowSubscription(selectedSubscription.uuid)}
-                                    onUnfollow={() => handleUnfollowSubscription(selectedSubscription.uuid)}/>
                 <div className="hidden sm:contents">
                   <Button primary={false} clickAction={handleChatAboutThis} tooltip={t("chat_about_this")}>
                       <ChatBubbleIcon/>
                       {t("ask_ai")}
                   </Button>
-                  <ShareLinkButton title={subscriptionName}/>
                 </div>
-                <div className={dropdownButtons.length > 0 ? "contents" : "contents sm:hidden"}>
-                  <Dropdown label={t("more")} button={<EllipsisHorizontalIcon/>} width={"narrow"} position="end"
-                            bottom={true} closeOnClickInside={true}>
-                      <Menu>
-                          <div className="sm:hidden">{mobileMenuButtons}</div>
-                        {dropdownButtons}
-                      </Menu>
-                  </Dropdown>
-                </div>
+                <FollowToggleButton followed={selectedSubscription.followed} isLoggedIn={isUserLogged}
+                                    iconOnlyOnMobile={true}
+                                    onFollow={() => handleFollowSubscription(selectedSubscription.uuid)}
+                                    onUnfollow={() => handleUnfollowSubscription(selectedSubscription.uuid)}/>
+                <Dropdown label={t("more")} button={<EllipsisHorizontalIcon/>} width={"narrow"} position="end"
+                          bottom={true} closeOnClickInside={true}>
+                    <Menu>
+                        <MenuAction icon={<ChatBubbleIcon/>} label={t("ask_ai")} onClick={handleChatAboutThis}
+                                    mobileOnly={true}/>
+                        <MenuAction icon={<ShareIcon/>} label={t("share")} onClick={shareSubscription}/>
+                      {isUserLogged &&
+                          <MenuAction icon={<PencilIcon/>} label={t("assign")} onClick={handleAssignSubscription}/>
+                      }
+                      {isUserLogged &&
+                          <MenuAction icon={<RefreshIcon/>} label={t("refresh")}
+                                      onClick={() => handleRefreshSubscription(selectedSubscription.uuid, selectedSubscription.name)}/>
+                      }
+                    </Menu>
+                </Dropdown>
               </>}
           />
       }
@@ -222,6 +188,8 @@ const SubscriptionPageComponent = ({subscriptionId}: { subscriptionId: string })
                 scanningEntityName={selectedSubscription.name}
                 withSubscription={false}
                 topics={topics.filter(topic => topic.subscriptions_ids.includes(selectedSubscription.uuid))}
+                stripLeading={<FilterToggleButton isOpen={showFilters} isModified={areFiltersModified}
+                                                  onClick={toggleFilters}/>}
                 filterBar={showFilters &&
                     <ContentFilterBar isModified={areFiltersModified} filters={filters}
                                       showInteractions={isUserLogged}

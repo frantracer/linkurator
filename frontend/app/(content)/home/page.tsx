@@ -178,13 +178,14 @@ const HomePageComponent = () => {
 
   return (
     <div className="flex flex-col w-full h-full min-h-0 overflow-hidden bg-base-300">
-      <PageHeader title={t("home")} icon={<HomeIcon/>} actions={<FilterToggleButton isOpen={showFilters} isModified={areFiltersModified} onClick={toggleFilters}/>}/>
+      <PageHeader title={t("home")} icon={<HomeIcon/>}/>
 
       {isLoading && <ContentItemCardGridSkeleton/>}
 
       {!isLoading &&
           <>
-              <TagsRow>
+              <TagsRow leading={<FilterToggleButton isOpen={showFilters} isModified={areFiltersModified}
+                                                    onClick={toggleFilters}/>}>
                 {sections.map(section => (
                   <Tag
                     key={section.key}
