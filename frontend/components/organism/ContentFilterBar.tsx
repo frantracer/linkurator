@@ -125,7 +125,7 @@ const ContentFilterBar = (
   const optionRowClass = "flex flex-row gap-2 items-center min-w-0 px-2 py-1.5 rounded-md cursor-pointer hover:bg-base-content/5 text-sm";
 
   return (
-    <div className="shrink-0 flex flex-col sm:flex-row gap-2 sm:items-center px-4 py-3 border-b border-neutral bg-base-100">
+    <div className="shrink-0 flex flex-col sm:flex-row gap-2 sm:items-center px-4 py-3 border-b border-neutral bg-base-300">
       <div className="sm:flex-1 sm:min-w-48 sm:max-w-md">
         <SearchBar handleChange={(value) => setFilters({...filters, textSearch: value})}
                    value={filters.textSearch}
