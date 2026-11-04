@@ -262,7 +262,7 @@ const SearchPalette = () => {
   return (
     <Modal id={SearchPaletteId} title={t("search")} size={"lg"} onClose={reset}>
       <div className="flex flex-col gap-3">
-        <label className="flex flex-row items-center gap-2 px-3 h-11 rounded-lg border border-neutral focus-within:border-primary">
+        <label className="flex flex-row items-center gap-2 px-3 h-11 rounded-lg border border-base-content/40 focus-within:border-primary">
           <MagnifyingGlassIcon/>
           <input
             type="search"
@@ -318,7 +318,7 @@ const SearchPalette = () => {
               <li role="presentation" className="flex justify-center py-10"><Spinner/></li>
           }
         </ul>
-        <p className="hidden sm:block text-xs text-base-content/50">{t("search_keyboard_hint")}</p>
+        <p className="hidden sm:block text-xs text-base-content/60">{t("search_keyboard_hint")}</p>
       </div>
     </Modal>
   );

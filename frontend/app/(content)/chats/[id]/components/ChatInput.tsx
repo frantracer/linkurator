@@ -57,7 +57,7 @@ const ChatInput = ({
 
   return (
     <div className="p-4 pt-2 pb-mobile-nav">
-      <div className="max-w-3xl mx-auto flex flex-row items-end gap-2 rounded-2xl border border-neutral bg-base-100 shadow-sm px-3 py-2 focus-within:border-primary">
+      <div className="max-w-3xl mx-auto flex flex-row items-end gap-2 rounded-2xl border border-base-content/40 bg-base-100 shadow-sm px-3 py-2 focus-within:border-primary">
         <textarea
           value={value}
           onChange={(e) => {

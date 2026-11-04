@@ -33,6 +33,24 @@
     display: none;
 }
 
+/* On light backgrounds the brand green is only 3.8:1 as text, so green text uses the darker shade there.
+   Fills, borders and tints keep the brand green. */
+[data-theme="light"] .text-primary,
+[data-theme="light"] .hover\:text-primary:hover,
+[data-theme="light"] .markdown-content a {
+    color: #047a3d;
+}
+
+[data-theme="light"] .\!text-primary,
+[data-theme="light"] .hover\:\!text-primary:hover {
+    color: #047a3d !important;
+}
+
+/* Outline buttons use a 30% text-colour border, which is 2:1 on white; light backgrounds need 45% for 3:1 */
+[data-theme="light"] .border-base-content\/30 {
+    border-color: oklch(var(--bc) / 0.45);
+}
+
 :focus-visible {
     outline: 2px solid oklch(var(--p));
     outline-offset: 2px;

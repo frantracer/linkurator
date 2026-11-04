@@ -55,7 +55,7 @@ const InputText = (
 
   return (
     <input
-      className={"input input-sm border border-neutral focus:border-primary bg-base-100 w-full " + padding + (invalid ? " input-error" : "")}
+      className={"input input-sm border border-base-content/40 focus:border-primary bg-base-100 w-full " + padding + (invalid ? " input-error" : "")}
       type={inputType?.toString()}
       id={id}
       name={name}

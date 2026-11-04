@@ -23,7 +23,7 @@ const NumberInput = (
            id={id}
            min={0}
            placeholder={placeholder}
-           className="input input-sm border border-neutral focus:border-primary bg-base-100 w-full"
+           className="input input-sm border border-base-content/40 focus:border-primary bg-base-100 w-full"
            value={value ?? ""}
            onChange={(event) => {
              const parsed = parseInt(event.target.value);
