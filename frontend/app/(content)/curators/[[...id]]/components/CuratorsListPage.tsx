@@ -7,7 +7,7 @@ import Button from "../../../../../components/atoms/Button";
 import Collapse from "../../../../../components/atoms/Collapse";
 import {CuratorIcon, MagnifyingGlassIcon} from "../../../../../components/atoms/Icons";
 import SearchBar from "../../../../../components/molecules/SearchBar";
-import PageHeader from "../../../../../components/molecules/PageHeader";
+import PageHeader from "../../../../../components/organism/PageHeader";
 import CuratorCard from "../../../../../components/organism/CuratorCard";
 import {openSearchPalette} from "../../../../../utilities/searchPaletteAction";
 import EmptyStateNoFollowedCurators from "../../../../../components/organism/EmptyStateNoFollowedCurators";

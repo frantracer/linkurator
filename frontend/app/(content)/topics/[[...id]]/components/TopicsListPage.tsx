@@ -7,7 +7,7 @@ import Button from "../../../../../components/atoms/Button";
 import Collapse from "../../../../../components/atoms/Collapse";
 import {AddIcon, MagnifyingGlassIcon, RectangleGroup, StarIcon} from "../../../../../components/atoms/Icons";
 import SearchBar from "../../../../../components/molecules/SearchBar";
-import PageHeader from "../../../../../components/molecules/PageHeader";
+import PageHeader from "../../../../../components/organism/PageHeader";
 import ConfirmDialog from "../../../../../components/organism/ConfirmDialog";
 import TopicEditorModal, {EditTopicModalId} from "../../../../../components/organism/TopicEditorModal";
 import EmptyStateNoMatches from "../../../../../components/organism/EmptyStateNoMatches";

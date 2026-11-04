@@ -14,7 +14,7 @@ import {
 } from "../../../../../components/atoms/Icons";
 import useShareLink from "../../../../../hooks/useShareLink";
 import Miniature from "../../../../../components/atoms/Miniature";
-import PageHeader from "../../../../../components/molecules/PageHeader";
+import PageHeader from "../../../../../components/organism/PageHeader";
 import FollowToggleButton from "../../../../../components/molecules/FollowToggleButton";
 import MenuAction from "../../../../../components/molecules/MenuAction";
 import Avatar from "../../../../../components/atoms/Avatar";

@@ -11,7 +11,7 @@ import EmptyStateImportSubscriptions from "../../../../../components/organism/Em
 import EmptyStateNoMatches from "../../../../../components/organism/EmptyStateNoMatches";
 import Miniature from "../../../../../components/atoms/Miniature";
 import SearchBar from "../../../../../components/molecules/SearchBar";
-import PageHeader from "../../../../../components/molecules/PageHeader";
+import PageHeader from "../../../../../components/organism/PageHeader";
 import AssignTopicModal, {AssignTopicModalId} from "../../../../../components/organism/AssignTopicModal";
 import {openSearchPalette} from "../../../../../utilities/searchPaletteAction";
 import {openImportModal} from "../../../../../utilities/importModalAction";

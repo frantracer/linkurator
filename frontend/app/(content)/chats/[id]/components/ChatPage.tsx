@@ -7,7 +7,7 @@ import Dropdown from "../../../../../components/atoms/Dropdown";
 import Menu from "../../../../../components/atoms/Menu";
 import MenuAction from "../../../../../components/molecules/MenuAction";
 import ChatInput from "./ChatInput";
-import PageHeader from "../../../../../components/molecules/PageHeader";
+import PageHeader from "../../../../../components/organism/PageHeader";
 import {ChatMessage, ChatScope, getLatestScope, newTopicsWereCreated} from "../../../../../entities/Chat";
 import {areFiltersEqual, defaultFilters, Filters} from "../../../../../entities/Filters";
 import {ChatRateLimitError, deleteChat, queryAgent} from "../../../../../services/chatService";

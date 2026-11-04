@@ -35,7 +35,7 @@ import {openModal} from "../../../../../utilities/modalAction";
 import {newScopedChatPath, scopeFromFilters} from "../../../../../utilities/chatScope";
 import Dropdown from "../../../../../components/atoms/Dropdown";
 import Menu from "../../../../../components/atoms/Menu";
-import PageHeader from "../../../../../components/molecules/PageHeader";
+import PageHeader from "../../../../../components/organism/PageHeader";
 import FollowToggleButton from "../../../../../components/molecules/FollowToggleButton";
 import MenuAction from "../../../../../components/molecules/MenuAction";
 import useShareLink from "../../../../../hooks/useShareLink";

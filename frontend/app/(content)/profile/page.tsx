@@ -6,7 +6,7 @@ import {useRouter} from "next/navigation";
 import React, {useEffect, useState} from "react";
 import {configuration, paths} from "../../../configuration";
 import Button from "../../../components/atoms/Button";
-import PageHeader from "../../../components/molecules/PageHeader";
+import PageHeader from "../../../components/organism/PageHeader";
 import FormField from "../../../components/molecules/FormField";
 import SettingsSection from "../../../components/molecules/SettingsSection";
 import {InputType} from "../../../components/atoms/InputText";

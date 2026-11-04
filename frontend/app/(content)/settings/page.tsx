@@ -6,7 +6,7 @@ import {useRouter} from "next/navigation";
 import React, {useEffect, useRef, useState} from "react";
 import {paths} from "../../../configuration";
 import Button from "../../../components/atoms/Button";
-import PageHeader from "../../../components/molecules/PageHeader";
+import PageHeader from "../../../components/organism/PageHeader";
 import SettingsSection from "../../../components/molecules/SettingsSection";
 import {useLocale, useTranslations} from "next-intl";
 import useUserFilter from "../../../hooks/useUserFilter";

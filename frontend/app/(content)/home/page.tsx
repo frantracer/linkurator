@@ -3,7 +3,7 @@
 import {useTranslations} from "next-intl";
 import {useRouter, useSearchParams} from "next/navigation";
 import React, {Suspense, useEffect, useState} from "react";
-import PageHeader from "../../../components/molecules/PageHeader";
+import PageHeader from "../../../components/organism/PageHeader";
 import {paths} from "../../../configuration";
 import useProfile from "../../../hooks/useProfile";
 import useSubscriptions from "../../../hooks/useSubscriptions";
@@ -178,7 +178,7 @@ const HomePageComponent = () => {
 
   return (
     <div className="flex flex-col w-full h-full min-h-0 overflow-hidden bg-base-300">
-      <PageHeader title={t("home")} icon={<HomeIcon/>}/>
+      <PageHeader title={t("home")} icon={<HomeIcon/>} showNotifications={true}/>
 
       {isLoading && <ContentItemCardGridSkeleton/>}
 

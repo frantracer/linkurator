@@ -6,7 +6,7 @@ import {useTranslations} from "next-intl";
 import EmptyStateBox from "../../../../components/atoms/EmptyStateBox";
 import {BellIcon} from "../../../../components/atoms/Icons";
 import {Spinner} from "../../../../components/atoms/Spinner";
-import PageHeader from "../../../../components/molecules/PageHeader";
+import PageHeader from "../../../../components/organism/PageHeader";
 import NotificationCard from "../../../../components/organism/NotificationCard";
 import useNotificationsAndMarkAsRead from "../../../../hooks/useNotificationsAndMarkAsRead";
 import useProfile from "../../../../hooks/useProfile";

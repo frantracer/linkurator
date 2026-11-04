@@ -10,7 +10,7 @@ import Button from "../../../../components/atoms/Button";
 import {Spinner} from "../../../../components/atoms/Spinner";
 import {AddIcon, ChatBubbleIcon} from "../../../../components/atoms/Icons";
 import SearchBar from "../../../../components/molecules/SearchBar";
-import PageHeader from "../../../../components/molecules/PageHeader";
+import PageHeader from "../../../../components/organism/PageHeader";
 import EmptyStateNoMatches from "../../../../components/organism/EmptyStateNoMatches";
 import {paths} from "../../../../configuration";
 import {ChatConversation} from "../../../../entities/Chat";

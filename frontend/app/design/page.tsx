@@ -2,7 +2,7 @@
 
 import Drawer from "../../components/molecules/Drawer";
 import ThemeToggleButton from "../../components/molecules/ThemeToggleButton";
-import PageHeader from "../../components/molecules/PageHeader";
+import PageHeader from "../../components/organism/PageHeader";
 import Button from "../../components/atoms/Button";
 import FollowToggleButton from "../../components/molecules/FollowToggleButton";
 import TopicIcon from "../../components/atoms/TopicIcon";
