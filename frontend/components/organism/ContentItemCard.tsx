@@ -55,10 +55,10 @@ type ActionButtonProps = {
 
 const ActionButton = ({active, onClick, label, children}: ActionButtonProps) => {
   const className = classNames(
-    "btn btn-sm btn-circle border-0 shadow",
+    "btn btn-sm flex-1 flex-nowrap gap-1 px-2 rounded-md font-normal text-xs border",
     {
-      "bg-black/70 text-white hover:bg-black/90": !active,
-      "bg-primary-filled": active,
+      "btn-ghost border-neutral text-base-content hover:!border-primary hover:!text-primary": !active,
+      "border-primary bg-primary/10 text-primary hover:bg-primary/15 hover:border-primary": active,
     }
   );
 
@@ -67,7 +67,6 @@ const ActionButton = ({active, onClick, label, children}: ActionButtonProps) => 
       type="button"
       className={className}
       title={label}
-      aria-label={label}
       aria-pressed={active}
       onClick={(e) => {
         e.preventDefault();
@@ -189,62 +188,88 @@ const ContentItemCard = (
   }
 
   return (
-    <article key="card" className="group flex flex-col gap-2 w-full min-w-0">
-      <div className="relative">
-        <a
-          href={item.url}
-          target="_blank"
-          rel="noopener noreferrer"
-          onClick={handleOpenItem}
-          tabIndex={-1}
-          aria-hidden="true"
-          className="relative block w-full aspect-video rounded-xl overflow-hidden bg-neutral"
-        >
-          {fitsWholeThumbnail &&
-              <img src={item.thumbnail} alt="" className="absolute inset-0 w-full h-full object-cover blur-xl scale-110 opacity-60"/>
+    <article key="card" className="relative flex flex-col w-full min-w-0 h-full rounded-xl border border-neutral bg-base-100
+      overflow-hidden transition duration-200 hover:z-10 hover:border-primary hover:shadow-xl motion-safe:hover:scale-105">
+      <a
+        href={item.url}
+        target="_blank"
+        rel="noopener noreferrer"
+        onClick={handleOpenItem}
+        tabIndex={-1}
+        aria-hidden="true"
+        className="relative block w-full aspect-video overflow-hidden bg-neutral"
+      >
+        {fitsWholeThumbnail &&
+            <img src={item.thumbnail} alt="" className="absolute inset-0 w-full h-full object-cover blur-xl scale-110 opacity-60"/>
+        }
+        <img
+          className={classNames("relative w-full h-full", {
+            "object-cover": !fitsWholeThumbnail,
+            "object-contain": fitsWholeThumbnail,
+          })}
+          src={item.thumbnail}
+          alt=""
+          loading="lazy"
+          onLoad={handleLoad}
+        />
+        {item.duration != undefined &&
+            <span className="absolute top-1.5 right-1.5 px-1.5 py-0.5 rounded bg-black/80 text-white text-xs font-medium">
+              {formatDuration(item.duration)}
+            </span>
+        }
+        {viewed && <span className="absolute inset-x-0 bottom-0 h-1 bg-primary"/>}
+      </a>
+      <div className="flex flex-col flex-1 gap-2 p-3">
+        <h3 className={classNames("text-sm font-semibold leading-snug line-clamp-2", {"text-base-content/60": viewed})}>
+          <a href={item.url} target="_blank" rel="noopener noreferrer" onClick={handleOpenItem}
+             className="hover:text-primary" title={item.name}>
+            {item.name}
+          </a>
+        </h3>
+        <div className="flex flex-row items-center gap-2 text-xs text-base-content/70 min-w-0">
+          {withSubscription &&
+              <Link className="flex flex-row items-center gap-1.5 min-w-0 hover:text-primary"
+                    href={paths.SUBSCRIPTIONS + "/" + item.subscription.uuid}>
+                  <Miniature src={item.subscription.thumbnail} alt=""
+                             badgeImage={getProviderIcon(providers, item.subscription.provider)}/>
+                  <span className="truncate">{item.subscription.name}</span>
+              </Link>
           }
-          <img
-            className={classNames("relative w-full h-full transition-opacity", {
-              "object-cover": !fitsWholeThumbnail,
-              "object-contain": fitsWholeThumbnail,
-              "opacity-50": viewed,
-            })}
-            src={item.thumbnail}
-            alt=""
-            loading="lazy"
-            onLoad={handleLoad}
-          />
-          {item.duration != undefined &&
-              <span className="absolute top-1.5 right-1.5 px-1.5 py-0.5 rounded bg-black/80 text-white text-xs font-medium">
-                {formatDuration(item.duration)}
-              </span>
-          }
-          {viewed && <span className="absolute inset-x-0 bottom-0 h-1 bg-primary"/>}
-        </a>
+          <span className="flex-none ml-auto whitespace-nowrap">{agoText(item.published_at)}</span>
+        </div>
+        {item.recommended_by && item.recommended_by.length > 0 &&
+            <div className="flex gap-x-2 items-center">
+                <span className="text-xs text-base-content/70">{t("recommended_by")}:</span>
+                <AvatarGroup users={item.recommended_by.map(
+                  ({curator}) => ({
+                    id: curator.id, username: curator.username, avatarUrl: curator.avatar_url, onClick: () => {
+                      router.push(paths.CURATORS + "/" + curator.username);
+                    }
+                  })
+                )} maxDisplay={3}/>
+            </div>
+        }
         {withInteractions &&
-            <div className={classNames(
-              "absolute bottom-2 right-2 flex flex-row gap-1.5 transition-opacity",
-              "lg:opacity-0 lg:group-hover:opacity-100 lg:group-focus-within:opacity-100",
-              {"lg:opacity-100": recommended || discouraged || hidden}
-            )}>
+            <div className="flex flex-row flex-nowrap gap-2 mt-auto pt-1">
                 <ActionButton
                     active={recommended}
                     onClick={toggleRecommended}
                     label={recommended ? t("recommended") : t("mark_as_recommended")}>
                   {recommended ? <ThumbsUpFilledIcon/> : <ThumbsUpIcon/>}
+                  {recommended ? t("recommended") : t("recommend")}
                 </ActionButton>
                 <ActionButton
                     active={viewed}
                     onClick={toggleViewed}
                     label={viewed ? t("mark_as_not_viewed") : t("mark_as_viewed")}>
                   {viewed ? <CheckCircleFilledIcon/> : <CheckCircleIcon/>}
+                  {viewed ? t("viewed") : t("mark_viewed")}
                 </ActionButton>
                 <Dropdown
                     width={"narrow"}
                     bottom={false}
                     position="end"
                     closeOnClickInside={true}
-                    triggerStyle={"overlay"}
                     label={t("more_actions")}
                     button={<EllipsisHorizontalIcon/>}>
                     <li>
@@ -267,36 +292,6 @@ const ContentItemCard = (
             </div>
         }
       </div>
-      <h3 className={classNames("text-sm font-semibold leading-snug line-clamp-2", {"text-base-content/60": viewed})}>
-        <a href={item.url} target="_blank" rel="noopener noreferrer" onClick={handleOpenItem}
-           className="hover:text-primary" title={item.name}>
-          {item.name}
-        </a>
-      </h3>
-      <div className="flex flex-row items-center gap-2 text-xs text-base-content/70 min-w-0">
-        {withSubscription &&
-            <Link className="flex flex-row items-center gap-1.5 min-w-0 hover:text-primary"
-                  href={paths.SUBSCRIPTIONS + "/" + item.subscription.uuid}>
-                <Miniature src={item.subscription.thumbnail} alt=""
-                           badgeImage={getProviderIcon(providers, item.subscription.provider)}/>
-                <span className="truncate">{item.subscription.name}</span>
-            </Link>
-        }
-        {withSubscription && <span aria-hidden="true">·</span>}
-        <span className="flex-none whitespace-nowrap">{agoText(item.published_at)}</span>
-      </div>
-      {item.recommended_by && item.recommended_by.length > 0 &&
-          <div className="flex gap-x-2 items-center">
-              <span className="text-xs text-base-content/70">{t("recommended_by")}:</span>
-              <AvatarGroup users={item.recommended_by.map(
-                ({curator}) => ({
-                  id: curator.id, username: curator.username, avatarUrl: curator.avatar_url, onClick: () => {
-                    router.push(paths.CURATORS + "/" + curator.username);
-                  }
-                })
-              )} maxDisplay={3}/>
-          </div>
-      }
     </article>
   )
 };
