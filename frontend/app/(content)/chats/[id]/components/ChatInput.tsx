@@ -72,16 +72,17 @@ const ChatInput = ({
           rows={rows}
           disabled={disabled}
         />
-        <button
-          type="button"
-          onClick={onSend}
-          disabled={sendDisabled}
-          aria-label={t('send')}
-          title={t('send')}
-          className="btn btn-primary btn-sm btn-circle"
-        >
-          <PaperAirplaneIcon/>
-        </button>
+        {!sendDisabled &&
+            <button
+                type="button"
+                onClick={onSend}
+                aria-label={t('send')}
+                title={t('send')}
+                className="btn btn-primary btn-sm btn-circle"
+            >
+                <PaperAirplaneIcon/>
+            </button>
+        }
       </div>
       {(charactersLeft <= CHARACTERS_WARNING_THRESHOLD || messagesLeft <= MESSAGES_WARNING_THRESHOLD) &&
           <div className="max-w-3xl mx-auto flex flex-row justify-between gap-2 px-3 pt-1.5 text-xs text-warning" aria-live="polite">
