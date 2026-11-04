@@ -45,7 +45,7 @@ const Button = (
     {
       "btn-primary": primary && !danger,
       "btn-error": danger,
-      "btn-outline border-neutral text-base-content hover:!bg-base-content/5 hover:!text-primary hover:!border-primary": outline,
+      "btn-outline border-base-content/30 text-base-content hover:!bg-base-content/5 hover:!text-primary hover:!border-primary": outline,
       "btn-ghost text-base-content hover:!bg-base-content/10 hover:!text-primary": borderless && !primary && !danger,
       "w-fit": fitContent,
       "flex-1 w-full": !fitContent,

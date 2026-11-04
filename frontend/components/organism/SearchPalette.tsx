@@ -250,7 +250,7 @@ const SearchPalette = () => {
               }}
               className={classNames("btn btn-xs rounded-md", {
                 "btn-primary": !row.follow.followed,
-                "btn-outline border-neutral": row.follow.followed,
+                "btn-outline border-base-content/30": row.follow.followed,
               })}
           >
             {row.follow.followed ? t("following") : t("follow")}
@@ -289,7 +289,7 @@ const SearchPalette = () => {
               onClick={() => setFilter(option.key)}
               className={classNames("btn btn-xs rounded-full px-3", {
                 "btn-neutral": filter === option.key,
-                "btn-ghost border border-neutral": filter !== option.key,
+                "btn-ghost border border-base-content/30": filter !== option.key,
               })}
             >
               {option.label}

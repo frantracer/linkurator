@@ -66,7 +66,7 @@ const ImportProviderTiles = ({onChooseStep, columns}: ImportProviderTilesProps) 
           <button type="button" onClick={tile.onClick}
                   className={classNames("btn btn-sm rounded-md mt-1", {
                     "btn-primary": index === 0,
-                    "btn-outline border-neutral": index !== 0,
+                    "btn-outline border-base-content/30": index !== 0,
                   })}>
             {tile.action}
           </button>
