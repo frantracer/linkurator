@@ -14,7 +14,7 @@ import {useTranslations} from "next-intl";
 import {LinkedinIcon, GithubIcon} from "../components/atoms/Icons";
 import {useEffect} from "react";
 import useProfile from "../hooks/useProfile";
-import {configuration, paths} from "../configuration";
+import {paths} from "../configuration";
 import TopicIcon from "../components/atoms/TopicIcon";
 import {useRouter} from "next/navigation";
 
@@ -98,7 +98,7 @@ export default function LandingPage() {
                   </p>
                   <div className="flex flex-row flex-wrap gap-3">
                     <Link href={paths.REGISTER} className="btn btn-primary">{t("hero_cta_primary")}</Link>
-                    <Link href={configuration.EXAMPLE_GEOPOLITICS_TOPIC_URL} className="btn btn-ghost">
+                    <Link href={paths.TOPICS + "/8b281f83-c3b0-4846-866b-a1521ed39670"} className="btn btn-ghost">
                       {t("hero_cta_secondary")}
                     </Link>
                   </div>

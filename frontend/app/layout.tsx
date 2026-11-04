@@ -8,7 +8,6 @@ import { getLocale, getMessages } from 'next-intl/server';
 import { Analytics } from '@vercel/analytics/next';
 import { ToastProvider } from '../contexts/ToastContext';
 import { getUserTheme } from '../utilities/theme';
-import ClientOnly from '../components/atoms/ClientOnly';
 
 export const viewport: Viewport = {
   width: "device-width",
@@ -49,9 +48,7 @@ export default async function RootLayout(
         <NextIntlClientProvider messages={messages}>
           <ReactQueryProvider>
             <ToastProvider>
-              <ClientOnly>
-                {children}
-              </ClientOnly>
+              {children}
             </ToastProvider>
           </ReactQueryProvider>
         </NextIntlClientProvider>
