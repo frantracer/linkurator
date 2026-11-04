@@ -14,7 +14,7 @@ import LanguageSelector from "../../../components/molecules/LanguageSelector";
 import ThemeToggleButton from "../../../components/molecules/ThemeToggleButton";
 import Checkbox from "../../../components/atoms/Checkbox";
 import NumberInput from "../../../components/atoms/NumberInput";
-import {Filters, areFiltersEqual, durationOptions} from "../../../entities/Filters";
+import {Filters, areFiltersEqual, defaultFilters, durationOptions} from "../../../entities/Filters";
 import {
   ArchiveBoxFilledIcon,
   CheckCircleFilledIcon,
@@ -64,8 +64,11 @@ const SettingsPage: NextPage = () => {
   const handleDelete = () => {
     deleteUserFilter(undefined, {
       onSuccess: async () => {
+        // Set the form explicitly: when the refetched filter equals the previous one the
+        // userFilter effect does not run, which would leave unsaved edits on screen
+        const {data} = await refreshUserFilter();
+        setLocalFilter(data ?? defaultFilters);
         showToast(t("filter_reset_successfully"));
-        await refreshUserFilter();
       },
       onError: () => showErrorToast(t("error_resetting_filter"))
     });
