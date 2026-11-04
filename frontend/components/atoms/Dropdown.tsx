@@ -1,4 +1,4 @@
-import React, {useEffect, useId, useRef, useState} from "react";
+import React, {useCallback, useEffect, useId, useRef, useState} from "react";
 import classNames from "classnames";
 
 export type DropdownTriggerStyle = "outline" | "ghost" | "overlay" | "bare";
@@ -45,6 +45,10 @@ const Dropdown = (
         }
         if (clickedInsideDropdown && clickedMenuContent && closeOnClickInside) {
           setIsOpen(false);
+          // A click with detail 0 comes from the keyboard (Enter/Space): keep focus on the dropdown
+          if (event.detail === 0) {
+            triggerRef.current?.focus();
+          }
         }
       }
     };
@@ -56,11 +60,77 @@ const Dropdown = (
     };
   }, [closeOnClickInside]);
 
+  const focusableItems = useCallback((): HTMLElement[] => {
+    if (!menuContentRef.current) {
+      return [];
+    }
+    const candidates = menuContentRef.current.querySelectorAll<HTMLElement>(
+      'a[href], button:not(:disabled), input:not(:disabled), [tabindex]:not([tabindex="-1"])'
+    );
+    // offsetParent is null for elements hidden with display: none, such as phone-only menu items
+    return Array.from(candidates).filter(element => element.offsetParent !== null);
+  }, []);
+
+  const focusItem = useCallback((position: "first" | "last" | "next" | "previous") => {
+    const items = focusableItems();
+    if (items.length === 0) {
+      return;
+    }
+    const current = items.indexOf(document.activeElement as HTMLElement);
+    const index = {
+      first: 0,
+      last: items.length - 1,
+      next: current < 0 ? 0 : (current + 1) % items.length,
+      previous: current < 0 ? items.length - 1 : (current - 1 + items.length) % items.length,
+    }[position];
+    items[index].focus();
+  }, [focusableItems]);
+
+  // Opening from the keyboard moves focus into the menu once it is rendered
+  const [focusFirstItemOnOpen, setFocusFirstItemOnOpen] = useState(false);
+  useEffect(() => {
+    if (isOpen && focusFirstItemOnOpen) {
+      setFocusFirstItemOnOpen(false);
+      focusItem("first");
+    }
+  }, [isOpen, focusFirstItemOnOpen, focusItem]);
+
   const handleKeyDown = (event: React.KeyboardEvent) => {
     if (event.key === "Escape" && isOpen) {
       event.stopPropagation();
       setIsOpen(false);
       triggerRef.current?.focus();
+      return;
+    }
+
+    // Text and number fields inside a menu keep their own arrow key behaviour
+    const target = event.target as HTMLElement;
+    const isTextField = target.tagName === "TEXTAREA" ||
+      (target.tagName === "INPUT" && !["checkbox", "radio"].includes((target as HTMLInputElement).type));
+    if (isTextField) {
+      return;
+    }
+
+    const onTrigger = target === triggerRef.current;
+    if (!isOpen) {
+      if (onTrigger && event.key === "ArrowDown") {
+        event.preventDefault();
+        setFocusFirstItemOnOpen(true);
+        setIsOpen(true);
+      }
+      return;
+    }
+
+    const positions: Record<string, "first" | "last" | "next" | "previous"> = {
+      ArrowDown: "next",
+      ArrowUp: "previous",
+      Home: "first",
+      End: "last",
+    };
+    const position = positions[event.key];
+    if (position) {
+      event.preventDefault();
+      focusItem(position);
     }
   };
 
