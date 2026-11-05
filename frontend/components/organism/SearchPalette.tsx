@@ -19,7 +19,9 @@ import useFindTopics from "../../hooks/useFindTopics";
 import useFindSubscriptions from "../../hooks/useFindSubscriptions";
 import {useSearchCurators} from "../../hooks/useSearchCurators";
 import {useDebounce} from "../../hooks/useDebounce";
+import useProviderSubscriptionSearch from "../../hooks/useProviderSubscriptionSearch";
 import {getProviderIcon, getProviderPrettyName} from "../../entities/Provider";
+import {Subscription} from "../../entities/Subscription";
 import {followTopic, unfollowTopic} from "../../services/topicService";
 import {followSubscription, unfollowSubscription} from "../../services/subscriptionService";
 import {followCurator, unfollowCurator} from "../../services/curatorService";
@@ -28,9 +30,10 @@ export const SearchPaletteId = "search-palette";
 
 type ResultRow = {
   key: string;
-  href: string;
+  href?: string;
+  onSelect?: () => void;
   title: string;
-  subtitle: string;
+  subtitle?: string;
   media: React.ReactNode;
   follow?: {
     followed: boolean;
@@ -38,6 +41,10 @@ type ResultRow = {
     toggle: () => Promise<void>;
   };
 };
+
+// Links resolve with a single lookup on their platform, unlike a name search
+const looksLikeUrl = (text: string): boolean =>
+  /^(https?:\/\/|www\.)/i.test(text) || /^([\w-]+\.)+[a-z]{2,}\//i.test(text);
 
 const isTypingTarget = (target: EventTarget | null): boolean => {
   if (!(target instanceof HTMLElement)) {
@@ -60,13 +67,18 @@ const SearchPalette = () => {
   const [filter, setFilter] = useState<SearchFilter>("all");
   const [query, setQuery] = useState("");
   const [activeIndex, setActiveIndex] = useState(0);
+  const [requestedProviders, setRequestedProviders] = useState<string[]>([]);
   const debouncedQuery = useDebounce(query.trim(), 400);
+  const queryIsUrl = looksLikeUrl(debouncedQuery);
 
   const includes = (kind: SearchFilter) => filter === "all" || filter === kind;
   const discoverQuery = (kind: SearchFilter) => includes(kind) ? debouncedQuery : "";
 
   const foundTopics = useFindTopics(profile, discoverQuery("topics"));
-  const foundSubscriptions = useFindSubscriptions(discoverQuery("subscriptions"));
+  // Searching subscriptions by name also queries every platform, so names only search the platforms the user picks
+  const foundSubscriptions = useFindSubscriptions(queryIsUrl ? discoverQuery("subscriptions") : "");
+  const canSearchProviders = includes("subscriptions") && debouncedQuery !== "" && !queryIsUrl;
+  const providerSearches = useProviderSubscriptionSearch(canSearchProviders ? debouncedQuery : "", requestedProviders);
   const foundCurators = useSearchCurators(discoverQuery("curators"));
 
   useEffect(() => {
@@ -92,6 +104,7 @@ const SearchPalette = () => {
 
   useEffect(() => {
     setActiveIndex(0);
+    setRequestedProviders([]);
   }, [filter, debouncedQuery]);
 
   useEffect(() => {
@@ -130,6 +143,23 @@ const SearchPalette = () => {
     refreshCurators();
   };
 
+  const subscriptionRow = (sub: Subscription, keyPrefix: string, refreshResults: () => void): ResultRow => ({
+    key: keyPrefix + sub.uuid,
+    href: paths.SUBSCRIPTIONS + "/" + sub.uuid,
+    title: sub.name,
+    subtitle: getProviderPrettyName(providers, sub.provider),
+    media: <Miniature src={sub.thumbnail} alt="" badgeImage={getProviderIcon(providers, sub.provider)}/>,
+    follow: {
+      followed: sub.followed,
+      disabled: false,
+      toggle: async () => {
+        await (sub.followed ? unfollowSubscription(sub.uuid) : followSubscription(sub.uuid));
+        refreshResults();
+        refreshLibrary();
+      },
+    },
+  });
+
   const libraryHrefs = new Set(libraryRows.map(row => row.href));
 
   const discoverRows: ResultRow[] = debouncedQuery === "" ? [] : [
@@ -149,22 +179,8 @@ const SearchPalette = () => {
         },
       },
     })),
-    ...foundSubscriptions.subscriptions.map(sub => ({
-      key: "discover-subscription-" + sub.uuid,
-      href: paths.SUBSCRIPTIONS + "/" + sub.uuid,
-      title: sub.name,
-      subtitle: getProviderPrettyName(providers, sub.provider),
-      media: <Miniature src={sub.thumbnail} alt="" badgeImage={getProviderIcon(providers, sub.provider)}/>,
-      follow: {
-        followed: sub.followed,
-        disabled: false,
-        toggle: async () => {
-          await (sub.followed ? unfollowSubscription(sub.uuid) : followSubscription(sub.uuid));
-          foundSubscriptions.refreshSubscriptions();
-          refreshLibrary();
-        },
-      },
-    })),
+    ...foundSubscriptions.subscriptions.map(sub =>
+      subscriptionRow(sub, "discover-subscription-", foundSubscriptions.refreshSubscriptions)),
     ...foundCurators.curators.map(curator => ({
       key: "discover-curator-" + curator.id,
       href: paths.CURATORS + "/" + curator.username,
@@ -183,7 +199,29 @@ const SearchPalette = () => {
     })),
   ].filter(row => !libraryHrefs.has(row.href));
 
-  const allRows = [...libraryRows, ...discoverRows];
+  // Platform results are listed in full, even when a channel also shows in the sections above
+  const providerSections = (canSearchProviders ? providerSearches : []).map(search => ({
+    provider: search.provider,
+    isLoading: search.isLoading,
+    rows: search.subscriptions.map(sub => subscriptionRow(sub, "provider-subscription-", search.refresh)),
+  }));
+  const providerRows = providerSections.flatMap(section => section.rows);
+
+  const searchProvider = (providerName: string) => {
+    setActiveIndex(libraryRows.length + discoverRows.length + providerRows.length);
+    setRequestedProviders(current => [...current, providerName]);
+  };
+
+  const externalRows: ResultRow[] = !canSearchProviders ? [] : providers
+    .filter(provider => !requestedProviders.includes(provider.name))
+    .map(provider => ({
+      key: "search-provider-" + provider.name,
+      onSelect: () => searchProvider(provider.name),
+      title: t("search_on_provider", {query: debouncedQuery, provider: provider.prettyName}),
+      media: <img src={provider.iconUrl} alt="" className="w-5 h-5 object-contain"/>,
+    }));
+
+  const allRows = [...libraryRows, ...discoverRows, ...providerRows, ...externalRows];
   const isSearching = debouncedQuery !== "" && (
     foundTopics.topicsAreLoading || foundSubscriptions.subscriptionsAreLoading || foundCurators.curatorsAreLoading
   );
@@ -195,8 +233,12 @@ const SearchPalette = () => {
   };
 
   const openRow = (row: ResultRow) => {
-    closeModal(SearchPaletteId);
-    router.push(row.href);
+    if (row.onSelect) {
+      row.onSelect();
+    } else if (row.href) {
+      closeModal(SearchPaletteId);
+      router.push(row.href);
+    }
   };
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
@@ -221,6 +263,8 @@ const SearchPalette = () => {
     {key: "curators", label: t("curators")},
   ];
 
+  const sectionHeadingClass = "px-3 pt-3 pb-1 text-xs font-semibold uppercase tracking-wider text-base-content/60";
+
   const renderRow = (row: ResultRow, index: number) => (
     <li
       key={row.key}
@@ -237,7 +281,7 @@ const SearchPalette = () => {
       <span className="shrink-0 flex items-center justify-center w-8 h-8">{row.media}</span>
       <span className="flex flex-col flex-1 min-w-0">
         <span className="text-sm font-medium break-words">{row.title}</span>
-        <span className="text-xs text-base-content/60 truncate">{row.subtitle}</span>
+        {row.subtitle && <span className="text-xs text-base-content/60 truncate">{row.subtitle}</span>}
       </span>
       {row.follow &&
           <button
@@ -304,11 +348,37 @@ const SearchPalette = () => {
           }
           {libraryRows.map((row, index) => renderRow(row, index))}
           {discoverRows.length > 0 &&
-              <li role="presentation" className="px-3 pt-3 pb-1 text-xs font-semibold uppercase tracking-wider text-base-content/60">
+              <li role="presentation" className={sectionHeadingClass}>
                 {t("discover")}
               </li>
           }
           {discoverRows.map((row, index) => renderRow(row, libraryRows.length + index))}
+          {providerSections.map((section, sectionIndex) => {
+            const firstIndex = libraryRows.length + discoverRows.length + providerSections
+              .slice(0, sectionIndex)
+              .reduce((count, previous) => count + previous.rows.length, 0);
+            return (
+              <React.Fragment key={section.provider}>
+                <li role="presentation" className={sectionHeadingClass}>
+                  {getProviderPrettyName(providers, section.provider)}
+                </li>
+                {section.isLoading && <li role="presentation" className="flex justify-center py-4"><Spinner/></li>}
+                {!section.isLoading && section.rows.length === 0 &&
+                    <li role="presentation" className="px-3 py-2 text-sm text-base-content/60">
+                      {t("no_results_on_provider", {provider: getProviderPrettyName(providers, section.provider)})}
+                    </li>
+                }
+                {section.rows.map((row, index) => renderRow(row, firstIndex + index))}
+              </React.Fragment>
+            );
+          })}
+          {externalRows.length > 0 &&
+              <li role="presentation" className={sectionHeadingClass}>
+                {t("search_elsewhere")}
+              </li>
+          }
+          {externalRows.map((row, index) =>
+            renderRow(row, libraryRows.length + discoverRows.length + providerRows.length + index))}
           {allRows.length === 0 && !isSearching &&
               <li role="presentation" className="flex flex-col items-center justify-center gap-1 py-10 text-center text-sm text-base-content/60">
                 {query === "" ? t("search_nothing_here") : t("no_search_results")}
