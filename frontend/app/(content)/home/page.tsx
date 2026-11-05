@@ -65,7 +65,7 @@ const HomePageComponent = () => {
   const {profile, profileIsLoading} = useProfile();
   const {subscriptions, subscriptionsAreLoading} = useSubscriptions(profile);
   const {topics, topicsAreLoading} = useTopics(profile, profileIsLoading);
-  const {filters, setFilters, resetFilters, isModified: areFiltersModified} = useFilters();
+  const {filters, setFilters, resetFilters, isModified: areFiltersModified, savedFilters} = useFilters();
   const {showFilters, toggleFilters} = useFilterBarVisibility();
   const [debouncedFilters, setDebouncedFilters] = useState(filters);
   const {
@@ -199,7 +199,7 @@ const HomePageComponent = () => {
                   </Tag>
                 ))}
               </TagsRow>
-              {showFilters && <ContentFilterBar isModified={areFiltersModified} filters={filters}
+              {showFilters && <ContentFilterBar savedFilters={savedFilters} filters={filters}
                                 showInteractions={true}
                                 setFilters={setFilters}
                                 resetFilters={resetFilters}/>}

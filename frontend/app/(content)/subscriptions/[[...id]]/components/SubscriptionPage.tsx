@@ -50,7 +50,7 @@ const SubscriptionPageComponent = ({subscriptionId}: { subscriptionId: string })
   const {showToast} = useToast();
   const {providers} = useProviders();
 
-  const {filters, setFilters, resetFilters, isModified: areFiltersModified} = useFilters();
+  const {filters, setFilters, resetFilters, isModified: areFiltersModified, savedFilters} = useFilters();
   const {showFilters, toggleFilters} = useFilterBarVisibility();
   const [debouncedFilters, setDebouncedFilters] = useState(filters);
   const {profile, profileIsLoading} = useProfile();
@@ -191,7 +191,7 @@ const SubscriptionPageComponent = ({subscriptionId}: { subscriptionId: string })
                 stripLeading={<FilterToggleButton isOpen={showFilters} isModified={areFiltersModified}
                                                   onClick={toggleFilters}/>}
                 filterBar={showFilters &&
-                    <ContentFilterBar isModified={areFiltersModified} filters={filters}
+                    <ContentFilterBar savedFilters={savedFilters} filters={filters}
                                       showInteractions={isUserLogged}
                                       setFilters={setFilters}
                                       resetFilters={resetFilters}/>

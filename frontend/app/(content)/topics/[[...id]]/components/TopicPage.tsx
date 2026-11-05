@@ -51,7 +51,7 @@ const TopicPageComponent = ({topicId}: { topicId: string }) => {
   const t = useTranslations("common");
   const router = useRouter()
 
-  const {filters, setFilters, resetFilters, isModified: areFiltersModified} = useFilters();
+  const {filters, setFilters, resetFilters, isModified: areFiltersModified, savedFilters} = useFilters();
   const {showFilters, toggleFilters} = useFilterBarVisibility();
   const [debouncedFilters, setDebouncedFilters] = useState(filters);
   const {providers} = useProviders();
@@ -214,7 +214,7 @@ const TopicPageComponent = ({topicId}: { topicId: string }) => {
                 stripLeading={<FilterToggleButton isOpen={showFilters} isModified={areFiltersModified}
                                                   onClick={toggleFilters}/>}
                 filterBar={showFilters &&
-                    <ContentFilterBar isModified={areFiltersModified} subscriptions={topicSubscriptions}
+                    <ContentFilterBar savedFilters={savedFilters} subscriptions={topicSubscriptions}
                                       providers={providers}
                                       filters={filters}
                                       showInteractions={isUserLogged}

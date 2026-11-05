@@ -52,7 +52,7 @@ const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const {providers} = useProviders();
-  const {filters, setFilters, resetFilters, isModified: areFiltersModified} = useFilters();
+  const {filters, setFilters, resetFilters, isModified: areFiltersModified, savedFilters} = useFilters();
   const {showFilters, toggleFilters} = useFilterBarVisibility();
   const [debouncedFilters, setDebouncedFilters] = useState(filters);
   const [selectedSection, setSelectedSection] = useState<SectionKey>(DEFAULT_SECTION);
@@ -196,7 +196,7 @@ const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
         </TagsRow>
 
         {selectedSection === "recommendations" && showFilters && (
-          <ContentFilterBar isModified={areFiltersModified} filters={filters} setFilters={setFilters} resetFilters={resetFilters}/>
+          <ContentFilterBar savedFilters={savedFilters} filters={filters} setFilters={setFilters} resetFilters={resetFilters}/>
         )}
 
         {selectedSection === "recommendations" && (

@@ -3,7 +3,7 @@ import {useTranslations} from "next-intl";
 import classNames from "classnames";
 import {Subscription, subscriptionSorting} from "../../entities/Subscription";
 import {getProviderIcon, Provider} from "../../entities/Provider";
-import {durationOptions, Filters} from "../../entities/Filters";
+import {areFiltersEqual, durationOptions, Filters} from "../../entities/Filters";
 import {
   ArchiveBoxFilledIcon,
   CheckCircleFilledIcon,
@@ -22,7 +22,7 @@ type ContentFilterBarProps = {
   filters: Filters,
   setFilters: (filters: Filters) => void;
   resetFilters: () => void;
-  isModified: boolean;
+  savedFilters: Filters;
   showInteractions?: boolean;
   subscriptions?: Subscription[];
   providers?: Provider[];
@@ -48,7 +48,7 @@ const ContentFilterBar = (
     filters,
     setFilters,
     resetFilters,
-    isModified,
+    savedFilters,
     showInteractions = false,
     subscriptions,
     providers = [],
@@ -56,14 +56,16 @@ const ContentFilterBar = (
 ) => {
   const t = useTranslations("common");
   const idPrefix = useId();
+  const isModified = !areFiltersEqual(filters, savedFilters);
 
   const handleDurationChange = (key: Filters["durationGroup"]) => {
     setFilters({...filters, durationGroup: key, minDuration: undefined, maxDuration: undefined});
   }
 
   const selectedDuration = durationOptions.find(option => option.key === filters.durationGroup);
-  const durationIsActive = filters.durationGroup !== "all";
-  const durationLabel = durationIsActive && selectedDuration && filters.durationGroup !== "custom"
+  const durationIsActive = filters.durationGroup !== savedFilters.durationGroup ||
+    filters.minDuration !== savedFilters.minDuration || filters.maxDuration !== savedFilters.maxDuration;
+  const durationLabel = filters.durationGroup !== "all" && selectedDuration && filters.durationGroup !== "custom"
     ? t(selectedDuration.label)
     : t("duration");
 
@@ -72,45 +74,53 @@ const ContentFilterBar = (
       key: "not_viewed",
       icon: <CheckCircleIcon/>,
       checked: filters.displayWithoutInteraction,
+      saved: savedFilters.displayWithoutInteraction,
       onChange: (checked: boolean) => setFilters({...filters, displayWithoutInteraction: checked}),
     },
     {
       key: "viewed",
       icon: <CheckCircleFilledIcon/>,
       checked: filters.displayViewed,
+      saved: savedFilters.displayViewed,
       onChange: (checked: boolean) => setFilters({...filters, displayViewed: checked}),
     },
     {
       key: "recommended",
       icon: <ThumbsUpFilledIcon/>,
       checked: filters.displayRecommended,
+      saved: savedFilters.displayRecommended,
       onChange: (checked: boolean) => setFilters({...filters, displayRecommended: checked}),
     },
     {
       key: "not_recommended",
       icon: <ThumbsDownFilledIcon/>,
       checked: filters.displayDiscouraged,
+      saved: savedFilters.displayDiscouraged,
       onChange: (checked: boolean) => setFilters({...filters, displayDiscouraged: checked}),
     },
     {
       key: "archived",
       icon: <ArchiveBoxFilledIcon/>,
       checked: filters.displayHidden,
+      saved: savedFilters.displayHidden,
       onChange: (checked: boolean) => setFilters({...filters, displayHidden: checked}),
     },
   ];
   const selectedInteractions = interactionOptions.filter(option => option.checked);
+  const interactionsAreActive = interactionOptions.some(option => option.checked !== option.saved);
   // Checking nothing shows everything, so only a partial selection narrows the feed
-  const interactionsAreActive = selectedInteractions.length > 0 && selectedInteractions.length < interactionOptions.length;
+  const interactionsNarrowFeed = selectedInteractions.length > 0 && selectedInteractions.length < interactionOptions.length;
   const interactionsLabel = selectedInteractions.length === 1
     ? t(selectedInteractions[0].key)
-    : interactionsAreActive ? `${t("show_items")} · ${selectedInteractions.length}` : t("show_items");
+    : interactionsNarrowFeed ? `${t("show_items")} · ${selectedInteractions.length}` : t("show_items");
 
   const sortedSubscriptions = subscriptions ? subscriptions.slice().sort(subscriptionSorting) : [];
   const includedSubscriptionsCount = sortedSubscriptions
     .filter(subscription => !filters.excludedSubscriptions.includes(subscription.uuid))
     .length;
-  const sourcesAreActive = includedSubscriptionsCount < sortedSubscriptions.length;
+  const sourcesAreActive = sortedSubscriptions.some(subscription =>
+    filters.excludedSubscriptions.includes(subscription.uuid) !== savedFilters.excludedSubscriptions.includes(subscription.uuid)
+  );
 
   const toggleSubscription = (subscriptionId: string) => {
     const isExcluded = filters.excludedSubscriptions.includes(subscriptionId);

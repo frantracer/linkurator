@@ -7,6 +7,7 @@ type UseFilters = {
   setFilters: (filters: Filters) => void,
   resetFilters: () => void,
   isModified: boolean,
+  savedFilters: Filters,
 }
 
 const useFilters = (): UseFilters => {
@@ -24,6 +25,7 @@ const useFilters = (): UseFilters => {
     setFilters,
     resetFilters: () => setFilters(userFilter),
     isModified: !areFiltersEqual(filters, userFilter),
+    savedFilters: userFilter,
   }
 };
 
