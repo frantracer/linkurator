@@ -24,27 +24,44 @@ type AssignTopicModalProps = {
 const AssignTopicModal = ({topics, subscription, refreshTopics}: AssignTopicModalProps) => {
   const t = useTranslations("common");
   const queryClient = useQueryClient();
-  const {showErrorToast} = useToast();
+  const {showToast, showErrorToast} = useToast();
   const [topicName, setTopicName] = useState("");
   const [searchValue, setSearchValue] = useState("");
   const [pendingTopicIds, setPendingTopicIds] = useState<string[]>([]);
 
-  const runForTopic = async (topicId: string, action: () => Promise<unknown>) => {
+  const runForTopic = async (topicId: string, action: () => Promise<unknown>): Promise<boolean> => {
     setPendingTopicIds(ids => ids.concat(topicId));
     try {
       await action();
       refreshTopics();
       queryClient.invalidateQueries({queryKey: ['topicItems', topicId]});
+      return true;
     } catch {
       showErrorToast(t("action_failed"), subscription.name);
+      return false;
     } finally {
       setPendingTopicIds(ids => ids.filter(id => id !== topicId));
     }
   };
 
-  const toggleTopic = (topic: Topic, assigned: boolean) => runForTopic(topic.uuid, () => assigned
-    ? unassignSubscriptionToTopic(topic.uuid, subscription.uuid)
-    : assignSubscriptionToTopic(topic.uuid, subscription.uuid));
+  const setAssignment = (topic: Topic, assign: boolean, offerUndo: boolean) => {
+    runForTopic(topic.uuid, () => assign
+      ? assignSubscriptionToTopic(topic.uuid, subscription.uuid)
+      : unassignSubscriptionToTopic(topic.uuid, subscription.uuid)
+    ).then(succeeded => {
+      if (succeeded && offerUndo) {
+        showToast(
+          assign
+            ? t("subscription_added_to_topic", {topic: topic.name})
+            : t("subscription_removed_from_topic", {topic: topic.name}),
+          subscription.name,
+          () => setAssignment(topic, !assign, false)
+        );
+      }
+    });
+  };
+
+  const toggleTopic = (topic: Topic, assigned: boolean) => setAssignment(topic, !assigned, true);
 
   const createTopicWithSubscription = () => {
     const name = topicName.trim();
@@ -53,7 +70,11 @@ const AssignTopicModal = ({topics, subscription, refreshTopics}: AssignTopicModa
     }
     const newTopicUuid = uuidv4();
     setTopicName("");
-    runForTopic(newTopicUuid, () => createTopic(newTopicUuid, name, [subscription.uuid]));
+    runForTopic(newTopicUuid, () => createTopic(newTopicUuid, name, [subscription.uuid])).then(succeeded => {
+      if (succeeded) {
+        showToast(t("subscription_added_to_topic", {topic: name}), subscription.name);
+      }
+    });
   };
 
   const ownTopics = topics
