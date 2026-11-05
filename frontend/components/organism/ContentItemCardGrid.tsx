@@ -38,6 +38,7 @@ type ContentItemCardGridProps = {
   stripLeading?: React.ReactNode;
 }
 
+// useGridCardWidth repeats these sizes, keep both in sync
 const GRID_CLASS = "grid grid-cols-[repeat(auto-fill,minmax(min(100%,17.5rem),1fr))] gap-4 p-4";
 const SKELETON_COUNT = 8;
 
