@@ -41,11 +41,6 @@
     color: #047a3d;
 }
 
-[data-theme="light"] .\!text-primary,
-[data-theme="light"] .hover\:\!text-primary:hover {
-    color: #047a3d !important;
-}
-
 /* Outline buttons use a 30% text-colour border, which is 2:1 on white; light backgrounds need 45% for 3:1 */
 [data-theme="light"] .border-base-content\/30 {
     border-color: oklch(var(--bc) / 0.45);

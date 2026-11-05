@@ -153,11 +153,11 @@ const Dropdown = (
   });
 
   const triggerClass = classNames({
-    "btn btn-sm rounded-md px-2 gap-1.5 font-medium flex-nowrap btn-outline border-base-content/30 text-base-content hover:!bg-base-content/5 hover:!text-primary hover:!border-primary": triggerStyle === "outline",
-    "btn btn-sm rounded-md px-2 gap-1.5 font-medium flex-nowrap btn-ghost hover:!bg-base-content/10 hover:!text-primary": triggerStyle === "ghost",
+    "btn btn-sm rounded-md px-2 gap-1.5 font-medium flex-nowrap btn-outline border-base-content/30 text-base-content hover:!bg-base-content/10 hover:!border-base-content/60 hover:!text-base-content": triggerStyle === "outline",
+    "btn btn-sm rounded-md px-2 gap-1.5 font-medium flex-nowrap btn-ghost hover:!bg-base-content/10": triggerStyle === "ghost",
     "btn btn-sm btn-circle border-0 shadow bg-black/70 text-white hover:bg-black/90": triggerStyle === "overlay",
     "rounded-full": triggerStyle === "bare",
-    "btn-active !border-primary !text-primary": isOpen && (triggerStyle === "outline" || triggerStyle === "ghost"),
+    "!bg-base-content/10 !border-base-content/60": isOpen && (triggerStyle === "outline" || triggerStyle === "ghost"),
     "w-full": fullWidth,
   });
 

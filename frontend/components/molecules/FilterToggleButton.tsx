@@ -18,7 +18,7 @@ const FilterToggleButton = ({isOpen, isModified, onClick}: FilterToggleButtonPro
       aria-pressed={isOpen}
       title={t("filters")}
       className={classNames("relative btn btn-sm rounded-md px-2 gap-1.5 font-medium flex-nowrap", {
-        "btn-outline border-base-content/30 text-base-content hover:!bg-base-content/5 hover:!text-primary hover:!border-primary": !isOpen,
+        "btn-outline border-base-content/30 text-base-content hover:!bg-base-content/10 hover:!border-base-content/60 hover:!text-base-content": !isOpen,
         "bg-primary/15 border-primary text-primary hover:bg-primary/20 hover:border-primary": isOpen,
       })}
     >

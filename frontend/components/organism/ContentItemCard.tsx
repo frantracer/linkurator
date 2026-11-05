@@ -57,7 +57,7 @@ const ActionButton = ({active, onClick, label, children}: ActionButtonProps) => 
   const className = classNames(
     "btn btn-sm flex-1 flex-nowrap gap-1 px-2 rounded-md font-normal text-xs border",
     {
-      "btn-ghost border-base-content/30 text-base-content hover:!border-primary hover:!text-primary": !active,
+      "btn-ghost border-base-content/30 text-base-content hover:!bg-base-content/10 hover:!border-base-content/60": !active,
       "border-primary bg-primary/10 text-primary hover:bg-primary/15 hover:border-primary": active,
     }
   );
