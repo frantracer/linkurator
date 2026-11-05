@@ -24,6 +24,7 @@ import Avatar from "../../../../../components/atoms/Avatar";
 import FilterToggleButton from "../../../../../components/molecules/FilterToggleButton";
 import useFilterBarVisibility from "../../../../../hooks/useFilterBarVisibility";
 import ContentFilterBar from "../../../../../components/organism/ContentFilterBar";
+import SearchBar from "../../../../../components/molecules/SearchBar";
 import ContentItemCardGrid from "../../../../../components/organism/ContentItemCardGrid";
 import {paths} from "../../../../../configuration";
 import {useCurator} from "../../../../../hooks/useCurator";
@@ -56,6 +57,7 @@ const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
   const {showFilters, toggleFilters} = useFilterBarVisibility();
   const [debouncedFilters, setDebouncedFilters] = useState(filters);
   const [selectedSection, setSelectedSection] = useState<SectionKey>(DEFAULT_SECTION);
+  const [nameFilter, setNameFilter] = useState("");
 
   const sectionParam = searchParams.get("section");
 
@@ -91,6 +93,11 @@ const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
     subscriptionsIsLoading: isSubscriptionsLoading,
     refetchSubscriptions
   } = useCuratorSubscriptions(curatorId);
+
+  const matchesNameFilter = (name: string) => name.toLowerCase().includes(nameFilter.trim().toLowerCase());
+  const filteredTopics = topics.filter(topic => matchesNameFilter(topic.name));
+  const filteredSubscriptions = subscriptions.filter(subscription => matchesNameFilter(subscription.name));
+  const isRecommendationsSection = selectedSection === "recommendations";
 
   const isLoggedIn = !!(profile)
   const isOwnCuratorProfile = isLoggedIn && !!(curator) && profile.username === curator.username;
@@ -179,8 +186,11 @@ const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
       {(isMainDataLoading || !curator) && <div className="h-14 shrink-0 border-b border-neutral bg-base-100"/>}
 
       <div className="flex flex-col flex-1 min-h-0 bg-base-300 overflow-hidden">
-        <TagsRow leading={selectedSection === "recommendations" &&
-            <FilterToggleButton isOpen={showFilters} isModified={areFiltersModified} onClick={toggleFilters}/>}>
+        <TagsRow leading={
+          <FilterToggleButton isOpen={showFilters}
+                              isModified={isRecommendationsSection ? areFiltersModified : nameFilter.trim() !== ""}
+                              onClick={toggleFilters}/>
+        }>
           {sections.map(section => (
             <Tag
               key={section.key}
@@ -195,8 +205,21 @@ const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
           ))}
         </TagsRow>
 
-        {selectedSection === "recommendations" && showFilters && (
+        {isRecommendationsSection && showFilters && (
           <ContentFilterBar savedFilters={savedFilters} filters={filters} setFilters={setFilters} resetFilters={resetFilters}/>
+        )}
+
+        {!isRecommendationsSection && showFilters && (
+          <div className="shrink-0 px-4 py-3 border-b border-neutral bg-base-300">
+            <div className="sm:max-w-md">
+              <SearchBar
+                placeholder={selectedSection === "topics" ? t("filter_topics_placeholder") : t("filter_subscriptions_placeholder")}
+                value={nameFilter}
+                handleChange={setNameFilter}
+                icon="filter"
+              />
+            </div>
+          </div>
         )}
 
         {selectedSection === "recommendations" && (
@@ -217,7 +240,7 @@ const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
           <div className="flex-1 min-h-0 overflow-x-hidden overflow-y-auto pb-mobile-nav">
             <div className="flex flex-col gap-6 p-4 max-w-7xl w-full mx-auto">
               <CuratorTopicsList
-                topics={topics}
+                topics={filteredTopics}
                 isUserLoggedIn={isLoggedIn}
                 isLoading={isMainDataLoading}
                 refreshTopics={refreshAllTopics}/>
@@ -229,7 +252,7 @@ const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
           <div className="flex-1 min-h-0 overflow-x-hidden overflow-y-auto pb-mobile-nav">
             <div className="flex flex-col gap-6 p-4 max-w-7xl w-full mx-auto">
               <CuratorSubscriptionsList
-                subscriptions={subscriptions}
+                subscriptions={filteredSubscriptions}
                 isLoading={isMainDataLoading || isSubscriptionsLoading}
                 refreshSubscriptions={() => refetchSubscriptions()}/>
             </div>
