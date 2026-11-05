@@ -65,9 +65,14 @@ const ContentFilterBar = (
   const selectedDuration = durationOptions.find(option => option.key === filters.durationGroup);
   const durationIsActive = filters.durationGroup !== savedFilters.durationGroup ||
     filters.minDuration !== savedFilters.minDuration || filters.maxDuration !== savedFilters.maxDuration;
-  const durationLabel = filters.durationGroup !== "all" && selectedDuration && filters.durationGroup !== "custom"
-    ? t(selectedDuration.label)
-    : t("duration");
+  const customDurationRange = filters.minDuration !== undefined && filters.maxDuration !== undefined
+    ? `${filters.minDuration}–${filters.maxDuration} min`
+    : filters.minDuration !== undefined ? `≥ ${filters.minDuration} min`
+      : filters.maxDuration !== undefined ? `≤ ${filters.maxDuration} min` : undefined;
+  const durationValue = filters.durationGroup === "custom" && customDurationRange
+    ? customDurationRange
+    : selectedDuration ? t(selectedDuration.label) : undefined;
+  const durationLabel = durationValue ? `${t("duration")}: ${durationValue}` : t("duration");
 
   const interactionOptions = [
     {
@@ -142,7 +147,7 @@ const ContentFilterBar = (
                    placeholder={t("search_placeholder")}/>
       </div>
       <div className="flex flex-row flex-wrap gap-2 items-center">
-        <Dropdown label={t("duration")} width={"narrow"} position="start" bottom={true}
+        <Dropdown label={t("duration")} width={"medium"} position="start" bottom={true}
                   button={<FilterChip active={durationIsActive}>{durationLabel}</FilterChip>}>
           <li role="radiogroup" aria-label={t("duration")} className="flex flex-col p-1">
             {durationOptions.map(option => (
@@ -151,6 +156,7 @@ const ContentFilterBar = (
                        checked={filters.durationGroup === option.key}
                        onChange={() => handleDurationChange(option.key)}/>
                 {t(option.label)}
+                {option.range && <span className="text-base-content/60">· {option.range}</span>}
               </label>
             ))}
             {filters.durationGroup === "custom" &&

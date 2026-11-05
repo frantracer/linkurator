@@ -130,6 +130,7 @@ const SettingsPage: NextPage = () => {
                     }}
                   />
                   {t(option.label)}
+                  {option.range && <span className="text-base-content/60">· {option.range}</span>}
                 </label>
               ))}
               {localFilter.durationGroup === "custom" && (
