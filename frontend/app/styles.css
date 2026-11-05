@@ -1,9 +1,65 @@
-div {
-    background: inherit;
+/* Room for the floating mobile tab bar at the end of each page's scroll area, so the page itself can
+   run down behind the bar. The id selector outranks Tailwind padding utilities on the same element. */
+@media (max-width: 1023px) {
+    #main-content .pb-mobile-nav {
+        padding-bottom: calc(5.5rem + env(safe-area-inset-bottom));
+    }
 }
 
-section {
-    background: inherit;
+/* Solid green surfaces with white text use a darker shade of the brand green so the label reaches
+   4.5:1 contrast; text, icons, borders and tints keep the brand green. :root raises specificity
+   above DaisyUI's own component rules, which load after this file. */
+:root .btn-primary:not(:disabled):not(.btn-disabled),
+:root .badge-primary,
+:root .bg-primary-filled,
+:root .bg-primary-filled:hover {
+    background-color: #047a3d;
+    border-color: #047a3d;
+    color: #ffffff;
+}
+
+:root .btn-primary:not(:disabled):not(.btn-disabled):hover {
+    background-color: #03652f;
+    border-color: #03652f;
+}
+
+/* Horizontal chip strips stay scrollable by touch, wheel and keyboard without showing a scrollbar */
+.scrollbar-hide {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+    display: none;
+}
+
+/* On light backgrounds the brand green is only 3.8:1 as text, so green text uses the darker shade there.
+   Fills, borders and tints keep the brand green. */
+[data-theme="light"] .text-primary,
+[data-theme="light"] .hover\:text-primary:hover,
+[data-theme="light"] .markdown-content a {
+    color: #047a3d;
+}
+
+/* Outline buttons use a 30% text-colour border, which is 2:1 on white; light backgrounds need 45% for 3:1 */
+[data-theme="light"] .border-base-content\/30 {
+    border-color: oklch(var(--bc) / 0.45);
+}
+
+/* DaisyUI's .modal keeps closed dialogs rendered (only transparent), so keyboard focus and screen
+   readers could reach them. Hiding them still lets the opening transition run. */
+dialog.modal:not([open]) {
+    visibility: hidden;
+}
+
+/* Visibility must flip at once on open, otherwise the dialog is still hidden when openModal focuses its input */
+dialog.modal[open] {
+    transition-property: transform, opacity;
+}
+
+:focus-visible {
+    outline: 2px solid oklch(var(--p));
+    outline-offset: 2px;
 }
 
 
@@ -29,7 +85,7 @@ section {
 }
 
 .markdown-content pre {
-    background-color: hsl(var(--b2));
+    background-color: oklch(var(--b2));
     border-radius: 0.375rem;
     padding: 1rem;
     overflow-x: auto;
@@ -37,7 +93,7 @@ section {
 }
 
 .markdown-content code {
-    background-color: hsl(var(--b2));
+    background-color: oklch(var(--b2));
     padding: 0.125rem 0.25rem;
     border-radius: 0.25rem;
     font-size: 0.875em;
@@ -49,7 +105,7 @@ section {
 }
 
 .markdown-content blockquote {
-    border-left: 4px solid hsl(var(--p));
+    border-left: 4px solid oklch(var(--p));
     padding-left: 1rem;
     margin: 0.5rem 0;
     font-style: italic;
@@ -82,7 +138,7 @@ section {
 }
 
 .markdown-content a {
-    color: hsl(var(--p));
+    color: oklch(var(--p));
     text-decoration: underline;
 }
 

@@ -2,39 +2,28 @@ import React from "react";
 import {useTranslations} from "next-intl";
 import EmptyStateBox from "../atoms/EmptyStateBox";
 import Button from "../atoms/Button";
-import {AddIcon, MagnifyingGlassIcon} from "../atoms/Icons";
-import {NewTopicModalId} from "./NewTopicModal";
-import {FindTopicModalId} from "./FindTopicModal";
+import {AddIcon, MagnifyingGlassIcon, RectangleGroup} from "../atoms/Icons";
+import {NewTopicModalId} from "./TopicEditorModal";
+import {openSearchPalette} from "../../utilities/searchPaletteAction";
 import {openModal} from "../../utilities/modalAction";
-import Divider from "../atoms/Divider";
 
 const EmptyStateNoTopics = () => {
   const t = useTranslations("common");
 
   return (
     <EmptyStateBox
+      icon={<RectangleGroup/>}
       title={t("create_first_topic")}
       message={t("follow_and_create")}
     >
-      <div className={"flex flex-col gap-4 items-center justify-center mb-4"}>
-        <Button
-          clickAction={() => openModal(NewTopicModalId)}
-          primary={false}
-          fitContent={true}
-        >
-          <AddIcon/>
-          {t("create_topic")}
-        </Button>
-        <Divider text={t("or")}/>
-        <Button
-          clickAction={() => openModal(FindTopicModalId)}
-          primary={false}
-          fitContent={true}
-        >
-          <MagnifyingGlassIcon/>
-          {t("find_topics")}
-        </Button>
-      </div>
+      <Button clickAction={() => openModal(NewTopicModalId)}>
+        <AddIcon/>
+        {t("create_topic")}
+      </Button>
+      <Button primary={false} clickAction={() => openSearchPalette("topics")}>
+        <MagnifyingGlassIcon/>
+        {t("find_topics")}
+      </Button>
     </EmptyStateBox>
   );
 }

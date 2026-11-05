@@ -1,12 +1,12 @@
 'use client';
 
 import React, {useEffect, useRef} from "react";
+import EndOfList from "../../../../components/atoms/EndOfList";
 import {useTranslations} from "next-intl";
 import EmptyStateBox from "../../../../components/atoms/EmptyStateBox";
 import {BellIcon} from "../../../../components/atoms/Icons";
-import {InfoBanner} from "../../../../components/atoms/InfoBanner";
 import {Spinner} from "../../../../components/atoms/Spinner";
-import TopTitle from "../../../../components/molecules/TopTitle";
+import PageHeader from "../../../../components/organism/PageHeader";
 import NotificationCard from "../../../../components/organism/NotificationCard";
 import useNotificationsAndMarkAsRead from "../../../../hooks/useNotificationsAndMarkAsRead";
 import useProfile from "../../../../hooks/useProfile";
@@ -52,24 +52,15 @@ const NotificationsPageComponent = () => {
 
   return (
     <>
-      <TopTitle>
-        <div className="flex flex-row items-center h-full w-full px-4">
-          <div className="w-10 shrink-0"/>
-          <div className="flex-1 min-w-0 flex flex-row items-center justify-center gap-2">
-            <BellIcon/>
-            <h1 className="text-xl font-bold truncate">{t("notifications")}</h1>
-          </div>
-          <div className="w-10 shrink-0"/>
-        </div>
-      </TopTitle>
+      <PageHeader title={t("notifications")} icon={<BellIcon/>}/>
       <div
         ref={containerRef}
         onScroll={handleContainerScroll}
-        className="flex flex-col h-full bg-base-300 overflow-y-auto overflow-x-hidden"
+        className="flex flex-col h-full bg-base-300 overflow-y-auto overflow-x-hidden pb-mobile-nav"
       >
         <div className="flex flex-col gap-3 p-4 max-w-3xl w-full mx-auto">
           {hasNoNotifications &&
-              <EmptyStateBox title={t("no_notifications_title")} message={t("no_notifications_message")}/>
+              <EmptyStateBox icon={<BellIcon/>} title={t("no_notifications_title")} message={t("no_notifications_message")}/>
           }
           {notifications.map(notification => (
             <NotificationCard key={notification.id} notification={notification} providers={providers}/>
@@ -81,9 +72,7 @@ const NotificationsPageComponent = () => {
               </div>
           }
           {isFinished && notifications.length > 0 &&
-              <div className="flex items-center justify-center p-4">
-                  <InfoBanner>{t("no_more_content")}</InfoBanner>
-              </div>
+              <EndOfList text={t("all_caught_up")}/>
           }
         </div>
       </div>

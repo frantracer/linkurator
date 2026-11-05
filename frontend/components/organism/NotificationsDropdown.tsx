@@ -2,7 +2,6 @@
 
 import React from "react";
 import {useTranslations} from "next-intl";
-import Button from "../atoms/Button";
 import Dropdown from "../atoms/Dropdown";
 import {BellIcon} from "../atoms/Icons";
 import useNotificationsAndMarkAsRead from "../../hooks/useNotificationsAndMarkAsRead";
@@ -24,18 +23,18 @@ const NotificationsDropdown = ({profile, bottom = true, position = "end"}: Notif
 
   return (
     <Dropdown
+      label={t("notifications")}
+      width={"medium"}
+      triggerStyle={"ghost"}
       button={
-        <div onClick={loadAndMarkAsRead} className="indicator">
+        <span onClick={loadAndMarkAsRead} className="indicator">
           {unreadCount > 0 &&
               <span className="indicator-item badge badge-primary badge-sm">
                 {formatUnreadCount(unreadCount)}
               </span>
           }
-          <Button fitContent={true} primary={false} borderless={true} tooltip={t("notifications")}
-                  stopPropagation={false}>
-            <BellIcon/>
-          </Button>
-        </div>
+          <BellIcon/>
+        </span>
       }
       bottom={bottom}
       position={position}

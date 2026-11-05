@@ -1,19 +1,20 @@
 'use client';
 
 import React, {useState} from "react";
+import EntityCardGridSkeleton from "../../../../../components/molecules/EntityCardGridSkeleton";
 import {flushSync} from "react-dom";
 import {useTranslations} from "next-intl";
 import Button from "../../../../../components/atoms/Button";
 import Collapse from "../../../../../components/atoms/Collapse";
 import {ImportIcon, MagnifyingGlassIcon, SubscriptionIcon} from "../../../../../components/atoms/Icons";
-import EmptyStateNoSubscriptions from "../../../../../components/organism/EmptyStateNoSubscriptions";
+import EmptyStateImportSubscriptions from "../../../../../components/organism/EmptyStateImportSubscriptions";
 import EmptyStateNoMatches from "../../../../../components/organism/EmptyStateNoMatches";
 import Miniature from "../../../../../components/atoms/Miniature";
 import SearchBar from "../../../../../components/molecules/SearchBar";
-import TopTitle from "../../../../../components/molecules/TopTitle";
+import PageHeader from "../../../../../components/organism/PageHeader";
 import AssignTopicModal, {AssignTopicModalId} from "../../../../../components/organism/AssignTopicModal";
-import {FindSubscriptionModalId} from "../../../../../components/organism/FindSubscriptionModal";
-import {ImportSubscriptionsModalId} from "../../../../../components/organism/ImportSubscriptionsModal";
+import {openSearchPalette} from "../../../../../utilities/searchPaletteAction";
+import {openImportModal} from "../../../../../utilities/importModalAction";
 import SubscriptionCard from "../../../../../components/organism/SubscriptionCard";
 import {getProviderIcon, getProviderPrettyName} from "../../../../../entities/Provider";
 import {Subscription, subscriptionFiltering, subscriptionSorting} from "../../../../../entities/Subscription";
@@ -50,9 +51,8 @@ const SubscriptionsListPageComponent = () => {
     ? subscriptions
     : subscriptions.filter(subscription => subscriptionFiltering(subscription, filterText.trim()));
 
-  const openDiscoverModal = () => openModal(FindSubscriptionModalId);
-  const openImportModal = () => openModal(ImportSubscriptionsModalId);
-
+  const openDiscoverModal = () => openSearchPalette("subscriptions");
+  
   const handleAssign = (subscription: Subscription) => {
     flushSync(() => setAssigningSubscription(subscription));
     openModal(AssignTopicModalId);
@@ -82,17 +82,8 @@ const SubscriptionsListPageComponent = () => {
 
   return (
     <>
-      <TopTitle>
-        <div className="flex flex-row items-center h-full w-full px-4">
-          <div className="w-10 shrink-0"/>
-          <div className="flex-1 min-w-0 flex flex-row items-center justify-center gap-2">
-            <SubscriptionIcon/>
-            <h1 className="text-xl font-bold truncate">{t("subscriptions")}</h1>
-          </div>
-          <div className="w-10 shrink-0"/>
-        </div>
-      </TopTitle>
-      <div className="flex flex-col h-full bg-base-300 overflow-y-auto overflow-x-hidden">
+      <PageHeader title={t("subscriptions")} icon={<SubscriptionIcon/>}/>
+      <div className="flex flex-col h-full bg-base-300 overflow-y-auto overflow-x-hidden pb-mobile-nav">
         <div className="flex flex-col gap-6 p-4 max-w-7xl w-full mx-auto">
           <div className="flex flex-row gap-2 w-full items-center justify-center">
             <Button fitContent={true} clickAction={openDiscoverModal} primary={false}>
@@ -108,15 +99,17 @@ const SubscriptionsListPageComponent = () => {
               />
             </div>
             {profile && (
-              <Button fitContent={true} clickAction={openImportModal} primary={false}>
+              <Button fitContent={true} clickAction={() => openImportModal()}>
                 <ImportIcon/>
                 {t("import")}
               </Button>
             )}
           </div>
 
+          {subscriptionsAreLoading && <EntityCardGridSkeleton/>}
+
           {!subscriptionsAreLoading && profile && !hasAnySubscriptions && (
-            <EmptyStateNoSubscriptions/>
+            <EmptyStateImportSubscriptions/>
           )}
 
           {!subscriptionsAreLoading && hasNoMatches && (

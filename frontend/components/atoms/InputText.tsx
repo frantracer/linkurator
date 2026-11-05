@@ -15,6 +15,13 @@ type InputTextProps = {
   disabled?: boolean;
   inputType?: InputType;
   autofocus?: boolean;
+  id?: string;
+  name?: string;
+  ariaLabel?: string;
+  autoComplete?: string;
+  required?: boolean;
+  describedBy?: string;
+  invalid?: boolean;
 };
 
 const InputText = (
@@ -27,6 +34,13 @@ const InputText = (
     disabled = false,
     inputType = InputType.TEXT,
     autofocus = false,
+    id = undefined,
+    name = undefined,
+    ariaLabel = undefined,
+    autoComplete = undefined,
+    required = false,
+    describedBy = undefined,
+    invalid = false,
   }: InputTextProps) => {
   const [searchValue, setSearchValue] = useState(value);
 
@@ -41,8 +55,15 @@ const InputText = (
 
   return (
     <input
-      className={"input input-sm border-2 border-neutral focus:border-primary bg-base-300 w-full " + padding}
+      className={"input input-sm border border-base-content/40 focus:border-primary bg-base-100 w-full " + padding + (invalid ? " input-error" : "")}
       type={inputType?.toString()}
+      id={id}
+      name={name}
+      aria-label={ariaLabel}
+      autoComplete={autoComplete}
+      required={required}
+      aria-describedby={describedBy}
+      aria-invalid={invalid || undefined}
       placeholder={placeholder}
       value={searchValue}
       disabled={disabled}

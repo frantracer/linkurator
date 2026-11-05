@@ -10,10 +10,11 @@ const ToggleButton = (props: ToggleButtonProps) => {
   return (
     <input
       type="checkbox"
-      alt={props.label}
+      aria-label={props.label}
+      title={props.label}
       onChange={props.onChange}
       checked={props.value}
-      className="toggle"
+      className="toggle toggle-primary"
     />
   );
 }

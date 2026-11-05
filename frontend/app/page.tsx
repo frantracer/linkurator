@@ -10,13 +10,12 @@ import LogoCarousel from "../components/molecules/LogoCarousel";
 import Carousel from "../components/molecules/Carousel";
 import LanguageSelector from "../components/molecules/LanguageSelector";
 import {LogoImage} from "../components/atoms/LogoImage";
-import FlexRow from "../components/atoms/FlexRow";
-import FlexItem from "../components/atoms/FlexItem";
 import {useTranslations} from "next-intl";
 import {LinkedinIcon, GithubIcon} from "../components/atoms/Icons";
 import {useEffect} from "react";
 import useProfile from "../hooks/useProfile";
 import {paths} from "../configuration";
+import TopicIcon from "../components/atoms/TopicIcon";
 import {useRouter} from "next/navigation";
 
 export default function LandingPage() {
@@ -55,61 +54,62 @@ export default function LandingPage() {
 
   return (
     <div className="w-full h-full">
-      <div className="sticky top-0 z-10 flex flex-row items-center justify-between
-        m-1 min-h-16 border-b-2 border-neutral bg-base-100 text-base-content">
-        <FlexRow position={"start"}>
-          <FlexItem whiteSpace={true}/>
+      <header className="sticky top-0 z-10 flex flex-row items-center justify-between gap-2
+        px-3 sm:px-4 min-h-16 border-b border-neutral bg-base-100 text-base-content">
+        <div className="flex flex-row items-center gap-2 shrink-0">
           <LogoImage/>
-          <span className="text-xl font-bold">Linkurator</span>
-        </FlexRow>
-        <FlexRow position={"center"} hideOnMobile={true}>
+          <span className="text-lg sm:text-xl font-bold">Linkurator</span>
+        </div>
+        <nav className="hidden lg:flex flex-row items-center gap-6">
           <Link href="#how-it-works" className="text-sm font-medium hover:underline underline-offset-4">
             {t("how_it_works")}
           </Link>
-          <div className={"w-4"}/>
           <Link href="#integrations" className="text-sm font-medium hover:underline underline-offset-4">
             {t("integrations")}
           </Link>
-          <div className={"w-4"}/>
           <Link href="#about" className="text-sm font-medium hover:underline underline-offset-4">
             {t("about")}
           </Link>
-          <div className={"w-4"}/>
           <Link href="#faq" className="text-sm font-medium hover:underline underline-offset-4">
             {t("faq")}
           </Link>
-        </FlexRow>
-        <FlexRow position={"end"}>
-          <Button href="/register" primary={false}>
-            {t("sign_up")}
-          </Button>
-          <Button href={"/login"}>
+        </nav>
+        <div className="flex flex-row items-center gap-1 sm:gap-2 shrink-0">
+          <Button href={paths.LOGIN} primary={false} borderless={true}>
             {t("log_in")}
           </Button>
-          <div className={"w-4"}/>
-        </FlexRow>
-      </div>
+          <Button href={paths.REGISTER}>
+            {t("sign_up")}
+          </Button>
+        </div>
+      </header>
       <main className="flex-1">
         {/* Hero Section */}
         <section className="w-full pt-12 pb-12 px-6 bg-base-200">
           <div className="mx-auto container px-4 md:px-6">
-            <div className="grid gap-6 lg:grid-cols-[1fr_600px] lg:gap-12 xl:grid-cols-[1fr_700px]">
+            <div className="grid gap-6 lg:grid-cols-2 lg:gap-12">
               <div className="flex flex-col justify-center space-y-4">
                 <div className="space-y-12 py-4">
                   <h1 className="text-3xl font-bold tracking-tighter sm:text-5xl xl:text-6xl/none">
                     {t("hero_title")}
                   </h1>
-                  <p className="max-w-[600px] text-muted-foreground md:text-xl">
+                  <p className="max-w-[600px] text-base-content/70 md:text-xl">
                     {t("hero_subtitle_1")}
                   </p>
+                  <div className="flex flex-row flex-wrap gap-3">
+                    <Link href={paths.REGISTER} className="btn btn-primary">{t("hero_cta_primary")}</Link>
+                    <Link href={paths.TOPICS + "/8b281f83-c3b0-4846-866b-a1521ed39670"} className="btn btn-ghost">
+                      {t("hero_cta_secondary")}
+                    </Link>
+                  </div>
                 </div>
               </div>
               <div className="flex items-center justify-center">
-                <div className="relative overflow-hidden rounded-xl border shadow-xl">
+                <div className="relative overflow-hidden rounded-xl border border-neutral shadow-xl">
                   <Image
                     src="/linkurator_main_page.png"
-                    width={2787}
-                    height={1441}
+                    width={1280}
+                    height={676}
                     alt="Linkurator app interface"
                     className="object-cover"
                   />
@@ -125,7 +125,7 @@ export default function LandingPage() {
             <p className="text-xl md:text-2xl font-bold tracking-tight text-primary">
               {t("no_algorithm_statement")}
             </p>
-            <p className="mt-2 text-sm md:text-base text-muted-foreground">
+            <p className="mt-2 text-sm md:text-base text-base-content/70">
               {t("no_algorithm_subtitle")}
             </p>
           </div>
@@ -142,11 +142,12 @@ export default function LandingPage() {
                 {title: t("cooking_topic"), link: "/topics/9ebf46b2-be81-48fc-8124-50e98f9c7436"},
                 {title: t("science_topic"), link: "/topics/b502f236-1716-4e2c-bd7d-3d943741897c"},
               ].map((category, i) => (
-                <div key={i} className="w-48 h-28 rounded-xl border bg-base-100 shadow-xl
-                  flex flex-col items-center justify-center gap-2 px-4 text-center">
+                <Link key={i} href={category.link} className="w-56 rounded-xl border border-neutral bg-base-100
+                  flex flex-col gap-3 p-4 hover:border-primary transition-colors">
+                  <TopicIcon name={category.title} size={"md"}/>
                   <h3 className="font-semibold">{category.title}</h3>
-                  <Button href={category.link}>{t("explore_now")}</Button>
-                </div>
+                  <span className="text-sm font-medium text-primary">{t("explore_now")} →</span>
+                </Link>
               ))}
             </Carousel>
           </FlexColumn>
@@ -159,7 +160,7 @@ export default function LandingPage() {
               <div className="space-y-2">
                 <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">{t("how_it_works")}</h2>
                 <p
-                  className="max-w-[900px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
+                  className="max-w-[900px] text-base-content/70 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
                   {t("how_it_works_subtitle")}
                 </p>
               </div>
@@ -213,7 +214,7 @@ export default function LandingPage() {
                   </div>
                   <div className="space-y-2">
                     <h3 className="text-xl font-bold">{step.title}</h3>
-                    <p className="text-muted-foreground">{step.description}</p>
+                    <p className="text-base-content/70">{step.description}</p>
                   </div>
                 </div>
               ))}
@@ -228,7 +229,7 @@ export default function LandingPage() {
               <div className="space-y-2">
                 <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">{t("integrations")}</h2>
                 <p
-                  className="max-w-[900px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
+                  className="max-w-[900px] text-base-content/70 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
                   {t("integrations_subtitle")}
                 </p>
               </div>
@@ -248,7 +249,7 @@ export default function LandingPage() {
         <section id="about" className="w-full pt-12 pb-12 px-6 bg-base-100">
           <FlexColumn position={"center"}>
             <div className="flex flex-col items-center justify-center space-y-4 text-center max-w-2xl">
-              <div className="relative h-24 w-24 overflow-hidden rounded-full border shadow-sm bg-primary/10">
+              <div className="relative h-24 w-24 overflow-hidden rounded-full border border-neutral shadow-sm bg-primary/10">
                 <Image
                   src="/frantracer.jpg"
                   alt="Fran, creator of Linkurator"
@@ -258,8 +259,8 @@ export default function LandingPage() {
                 />
               </div>
               <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">{t("about_title")}</h2>
-              <p className="text-muted-foreground md:text-xl/relaxed">{t("about_description_1")}</p>
-              <p className="text-muted-foreground md:text-xl/relaxed">{t("about_description_2")}</p>
+              <p className="text-base-content/70 md:text-xl/relaxed">{t("about_description_1")}</p>
+              <p className="text-base-content/70 md:text-xl/relaxed">{t("about_description_2")}</p>
               <Button href="https://www.linkedin.com/in/frantracer/" primary={false}>
                 <LinkedinIcon/>
                 {t("about_linkedin_cta")}
@@ -273,8 +274,8 @@ export default function LandingPage() {
           <FlexColumn position={"center"}>
             <div className="flex flex-col items-center justify-center space-y-4 text-center max-w-2xl">
               <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">{t("open_source_title")}</h2>
-              <p className="text-muted-foreground md:text-xl/relaxed">{t("open_source_trust")}</p>
-              <p className="text-muted-foreground md:text-xl/relaxed">{t("open_source_description")}</p>
+              <p className="text-base-content/70 md:text-xl/relaxed">{t("open_source_trust")}</p>
+              <p className="text-base-content/70 md:text-xl/relaxed">{t("open_source_description")}</p>
               <Button href="https://github.com/frantracer/linkurator" primary={false}>
                 <GithubIcon/>
                 {t("open_source_cta")}
@@ -289,7 +290,7 @@ export default function LandingPage() {
             <div className="flex flex-col items-center justify-center space-y-4 text-center">
               <div className="space-y-2">
                 <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">{t("ready_to_start")}</h2>
-                <p className="max-w-[600px] mx-auto text-muted-foreground md:text-xl/relaxed">
+                <p className="max-w-[600px] mx-auto text-base-content/70 md:text-xl/relaxed">
                   {t("ready_to_start_subtitle")}
                 </p>
               </div>
@@ -307,7 +308,7 @@ export default function LandingPage() {
               <div className="space-y-2">
                 <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">{t("faq")}</h2>
                 <p
-                  className="max-w-[900px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
+                  className="max-w-[900px] text-base-content/70 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
                   {t("faq_subtitle")}
                 </p>
               </div>
@@ -324,7 +325,7 @@ export default function LandingPage() {
           </FlexColumn>
         </section>
       </main>
-      <footer className="w-full border-t bg-background">
+      <footer className="w-full border-t border-neutral bg-base-100">
         <div className="container flex flex-col gap-6 px-6 py-10 lg:flex-row lg:gap-12">
           <div className="flex flex-row gap-8 flex-wrap justify-between items-start">
             <div className="flex items-center gap-2">
@@ -341,12 +342,12 @@ export default function LandingPage() {
               <h4 className="text-sm font-bold">{t("product")}</h4>
               <ul className="space-y-2 text-sm">
                 <li>
-                  <Link href="#integrations" className="text-muted-foreground hover:text-foreground">
+                  <Link href="#integrations" className="text-base-content/70 hover:text-base-content">
                     {t("integrations")}
                   </Link>
                 </li>
                 <li>
-                  <Link href="#faq" className="text-muted-foreground hover:text-foreground">
+                  <Link href="#faq" className="text-base-content/70 hover:text-base-content">
                     {t("faq")}
                   </Link>
                 </li>
@@ -356,13 +357,13 @@ export default function LandingPage() {
               <h4 className="text-sm font-bold">{t("contact")}</h4>
               <ul className="space-y-2 text-sm">
                 <li>
-                  <Link href="mailto:admin@linkurator.com" className="text-muted-foreground hover:text-foreground">
+                  <Link href="mailto:admin@linkurator.com" className="text-base-content/70 hover:text-base-content">
                     {t("email")}
                   </Link>
                 </li>
                 <li>
                   <Link href="https://www.linkedin.com/company/linkurator"
-                        className="text-muted-foreground hover:text-foreground">
+                        className="text-base-content/70 hover:text-base-content">
                     LinkedIn
                   </Link>
                 </li>
@@ -372,13 +373,13 @@ export default function LandingPage() {
               <h4 className="text-sm font-bold">{t("resources")}</h4>
               <ul className="space-y-2 text-sm">
                 <li>
-                  <Link href="https://api.linkurator.com/docs" className="text-muted-foreground hover:text-foreground">
+                  <Link href="https://api.linkurator.com/docs" className="text-base-content/70 hover:text-base-content">
                     API
                   </Link>
                 </li>
                 <li>
                   <Link href="https://github.com/frantracer/linkurator"
-                        className="text-muted-foreground hover:text-foreground">
+                        className="text-base-content/70 hover:text-base-content">
                     {t("source_code")}
                   </Link>
                 </li>
@@ -388,12 +389,12 @@ export default function LandingPage() {
               <h4 className="text-sm font-bold">{t("legal")}</h4>
               <ul className="space-y-2 text-sm">
                 <li>
-                  <Link href="/tos" className="text-muted-foreground hover:text-foreground">
+                  <Link href="/tos" className="text-base-content/70 hover:text-base-content">
                     {t("terms_of_service")}
                   </Link>
                 </li>
                 <li>
-                  <Link href="/privacy" className="text-muted-foreground hover:text-foreground">
+                  <Link href="/privacy" className="text-base-content/70 hover:text-base-content">
                     {t("privacy_policy")}
                   </Link>
                 </li>

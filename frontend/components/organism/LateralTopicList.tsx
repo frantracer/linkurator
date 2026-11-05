@@ -1,51 +1,45 @@
-import {MenuItem} from "../atoms/MenuItem";
 import {Topic} from "../../entities/Topic";
-import Menu from "../atoms/Menu";
-import FlexRow from "../atoms/FlexRow";
 import Miniature from "../atoms/Miniature";
-import FlexItem from "../atoms/FlexItem";
+import NavLink from "../atoms/NavLink";
+import TopicIcon from "../atoms/TopicIcon";
+import {paths} from "../../configuration";
 import React from "react";
+import {useTranslations} from "next-intl";
 
 type LateralTopicListProps = {
   topics: Topic[];
   selectedTopic: Topic | undefined;
-  isLoading: boolean;
-  openTopic: (topic: Topic) => void;
+  onOpenTopic: () => void;
 }
 
-const LateralTopicList = (props: LateralTopicListProps) => {
+const LateralTopicList = ({topics, selectedTopic, onOpenTopic}: LateralTopicListProps) => {
+  const t = useTranslations("common");
+  const favoriteTopics = topics.filter(topic => topic.is_favorite);
 
-  const handleClick = (topicId: string) => {
-    const topic = props.topics.find((topic) => topic.uuid === topicId);
-    if (topic) {
-      props.openTopic(topic);
-    }
+  if (favoriteTopics.length === 0) {
+    return null;
   }
 
-  const favoriteTopics = props.topics.filter(topic => topic.is_favorite);
-
-  const renderTopicItem = (topic: Topic) => (
-    <MenuItem
-      key={topic.uuid}
-      onClick={() => handleClick(topic.uuid)}
-      selected={topic.uuid === props.selectedTopic?.uuid}
-    >
-      <FlexRow position={"start"}>
-        <span className={"text-wrap"}>{topic.name}</span>
-        <FlexItem grow={true}/>
-        {!topic.is_owner &&
-            <Miniature src={topic.curator.avatar_url} alt={topic.curator.username}/>
-        }
-      </FlexRow>
-    </MenuItem>
-  );
-
   return (
-    <Menu>
-      <div className="space-y-1">
-        {favoriteTopics.map(renderTopicItem)}
-      </div>
-    </Menu>
+    <nav aria-labelledby="sidebar-favorites-heading" className="flex flex-col gap-0.5">
+      <h2 id="sidebar-favorites-heading"
+          className="px-3 pb-1 text-xs font-semibold uppercase tracking-wider text-base-content/60">
+        {t("favorites")}
+      </h2>
+      {favoriteTopics.map(topic => (
+        <NavLink
+          key={topic.uuid}
+          href={paths.TOPICS + "/" + topic.uuid}
+          selected={topic.uuid === selectedTopic?.uuid}
+          onClick={onOpenTopic}
+          icon={<TopicIcon name={topic.name} size={"xs"}/>}
+          trailing={!topic.is_owner &&
+              <Miniature src={topic.curator.avatar_url} alt={topic.curator.username}/>}
+        >
+          {topic.name}
+        </NavLink>
+      ))}
+    </nav>
   )
 }
 

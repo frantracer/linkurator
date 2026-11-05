@@ -4,24 +4,27 @@ import {useTranslations} from 'next-intl';
 import {useRouter, useSearchParams} from "next/navigation";
 import React, {Suspense, useEffect, useState} from "react";
 import Button from "../../../../../components/atoms/Button";
-import CrossButton from "../../../../../components/atoms/CrossButton";
 import {
-  AddIcon,
   ChatBubbleIcon,
   EllipsisHorizontalIcon,
-  MinusIcon,
   RectangleGroup,
   ShareIcon,
   SubscriptionIcon,
   ThumbsUpIcon
 } from "../../../../../components/atoms/Icons";
-import {MenuItem} from "../../../../../components/atoms/MenuItem";
-import Miniature from "../../../../../components/atoms/Miniature";
 import Tag from "../../../../../components/atoms/Tag";
 import TagsRow from "../../../../../components/atoms/TagsRow";
-import TopTitle from "../../../../../components/molecules/TopTitle";
+import PageHeader from "../../../../../components/organism/PageHeader";
+import FollowToggleButton from "../../../../../components/molecules/FollowToggleButton";
+import MenuAction from "../../../../../components/molecules/MenuAction";
+import Dropdown from "../../../../../components/atoms/Dropdown";
+import Menu from "../../../../../components/atoms/Menu";
+import useShareLink from "../../../../../hooks/useShareLink";
+import Avatar from "../../../../../components/atoms/Avatar";
 import FilterToggleButton from "../../../../../components/molecules/FilterToggleButton";
+import useFilterBarVisibility from "../../../../../hooks/useFilterBarVisibility";
 import ContentFilterBar from "../../../../../components/organism/ContentFilterBar";
+import SearchBar from "../../../../../components/molecules/SearchBar";
 import ContentItemCardGrid from "../../../../../components/organism/ContentItemCardGrid";
 import {paths} from "../../../../../configuration";
 import {useCurator} from "../../../../../hooks/useCurator";
@@ -29,7 +32,6 @@ import useCuratorItems from "../../../../../hooks/useCuratorItems";
 import {useCurators} from "../../../../../hooks/useCurators";
 import {useCuratorTopics} from "../../../../../hooks/useCuratorTopics";
 import useFilters from "../../../../../hooks/useFilters";
-import useFilterBarVisibility from "../../../../../hooks/useFilterBarVisibility";
 import useProfile from "../../../../../hooks/useProfile";
 import {followCurator, unfollowCurator} from "../../../../../services/curatorService";
 import {newScopedChatPath, scopeFromFilters} from "../../../../../utilities/chatScope";
@@ -37,8 +39,6 @@ import CuratorTopicsList from "../../../../../components/organism/CuratorTopicsL
 import CuratorSubscriptionsList from "../../../../../components/organism/CuratorSubscriptionsList";
 import {useCuratorSubscriptions} from "../../../../../hooks/useCuratorSubscriptions";
 import {useTopics} from "../../../../../hooks/useTopics";
-import Dropdown from "../../../../../components/atoms/Dropdown";
-import Menu from "../../../../../components/atoms/Menu";
 import ShareCuratorModal, {ShareCuratorModalId} from "../../../../../components/organism/ShareCuratorModal";
 import {openModal} from "../../../../../utilities/modalAction";
 import useProviders from "../../../../../hooks/useProviders";
@@ -53,10 +53,11 @@ const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const {providers} = useProviders();
-  const {filters, setFilters, resetFilters, isModified: areFiltersModified} = useFilters();
-  const [debouncedFilters, setDebouncedFilters] = useState(filters);
+  const {filters, setFilters, resetFilters, isModified: areFiltersModified, savedFilters} = useFilters();
   const {showFilters, toggleFilters} = useFilterBarVisibility();
+  const [debouncedFilters, setDebouncedFilters] = useState(filters);
   const [selectedSection, setSelectedSection] = useState<SectionKey>(DEFAULT_SECTION);
+  const [nameFilter, setNameFilter] = useState("");
 
   const sectionParam = searchParams.get("section");
 
@@ -93,6 +94,11 @@ const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
     refetchSubscriptions
   } = useCuratorSubscriptions(curatorId);
 
+  const matchesNameFilter = (name: string) => name.toLowerCase().includes(nameFilter.trim().toLowerCase());
+  const filteredTopics = topics.filter(topic => matchesNameFilter(topic.name));
+  const filteredSubscriptions = subscriptions.filter(subscription => matchesNameFilter(subscription.name));
+  const isRecommendationsSection = selectedSection === "recommendations";
+
   const isLoggedIn = !!(profile)
   const isOwnCuratorProfile = isLoggedIn && !!(curator) && profile.username === curator.username;
   const isMainDataLoading = isCuratorLoading || isCuratorsLoading || isProfileLoading || isTopicsLoading;
@@ -126,39 +132,6 @@ const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
     openModal(ShareCuratorModalId);
   }
 
-  const dropdownButtons = []
-  if (curator) {
-    if (isLoggedIn) {
-      if (curator.followed) {
-        dropdownButtons.push(
-          <MenuItem key={"curators-unfollow"} onClick={() => handleUnfollowCurator(curator.id)} hideMenuOnClick={true}>
-            <div className="flex flex-row gap-2 items-center justify-left">
-              <MinusIcon/>
-              {t("unfollow")}
-            </div>
-          </MenuItem>
-        )
-      } else {
-        dropdownButtons.push(
-          <MenuItem key={"curators-follow"} onClick={() => handleFollowCurator(curator.id)} hideMenuOnClick={true}>
-            <div className="flex flex-row gap-2 items-center justify-left">
-              <AddIcon/>
-              {t("follow")}
-            </div>
-          </MenuItem>
-        )
-      }
-    }
-    dropdownButtons.push(
-      <MenuItem key={"curators-chat"} onClick={handleChatAboutThis} hideMenuOnClick={true}>
-        <div className="flex flex-row gap-2 items-center justify-left">
-          <ChatBubbleIcon/>
-          {t("chat_about_this")}
-        </div>
-      </MenuItem>
-    )
-  }
-
   useEffect(() => {
     if (filters.textSearch === debouncedFilters.textSearch) {
       setDebouncedFilters(filters)
@@ -170,6 +143,8 @@ const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
     }
   }, [debouncedFilters.textSearch, filters]);
 
+  const shareCuratorLink = useShareLink(curatorName);
+
   const sections: { key: SectionKey; title: string; icon: React.ReactNode }[] = [
     {key: "recommendations", title: t("recommendations"), icon: <ThumbsUpIcon/>},
     {key: "topics", title: t("topics"), icon: <RectangleGroup/>},
@@ -178,77 +153,44 @@ const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
 
   return (
     <div className="flex flex-col w-full h-full min-h-0 overflow-hidden">
-      <TopTitle>
-        <div className="flex flex-row items-center gap-4 h-full w-full px-4">
-          {!isMainDataLoading && curator &&
-              <>
-                  <div className="w-10 shrink-0 flex items-center justify-start">
-                    {selectedSection === "recommendations" &&
-                        <FilterToggleButton isOpen={showFilters} isModified={areFiltersModified} onClick={toggleFilters}/>
-                    }
-                  </div>
-                  <div className="flex-1 min-w-0 flex flex-col items-center gap-2 overflow-hidden">
-                      <div className="w-full flex flex-row gap-2 items-center justify-center overflow-hidden">
-                          <div className="shrink-0">
-                              <Miniature src={curatorThumbnail} alt={curatorName}/>
-                          </div>
-                          <h1 className="text-xl font-bold min-w-0 whitespace-nowrap truncate">
-                            {curatorName}
-                          </h1>
-                      </div>
-                      <div className="flex flex-row gap-2 items-center justify-center">
-                        {curator && curator.followed &&
-                            <Tag>
-                    <span>
-                    {t("following")}
-                    </span>
-                                <CrossButton onClick={() => handleUnfollowCurator(curator.id)}/>
-                            </Tag>
-                        }
-                        {curator && !curator.followed && isLoggedIn && !isOwnCuratorProfile &&
-                            <Button primary={false} clickAction={() => handleFollowCurator(curator.id)}>
-                              {t("follow")}
-                            </Button>
-                        }
-                        {curator && !curator.followed && !isLoggedIn &&
-                            <Button primary={false} href={paths.LOGIN}>
-                              {t("follow")}
-                            </Button>
-                        }
-                        {isOwnCuratorProfile &&
-                            <Button primary={false} clickAction={handleShareCurator}>
-                                <ShareIcon/>
-                              {t("share")}
-                            </Button>
-                        }
-                      </div>
-                  </div>
-                  <div className="w-10 shrink-0 flex items-center justify-end">
-                    {isLoggedIn && !isOwnCuratorProfile && curator &&
-                        <Dropdown
-                            small={true}
-                            position="end"
-                            bottom={true}
-                            button={
-                              <Button primary={false} fitContent={true} stopPropagation={false}>
-                                <EllipsisHorizontalIcon/>
-                              </Button>
-                            }
-                            closeOnClickInside={true}
-                        >
-                            <Menu>
-                              {dropdownButtons}
-                            </Menu>
-                        </Dropdown>
-                    }
-                  </div>
-              </>
-          }
-        </div>
-      </TopTitle>
+      {!isMainDataLoading && curator &&
+          <PageHeader
+              title={curatorName}
+              media={<Avatar src={curatorThumbnail} alt=""/>}
+              subtitle={t("topics_count", {count: topics.length})}
+              actions={<>
+                <div className="hidden sm:contents">
+                  <Button primary={false} clickAction={handleChatAboutThis} tooltip={t("chat_about_this")}>
+                      <ChatBubbleIcon/>
+                      {t("ask_ai")}
+                  </Button>
+                </div>
+                {!isOwnCuratorProfile &&
+                    <FollowToggleButton followed={curator.followed} isLoggedIn={isLoggedIn}
+                                        iconOnlyOnMobile={true}
+                                        onFollow={() => handleFollowCurator(curator.id)}
+                                        onUnfollow={() => handleUnfollowCurator(curator.id)}/>
+                }
+                <Dropdown label={t("more")} button={<EllipsisHorizontalIcon/>} width={"narrow"} position="end"
+                          bottom={true} closeOnClickInside={true}>
+                    <Menu>
+                        <MenuAction icon={<ChatBubbleIcon/>} label={t("ask_ai")} onClick={handleChatAboutThis}
+                                    mobileOnly={true}/>
+                        <MenuAction icon={<ShareIcon/>} label={t("share")}
+                                    onClick={isOwnCuratorProfile ? handleShareCurator : shareCuratorLink}/>
+                    </Menu>
+                </Dropdown>
+              </>}
+          />
+      }
+      {(isMainDataLoading || !curator) && <div className="h-14 shrink-0 border-b border-neutral bg-base-100"/>}
 
       <div className="flex flex-col flex-1 min-h-0 bg-base-300 overflow-hidden">
-        <TagsRow>
+        <TagsRow leading={
+          <FilterToggleButton isOpen={showFilters}
+                              isModified={isRecommendationsSection ? areFiltersModified : nameFilter.trim() !== ""}
+                              onClick={toggleFilters}/>
+        }>
           {sections.map(section => (
             <Tag
               key={section.key}
@@ -263,8 +205,21 @@ const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
           ))}
         </TagsRow>
 
-        {selectedSection === "recommendations" && showFilters && (
-          <ContentFilterBar filters={filters} setFilters={setFilters} resetFilters={resetFilters}/>
+        {isRecommendationsSection && showFilters && (
+          <ContentFilterBar savedFilters={savedFilters} filters={filters} setFilters={setFilters} resetFilters={resetFilters}/>
+        )}
+
+        {!isRecommendationsSection && showFilters && (
+          <div className="shrink-0 px-4 py-3 border-b border-neutral bg-base-300">
+            <div className="sm:max-w-md">
+              <SearchBar
+                placeholder={selectedSection === "topics" ? t("filter_topics_placeholder") : t("filter_subscriptions_placeholder")}
+                value={nameFilter}
+                handleChange={setNameFilter}
+                icon="filter"
+              />
+            </div>
+          </div>
         )}
 
         {selectedSection === "recommendations" && (
@@ -282,10 +237,10 @@ const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
         )}
 
         {selectedSection === "topics" && (
-          <div className="flex-1 min-h-0 overflow-x-hidden overflow-y-auto">
+          <div className="flex-1 min-h-0 overflow-x-hidden overflow-y-auto pb-mobile-nav">
             <div className="flex flex-col gap-6 p-4 max-w-7xl w-full mx-auto">
               <CuratorTopicsList
-                topics={topics}
+                topics={filteredTopics}
                 isUserLoggedIn={isLoggedIn}
                 isLoading={isMainDataLoading}
                 refreshTopics={refreshAllTopics}/>
@@ -294,10 +249,10 @@ const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
         )}
 
         {selectedSection === "subscriptions" && (
-          <div className="flex-1 min-h-0 overflow-x-hidden overflow-y-auto">
+          <div className="flex-1 min-h-0 overflow-x-hidden overflow-y-auto pb-mobile-nav">
             <div className="flex flex-col gap-6 p-4 max-w-7xl w-full mx-auto">
               <CuratorSubscriptionsList
-                subscriptions={subscriptions}
+                subscriptions={filteredSubscriptions}
                 isLoading={isMainDataLoading || isSubscriptionsLoading}
                 refreshSubscriptions={() => refetchSubscriptions()}/>
             </div>

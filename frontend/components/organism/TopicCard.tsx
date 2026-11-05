@@ -1,14 +1,14 @@
 import React from "react";
+import Link from "next/link";
 import {useTranslations} from "next-intl";
 import {paths} from "../../configuration";
 import {Topic} from "../../entities/Topic";
 import Button from "../atoms/Button";
 import {PencilIcon, StarFilledIcon, StarIcon, TrashIcon} from "../atoms/Icons";
 import Miniature from "../atoms/Miniature";
-import Tag from "../atoms/Tag";
-import ALink from "../atoms/ALink";
-import CrossButton from "../atoms/CrossButton";
 import TopicIcon from "../atoms/TopicIcon";
+import EntityCard from "../molecules/EntityCard";
+import FollowToggleButton from "../molecules/FollowToggleButton";
 
 type TopicCardProps = {
   topic: Topic;
@@ -22,108 +22,45 @@ type TopicCardProps = {
 const TopicCard = ({topic, onEdit, onDelete, onToggleFavorite, onFollow, onUnfollow}: TopicCardProps) => {
   const t = useTranslations("common");
 
-  const handleFavorite = () => {
-    onToggleFavorite(topic);
-  }
-
-  const handleEdit = () => {
-    if (onEdit) {
-      onEdit(topic);
-    }
-  }
-
-  const handleDelete = () => {
-    if (onDelete) {
-      onDelete(topic);
-    }
-  }
-
-  const handleFollow = () => {
-    if (onFollow) {
-      onFollow(topic);
-    }
-  }
-
-  const handleUnfollow = () => {
-    if (onUnfollow) {
-      onUnfollow(topic);
-    }
-  }
+  const canToggleFollow = topic.followed ? onUnfollow !== undefined : onFollow !== undefined;
 
   return (
-    <div
-      className="card relative rounded-lg w-72 h-full bg-base-200 hover:scale-105 shadow-md border border-neutral hover:shadow-xl hover:border-primary duration-200 cursor-pointer"
-    >
-      <ALink href={paths.TOPICS + "/" + topic.uuid}>
-        <span className="absolute inset-0"/>
-        <span className="sr-only">{topic.name}</span>
-      </ALink>
-      <div className="card-body m-1 p-2 gap-3">
-        <div className="flex flex-row items-start gap-3">
-          <TopicIcon name={topic.name}/>
-          <div className="flex-1 min-w-0 flex flex-col gap-1 pt-1">
-            <h2 className="card-title text-sm hover:text-primary line-clamp-2">{topic.name}</h2>
-            {!topic.is_owner && (
-              <div className="relative z-10 flex flex-row items-center gap-1 min-w-0 text-xs text-base-content/70">
-                <ALink href={paths.CURATORS + "/" + topic.curator.username}>
-                  <div className={"flex flex-row items-center gap-1"}>
-                    <Miniature src={topic.curator.avatar_url} alt={topic.curator.username}/>
-                    <span className="truncate">{topic.curator.username}</span>
-                  </div>
-                </ALink>
-              </div>
-            )}
-          </div>
-          <div className="relative z-10 shrink-0">
-            <Button
-              primary={false}
-              borderless={true}
-              fitContent={true}
-              clickAction={handleFavorite}
-              tooltip={topic.is_favorite ? t("remove_from_favorites") : t("add_to_favorites")}
-            >
-              {topic.is_favorite ? <StarFilledIcon/> : <StarIcon/>}
+    <EntityCard
+      href={paths.TOPICS + "/" + topic.uuid}
+      title={topic.name}
+      media={<TopicIcon name={topic.name} size={"md"}/>}
+      meta={!topic.is_owner &&
+          <Link href={paths.CURATORS + "/" + topic.curator.username}
+                className="inline-flex flex-row items-center gap-1 min-w-0 hover:text-primary">
+              <Miniature src={topic.curator.avatar_url} alt=""/>
+              <span className="truncate">{topic.curator.username}</span>
+          </Link>
+      }
+      corner={
+        <Button primary={false} borderless={true} ariaPressed={topic.is_favorite}
+                clickAction={() => onToggleFavorite(topic)}
+                tooltip={topic.is_favorite ? t("remove_from_favorites") : t("add_to_favorites")}>
+          {topic.is_favorite ? <StarFilledIcon/> : <StarIcon/>}
+        </Button>
+      }
+      footerStart={t("subscriptions_count", {count: topic.subscriptions_ids.length})}
+      footerEnd={<>
+        {topic.is_owner && onDelete &&
+            <Button primary={false} borderless={true} clickAction={() => onDelete(topic)} tooltip={t("delete")}>
+                <TrashIcon/>
             </Button>
-          </div>
-        </div>
-        <div className="flex flex-row items-center justify-between gap-2 mt-auto">
-          <Tag>
-            <span className="text-xs">
-              {topic.subscriptions_ids.length} {t("subscriptions").toLowerCase()}
-            </span>
-          </Tag>
-          {topic.is_owner && (onEdit || onDelete) && (
-            <div className="card-actions flex justify-end relative z-10">
-              {onDelete && (
-                <Button primary={false} fitContent={true} clickAction={handleDelete} tooltip={t("delete")}>
-                  <TrashIcon/>
-                </Button>
-              )}
-              {onEdit && (
-                <Button primary={false} fitContent={true} clickAction={handleEdit} tooltip={t("edit")}>
-                  <PencilIcon/>
-                </Button>
-              )}
-            </div>
-          )}
-          {!topic.is_owner && topic.followed && onUnfollow && (
-            <div className="relative z-10">
-              <Tag>
-                <span className="text-xs">{t("following")}</span>
-                <CrossButton onClick={handleUnfollow}/>
-              </Tag>
-            </div>
-          )}
-          {!topic.is_owner && !topic.followed && onFollow && (
-            <div className="relative z-10">
-              <Button primary={true} fitContent={true} clickAction={handleFollow}>
-                {t("follow")}
-              </Button>
-            </div>
-          )}
-        </div>
-      </div>
-    </div>
+        }
+        {topic.is_owner && onEdit &&
+            <Button primary={false} borderless={true} clickAction={() => onEdit(topic)} tooltip={t("edit")}>
+                <PencilIcon/>
+            </Button>
+        }
+        {!topic.is_owner && canToggleFollow &&
+            <FollowToggleButton followed={topic.followed} isLoggedIn={true}
+                                onFollow={() => onFollow?.(topic)} onUnfollow={() => onUnfollow?.(topic)}/>
+        }
+      </>}
+    />
   );
 }
 

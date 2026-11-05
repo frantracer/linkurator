@@ -3,14 +3,12 @@
 import {useTranslations} from "next-intl";
 import {useRouter, useSearchParams} from "next/navigation";
 import React, {Suspense, useEffect, useState} from "react";
-import TopTitle from "../../../components/molecules/TopTitle";
-import FilterToggleButton from "../../../components/molecules/FilterToggleButton";
+import PageHeader from "../../../components/organism/PageHeader";
 import {paths} from "../../../configuration";
 import useProfile from "../../../hooks/useProfile";
 import useSubscriptions from "../../../hooks/useSubscriptions";
 import {useTopics} from "../../../hooks/useTopics";
 import useFilters from "../../../hooks/useFilters";
-import useFilterBarVisibility from "../../../hooks/useFilterBarVisibility";
 import useLatestSubscriptionItems from "../../../hooks/useLatestSubscriptionItems";
 import useLatestFavoriteTopicItems from "../../../hooks/useLatestFavoriteTopicItems";
 import useLatestFollowedCuratorItems from "../../../hooks/useLatestFollowedCuratorItems";
@@ -24,7 +22,9 @@ import {
 } from "../../../components/atoms/Icons";
 import Tag from "../../../components/atoms/Tag";
 import TagsRow from "../../../components/atoms/TagsRow";
-import ContentItemCardGrid from "../../../components/organism/ContentItemCardGrid";
+import ContentItemCardGrid, {ContentItemCardGridSkeleton} from "../../../components/organism/ContentItemCardGrid";
+import FilterToggleButton from "../../../components/molecules/FilterToggleButton";
+import useFilterBarVisibility from "../../../hooks/useFilterBarVisibility";
 import ContentFilterBar from "../../../components/organism/ContentFilterBar";
 import EmptyStateNoFavoriteTopics from "../../../components/organism/EmptyStateNoFavoriteTopics";
 import EmptyStateNoFollowedCurators from "../../../components/organism/EmptyStateNoFollowedCurators";
@@ -65,9 +65,9 @@ const HomePageComponent = () => {
   const {profile, profileIsLoading} = useProfile();
   const {subscriptions, subscriptionsAreLoading} = useSubscriptions(profile);
   const {topics, topicsAreLoading} = useTopics(profile, profileIsLoading);
-  const {filters, setFilters, resetFilters, isModified: areFiltersModified} = useFilters();
-  const [debouncedFilters, setDebouncedFilters] = useState(filters);
+  const {filters, setFilters, resetFilters, isModified: areFiltersModified, savedFilters} = useFilters();
   const {showFilters, toggleFilters} = useFilterBarVisibility();
+  const [debouncedFilters, setDebouncedFilters] = useState(filters);
   const {
     latestItems,
     isLoading: latestItemsLoading,
@@ -94,6 +94,8 @@ const HomePageComponent = () => {
   const isLoading = profileIsLoading || subscriptionsAreLoading || topicsAreLoading;
   const hasSubscriptions = subscriptions.length > 0;
   const hasTopics = topics.length > 0;
+  const hasFavoriteTopics = topics.some(topic => topic.is_favorite);
+  const noMatches = <EmptyStateNoMatches onClearFilters={areFiltersModified ? resetFilters : undefined}/>;
   const hasFollowedCurators = curators.length > 0;
 
   const sections: {
@@ -118,9 +120,11 @@ const HomePageComponent = () => {
       fetchMoreItems: fetchMoreFavoriteTopicItems,
       emptyState: !hasSubscriptions
         ? <EmptyStateImportSubscriptions/>
-        : hasTopics
-          ? <EmptyStateNoFavoriteTopics/>
-          : <EmptyStateOrganizeSubscriptions/>,
+        : !hasTopics
+          ? <EmptyStateOrganizeSubscriptions/>
+          : !hasFavoriteTopics
+            ? <EmptyStateNoFavoriteTopics/>
+            : noMatches,
     },
     {
       key: "curators",
@@ -131,7 +135,7 @@ const HomePageComponent = () => {
       isFinished: latestCuratorItemsFinished,
       refetch: refetchCuratorItems,
       fetchMoreItems: fetchMoreCuratorItems,
-      emptyState: hasFollowedCurators ? <EmptyStateNoMatches/> : <EmptyStateNoFollowedCurators/>,
+      emptyState: hasFollowedCurators ? noMatches : <EmptyStateNoFollowedCurators/>,
     },
     {
       key: "subscriptions",
@@ -143,7 +147,7 @@ const HomePageComponent = () => {
       refetch: refetchSubscriptionItems,
       fetchMoreItems: fetchMoreSubscriptionItems,
       emptyState: hasSubscriptions
-        ? <EmptyStateNoMatches/>
+        ? noMatches
         : <EmptyStateImportSubscriptions/>,
     },
   ];
@@ -174,28 +178,14 @@ const HomePageComponent = () => {
 
   return (
     <div className="flex flex-col w-full h-full min-h-0 overflow-hidden bg-base-300">
-      <TopTitle>
-        <div className="flex flex-row items-center h-full w-full px-4">
-          <div className="w-10 shrink-0 flex items-center justify-start">
-            <FilterToggleButton isOpen={showFilters} isModified={areFiltersModified} onClick={toggleFilters}/>
-          </div>
-          <h1 className="text-xl font-bold flex-1 min-w-0 flex items-center justify-center gap-2">
-            <HomeIcon/>
-            {t("home")}
-          </h1>
-          <div className="w-10 shrink-0 flex items-center justify-end"/>
-        </div>
-      </TopTitle>
+      <PageHeader title={t("home")} icon={<HomeIcon/>} showNotifications={true}/>
 
-      {isLoading &&
-          <div className="flex items-center justify-center h-full">
-              <span className="loading loading-spinner loading-lg"></span>
-          </div>
-      }
+      {isLoading && <ContentItemCardGridSkeleton/>}
 
       {!isLoading &&
           <>
-              <TagsRow>
+              <TagsRow leading={<FilterToggleButton isOpen={showFilters} isModified={areFiltersModified}
+                                                    onClick={toggleFilters}/>}>
                 {sections.map(section => (
                   <Tag
                     key={section.key}
@@ -209,15 +199,13 @@ const HomePageComponent = () => {
                   </Tag>
                 ))}
               </TagsRow>
-              {showFilters &&
-                  <ContentFilterBar filters={filters}
-                                    showInteractions={true}
-                                    setFilters={setFilters}
-                                    resetFilters={resetFilters}/>
-              }
+              {showFilters && <ContentFilterBar savedFilters={savedFilters} filters={filters}
+                                showInteractions={true}
+                                setFilters={setFilters}
+                                resetFilters={resetFilters}/>}
 
             {showEmptyState
-              ? <div className="flex-1 overflow-y-auto p-4 flex items-center justify-center">
+              ? <div className="flex-1 overflow-y-auto p-4 flex items-center justify-center pb-mobile-nav">
                 {activeSection.emptyState}
               </div>
               : <div className="flex-1 min-h-0">

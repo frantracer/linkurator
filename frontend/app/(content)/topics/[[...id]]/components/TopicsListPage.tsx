@@ -1,20 +1,19 @@
 'use client';
 
 import React, {useState} from "react";
+import EntityCardGridSkeleton from "../../../../../components/molecules/EntityCardGridSkeleton";
 import {useTranslations} from "next-intl";
 import Button from "../../../../../components/atoms/Button";
 import Collapse from "../../../../../components/atoms/Collapse";
 import {AddIcon, MagnifyingGlassIcon, RectangleGroup, StarIcon} from "../../../../../components/atoms/Icons";
 import SearchBar from "../../../../../components/molecules/SearchBar";
-import TopTitle from "../../../../../components/molecules/TopTitle";
-import DeleteTopicConfirmationModal, {
-  DeleteTopicConfirmationModalId
-} from "../../../../../components/organism/DeleteTopicConfirmationModal";
-import EditTopicModal, {EditTopicModalId} from "../../../../../components/organism/EditTopicModal";
+import PageHeader from "../../../../../components/organism/PageHeader";
+import ConfirmDialog from "../../../../../components/organism/ConfirmDialog";
+import TopicEditorModal, {EditTopicModalId} from "../../../../../components/organism/TopicEditorModal";
 import EmptyStateNoMatches from "../../../../../components/organism/EmptyStateNoMatches";
 import EmptyStateNoTopics from "../../../../../components/organism/EmptyStateNoTopics";
-import {FindTopicModalId} from "../../../../../components/organism/FindTopicModal";
-import {NewTopicModalId} from "../../../../../components/organism/NewTopicModal";
+import {openSearchPalette} from "../../../../../utilities/searchPaletteAction";
+import {NewTopicModalId} from "../../../../../components/organism/TopicEditorModal";
 import TopicCard from "../../../../../components/organism/TopicCard";
 import {Topic} from "../../../../../entities/Topic";
 import {useFavoriteTopics} from "../../../../../hooks/useFavoriteTopics";
@@ -26,6 +25,8 @@ import {deleteTopic, followTopic, unfollowTopic} from "../../../../../services/t
 import {openModal} from "../../../../../utilities/modalAction";
 import {flushSync} from "react-dom";
 import {useToast} from "../../../../../contexts/ToastContext";
+
+const DeleteTopicDialogId = "delete-topic-dialog";
 
 const TopicsListPageComponent = () => {
   const t = useTranslations("common");
@@ -60,7 +61,7 @@ const TopicsListPageComponent = () => {
 
   const handleDeleteTopic = (topic: Topic) => {
     setDeletingTopic(topic);
-    openModal(DeleteTopicConfirmationModalId);
+    openModal(DeleteTopicDialogId);
   }
 
   const handleFollowTopic = (topic: Topic) => {
@@ -74,15 +75,15 @@ const TopicsListPageComponent = () => {
     });
   }
 
-  const confirmDeleteTopic = () => {
+  const confirmDeleteTopic = async () => {
     if (deletingTopic) {
-      const topicId = deletingTopic.uuid;
+      await deleteTopic(deletingTopic.uuid);
       setDeletingTopic(null);
-      deleteTopic(topicId).then(() => refreshTopics());
+      refreshTopics();
     }
   }
 
-  const openDiscoverModal = () => openModal(FindTopicModalId);
+  const openDiscoverModal = () => openSearchPalette("topics");
   const openNewModal = () => openModal(NewTopicModalId);
 
   const renderSection = (key: string, title: string, icon: React.ReactNode, sectionTopics: Topic[]) => {
@@ -122,17 +123,8 @@ const TopicsListPageComponent = () => {
 
   return (
     <>
-      <TopTitle>
-        <div className="flex flex-row items-center h-full w-full px-4">
-          <div className="w-10 shrink-0"/>
-          <div className="flex-1 min-w-0 flex flex-row items-center justify-center gap-2">
-            <RectangleGroup/>
-            <h1 className="text-xl font-bold truncate">{t("topics")}</h1>
-          </div>
-          <div className="w-10 shrink-0"/>
-        </div>
-      </TopTitle>
-      <div className="flex flex-col h-full bg-base-300 overflow-y-auto overflow-x-hidden">
+      <PageHeader title={t("topics")} icon={<RectangleGroup/>}/>
+      <div className="flex flex-col h-full bg-base-300 overflow-y-auto overflow-x-hidden pb-mobile-nav">
         <div className="flex flex-col gap-6 p-4 max-w-7xl w-full mx-auto">
           <div className="flex flex-row gap-2 w-full items-center justify-center">
             <Button fitContent={true} clickAction={openDiscoverModal} primary={false}>
@@ -155,6 +147,8 @@ const TopicsListPageComponent = () => {
             )}
           </div>
 
+          {topicsAreLoading && <EntityCardGridSkeleton/>}
+
           {!topicsAreLoading && profile && !hasAnyTopics && (
             <EmptyStateNoTopics/>
           )}
@@ -170,17 +164,25 @@ const TopicsListPageComponent = () => {
       </div>
 
       {editingTopic && (
-        <EditTopicModal
+        <TopicEditorModal
           topic={editingTopic}
           subscriptions={subscriptions}
           providers={providers}
-          refreshTopics={refreshTopics}
-          refreshTopicItems={() => undefined}
-          refreshSubscriptions={refreshSubscriptions}
+          onSaved={() => {
+            refreshTopics();
+            refreshSubscriptions();
+          }}
         />
       )}
 
-      <DeleteTopicConfirmationModal onDeleteTopic={confirmDeleteTopic}/>
+      <ConfirmDialog
+        id={DeleteTopicDialogId}
+        title={t("delete_topic_confirmation")}
+        message={t("delete_topic_confirmation_message")}
+        confirmLabel={t("delete")}
+        errorMessage={t("delete_topic_failed")}
+        onConfirm={confirmDeleteTopic}
+      />
     </>
   );
 }

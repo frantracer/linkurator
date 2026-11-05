@@ -1,9 +1,14 @@
-import React, {useEffect, useState, useRef} from 'react';
-import {CrossIcon, ArrowUturnLeft} from './Icons';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
+import {CheckCircleFilledIcon, CrossIcon, ExclamationCircle} from './Icons';
 import {useTranslations} from 'next-intl';
 import classNames from "classnames";
 
 export type ToastVariant = "success" | "error";
+
+export type ToastAction = {
+  label: string;
+  onClick: () => void;
+};
 
 type ToastProps = {
   id: string;
@@ -12,76 +17,81 @@ type ToastProps = {
   variant: ToastVariant;
   duration: number;
   onClose: (id: string) => void;
-  onUndo?: () => void;
+  action?: ToastAction;
 }
 
-export const Toast = ({id, title, subtitle, variant, duration, onClose, onUndo}: ToastProps) => {
+const FADE_OUT_MS = 300;
+
+export const Toast = ({id, title, subtitle, variant, duration, onClose, action}: ToastProps) => {
   const t = useTranslations("common");
   const [isVisible, setIsVisible] = useState(true);
+  const [isPaused, setIsPaused] = useState(false);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
-  useEffect(() => {
-    timerRef.current = setTimeout(() => {
-      setIsVisible(false);
-      setTimeout(() => onClose(id), 300); // Wait for fade-out animation
-    }, duration);
+  const dismiss = useCallback(() => {
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+    }
+    setIsVisible(false);
+    setTimeout(() => onClose(id), FADE_OUT_MS);
+  }, [id, onClose]);
 
+  // Restarting the full duration on resume keeps the logic simple and errs on the side of reading time
+  useEffect(() => {
+    if (isPaused) {
+      return;
+    }
+    timerRef.current = setTimeout(dismiss, duration);
     return () => {
       if (timerRef.current) {
         clearTimeout(timerRef.current);
       }
     };
-  }, [id, duration, onClose]);
+  }, [duration, dismiss, isPaused]);
 
-  const handleClose = () => {
-    if (timerRef.current) {
-      clearTimeout(timerRef.current);
+  const handleAction = () => {
+    if (action) {
+      action.onClick();
     }
-    setIsVisible(false);
-    setTimeout(() => onClose(id), 300); // Wait for fade-out animation
-  };
-
-  const handleUndo = () => {
-    if (timerRef.current) {
-      clearTimeout(timerRef.current);
-    }
-    setIsVisible(false);
-    if (onUndo) {
-      onUndo();
-    }
-    setTimeout(() => onClose(id), 300); // Wait for fade-out animation
+    dismiss();
   };
 
   const toastClass = classNames(
-    "alert shadow-lg flex flex-row items-start gap-2 transition-opacity duration-300 " +
-    "border-2 border-neutral w-80 md:w-96",
+    "flex flex-row items-center gap-3 w-full rounded-xl border px-4 py-3 shadow-lg transition-opacity duration-300",
+    "bg-base-100 text-base-content",
     {
-      "alert-success bg-primary": variant === "success",
-      "alert-error": variant === "error",
+      "border-neutral": variant === "success",
+      "border-error": variant === "error",
       "opacity-100": isVisible,
       "opacity-0": !isVisible
     }
   );
 
   return (
-    <div className={toastClass} role="alert">
-      {onUndo && (
-        <button
-          onClick={handleUndo}
-          className="btn btn-sm btn-ghost btn-circle"
-          aria-label={t("undo")}
-        >
-          <ArrowUturnLeft/>
+    <div
+      className={toastClass}
+      role={variant === "error" ? "alert" : "status"}
+      onMouseEnter={() => setIsPaused(true)}
+      onMouseLeave={() => setIsPaused(false)}
+      onFocus={() => setIsPaused(true)}
+      onBlur={() => setIsPaused(false)}
+    >
+      <span className={variant === "error" ? "text-error" : "text-primary"}>
+        {variant === "error" ? <ExclamationCircle/> : <CheckCircleFilledIcon/>}
+      </span>
+      <div className="flex-grow flex flex-col min-w-0">
+        <span className="text-sm font-semibold">{title}</span>
+        {subtitle && <span className="text-xs text-base-content/70">{subtitle}</span>}
+      </div>
+      {action && (
+        <button onClick={handleAction} className="btn btn-sm btn-ghost text-primary px-2">
+          {action.label}
         </button>
       )}
-      <div className="flex-grow flex flex-col gap-1">
-        <span className="font-semibold">{title}</span>
-        {subtitle && <span className="text-sm">{subtitle}</span>}
-      </div>
       <button
-        onClick={handleClose}
+        onClick={dismiss}
         className="btn btn-sm btn-ghost btn-circle"
-        aria-label="Close"
+        aria-label={t("close")}
       >
         <CrossIcon/>
       </button>

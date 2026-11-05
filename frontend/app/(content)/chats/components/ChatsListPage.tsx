@@ -1,15 +1,16 @@
 'use client';
 
 import React, {useEffect, useRef, useState} from "react";
+import EmptyStateBox from "../../../../components/atoms/EmptyStateBox";
+import EndOfList from "../../../../components/atoms/EndOfList";
 import {useRouter} from "next/navigation";
 import {useLocale, useTranslations} from "next-intl";
 import {v4 as uuidv4} from 'uuid';
 import Button from "../../../../components/atoms/Button";
-import {InfoBanner} from "../../../../components/atoms/InfoBanner";
 import {Spinner} from "../../../../components/atoms/Spinner";
 import {AddIcon, ChatBubbleIcon} from "../../../../components/atoms/Icons";
 import SearchBar from "../../../../components/molecules/SearchBar";
-import TopTitle from "../../../../components/molecules/TopTitle";
+import PageHeader from "../../../../components/organism/PageHeader";
 import EmptyStateNoMatches from "../../../../components/organism/EmptyStateNoMatches";
 import {paths} from "../../../../configuration";
 import {ChatConversation} from "../../../../entities/Chat";
@@ -60,20 +61,11 @@ const ChatsListPageComponent = () => {
 
   return (
     <>
-      <TopTitle>
-        <div className="flex flex-row items-center h-full w-full px-4">
-          <div className="w-10 shrink-0"/>
-          <div className="flex-1 min-w-0 flex flex-row items-center justify-center gap-2">
-            <ChatBubbleIcon/>
-            <h1 className="text-xl font-bold truncate">{t("chats")}</h1>
-          </div>
-          <div className="w-10 shrink-0"/>
-        </div>
-      </TopTitle>
+      <PageHeader title={t("chats")} icon={<ChatBubbleIcon/>}/>
       <div
         ref={containerRef}
         onScroll={handleContainerScroll}
-        className="flex flex-col h-full bg-base-300 overflow-y-auto overflow-x-hidden"
+        className="flex flex-col h-full bg-base-300 overflow-y-auto overflow-x-hidden pb-mobile-nav"
       >
         <div className="flex flex-col gap-6 p-4 max-w-2xl w-full mx-auto">
           <div className="flex flex-row gap-2 w-full items-center">
@@ -90,9 +82,7 @@ const ChatsListPageComponent = () => {
           </div>
 
           {!isLoading && !hasAnyConversations && !isFiltering && (
-            <InfoBanner>
-              <span>{t("no_conversations_yet")}</span>
-            </InfoBanner>
+            <EmptyStateBox icon={<ChatBubbleIcon/>} title={t("no_conversations_yet")} message={t("start_conversation")}/>
           )}
 
           {!isLoading && !hasAnyConversations && isFiltering && (
@@ -139,7 +129,7 @@ const ChatsListPageComponent = () => {
           )}
 
           {hasAnyConversations && isFinished && !isLoading && (
-            <InfoBanner>{t("no_more_content")}</InfoBanner>
+            <EndOfList text={t("all_caught_up")}/>
           )}
         </div>
       </div>

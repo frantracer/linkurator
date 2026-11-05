@@ -1,116 +1,131 @@
-import React, {useState} from "react";
+import React, {useId} from "react";
 import {useTranslations} from "next-intl";
+import classNames from "classnames";
 import {Subscription, subscriptionSorting} from "../../entities/Subscription";
 import {getProviderIcon, Provider} from "../../entities/Provider";
-import {durationOptions, Filters} from "../../entities/Filters";
+import {areFiltersEqual, durationOptions, Filters} from "../../entities/Filters";
 import {
   ArchiveBoxFilledIcon,
-  ArrowUturnLeft,
   CheckCircleFilledIcon,
   CheckCircleIcon,
   ChevronDownIcon,
-  ChevronUpIcon,
   ThumbsDownFilledIcon,
   ThumbsUpFilledIcon
 } from "../atoms/Icons";
-import Button from "../atoms/Button";
 import Checkbox from "../atoms/Checkbox";
 import Dropdown from "../atoms/Dropdown";
 import NumberInput from "../atoms/NumberInput";
 import Miniature from "../atoms/Miniature";
-import Tag from "../atoms/Tag";
-import Select from "../atoms/Select";
 import SearchBar from "../molecules/SearchBar";
 
 type ContentFilterBarProps = {
   filters: Filters,
   setFilters: (filters: Filters) => void;
   resetFilters: () => void;
+  savedFilters: Filters;
   showInteractions?: boolean;
   subscriptions?: Subscription[];
   providers?: Provider[];
 };
+
+type FilterChipProps = {
+  active: boolean;
+  children: React.ReactNode;
+};
+
+const FilterChip = ({active, children}: FilterChipProps) => (
+  <span className={classNames(
+    "flex flex-row items-center gap-1 whitespace-nowrap",
+    {"text-primary": active}
+  )}>
+    {children}
+    <ChevronDownIcon/>
+  </span>
+);
 
 const ContentFilterBar = (
   {
     filters,
     setFilters,
     resetFilters,
+    savedFilters,
     showInteractions = false,
     subscriptions,
     providers = [],
   }: ContentFilterBarProps
 ) => {
   const t = useTranslations("common");
-  const [showSubscriptions, setShowSubscriptions] = useState(false);
+  const idPrefix = useId();
+  const isModified = !areFiltersEqual(filters, savedFilters);
 
-  const showCustomDuration = filters.durationGroup == "custom";
-
-  const translatedDurationOptions = durationOptions.map(option => {
-    return {
-      key: option.key,
-      label: t(option.label)
-    }
-  });
-
-  const handleDurationChange = (key: string) => {
-    switch (key) {
-      case "short":
-        setFilters({...filters, durationGroup: "short", minDuration: undefined, maxDuration: undefined});
-        break;
-      case "medium":
-        setFilters({...filters, durationGroup: "medium", minDuration: undefined, maxDuration: undefined});
-        break;
-      case "long":
-        setFilters({...filters, durationGroup: "long", minDuration: undefined, maxDuration: undefined});
-        break;
-      case "all":
-        setFilters({...filters, durationGroup: "all", minDuration: undefined, maxDuration: undefined});
-        break;
-      case "custom":
-        setFilters({...filters, minDuration: undefined, maxDuration: undefined, durationGroup: "custom"});
-        break;
-    }
+  const handleDurationChange = (key: Filters["durationGroup"]) => {
+    setFilters({...filters, durationGroup: key, minDuration: undefined, maxDuration: undefined});
   }
+
+  const selectedDuration = durationOptions.find(option => option.key === filters.durationGroup);
+  const durationIsActive = filters.durationGroup !== savedFilters.durationGroup ||
+    filters.minDuration !== savedFilters.minDuration || filters.maxDuration !== savedFilters.maxDuration;
+  const customDurationRange = filters.minDuration !== undefined && filters.maxDuration !== undefined
+    ? `${filters.minDuration}–${filters.maxDuration} min`
+    : filters.minDuration !== undefined ? `≥ ${filters.minDuration} min`
+      : filters.maxDuration !== undefined ? `≤ ${filters.maxDuration} min` : undefined;
+  const durationValue = filters.durationGroup === "custom" && customDurationRange
+    ? customDurationRange
+    : selectedDuration ? t(selectedDuration.label) : undefined;
+  const durationLabel = durationValue ? `${t("duration")}: ${durationValue}` : t("duration");
 
   const interactionOptions = [
     {
       key: "not_viewed",
       icon: <CheckCircleIcon/>,
       checked: filters.displayWithoutInteraction,
+      saved: savedFilters.displayWithoutInteraction,
       onChange: (checked: boolean) => setFilters({...filters, displayWithoutInteraction: checked}),
     },
     {
       key: "viewed",
       icon: <CheckCircleFilledIcon/>,
       checked: filters.displayViewed,
+      saved: savedFilters.displayViewed,
       onChange: (checked: boolean) => setFilters({...filters, displayViewed: checked}),
     },
     {
       key: "recommended",
       icon: <ThumbsUpFilledIcon/>,
       checked: filters.displayRecommended,
+      saved: savedFilters.displayRecommended,
       onChange: (checked: boolean) => setFilters({...filters, displayRecommended: checked}),
     },
     {
       key: "not_recommended",
       icon: <ThumbsDownFilledIcon/>,
       checked: filters.displayDiscouraged,
+      saved: savedFilters.displayDiscouraged,
       onChange: (checked: boolean) => setFilters({...filters, displayDiscouraged: checked}),
     },
     {
       key: "archived",
       icon: <ArchiveBoxFilledIcon/>,
       checked: filters.displayHidden,
+      saved: savedFilters.displayHidden,
       onChange: (checked: boolean) => setFilters({...filters, displayHidden: checked}),
     },
   ];
-  const selectedInteractionsCount = interactionOptions.filter(option => option.checked).length;
+  const selectedInteractions = interactionOptions.filter(option => option.checked);
+  const interactionsAreActive = interactionOptions.some(option => option.checked !== option.saved);
+  // Checking nothing shows everything, so only a partial selection narrows the feed
+  const interactionsNarrowFeed = selectedInteractions.length > 0 && selectedInteractions.length < interactionOptions.length;
+  const interactionsLabel = selectedInteractions.length === 1
+    ? t(selectedInteractions[0].key)
+    : interactionsNarrowFeed ? `${t("show_items")} · ${selectedInteractions.length}` : t("show_items");
 
   const sortedSubscriptions = subscriptions ? subscriptions.slice().sort(subscriptionSorting) : [];
   const includedSubscriptionsCount = sortedSubscriptions
     .filter(subscription => !filters.excludedSubscriptions.includes(subscription.uuid))
     .length;
+  const sourcesAreActive = sortedSubscriptions.some(subscription =>
+    filters.excludedSubscriptions.includes(subscription.uuid) !== savedFilters.excludedSubscriptions.includes(subscription.uuid)
+  );
 
   const toggleSubscription = (subscriptionId: string) => {
     const isExcluded = filters.excludedSubscriptions.includes(subscriptionId);
@@ -122,85 +137,98 @@ const ContentFilterBar = (
     });
   }
 
-  const subsTags = sortedSubscriptions.map(subscription => {
-    const isExcluded = filters.excludedSubscriptions.includes(subscription.uuid);
-    return (
-      <div key={subscription.uuid} className={isExcluded ? "opacity-40" : ""}>
-        <Tag onClick={() => toggleSubscription(subscription.uuid)}>
-          <div className="flex flex-row items-center gap-1 whitespace-nowrap">
-            <input type="checkbox" readOnly tabIndex={-1} checked={!isExcluded}
-                   className="checkbox checkbox-primary checkbox-xs pointer-events-none"/>
-            <Miniature src={subscription.thumbnail} alt={subscription.name}
-                       badgeImage={getProviderIcon(providers, subscription.provider)}/>
-            {subscription.name}
-          </div>
-        </Tag>
-      </div>
-    );
-  });
+  const optionRowClass = "flex flex-row gap-2 items-center min-w-0 px-2 py-1.5 rounded-md cursor-pointer hover:bg-base-content/5 text-sm";
 
   return (
-    <div className="flex flex-col shrink-0">
-      <div className="flex flex-row flex-wrap gap-2 items-center px-4 py-3 bg-base-300">
-        <div className="flex-1 min-w-48">
-          <SearchBar handleChange={(value) => setFilters({...filters, textSearch: value})}
-                     value={filters.textSearch}
-                     placeholder={t("search_placeholder")}/>
-        </div>
-        <div className="w-56">
-          <Select selected={filters.durationGroup} options={translatedDurationOptions}
-                  onChange={handleDurationChange}/>
-        </div>
-        {showCustomDuration &&
-            <div className="flex flex-row gap-2 items-center">
-                <span className="text-sm">{t("min")}</span>
-                <div className="w-20">
-                    <NumberInput value={filters.minDuration}
-                                 onChange={(value) => setFilters({...filters, minDuration: value})}/>
+    <div className="shrink-0 flex flex-col sm:flex-row gap-2 sm:items-center px-4 py-3 border-b border-neutral bg-base-300">
+      <div className="sm:flex-1 sm:min-w-48 sm:max-w-md">
+        <SearchBar handleChange={(value) => setFilters({...filters, textSearch: value})}
+                   value={filters.textSearch}
+                   placeholder={t("search_placeholder")}/>
+      </div>
+      <div className="flex flex-row flex-wrap gap-2 items-center">
+        <Dropdown label={t("duration")} width={"medium"} position="start" bottom={true}
+                  button={<FilterChip active={durationIsActive}>{durationLabel}</FilterChip>}>
+          <li role="radiogroup" aria-label={t("duration")} className="flex flex-col p-1">
+            {durationOptions.map(option => (
+              <label key={option.key} className={optionRowClass}>
+                <input type="radio" name={idPrefix + "-duration"} className="radio radio-primary radio-xs"
+                       checked={filters.durationGroup === option.key}
+                       onChange={() => handleDurationChange(option.key)}/>
+                {t(option.label)}
+                {option.range && <span className="text-base-content/60">· {option.range}</span>}
+              </label>
+            ))}
+            {filters.durationGroup === "custom" &&
+                <div className="grid grid-cols-2 gap-2 px-2 pt-2">
+                    <label className="flex flex-col gap-1 text-xs" htmlFor={idPrefix + "-min"}>
+                      {t("min_minutes")}
+                        <NumberInput id={idPrefix + "-min"} value={filters.minDuration}
+                                     onChange={(value) => setFilters({...filters, minDuration: value})}/>
+                    </label>
+                    <label className="flex flex-col gap-1 text-xs" htmlFor={idPrefix + "-max"}>
+                      {t("max_minutes")}
+                        <NumberInput id={idPrefix + "-max"} value={filters.maxDuration}
+                                     onChange={(value) => setFilters({...filters, maxDuration: value})}/>
+                    </label>
                 </div>
-                <span className="text-sm">{t("max")}</span>
-                <div className="w-20">
-                    <NumberInput value={filters.maxDuration}
-                                 onChange={(value) => setFilters({...filters, maxDuration: value})}/>
-                </div>
-            </div>
-        }
+            }
+          </li>
+        </Dropdown>
         {showInteractions &&
-            <Dropdown
-                button={
-                  <Button primary={false} fitContent={true} stopPropagation={false}>
-                    <span>{t("interactions")}: {selectedInteractionsCount}</span>
-                    <ChevronDownIcon/>
-                  </Button>
-                }
-                small={true}
-                position="start"
-                bottom={true}
-            >
+            <Dropdown label={t("show_items")} width={"narrow"} position="start" bottom={true}
+                      button={<FilterChip active={interactionsAreActive}>{interactionsLabel}</FilterChip>}>
               {interactionOptions.map(option => (
-                <li key={option.key} className="flex flex-row gap-2 items-center p-2">
-                  <Checkbox checked={option.checked} onChange={option.onChange}/>
-                  {option.icon}
-                  <label>{t(option.key)}</label>
+                <li key={option.key}>
+                  <label className={optionRowClass}>
+                    <Checkbox small={true} checked={option.checked} onChange={option.onChange}/>
+                    {option.icon}
+                    {t(option.key)}
+                  </label>
                 </li>
               ))}
             </Dropdown>
         }
         {sortedSubscriptions.length > 0 &&
-            <Button primary={false} fitContent={true} clickAction={() => setShowSubscriptions(!showSubscriptions)}>
-                <span>{t("subscriptions")}: {includedSubscriptionsCount}/{sortedSubscriptions.length}</span>
-              {showSubscriptions ? <ChevronUpIcon/> : <ChevronDownIcon/>}
-            </Button>
+            <Dropdown label={t("sources")} position="start" bottom={true}
+                      button={<FilterChip active={sourcesAreActive}>
+                        {t("sources")} {includedSubscriptionsCount}/{sortedSubscriptions.length}
+                      </FilterChip>}>
+                <li className="flex flex-row gap-2 px-2 py-1.5 text-xs">
+                    <button type="button" className="link link-hover text-primary"
+                            onClick={() => setFilters({...filters, excludedSubscriptions: []})}>
+                      {t("select_all")}
+                    </button>
+                    <span aria-hidden="true">·</span>
+                    <button type="button" className="link link-hover text-primary"
+                            onClick={() => setFilters({
+                              ...filters,
+                              excludedSubscriptions: sortedSubscriptions.map(subscription => subscription.uuid)
+                            })}>
+                      {t("select_none")}
+                    </button>
+                </li>
+              {sortedSubscriptions.map(subscription => (
+                <li key={subscription.uuid}>
+                  <label className={optionRowClass}>
+                    <Checkbox small={true}
+                              checked={!filters.excludedSubscriptions.includes(subscription.uuid)}
+                              onChange={() => toggleSubscription(subscription.uuid)}/>
+                    <Miniature src={subscription.thumbnail} alt=""
+                               badgeImage={getProviderIcon(providers, subscription.provider)}/>
+                    <span className="flex-1 min-w-0 break-words">{subscription.name}</span>
+                  </label>
+                </li>
+              ))}
+            </Dropdown>
         }
-        <Button primary={false} fitContent={true} clickAction={resetFilters} tooltip={t("reset_filters")}>
-          <ArrowUturnLeft/>
-        </Button>
+        {isModified &&
+            <button type="button" onClick={resetFilters}
+                    className="btn btn-sm btn-ghost text-primary px-2 whitespace-nowrap">
+              {t("clear_filters")}
+            </button>
+        }
       </div>
-      {showSubscriptions && sortedSubscriptions.length > 0 &&
-          <div className="flex flex-row flex-wrap gap-2 p-2 max-h-48 overflow-y-auto bg-base-300">
-            {subsTags}
-          </div>
-      }
     </div>
   );
 };

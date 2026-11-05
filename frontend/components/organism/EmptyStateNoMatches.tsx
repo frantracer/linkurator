@@ -1,22 +1,25 @@
 import React from "react";
 import {useTranslations} from "next-intl";
 import EmptyStateBox from "../atoms/EmptyStateBox";
+import Button from "../atoms/Button";
+import {MagnifyingGlassIcon} from "../atoms/Icons";
 
 type EmptyStateNoMatchesProps = {
-  title?: string;
-  message?: string;
-  children?: React.ReactNode;
+  onClearFilters?: () => void;
 }
 
-const EmptyStateNoMatches = ({title, message, children}: EmptyStateNoMatchesProps) => {
+const EmptyStateNoMatches = ({onClearFilters}: EmptyStateNoMatchesProps) => {
   const t = useTranslations("common");
 
   return (
     <EmptyStateBox
-      title={title ?? t("no_matches_title")}
-      message={message ?? t("no_matches_message")}
+      icon={<MagnifyingGlassIcon/>}
+      title={t("no_matches_title")}
+      message={t("no_matches_message")}
     >
-      {children}
+      {onClearFilters &&
+          <Button primary={false} clickAction={onClearFilters}>{t("reset_filters")}</Button>
+      }
     </EmptyStateBox>
   );
 }

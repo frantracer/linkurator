@@ -1,31 +1,31 @@
 'use client';
 
 import {useTranslations} from 'next-intl';
+import EmptyStateBox from "../../../../../components/atoms/EmptyStateBox";
 import {useRouter} from "next/navigation";
 import React, {useEffect, useState} from "react";
 import Button from "../../../../../components/atoms/Button";
-import CrossButton from "../../../../../components/atoms/CrossButton";
 import {
-  AddIcon,
   ChatBubbleIcon,
   EllipsisHorizontalIcon,
-  MinusIcon,
   PencilIcon,
-  RefreshIcon
+  RefreshIcon,
+  ShareIcon
 } from "../../../../../components/atoms/Icons";
-import {MenuItem} from "../../../../../components/atoms/MenuItem";
+import useShareLink from "../../../../../hooks/useShareLink";
 import Miniature from "../../../../../components/atoms/Miniature";
-import Tag from "../../../../../components/atoms/Tag";
-import TopTitle from "../../../../../components/molecules/TopTitle";
-import FilterToggleButton from "../../../../../components/molecules/FilterToggleButton";
+import PageHeader from "../../../../../components/organism/PageHeader";
+import FollowToggleButton from "../../../../../components/molecules/FollowToggleButton";
+import MenuAction from "../../../../../components/molecules/MenuAction";
+import Avatar from "../../../../../components/atoms/Avatar";
 import AssignTopicModal, {AssignTopicModalId} from "../../../../../components/organism/AssignTopicModal";
+import FilterToggleButton from "../../../../../components/molecules/FilterToggleButton";
+import useFilterBarVisibility from "../../../../../hooks/useFilterBarVisibility";
 import ContentFilterBar from "../../../../../components/organism/ContentFilterBar";
 import ContentItemCardGrid from "../../../../../components/organism/ContentItemCardGrid";
-import {paths} from "../../../../../configuration";
 import {getProviderIcon, getProviderPrettyName} from "../../../../../entities/Provider";
 import useProviders from "../../../../../hooks/useProviders";
 import useFilters from "../../../../../hooks/useFilters";
-import useFilterBarVisibility from "../../../../../hooks/useFilterBarVisibility";
 import useProfile from "../../../../../hooks/useProfile";
 import useSubscription from "../../../../../hooks/useSubscription";
 import useSubscriptionItems from "../../../../../hooks/useSubscriptionItems";
@@ -50,9 +50,9 @@ const SubscriptionPageComponent = ({subscriptionId}: { subscriptionId: string })
   const {showToast} = useToast();
   const {providers} = useProviders();
 
-  const {filters, setFilters, resetFilters, isModified: areFiltersModified} = useFilters();
-  const [debouncedFilters, setDebouncedFilters] = useState(filters);
+  const {filters, setFilters, resetFilters, isModified: areFiltersModified, savedFilters} = useFilters();
   const {showFilters, toggleFilters} = useFilterBarVisibility();
+  const [debouncedFilters, setDebouncedFilters] = useState(filters);
   const {profile, profileIsLoading} = useProfile();
   const {subscriptions, refreshSubscriptions} = useSubscriptions(profile);
   const {topics, refreshTopics} = useTopics(profile, profileIsLoading);
@@ -65,10 +65,6 @@ const SubscriptionPageComponent = ({subscriptionId}: { subscriptionId: string })
   const subscriptionName = selectedSubscription ? selectedSubscription.name : "";
 
   const isUserLogged = !!(profile)
-
-  const openSubscriptionUrl = () => {
-    if (subscriptionUrl) window.open(subscriptionUrl, "_blank");
-  }
 
   const {
     subscriptionsItems,
@@ -128,135 +124,55 @@ const SubscriptionPageComponent = ({subscriptionId}: { subscriptionId: string })
     }
   }, [debouncedFilters.textSearch, filters]);
 
-  const dropdownButtons = []
-  if (selectedSubscription && isUserLogged) {
-    dropdownButtons.push(
-      <MenuItem key={"subscriptions-assign"} onClick={handleAssignSubscription} hideMenuOnClick={true}>
-        <div className="flex flex-row gap-2 items-center justify-left">
-          <PencilIcon/>
-          {t("assign")}
-        </div>
-      </MenuItem>
-    )
-    dropdownButtons.push(
-      <MenuItem key={"subscriptions-refresh"} onClick={() => {
-        handleRefreshSubscription(selectedSubscription.uuid, selectedSubscription.name)
-      }} hideMenuOnClick={true}>
-        <div className="flex flex-row gap-2 items-center justify-left">
-          <RefreshIcon/>
-          {t("refresh")}
-        </div>
-      </MenuItem>
-    )
-  }
-  if (selectedSubscription && selectedSubscription.followed && isUserLogged) {
-    dropdownButtons.push(
-      <MenuItem key={"subscriptions-unfollow"} onClick={() => handleUnfollowSubscription(selectedSubscription.uuid)}
-                hideMenuOnClick={true}>
-        <div className="flex flex-row gap-2 items-center justify-left">
-          <MinusIcon/>
-          {t("unfollow")}
-        </div>
-      </MenuItem>
-    )
-  }
-  if (selectedSubscription && !selectedSubscription.followed && isUserLogged) {
-    dropdownButtons.push(
-      <MenuItem key={"subscriptions-follow"} onClick={() => handleFollowSubscription(selectedSubscription.uuid)}
-                hideMenuOnClick={true}>
-        <div className="flex flex-row gap-2 items-center justify-left">
-          <AddIcon/>
-          {t("follow")}
-        </div>
-      </MenuItem>
-    )
-  }
-  if (selectedSubscription) {
-    dropdownButtons.push(
-      <MenuItem key={"subscriptions-chat"} onClick={handleChatAboutThis} hideMenuOnClick={true}>
-        <div className="flex flex-row gap-2 items-center justify-left">
-          <ChatBubbleIcon/>
-          {t("chat_about_this")}
-        </div>
-      </MenuItem>
-    )
-  }
+  const shareSubscription = useShareLink(subscriptionName);
 
   return (
     <div className="flex flex-col w-full h-full min-h-0 overflow-hidden">
-      <TopTitle>
-        <div className="flex flex-row items-center gap-4 h-full w-full px-4">
-          {!profileIsLoading && <>
-              <div className="w-10 shrink-0 flex items-center justify-start">
-                  <FilterToggleButton isOpen={showFilters} isModified={areFiltersModified} onClick={toggleFilters}/>
-              </div>
-              <div className="flex-1 min-w-0 flex flex-col items-center gap-2 overflow-hidden">
-                  <div className="w-full flex flex-row items-center justify-center gap-2 overflow-hidden">
-                    {selectedSubscription &&
-                        <div className="shrink-0">
-                            <Miniature src={selectedSubscription.thumbnail} alt={selectedSubscription.name}/>
-                        </div>
-                    }
-                      <h1 className="text-xl font-bold min-w-0 whitespace-nowrap truncate">
-                        {subscriptionName}
-                      </h1>
-                  </div>
-                  <div className="flex flex-row items-center justify-center gap-2">
-                    {selectedSubscription &&
-                        <Button primary={false} clickAction={openSubscriptionUrl}>
-                            <Miniature src={getProviderIcon(providers, selectedSubscription.provider)}
-                                       alt={selectedSubscription.provider}/>
-                          {getProviderPrettyName(providers, selectedSubscription.provider)}
-                        </Button>
-                    }
-                    {selectedSubscription && selectedSubscription.followed &&
-                        <Tag>
-                      <span>
-                        {t("following")}
-                      </span>
-                            <CrossButton onClick={() => handleUnfollowSubscription(selectedSubscription.uuid)}/>
-                        </Tag>
-                    }
-                    {selectedSubscription && !selectedSubscription.followed && isUserLogged &&
-                        <Button primary={false}
-                                clickAction={() => handleFollowSubscription(selectedSubscription.uuid)}>
-                          {t("follow")}
-                        </Button>
-                    }
-                    {selectedSubscription && !selectedSubscription.followed && !isUserLogged &&
-                        <Button primary={false} href={paths.LOGIN}>
-                          {t("follow")}
-                        </Button>
-                    }
-                  </div>
-              </div>
-              <div className="w-10 shrink-0 flex items-center justify-end">
-                {isUserLogged && selectedSubscription &&
-                    <Dropdown
-                        button={
-                          <Button primary={false} fitContent={true} stopPropagation={false}>
-                            <EllipsisHorizontalIcon/>
-                          </Button>
-                        }
-                        small={true}
-                        position="end"
-                        bottom={true}
-                        closeOnClickInside={true}
-                    >
-                        <Menu>
-                          {dropdownButtons}
-                        </Menu>
-                    </Dropdown>
-                }
-              </div>
-          </>}
-        </div>
-      </TopTitle>
+      {!profileIsLoading && selectedSubscription &&
+          <PageHeader
+              title={subscriptionName}
+              media={<Avatar src={selectedSubscription.thumbnail} alt=""/>}
+              subtitle={
+                <a href={subscriptionUrl} target="_blank" rel="noopener noreferrer"
+                   className="inline-flex flex-row items-center gap-1 hover:text-primary">
+                  <Miniature src={getProviderIcon(providers, selectedSubscription.provider)} alt=""/>
+                  {t("open_source_page", {provider: getProviderPrettyName(providers, selectedSubscription.provider)})}
+                </a>
+              }
+              actions={<>
+                <div className="hidden sm:contents">
+                  <Button primary={false} clickAction={handleChatAboutThis} tooltip={t("chat_about_this")}>
+                      <ChatBubbleIcon/>
+                      {t("ask_ai")}
+                  </Button>
+                </div>
+                <FollowToggleButton followed={selectedSubscription.followed} isLoggedIn={isUserLogged}
+                                    iconOnlyOnMobile={true}
+                                    onFollow={() => handleFollowSubscription(selectedSubscription.uuid)}
+                                    onUnfollow={() => handleUnfollowSubscription(selectedSubscription.uuid)}/>
+                <Dropdown label={t("more")} button={<EllipsisHorizontalIcon/>} width={"narrow"} position="end"
+                          bottom={true} closeOnClickInside={true}>
+                    <Menu>
+                        <MenuAction icon={<ChatBubbleIcon/>} label={t("ask_ai")} onClick={handleChatAboutThis}
+                                    mobileOnly={true}/>
+                        <MenuAction icon={<ShareIcon/>} label={t("share")} onClick={shareSubscription}/>
+                      {isUserLogged &&
+                          <MenuAction icon={<PencilIcon/>} label={t("assign")} onClick={handleAssignSubscription}/>
+                      }
+                      {isUserLogged &&
+                          <MenuAction icon={<RefreshIcon/>} label={t("refresh")}
+                                      onClick={() => handleRefreshSubscription(selectedSubscription.uuid, selectedSubscription.name)}/>
+                      }
+                    </Menu>
+                </Dropdown>
+              </>}
+          />
+      }
+      {(profileIsLoading || !selectedSubscription) && !isSubscriptionError &&
+          <div className="h-14 shrink-0 border-b border-neutral bg-base-100"/>}
       <div className="flex flex-col flex-1 min-h-0 bg-base-300 overflow-auto">
         {isSubscriptionError &&
-            <div className="flex items-center justify-center h-dvh">
-                <span>{t("subscription_not_exist")}</span>
-            </div>
+            <EmptyStateBox title={t("subscription_not_exist")} message={t("not_found_message")}/>
         }
         {selectedSubscription &&
             <ContentItemCardGrid
@@ -272,8 +188,10 @@ const SubscriptionPageComponent = ({subscriptionId}: { subscriptionId: string })
                 scanningEntityName={selectedSubscription.name}
                 withSubscription={false}
                 topics={topics.filter(topic => topic.subscriptions_ids.includes(selectedSubscription.uuid))}
+                stripLeading={<FilterToggleButton isOpen={showFilters} isModified={areFiltersModified}
+                                                  onClick={toggleFilters}/>}
                 filterBar={showFilters &&
-                    <ContentFilterBar filters={filters}
+                    <ContentFilterBar savedFilters={savedFilters} filters={filters}
                                       showInteractions={isUserLogged}
                                       setFilters={setFilters}
                                       resetFilters={resetFilters}/>

@@ -1,7 +1,5 @@
 type BoxProps = {
   title?: string;
-  titleBackgroundColor?: string;
-  borderColor?: string;
   children?: React.ReactNode;
 }
 
@@ -12,16 +10,16 @@ const Box = (
   }: BoxProps) => {
 
   return (
-    <div id={"my-box"} className={"border w-full rounded mt-2 border-neutral bg-base-100"}>
+    <section className={"w-full flex flex-col gap-2 py-2"}>
       {title && (
-        <div className={"-my-4 mx-2 px-2 w-fit rounded bg-base-300 border border-neutral"}>
+        <h3 className={"text-sm font-semibold text-base-content/70"}>
           {title}
-        </div>
+        </h3>
       )}
-      <div className="mt-8 mb-4 px-4">
+      <div className={"w-full"}>
         {children}
       </div>
-    </div>
+    </section>
   )
 }
 

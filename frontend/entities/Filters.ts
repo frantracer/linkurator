@@ -80,10 +80,10 @@ export function areFiltersEqual(a: Filters, b: Filters): boolean {
     a.excludedSubscriptions.every(uuid => excludedB.has(uuid));
 }
 
-export const durationOptions: { key: DurationGroup, label: string }[] = [
-  {key: "short", label: "short_duration"},
-  {key: "medium", label: "medium_duration"},
-  {key: "long", label: "long_duration"},
+export const durationOptions: { key: DurationGroup, label: string, range?: string }[] = [
+  {key: "short", label: "short_duration", range: "< 2 min"},
+  {key: "medium", label: "medium_duration", range: "2 min – 1 h"},
+  {key: "long", label: "long_duration", range: "> 1 h"},
   {key: "all", label: "any_duration"},
   {key: "custom", label: "custom_duration"}
 ]

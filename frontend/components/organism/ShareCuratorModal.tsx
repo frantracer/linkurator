@@ -4,7 +4,8 @@ import {closeModal} from "../../utilities/modalAction";
 import FlexColumn from "../atoms/FlexColumn";
 import Button from "../atoms/Button";
 import {useTranslations} from "next-intl";
-import {LinkedinIcon, TwitterIcon} from "../atoms/Icons";
+import {LinkedinIcon, ShareIcon, TwitterIcon} from "../atoms/Icons";
+import {useToast} from "../../contexts/ToastContext";
 
 export const ShareCuratorModalId = "share-curator-modal";
 
@@ -15,6 +16,13 @@ type ShareCuratorModalProps = {
 
 const ShareCuratorModal = (props: ShareCuratorModalProps) => {
   const t = useTranslations("common");
+  const {showToast} = useToast();
+
+  const copyLink = async () => {
+    await navigator.clipboard.writeText(props.curatorUrl);
+    showToast(t("link_copied"), props.curatorUrl);
+    handleClose();
+  }
 
   const handleClose = () => {
     closeModal(ShareCuratorModalId);
@@ -36,12 +44,15 @@ const ShareCuratorModal = (props: ShareCuratorModalProps) => {
   }
 
   return (
-    <Modal id={ShareCuratorModalId} onClose={handleClose}>
-      <FlexColumn position={"center"}>
-        <h1 className="font-bold text-xl w-full text-center">{t("share")}</h1>
-        <p className="text-center mb-4">{t("share_curator_description")}</p>
+    <Modal id={ShareCuratorModalId} title={t("share")} size={"sm"} onClose={handleClose}>
+      <FlexColumn>
+        <p className="mb-2 text-base-content/80">{t("share_curator_description")}</p>
         <FlexColumn gap={2}>
-          <Button fitContent={false} clickAction={shareToTwitter} primary={true}>
+          <Button fitContent={false} clickAction={copyLink} primary={true}>
+            <ShareIcon/>
+            {t("copy_link")}
+          </Button>
+          <Button fitContent={false} clickAction={shareToTwitter} primary={false}>
             <TwitterIcon/>
             {t("share_on_twitter")}
           </Button>

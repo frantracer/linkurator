@@ -72,10 +72,9 @@ const EntityPickerModal = ({id, title, onSelect, onClose, selected = [], multipl
   };
 
   return (
-    <Modal id={id} onClose={handleClose}>
+    <Modal id={id} title={title} onClose={handleClose}>
 
       <FlexColumn>
-        <h1 className="font-bold text-xl w-full text-center">{title}</h1>
         <SearchBar
           placeholder={t('search_topics_subscriptions_curators')}
           value={searchValue}
@@ -110,7 +109,7 @@ const EntityPickerModal = ({id, title, onSelect, onClose, selected = [], multipl
                                           onClick={() => handleSelect({kind: 'topic', topic})}>
                                   <FlexRow position="start">
                                     <Miniature src={topic.curator.avatar_url} alt={topic.curator.username}/>
-                                    <span>{topic.name}</span>
+                                    <span className="flex-1 min-w-0 break-words">{topic.name}</span>
                                   </FlexRow>
                                 </MenuItem>
                               ))}
@@ -132,7 +131,7 @@ const EntityPickerModal = ({id, title, onSelect, onClose, selected = [], multipl
                                       alt={sub.name}
                                       badgeImage={getProviderIcon(providers, sub.provider)}
                                     />
-                                    <span>{sub.name}</span>
+                                    <span className="flex-1 min-w-0 break-words">{sub.name}</span>
                                   </FlexRow>
                                 </MenuItem>
                               ))}

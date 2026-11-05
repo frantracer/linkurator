@@ -5,82 +5,86 @@ import classNames from "classnames";
 type ButtonProps = {
   clickAction?: () => void
   href?: string
-  relatedModalId?: string
   showOnlyOnMobile?: boolean
   hideOnMobile?: boolean
   fitContent?: boolean
   disabled?: boolean
   primary?: boolean
   borderless?: boolean
+  danger?: boolean
+  submit?: boolean
   tooltip?: string
+  ariaLabel?: string
+  ariaPressed?: boolean
   children?: React.ReactNode
   stopPropagation?: boolean
 }
 
-const noAction = () => {
-}
-
 const Button = (
   {
-    clickAction = noAction,
+    clickAction = undefined,
     href = undefined,
-    relatedModalId = undefined,
     showOnlyOnMobile = false,
     hideOnMobile = false,
     fitContent = true,
     disabled = false,
     primary = true,
     borderless = false,
+    danger = false,
+    submit = false,
     tooltip = undefined,
+    ariaLabel = undefined,
+    ariaPressed = undefined,
     stopPropagation = true,
     children
   }: ButtonProps
 ) => {
+  const outline = !primary && !borderless && !danger;
   const className = classNames(
-    "btn btn-sm rounded px-1 text-base-content border-neutral",
+    "btn btn-sm rounded-md px-2 gap-1.5 font-medium flex-nowrap",
     {
-      "btn-outline": !primary && !borderless,
+      "btn-primary": primary && !danger,
+      "btn-error": danger,
+      "btn-outline border-base-content/30 text-base-content hover:!bg-base-content/10 hover:!border-base-content/60 hover:!text-base-content": outline,
+      "btn-ghost text-base-content hover:!bg-base-content/10": borderless && !primary && !danger,
       "w-fit": fitContent,
-      "flex-1": !fitContent,
-      "w-full": !fitContent,
+      "flex-1 w-full": !fitContent,
       "lg:hidden": showOnlyOnMobile,
       "hidden lg:flex": hideOnMobile,
-      "opacity-50 cursor-not-allowed": disabled,
-      "bg-primary hover:!bg-primary hover:brightness-110": primary,
-      "btn-ghost": borderless && !primary,
-      "border-0": borderless,
-      "text-white": primary,
-      "hover:!text-primary hover:!bg-base-300 hover:!border-primary": borderless || !primary,
     }
   );
 
-  if (disabled) {
-    clickAction = noAction;
-    relatedModalId = undefined;
-  }
+  const label = ariaLabel ?? tooltip;
 
-  const handleClick = (e: React.MouseEvent<HTMLLabelElement>) => {
-    if (stopPropagation) {
-      e.stopPropagation();
-    }
-    (e.currentTarget as HTMLElement).blur();
-    if (clickAction) {
-      clickAction();
-    }
-  }
-
-  if (href) {
+  if (href && !disabled) {
     return (
-      <Link href={href} className={className} title={tooltip}>
+      <Link href={href} className={className} title={tooltip} aria-label={label}>
         {children}
       </Link>
     );
   }
 
+  const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    if (stopPropagation) {
+      e.stopPropagation();
+    }
+    if (clickAction) {
+      clickAction();
+    }
+  }
+
   return (
-    <label role={"button"} onClick={handleClick} htmlFor={relatedModalId} className={className} title={tooltip}>
+    <button
+      type={submit ? "submit" : "button"}
+      onClick={handleClick}
+      disabled={disabled}
+      className={className}
+      title={tooltip}
+      aria-label={label}
+      aria-pressed={ariaPressed}
+    >
       {children}
-    </label>
+    </button>
   );
 }
 

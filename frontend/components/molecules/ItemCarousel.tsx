@@ -1,11 +1,13 @@
 'use client';
 
 import React, { useState } from 'react';
+import classNames from "classnames";
 import ContentItemCard from '../organism/ContentItemCard';
 import { SubscriptionItem } from '../../entities/SubscriptionItem';
 import { Provider } from '../../entities/Provider';
 import { ChevronDownIcon, ChevronUpIcon } from '../atoms/Icons';
 import ItemCardSkeleton from "../organism/ItemCardSkeleton";
+import useGridCardWidth from "../../hooks/useGridCardWidth";
 
 type ItemCarouselProps = {
   items: SubscriptionItem[];
@@ -29,6 +31,9 @@ const ItemCarousel = ({
   refreshItem = () => {},
 }: ItemCarouselProps) => {
   const [isExpanded, setIsExpanded] = useState(defaultExpanded);
+  const cardWidth = useGridCardWidth();
+  const cardClass = classNames("flex-shrink-0 max-w-full", {"w-72": cardWidth === undefined});
+  const cardStyle = cardWidth === undefined ? undefined : {width: cardWidth};
 
   const handleTouchStart = (e: React.TouchEvent) => {
     e.stopPropagation();
@@ -44,7 +49,7 @@ const ItemCarousel = ({
         <h2 className={`${titleClass}`}>{title}</h2>
         <div className={`flex gap-3 overflow-x-auto`}>
           {Array.from({ length: skeletonCount }).map((_, index) => (
-            <ItemCardSkeleton key={index} />
+            <div key={index} className={cardClass} style={cardStyle}><ItemCardSkeleton/></div>
           ))}
         </div>
       </div>
@@ -83,14 +88,13 @@ const ItemCarousel = ({
             onTouchStart={handleTouchStart}
           >
             {items.map((item) => (
-              <div key={item.uuid} className="flex-shrink-0">
+              <div key={item.uuid} className={cardClass} style={cardStyle}>
                 <ContentItemCard
                   item={item}
                   providers={providers}
                   withSubscription={true}
                   withInteractions={true}
                   onChange={() => refreshItem(item.uuid)}
-                  limitTitleLength={true}
                 />
               </div>
             ))}

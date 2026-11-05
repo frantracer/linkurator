@@ -7,7 +7,9 @@ import React, {useEffect, useRef} from "react";
 import {Filters, isItemShown} from "../../entities/Filters";
 import FlexRow from "../atoms/FlexRow";
 import {Spinner} from "../atoms/Spinner";
-import {InfoBanner} from "../atoms/InfoBanner";
+import EmptyStateBox from "../atoms/EmptyStateBox";
+import EndOfList from "../atoms/EndOfList";
+import ItemCardSkeleton from "./ItemCardSkeleton";
 import ALink from "../atoms/ALink";
 import Miniature from "../atoms/Miniature";
 import Tag from "../atoms/Tag";
@@ -32,7 +34,19 @@ type ContentItemCardGridProps = {
   subscriptions?: Subscription[] | null;
   topics?: Topic[] | null;
   filterBar?: React.ReactNode;
+  emptyState?: React.ReactNode;
+  stripLeading?: React.ReactNode;
 }
+
+// useGridCardWidth repeats these sizes, keep both in sync
+const GRID_CLASS = "grid grid-cols-[repeat(auto-fill,minmax(min(100%,17.5rem),1fr))] gap-4 p-4";
+const SKELETON_COUNT = 8;
+
+export const ContentItemCardGridSkeleton = () => (
+  <div className={GRID_CLASS} aria-busy="true">
+    {Array.from({length: SKELETON_COUNT}).map((_, index) => <ItemCardSkeleton key={index}/>)}
+  </div>
+);
 
 const ContentItemCardGrid = (
   {
@@ -49,7 +63,9 @@ const ContentItemCardGrid = (
     withSubscription = true,
     subscriptions = null,
     topics = null,
-    filterBar = null
+    filterBar = null,
+    emptyState = null,
+    stripLeading = null,
   }: ContentItemCardGridProps
 ) => {
   const {set: invalidCards, add: addInvalidCard} = useSet<string>();
@@ -86,8 +102,8 @@ const ContentItemCardGrid = (
 
     if (shouldShowItem && !invalidCards.has(item.uuid)) {
       cards.push(
-        <div className="m-4" key={item.uuid}>
-          <ContentItemCard
+        <ContentItemCard
+            key={item.uuid}
             item={item}
             providers={providers}
             withSubscription={withSubscription}
@@ -96,19 +112,18 @@ const ContentItemCardGrid = (
             onChangeSwapButton={onChangeSwapButton}
             addInvalidCard={addInvalidCard}
           />
-        </div>
       );
     }
   }
 
   const sortedSubscriptions = subscriptions ? [...subscriptions].sort(subscriptionSorting) : [];
   const sortedTopics = topics ? [...topics].sort(topicSorting) : [];
-  const showTagsRow = sortedSubscriptions.length > 0 || sortedTopics.length > 0;
+  const showTagsRow = stripLeading !== null || sortedSubscriptions.length > 0 || sortedTopics.length > 0;
 
   return (
     <div className="flex flex-col h-full w-full bg-base-300">
       {showTagsRow &&
-          <TagsRow>
+          <TagsRow leading={stripLeading}>
             {sortedSubscriptions.map(subscription => (
               <Tag key={subscription.uuid}>
                 <ALink href={paths.SUBSCRIPTIONS + "/" + subscription.uuid}>
@@ -134,7 +149,7 @@ const ContentItemCardGrid = (
           </TagsRow>
       }
       {filterBar}
-      <div ref={containerRef} onScroll={handleGridScroll} className="flex-1 min-h-0 overflow-auto flex flex-col">
+      <div ref={containerRef} onScroll={handleGridScroll} className="flex-1 min-h-0 overflow-auto flex flex-col pb-mobile-nav">
         {isBeingScanned &&
             <div className="flex items-center justify-center h-full">
                 <FlexRow position={"center"}>
@@ -143,22 +158,23 @@ const ContentItemCardGrid = (
                 </FlexRow>
             </div>
         }
-        {!isBeingScanned &&
-            <div className="grid grid-cols-[repeat(auto-fill,minmax(320px,1fr))] gap-4
-            justify-items-center justify-content-center">
+        {!isBeingScanned && cards.length > 0 &&
+            <div className={GRID_CLASS}>
               {cards}
             </div>
         }
-        {!isBeingScanned && isLoading &&
-            <div className={"flex items-center justify-center h-full"}>
-                <Spinner/>
-                <span>{t("loading")}</span>
+        {!isBeingScanned && isLoading && cards.length === 0 && <ContentItemCardGridSkeleton/>}
+        {!isBeingScanned && isLoading && cards.length > 0 &&
+            <div className="flex flex-row items-center justify-center gap-2 py-6 text-sm text-base-content/60" role="status">
+                <span className="loading loading-spinner loading-sm"/>
+                <span>{t("loading_more")}</span>
             </div>
         }
-        {!isBeingScanned && isFinished && !isLoading &&
-            <div className={"flex items-center justify-center h-full"}>
-                <InfoBanner>{t("no_more_content")}</InfoBanner>
-            </div>
+        {!isBeingScanned && isFinished && !isLoading && cards.length === 0 &&
+          (emptyState ?? <EmptyStateBox title={t("no_content_yet_title")} message={t("no_content_yet_message")}/>)
+        }
+        {!isBeingScanned && isFinished && !isLoading && cards.length > 0 &&
+            <EndOfList text={t("all_caught_up")}/>
         }
       </div>
     </div>

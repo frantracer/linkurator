@@ -1,21 +1,21 @@
 'use client';
 
 import React, {useState} from "react";
+import EntityCardGridSkeleton from "../../../../../components/molecules/EntityCardGridSkeleton";
 import {useTranslations} from "next-intl";
 import Button from "../../../../../components/atoms/Button";
 import Collapse from "../../../../../components/atoms/Collapse";
 import {CuratorIcon, MagnifyingGlassIcon} from "../../../../../components/atoms/Icons";
 import SearchBar from "../../../../../components/molecules/SearchBar";
-import TopTitle from "../../../../../components/molecules/TopTitle";
+import PageHeader from "../../../../../components/organism/PageHeader";
 import CuratorCard from "../../../../../components/organism/CuratorCard";
-import FindCuratorModal, {FindCuratorModalId} from "../../../../../components/organism/FindCuratorModal";
+import {openSearchPalette} from "../../../../../utilities/searchPaletteAction";
 import EmptyStateNoFollowedCurators from "../../../../../components/organism/EmptyStateNoFollowedCurators";
 import EmptyStateNoMatches from "../../../../../components/organism/EmptyStateNoMatches";
 import {Curator, curatorSorting} from "../../../../../entities/Curators";
 import {useCurators} from "../../../../../hooks/useCurators";
 import useProfile from "../../../../../hooks/useProfile";
 import {followCurator, unfollowCurator} from "../../../../../services/curatorService";
-import {openModal} from "../../../../../utilities/modalAction";
 
 const CuratorsListPageComponent = () => {
   const t = useTranslations("common");
@@ -32,7 +32,7 @@ const CuratorsListPageComponent = () => {
   const followedCurators = filteredCurators.filter(curator => curator.followed).sort(curatorSorting);
   const otherCurators = filteredCurators.filter(curator => !curator.followed).sort(curatorSorting);
 
-  const openDiscoverModal = () => openModal(FindCuratorModalId);
+  const openDiscoverModal = () => openSearchPalette("curators");
 
   const handleFollow = (curator: Curator) => {
     followCurator(curator.id).then(() => refreshCurators());
@@ -77,17 +77,8 @@ const CuratorsListPageComponent = () => {
 
   return (
     <>
-      <TopTitle>
-        <div className="flex flex-row items-center h-full w-full px-4">
-          <div className="w-10 shrink-0"/>
-          <div className="flex-1 min-w-0 flex flex-row items-center justify-center gap-2">
-            <CuratorIcon/>
-            <h1 className="text-xl font-bold truncate">{t("curators")}</h1>
-          </div>
-          <div className="w-10 shrink-0"/>
-        </div>
-      </TopTitle>
-      <div className="flex flex-col h-full bg-base-300 overflow-y-auto overflow-x-hidden">
+      <PageHeader title={t("curators")} icon={<CuratorIcon/>}/>
+      <div className="flex flex-col h-full bg-base-300 overflow-y-auto overflow-x-hidden pb-mobile-nav">
         <div className="flex flex-col gap-6 p-4 max-w-7xl w-full mx-auto">
           <div className="flex flex-row gap-2 w-full items-center justify-center">
             <Button fitContent={true} clickAction={openDiscoverModal} primary={false}>
@@ -104,6 +95,8 @@ const CuratorsListPageComponent = () => {
             </div>
           </div>
 
+          {curatorsAreLoading && <EntityCardGridSkeleton/>}
+
           {!curatorsAreLoading && profile && !hasAnyCurators && (
             <EmptyStateNoFollowedCurators/>
           )}
@@ -117,7 +110,6 @@ const CuratorsListPageComponent = () => {
         </div>
       </div>
 
-      <FindCuratorModal curators={curators} refreshCurators={refreshCurators}/>
     </>
   );
 }
