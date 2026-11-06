@@ -20,12 +20,9 @@ type UseFilterBarVisibility = {
 
 // Filter bar visibility shared across every page, persisted in localStorage.
 const useFilterBarVisibility = (): UseFilterBarVisibility => {
-  const [showFilters, setShowFilters] = useState<boolean>(DEFAULT_VISIBILITY);
+  const [showFilters, setShowFilters] = useState<boolean>(readStoredVisibility);
 
-  // Read after mount so the server render and the first client render match.
   useEffect(() => {
-    setShowFilters(readStoredVisibility());
-
     const handleStorage = (event: StorageEvent) => {
       if (event.key === FILTER_BAR_VISIBILITY_KEY) {
         setShowFilters(readStoredVisibility());

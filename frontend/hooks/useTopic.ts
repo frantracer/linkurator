@@ -27,6 +27,7 @@ export function useTopic(currentTopicId: string | undefined, topics: Topic[], to
   const {data: topic = null, isLoading, isError: topicIsError} = useQuery({
     queryKey: ['topic', currentTopicId, topics],
     queryFn: () => fetchTopic(currentTopicId, topics),
+    initialData: () => topics.find((topic) => topic.uuid === currentTopicId),
     staleTime: 60000,
     retry: false,
   });

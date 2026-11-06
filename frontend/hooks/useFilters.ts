@@ -1,5 +1,5 @@
 import {useEffect, useState} from "react";
-import {areFiltersEqual, defaultFilters, Filters} from "../entities/Filters";
+import {areFiltersEqual, Filters} from "../entities/Filters";
 import useUserFilter from "./useUserFilter";
 
 type UseFilters = {
@@ -12,7 +12,7 @@ type UseFilters = {
 
 const useFilters = (): UseFilters => {
   const {userFilter, isLoading} = useUserFilter();
-  const [filters, setFilters] = useState<Filters>(defaultFilters);
+  const [filters, setFilters] = useState<Filters>(userFilter);
 
   useEffect(() => {
     if (!isLoading) {
