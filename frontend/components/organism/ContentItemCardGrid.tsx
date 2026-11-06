@@ -18,6 +18,7 @@ import {paths} from "../../configuration";
 import useSet from "../../hooks/useSet";
 import {useTranslations} from "next-intl";
 import useItemInteraction from "../../hooks/useItemInteraction";
+import {CONTENT_GRID_STYLE} from "../../utilities/contentGrid";
 
 type ContentItemCardGridProps = {
   refreshItem: (itemId: string) => void;
@@ -38,12 +39,10 @@ type ContentItemCardGridProps = {
   stripLeading?: React.ReactNode;
 }
 
-// useGridCardWidth repeats these sizes, keep both in sync
-const GRID_CLASS = "grid grid-cols-[repeat(auto-fill,minmax(min(100%,17.5rem),1fr))] gap-4 p-4";
 const SKELETON_COUNT = 8;
 
 export const ContentItemCardGridSkeleton = () => (
-  <div className={GRID_CLASS} aria-busy="true">
+  <div style={CONTENT_GRID_STYLE} aria-busy="true">
     {Array.from({length: SKELETON_COUNT}).map((_, index) => <ItemCardSkeleton key={index}/>)}
   </div>
 );
@@ -159,7 +158,7 @@ const ContentItemCardGrid = (
             </div>
         }
         {!isBeingScanned && cards.length > 0 &&
-            <div className={GRID_CLASS}>
+            <div style={CONTENT_GRID_STYLE}>
               {cards}
             </div>
         }

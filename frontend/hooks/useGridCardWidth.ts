@@ -1,13 +1,9 @@
 import {useEffect, useState} from "react";
-
-// Mirrors GRID_CLASS in ContentItemCardGrid: 17.5rem minimum columns, 1rem gaps and 1rem padding
-const GRID_CARD_MIN_WIDTH_REM = 17.5;
-const GRID_GAP_REM = 1;
-const GRID_PADDING_REM = 1;
+import {GRID_CARD_MIN_WIDTH_REM, GRID_COLUMN_GAP_REM, GRID_PADDING_REM} from "../utilities/contentGrid";
 
 const gridCardWidth = (containerWidth: number, rem: number): number => {
   const available = containerWidth - 2 * GRID_PADDING_REM * rem;
-  const gap = GRID_GAP_REM * rem;
+  const gap = GRID_COLUMN_GAP_REM * rem;
   const columns = Math.max(1, Math.floor((available + gap) / (GRID_CARD_MIN_WIDTH_REM * rem + gap)));
   return (available - (columns - 1) * gap) / columns;
 };
