@@ -1,4 +1,5 @@
-import React from "react";
+import React, {useRef} from "react";
+import useWheelScrollsHorizontally from "../../hooks/useWheelScrollsHorizontally";
 
 type TagsRowProps = {
   leading?: React.ReactNode;
@@ -7,6 +8,9 @@ type TagsRowProps = {
 
 // The leading slot stays pinned on the left while the tags scroll horizontally
 const TagsRow = ({leading, children}: TagsRowProps) => {
+  const stripRef = useRef<HTMLDivElement>(null);
+  useWheelScrollsHorizontally(stripRef);
+
   return (
     <div className="shrink-0 flex flex-row items-center bg-base-300 border-b-[1px] border-neutral">
       {leading &&
@@ -14,7 +18,7 @@ const TagsRow = ({leading, children}: TagsRowProps) => {
             {leading}
           </div>
       }
-      <div className="flex flex-row flex-nowrap items-center gap-2 p-2 overflow-x-auto scrollbar-hide min-w-0">
+      <div ref={stripRef} className="flex flex-row flex-nowrap items-center gap-2 p-2 overflow-x-auto scrollbar-hide min-w-0">
         {children}
       </div>
     </div>
