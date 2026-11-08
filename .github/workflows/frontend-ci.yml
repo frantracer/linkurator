@@ -28,6 +28,8 @@ jobs:
         run: yarn install --frozen-lockfile
       - name: Lint
         run: yarn lint
+      - name: Check package vulnerabilities
+        run: yarn run audit
       - name: Test
         run: yarn test
       - name: Install Docker

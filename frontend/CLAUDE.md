@@ -13,6 +13,7 @@ Linkurator is a Next.js web application that helps users categorize their YouTub
 - `yarn start` - Start production server
 - `yarn lint` - Run ESLint
 - `yarn test` - Run Jest tests
+- `yarn run audit` - Check dependencies for known vulnerabilities (audit-ci; allowlist in `audit-ci.jsonc`)
 - `yarn coverage` - Run tests with coverage report
 - `yarn install` - Install dependencies
 
