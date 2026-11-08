@@ -8,6 +8,7 @@ from uuid import UUID
 import logfire
 from pydantic import BaseModel, Field
 from pydantic_ai import Agent, RunContext
+from pydantic_ai.capabilities import PrepareTools
 from pydantic_ai.models import Model
 from pydantic_ai.settings import ModelSettings
 from pydantic_ai.tools import ToolDefinition
@@ -500,7 +501,7 @@ def create_content_assistant_agent(
             "items referenced in the response.\n"
             "- The response must have 1000 words maximum.\n"
         ),
-        prepare_tools=filter_tools,
+        capabilities=[PrepareTools(filter_tools)],
     )
 
     @ai_agent.system_prompt

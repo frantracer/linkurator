@@ -112,6 +112,9 @@ ruff:
 format:
 	.venv/bin/ruff check linkurator_core tests scripts --fix
 
+audit:
+	.venv/bin/pip-audit --strict
+
 test:
 	.venv/bin/coverage run -m pytest -v tests
 	.venv/bin/coverage xml
@@ -137,6 +140,9 @@ docker-test: docker-run-external-services
 docker-lint:
 	docker rm -f $(DOCKER_CONTAINER_LINTING)
 	docker run --name $(DOCKER_CONTAINER_LINTING) --pull never --network host $(DOCKER_IMAGE) make lint
+
+docker-audit:
+	docker run --rm --pull never $(DOCKER_IMAGE) make audit
 
 docker-generate-env: docker-build
 	docker compose --profile init run --rm generate-env

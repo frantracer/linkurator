@@ -23,6 +23,8 @@ jobs:
         run: make docker-build
       - name: Check linting
         run: make docker-lint
+      - name: Check package vulnerabilities
+        run: make docker-audit
       - name: Generate configuration
         run: make docker-generate-env
       - name: Run tests

@@ -21,6 +21,7 @@ make run-processor        # Start background processor
 make lint                 # MyPy + Ruff linting
 make format              # Auto-format code with Ruff
 make test                # Run tests (90% coverage required)
+make audit               # Check dependencies for known vulnerabilities (pip-audit)
 
 # Docker operations
 make docker-build
