@@ -27,13 +27,14 @@ async def test_import_follows_new_and_registered_shows() -> None:
     await user_repository.add(user)
     event_bus_service = AsyncMock(spec=EventBusService)
 
-    await ImportSpotifySubscriptionsHandler(
+    imported = await ImportSpotifySubscriptionsHandler(
         spotify_subscription_service=subscription_service,
         user_repository=user_repository,
         subscription_repository=subscription_repository,
         event_bus_service=event_bus_service,
     ).handle(user_id=user.uuid, access_token="access_token")
 
+    assert imported == 2
     updated_user = await user_repository.get(user.uuid)
     assert updated_user is not None
     assert updated_user.get_subscriptions() == {new_sub.uuid, registered_sub.uuid}
@@ -51,13 +52,14 @@ async def test_import_does_not_fail_when_fetching_the_shows_fails() -> None:
     user = mock_user()
     await user_repository.add(user)
 
-    await ImportSpotifySubscriptionsHandler(
+    imported = await ImportSpotifySubscriptionsHandler(
         spotify_subscription_service=subscription_service,
         user_repository=user_repository,
         subscription_repository=InMemorySubscriptionRepository(),
         event_bus_service=AsyncMock(spec=EventBusService),
     ).handle(user_id=user.uuid, access_token="access_token")
 
+    assert imported == 0
     updated_user = await user_repository.get(user.uuid)
     assert updated_user is not None
     assert updated_user.get_subscriptions() == set()

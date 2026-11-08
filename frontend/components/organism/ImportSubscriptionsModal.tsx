@@ -7,11 +7,12 @@ import Button from "../atoms/Button";
 import InputText, {InputType} from "../atoms/InputText";
 import {ChevronLeftIcon} from "../atoms/Icons";
 import ImportProviderTiles from "../molecules/ImportProviderTiles";
-import {paths} from "../../configuration";
+import {subscriptionsOfProviderPath} from "../../configuration";
 import {closeModal, openModal} from "../../utilities/modalAction";
 import {ImportStep, OPEN_IMPORT_MODAL_EVENT} from "../../utilities/importModalAction";
 import {importOpmlSubscriptions, requestSpotifyImport} from "../../services/subscriptionService";
 import {invalidateTopicsCache} from "../../hooks/useTopics";
+import {useToast} from "../../contexts/ToastContext";
 import {NewTopicModalId} from "./TopicEditorModal";
 
 export const ImportSubscriptionsModalId = "import-subscriptions-modal";
@@ -36,6 +37,7 @@ const ImportSubscriptionsModal = ({refreshSubscriptions}: ImportSubscriptionsMod
   const t = useTranslations("common");
   const router = useRouter();
   const queryClient = useQueryClient();
+  const {showToast} = useToast();
   const fieldId = useId();
 
   const [step, setStep] = useState<ImportStep>("choose");
@@ -88,6 +90,7 @@ const ImportSubscriptionsModal = ({refreshSubscriptions}: ImportSubscriptionsMod
           invalidateTopicsCache(queryClient);
         }
         setOpmlState({status: "success", imported: result.imported, topicsCreated: result.topicsCreated});
+        showToast(t("subscriptions_imported", {count: result.imported}));
       } else {
         setOpmlState({status: "error"});
       }
@@ -96,7 +99,7 @@ const ImportSubscriptionsModal = ({refreshSubscriptions}: ImportSubscriptionsMod
 
   const viewSubscriptions = () => {
     closeModal(ImportSubscriptionsModalId);
-    router.push(paths.SUBSCRIPTIONS);
+    router.push(subscriptionsOfProviderPath("rss"));
   };
 
   const createTopic = () => {

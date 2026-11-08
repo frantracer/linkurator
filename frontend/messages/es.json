@@ -206,6 +206,8 @@
         "import_opml_loading_hint": "Esto puede tardar un poco si tu archivo tiene muchas fuentes",
         "import_opml_success": "Se importaron {count} fuentes",
         "import_opml_success_with_topics": "Se importaron {count} fuentes y se crearon {topics} categorías",
+        "provider": "Plataforma",
+        "subscriptions_imported": "{count, plural, =0 {No se importó ninguna subscripción} one {Se importó # subscripción} other {Se importaron # subscripciones}}",
         "import_opml_error": "Ha ocurrido un error al importar el archivo OPML",
         "sync_youtube": "Importar desde YouTube",
         "sync": "Importar",

@@ -17,8 +17,13 @@ const LOGOUT_URL = `${API_BASE_URL}/logout/?redirect_uri=${encodeURI(WEB_LOGIN_U
 const LOGIN_EMAIL_URL = `${API_BASE_URL}/login_email`;
 const REGISTER_URL = `${API_BASE_URL}/register/?redirect_uri=${encodeURI(WEB_HOME_URL)}`;
 const SUBSCRIPTIONS_WEB_URL = `${WEB_BASE_URL}/subscriptions`;
-const SUBSCRIPTIONS_YOUTUBE_IMPORT_URL = `${API_BASE_URL}/subscriptions/sync/youtube?redirect_uri=${encodeURI(SUBSCRIPTIONS_WEB_URL)}`;
-const SUBSCRIPTIONS_PATREON_IMPORT_URL = `${API_BASE_URL}/subscriptions/sync/patreon?redirect_uri=${encodeURI(SUBSCRIPTIONS_WEB_URL)}`;
+const SUBSCRIPTIONS_PROVIDER_PARAM = "provider";
+const subscriptionsOfProviderPath = (provider: string): string =>
+  `/subscriptions?${SUBSCRIPTIONS_PROVIDER_PARAM}=${encodeURIComponent(provider)}`;
+const subscriptionsOfProviderWebUrl = (provider: string): string =>
+  `${WEB_BASE_URL}${subscriptionsOfProviderPath(provider)}`;
+const SUBSCRIPTIONS_YOUTUBE_IMPORT_URL = `${API_BASE_URL}/subscriptions/sync/youtube?redirect_uri=${encodeURIComponent(subscriptionsOfProviderWebUrl("youtube"))}`;
+const SUBSCRIPTIONS_PATREON_IMPORT_URL = `${API_BASE_URL}/subscriptions/sync/patreon?redirect_uri=${encodeURIComponent(subscriptionsOfProviderWebUrl("patreon"))}`;
 const SUBSCRIPTIONS_SPOTIFY_IMPORT_URL = `${API_BASE_URL}/subscriptions/sync/spotify`;
 
 const TERMS_OF_SERVICE_URL = `${WEB_BASE_URL}/tos`;
@@ -80,4 +85,4 @@ const paths = {
   REGISTER_VALIDATE: '/register/validate',
 }
 
-export { configuration, paths };
+export { configuration, paths, SUBSCRIPTIONS_PROVIDER_PARAM, subscriptionsOfProviderPath, subscriptionsOfProviderWebUrl };

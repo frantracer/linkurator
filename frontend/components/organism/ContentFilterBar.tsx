@@ -1,6 +1,5 @@
 import React, {useId} from "react";
 import {useTranslations} from "next-intl";
-import classNames from "classnames";
 import {Subscription, subscriptionSorting} from "../../entities/Subscription";
 import {getProviderIcon, Provider} from "../../entities/Provider";
 import {areFiltersEqual, durationOptions, Filters} from "../../entities/Filters";
@@ -8,11 +7,11 @@ import {
   ArchiveBoxFilledIcon,
   CheckCircleFilledIcon,
   CheckCircleIcon,
-  ChevronDownIcon,
   ThumbsDownFilledIcon,
   ThumbsUpFilledIcon
 } from "../atoms/Icons";
 import Checkbox from "../atoms/Checkbox";
+import FilterChip from "../atoms/FilterChip";
 import Dropdown from "../atoms/Dropdown";
 import NumberInput from "../atoms/NumberInput";
 import Miniature from "../atoms/Miniature";
@@ -27,21 +26,6 @@ type ContentFilterBarProps = {
   subscriptions?: Subscription[];
   providers?: Provider[];
 };
-
-type FilterChipProps = {
-  active: boolean;
-  children: React.ReactNode;
-};
-
-const FilterChip = ({active, children}: FilterChipProps) => (
-  <span className={classNames(
-    "flex flex-row items-center gap-1 whitespace-nowrap",
-    {"text-primary": active}
-  )}>
-    {children}
-    <ChevronDownIcon/>
-  </span>
-);
 
 const ContentFilterBar = (
   {

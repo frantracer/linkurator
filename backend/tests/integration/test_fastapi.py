@@ -680,6 +680,7 @@ def test_sync_spotify_allows_the_account_and_the_callback_imports_its_saved_show
     allow_handler.handle.return_value = "chosen_app"
     handlers.allow_spotify_import_handler = allow_handler
     import_handler = AsyncMock()
+    import_handler.handle.return_value = 3
     handlers.import_spotify_subscriptions_handler = import_handler
     client = TestClient(create_app_from_handlers(handlers), cookies={"token": "token"})
 
@@ -698,7 +699,7 @@ def test_sync_spotify_allows_the_account_and_the_callback_imports_its_saved_show
     response = client.get(f"/subscriptions/sync/spotify_auth?code=the_code&state={state}", follow_redirects=False)
 
     assert response.status_code == 307
-    assert response.headers["location"] == "https://linkurator.com/subs"
+    assert response.headers["location"] == "https://linkurator.com/subs?imported_subscriptions=3"
     assert spotify_user_auth_client.exchange_code_for_token.call_args.kwargs == {
         "client_id": "chosen_app", "code": "the_code",
         "redirect_uri": "http://testserver/subscriptions/sync/spotify_auth"}
@@ -1120,3 +1121,20 @@ def test_notifications_without_authentication_return_401(handlers: Handlers) -> 
     assert client.get("/notifications").status_code == 401
     assert client.get("/notifications/unread/count").status_code == 401
     assert client.post("/notifications/read").status_code == 401
+
+
+def test_sync_youtube_auth_redirects_with_the_number_of_imported_subscriptions(handlers: Handlers) -> None:
+    google_youtube_client = MagicMock()
+    google_youtube_client.validate_code = AsyncMock(return_value=MagicMock(access_token="access_token"))
+    handlers.google_youtube_client = google_youtube_client
+    update_handler = AsyncMock()
+    update_handler.handle.return_value = 5
+    handlers.update_youtube_user_subscriptions_handler = update_handler
+    client = TestClient(create_app_from_handlers(handlers),
+                        cookies={"token": "token", "redirect_uri_youtube_sync": "https://linkurator.com/subs?a=b"})
+
+    response = client.get("/subscriptions/sync/youtube_auth?code=the_code", follow_redirects=False)
+
+    assert response.status_code == 307
+    assert response.headers["location"] == "https://linkurator.com/subs?a=b&imported_subscriptions=5"
+    update_handler.handle.assert_called_once_with(user_id=USER_UUID, access_token="access_token")

@@ -21,22 +21,26 @@ class UpdateYoutubeUserSubscriptionsHandler:
         self.user_repository = user_repository
         self.event_bus_service = event_bus_service
 
-    async def handle(self, user_id: uuid.UUID, access_token: str) -> None:
+    async def handle(self, user_id: uuid.UUID, access_token: str) -> int:
+        """Return the number of YouTube subscriptions imported."""
         user = await self.user_repository.get(user_id)
         if user is None:
-            return
+            return 0
 
+        imported = 0
         try:
             subscriptions = await self.subscription_service.get_subscriptions(
                 user_id=user_id, access_token=access_token)
             updated_subscriptions = [await self._get_or_create_subscription(subscription)
                                      for subscription in subscriptions]
             user.set_youtube_subscriptions({subscription.uuid for subscription in updated_subscriptions})
+            imported = len(updated_subscriptions)
         except InvalidCredentialError:
             pass
 
         user.scanned_at = datetime.now(timezone.utc)
         await self.user_repository.update(user)
+        return imported
 
     async def _get_or_create_subscription(self, subscription: Subscription) -> Subscription:
         registered_subscription = await self.subscription_repository.find_by_url(subscription.url)

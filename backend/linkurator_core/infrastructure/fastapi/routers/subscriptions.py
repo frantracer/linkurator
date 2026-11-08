@@ -3,7 +3,7 @@ from __future__ import annotations
 import asyncio
 from datetime import datetime, timezone
 from typing import Annotated, Any, Callable, Coroutine
-from urllib.parse import urljoin
+from urllib.parse import parse_qsl, urlencode, urljoin, urlparse
 from uuid import UUID
 
 from fastapi import Depends, Form, Query, Request, Response, UploadFile, status
@@ -65,6 +65,15 @@ REDIRECT_URI_PATREON_COOKIE_NAME = "redirect_uri_patreon_sync"
 REDIRECT_URI_SPOTIFY_COOKIE_NAME = "redirect_uri_spotify_sync"
 SPOTIFY_STATE_COOKIE_NAME = "spotify_sync_state"
 SPOTIFY_AUTH_CALLBACK_PATH = "/subscriptions/sync/spotify_auth"
+IMPORTED_SUBSCRIPTIONS_QUERY_PARAM = "imported_subscriptions"
+
+
+def with_imported_subscriptions(redirect_uri: str, imported: int | None) -> str:
+    if imported is None:
+        return redirect_uri
+    parsed_uri = urlparse(redirect_uri)
+    query = [*parse_qsl(parsed_uri.query), (IMPORTED_SUBSCRIPTIONS_QUERY_PARAM, str(imported))]
+    return parsed_uri._replace(query=urlencode(query)).geturl()
 
 
 async def get_user_profile(session: Session | None, handler: GetUserProfileHandler) -> User | None:
@@ -525,15 +534,16 @@ def get_router(  # pylint: disable=too-many-statements
         if session is None:
             return RedirectResponse(url=redirect_uri or "/login")
 
+        imported: int | None = None
         if update_user_subscriptions_handler is not None and error is None and code is not None:
             tokens = await google_client.validate_code(
                 code=code,
                 redirect_uri=urljoin(str(request.base_url), "/subscriptions/sync/youtube_auth"))
             if tokens is not None and tokens.access_token is not None:
-                await update_user_subscriptions_handler.handle(
+                imported = await update_user_subscriptions_handler.handle(
                     user_id=session.user_id, access_token=tokens.access_token)
 
-        response = RedirectResponse(url=redirect_uri or "/subscriptions")
+        response = RedirectResponse(url=with_imported_subscriptions(redirect_uri or "/subscriptions", imported))
         response.delete_cookie(REDIRECT_URI_COOKIE_NAME)
         return response
 
@@ -573,16 +583,17 @@ def get_router(  # pylint: disable=too-many-statements
         if session is None:
             return RedirectResponse(url=redirect_uri or "/login")
 
+        imported: int | None = None
         if (patreon_client is not None and update_patreon_user_subscriptions_handler is not None
                 and error is None and code is not None):
             access_token = await patreon_client.exchange_code_for_tokens(
                 code=code,
                 redirect_uri=urljoin(str(request.base_url), "/subscriptions/sync/patreon_auth"))
             if access_token is not None:
-                await update_patreon_user_subscriptions_handler.handle(
+                imported = await update_patreon_user_subscriptions_handler.handle(
                     user_id=session.user_id, access_token=access_token)
 
-        response = RedirectResponse(url=redirect_uri or "/subscriptions")
+        response = RedirectResponse(url=with_imported_subscriptions(redirect_uri or "/subscriptions", imported))
         response.delete_cookie(REDIRECT_URI_PATREON_COOKIE_NAME)
         return response
 
@@ -650,6 +661,7 @@ def get_router(  # pylint: disable=too-many-statements
         if session is None:
             return RedirectResponse(url=redirect_uri or "/login")
 
+        imported: int | None = None
         if (spotify_user_auth_client is not None and import_spotify_subscriptions_handler is not None
                 and authorization_state is not None and error is None and code is not None):
             access_token = await spotify_user_auth_client.exchange_code_for_token(
@@ -657,10 +669,10 @@ def get_router(  # pylint: disable=too-many-statements
                 code=code,
                 redirect_uri=urljoin(str(request.base_url), SPOTIFY_AUTH_CALLBACK_PATH))
             if access_token is not None:
-                await import_spotify_subscriptions_handler.handle(
+                imported = await import_spotify_subscriptions_handler.handle(
                     user_id=session.user_id, access_token=access_token)
 
-        response = RedirectResponse(url=redirect_uri or "/subscriptions")
+        response = RedirectResponse(url=with_imported_subscriptions(redirect_uri or "/subscriptions", imported))
         response.delete_cookie(REDIRECT_URI_SPOTIFY_COOKIE_NAME)
         response.delete_cookie(SPOTIFY_STATE_COOKIE_NAME)
         return response

@@ -32,8 +32,9 @@ async def test_update_user_subscriptions_with_a_subscription_that_is_not_registe
                                                     user_repository=user_repository,
                                                     subscription_repository=subscription_repository,
                                                     event_bus_service=event_bus_service)
-    await handler.handle(user_id=user.uuid, access_token="access_token")
+    imported = await handler.handle(user_id=user.uuid, access_token="access_token")
 
+    assert imported == 1
     assert await subscription_repository.get(sub1.uuid) == sub1
 
     user_input = await user_repository.get(user.uuid)
@@ -84,7 +85,9 @@ async def test_update_subscriptions_for_non_existing_user_does_nothing() -> None
                                                     subscription_repository=subscription_repository,
                                                     event_bus_service=event_bus_service)
     user_id = uuid.UUID("3577da9f-2d85-4475-9aaf-5f38cd01bc2a")
-    await handler.handle(user_id=user_id, access_token="access_token")
+    imported = await handler.handle(user_id=user_id, access_token="access_token")
+
+    assert imported == 0
 
     assert subscription_service.get_subscriptions.call_count == 0
     assert user_repository.update.call_count == 0
@@ -106,8 +109,9 @@ async def test_update_subscriptions_for_user_with_invalid_refresh_token_only_upd
                                                     user_repository=user_repository,
                                                     subscription_repository=subscription_repository,
                                                     event_bus_service=event_bus_service)
-    await handler.handle(user_id=user.uuid, access_token="access_token")
+    imported = await handler.handle(user_id=user.uuid, access_token="access_token")
 
+    assert imported == 0
     assert subscription_service.get_subscriptions.call_count == 1
     assert user_repository.update.call_count == 1
     user_input: User = user_repository.update.call_args[0][0]

@@ -1,4 +1,4 @@
-import {configuration} from "../configuration";
+import {configuration, subscriptionsOfProviderWebUrl} from "../configuration";
 import axios from "axios";
 import {isBeingScanned, Subscription} from "../entities/Subscription";
 import {SubscriptionItem} from "../entities/SubscriptionItem";
@@ -230,7 +230,7 @@ export async function requestSpotifyImport(name: string, email: string): Promise
   try {
     const {data} = await axios.post<SpotifyImportAuthorizationResponse>(
       configuration.SUBSCRIPTIONS_SPOTIFY_IMPORT_URL,
-      {name: name, email: email, redirect_uri: configuration.SUBSCRIPTIONS_WEB_URL},
+      {name: name, email: email, redirect_uri: subscriptionsOfProviderWebUrl("spotify")},
       {withCredentials: true});
     return {status: "authorize", authorizationUrl: data.authorization_url};
   } catch (error: unknown) {

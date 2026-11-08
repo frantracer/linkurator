@@ -58,7 +58,9 @@ async def test_update_patreon_subscriptions_for_non_existing_user_does_nothing()
                                                     subscription_repository=subscription_repository,
                                                     event_bus_service=event_bus_service)
     user_id = uuid.UUID("3577da9f-2d85-4475-9aaf-5f38cd01bc2a")
-    await handler.handle(user_id=user_id, access_token="access_token")
+    imported = await handler.handle(user_id=user_id, access_token="access_token")
+
+    assert imported == 0
 
     assert subscription_service.get_subscriptions.call_count == 0
     assert user_repository.update.call_count == 0
@@ -83,8 +85,9 @@ async def test_update_patreon_subscriptions_with_multiple_subscriptions() -> Non
                                                     user_repository=user_repository,
                                                     subscription_repository=subscription_repository,
                                                     event_bus_service=event_bus_service)
-    await handler.handle(user_id=user.uuid, access_token="access_token")
+    imported = await handler.handle(user_id=user.uuid, access_token="access_token")
 
+    assert imported == 2
     assert await subscription_repository.get(sub1.uuid) == sub1
     assert await subscription_repository.get(sub2.uuid) == sub2
 

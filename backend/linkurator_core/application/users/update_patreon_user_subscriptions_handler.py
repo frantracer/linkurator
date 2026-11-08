@@ -22,10 +22,11 @@ class UpdatePatreonUserSubscriptionsHandler:
         self.user_repository = user_repository
         self.event_bus_service = event_bus_service
 
-    async def handle(self, user_id: uuid.UUID, access_token: str) -> None:
+    async def handle(self, user_id: uuid.UUID, access_token: str) -> int:
+        """Return the number of Patreon subscriptions imported."""
         user = await self.user_repository.get(user_id)
         if user is None:
-            return
+            return 0
 
         try:
             subscriptions = await self.subscription_service.get_subscriptions(
@@ -37,9 +38,11 @@ class UpdatePatreonUserSubscriptionsHandler:
                 user.follow_subscription(registered.uuid)
 
             await self.user_repository.update(user)
+            return len(subscriptions)
 
         except Exception as e:
             logging.exception("Failed to update Patreon subscriptions for user %s: %s", user_id, e)
+            return 0
 
     async def _get_or_create_subscription(self, subscription: Subscription) -> Subscription:
         registered_subscription = await self.subscription_repository.find_by_url(subscription.url)
