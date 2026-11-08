@@ -183,7 +183,7 @@ const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
               </>}
           />
       }
-      {(isMainDataLoading || !curator) && <div className="h-14 shrink-0 border-b border-neutral bg-base-100"/>}
+      {(isMainDataLoading || !curator) && <div className="h-16 shrink-0 border-b border-neutral bg-base-100"/>}
 
       <div className="flex flex-col flex-1 min-h-0 bg-base-300 overflow-hidden">
         <TagsRow leading={

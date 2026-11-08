@@ -189,7 +189,7 @@ const TopicPageComponent = ({topicId}: { topicId: string }) => {
               </>}
           />
       }
-      {topicIsLoading && <div className="h-14 shrink-0 border-b border-neutral bg-base-100"/>}
+      {topicIsLoading && <div className="h-16 shrink-0 border-b border-neutral bg-base-100"/>}
       <div className="flex flex-col flex-1 min-h-0 bg-base-300 overflow-auto">
         {
           topicIsError && !topicIsLoading &&
