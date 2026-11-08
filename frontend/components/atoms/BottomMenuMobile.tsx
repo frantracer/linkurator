@@ -37,7 +37,7 @@ const BottomMenuMobile = () => {
   return (
     <nav
       aria-label={t("main_navigation")}
-      className="lg:hidden fixed inset-x-3 bottom-[calc(0.75rem+env(safe-area-inset-bottom))] z-50 flex flex-row items-stretch h-16 px-1 rounded-2xl border border-neutral bg-base-100/85 backdrop-blur-md shadow-lg shadow-black/20">
+      className="lg:hidden fixed inset-x-3 bottom-[max(0.25rem,calc(env(safe-area-inset-bottom)-0.75rem))] z-50 flex flex-row items-stretch h-16 px-1 rounded-2xl border border-neutral bg-base-100/85 backdrop-blur-md shadow-lg shadow-black/20">
       <button type="button" className={tabClass(false)} aria-label={t("more")} title={t("more")}
               onClick={() => showLateralMenu(LATERAL_NAVIGATION_MENU_ID)}>
         <span className={iconClass(false)}>

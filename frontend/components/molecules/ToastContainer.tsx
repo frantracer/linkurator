@@ -35,7 +35,7 @@ export const ToastContainer = ({ toasts, onRemoveToast }: ToastContainerProps) =
 
   const container = (
     <div
-      className="fixed z-[55] flex flex-col gap-2 inset-x-3 bottom-[calc(6rem+env(safe-area-inset-bottom))] lg:inset-x-auto lg:right-4 lg:bottom-4 lg:w-96"
+      className="fixed z-[55] flex flex-col gap-2 inset-x-3 bottom-[calc(5rem+env(safe-area-inset-bottom))] lg:inset-x-auto lg:right-4 lg:bottom-4 lg:w-96"
       role="region"
       aria-live="polite">
       {toasts.map((toast) => (
