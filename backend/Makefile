@@ -42,7 +42,7 @@ install-requirements:
 
 install:
 	rm -rf .venv
-	uv venv --python=python3.13.5 .venv
+	uv venv --python=python3.13.11 .venv
 	uv pip install pip --upgrade
 	uv pip install -r requirements.txt
 	@echo
