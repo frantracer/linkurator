@@ -111,9 +111,8 @@ const ChatPageComponent = ({conversationId}: { conversationId: string }) => {
     const handedOverScope = consumeChatScope(conversationId);
     if (handedOverScope) {
       updateDraft(handedOverScope, filtersFromScope(handedOverScope, defaultFilters));
-      setInputMessage(t('chat_scope_prefill'));
     }
-  }, [conversationId, t, updateDraft]);
+  }, [conversationId, updateDraft]);
 
   useEffect(() => {
     if (draftInitializedRef.current) return;
