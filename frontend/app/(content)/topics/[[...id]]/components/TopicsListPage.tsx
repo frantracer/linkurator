@@ -1,24 +1,18 @@
 'use client';
 
 import React, {useState} from "react";
-import EntityCardGridSkeleton from "../../../../../components/molecules/EntityCardGridSkeleton";
 import {useTranslations} from "next-intl";
-import Button from "../../../../../components/atoms/Button";
-import Collapse from "../../../../../components/atoms/Collapse";
-import {AddIcon, MagnifyingGlassIcon, RectangleGroup, StarIcon} from "../../../../../components/atoms/Icons";
-import SearchBar from "../../../../../components/molecules/SearchBar";
-import PageHeader from "../../../../../components/organism/PageHeader";
+import {AddIcon, RectangleGroup, StarIcon} from "../../../../../components/atoms/Icons";
 import ConfirmDialog from "../../../../../components/organism/ConfirmDialog";
-import TopicEditorModal, {EditTopicModalId} from "../../../../../components/organism/TopicEditorModal";
-import EmptyStateNoMatches from "../../../../../components/organism/EmptyStateNoMatches";
 import EmptyStateNoTopics from "../../../../../components/organism/EmptyStateNoTopics";
-import {openSearchPalette} from "../../../../../utilities/searchPaletteAction";
-import {NewTopicModalId} from "../../../../../components/organism/TopicEditorModal";
+import EntityListLayout, {EntityListFacet, EntityListSection} from "../../../../../components/organism/EntityListLayout";
 import TopicCard from "../../../../../components/organism/TopicCard";
+import TopicEditorModal, {EditTopicModalId, NewTopicModalId} from "../../../../../components/organism/TopicEditorModal";
 import {Topic} from "../../../../../entities/Topic";
 import {useFavoriteTopics} from "../../../../../hooks/useFavoriteTopics";
 import useProfile from "../../../../../hooks/useProfile";
 import useProviders from "../../../../../hooks/useProviders";
+import useSearchParam from "../../../../../hooks/useSearchParam";
 import useSubscriptions from "../../../../../hooks/useSubscriptions";
 import {useTopics} from "../../../../../hooks/useTopics";
 import {deleteTopic, followTopic, unfollowTopic} from "../../../../../services/topicService";
@@ -27,6 +21,30 @@ import {flushSync} from "react-dom";
 import {useToast} from "../../../../../contexts/ToastContext";
 
 const DeleteTopicDialogId = "delete-topic-dialog";
+const TOPICS_FACET_PARAM = "show";
+
+type TopicsFacet = "favorites" | "mine" | "following";
+
+const TOPICS_FACETS: TopicsFacet[] = ["favorites", "mine", "following"];
+
+const parseTopicsFacet = (value: string | null): TopicsFacet | null => {
+  if (value === "favorites" || value === "mine" || value === "following") {
+    return value;
+  }
+  return null;
+}
+
+// Every topic belongs to exactly one facet, so the facet counts add up to the total
+const belongsToFacet = (topic: Topic, facet: TopicsFacet): boolean => {
+  switch (facet) {
+    case "favorites":
+      return topic.is_favorite;
+    case "mine":
+      return topic.is_owner && !topic.is_favorite;
+    case "following":
+      return !topic.is_owner && !topic.is_favorite;
+  }
+}
 
 const TopicsListPageComponent = () => {
   const t = useTranslations("common");
@@ -35,20 +53,13 @@ const TopicsListPageComponent = () => {
   const {subscriptions, refreshSubscriptions} = useSubscriptions(profile);
   const {providers} = useProviders();
   const {toggleFavorite} = useFavoriteTopics();
+  const {value: facetParam, setValue: setFacetParam} = useSearchParam(TOPICS_FACET_PARAM);
   const [editingTopic, setEditingTopic] = useState<Topic | null>(null);
   const [deletingTopic, setDeletingTopic] = useState<Topic | null>(null);
   const [filterText, setFilterText] = useState("");
-  const [openSections, setOpenSections] = useState<Record<string, boolean>>({});
   const {showToast} = useToast();
 
-  const normalizedFilter = filterText.trim().toLowerCase();
-  const filteredTopics = normalizedFilter === ""
-    ? topics
-    : topics.filter(topic => topic.name.toLowerCase().includes(normalizedFilter));
-
-  const favoriteTopics = filteredTopics.filter(topic => topic.is_favorite);
-  const myTopics = filteredTopics.filter(topic => topic.is_owner && !topic.is_favorite);
-  const otherTopics = filteredTopics.filter(topic => !topic.is_owner && !topic.is_favorite);
+  const selectedFacet = parseTopicsFacet(facetParam);
 
   const handleToggleFavorite = (topic: Topic) => {
     toggleFavorite(topic.uuid, topic.is_favorite);
@@ -83,85 +94,62 @@ const TopicsListPageComponent = () => {
     }
   }
 
-  const openDiscoverModal = () => openSearchPalette("topics");
-  const openNewModal = () => openModal(NewTopicModalId);
+  const renderCard = (topic: Topic) => (
+    <TopicCard
+      key={topic.uuid}
+      topic={topic}
+      onToggleFavorite={handleToggleFavorite}
+      onEdit={topic.is_owner ? handleEditTopic : undefined}
+      onDelete={topic.is_owner ? handleDeleteTopic : undefined}
+      onFollow={!topic.is_owner ? handleFollowTopic : undefined}
+      onUnfollow={!topic.is_owner ? handleUnfollowTopic : undefined}
+    />
+  );
 
-  const renderSection = (key: string, title: string, icon: React.ReactNode, sectionTopics: Topic[]) => {
-    if (sectionTopics.length === 0) return null;
-    return (
-      <Collapse
-        isOpen={openSections[key] ?? true}
-        onToggle={(isOpen) => setOpenSections(prev => ({...prev, [key]: isOpen}))}
-        title={
-          <div className="flex flex-row gap-2 items-center">
-            {icon}
-            <h2 className="text-xl">{title} ({sectionTopics.length})</h2>
-          </div>
-        }
-        content={
-          <div className="grid grid-cols-[repeat(auto-fill,minmax(275px,1fr))] gap-4 justify-items-center justify-content-center">
-            {sectionTopics.map(topic => (
-              <TopicCard
-                key={topic.uuid}
-                topic={topic}
-                onToggleFavorite={handleToggleFavorite}
-                onEdit={topic.is_owner ? handleEditTopic : undefined}
-                onDelete={topic.is_owner ? handleDeleteTopic : undefined}
-                onFollow={!topic.is_owner ? handleFollowTopic : undefined}
-                onUnfollow={!topic.is_owner ? handleUnfollowTopic : undefined}
-              />
-            ))}
-          </div>
-        }
-      />
-    );
-  }
+  const normalizedFilter = filterText.trim().toLowerCase();
+  const filteredTopics = normalizedFilter === ""
+    ? topics
+    : topics.filter(topic => topic.name.toLowerCase().includes(normalizedFilter));
 
-  const hasAnyTopics = topics.length > 0;
-  const hasFilter = filterText.trim() !== "";
-  const hasNoMatches = hasAnyTopics && hasFilter && filteredTopics.length === 0;
+  const facetDetails: Record<TopicsFacet, { title: string, icon: React.ReactNode }> = {
+    favorites: {title: t("favorites"), icon: <StarIcon/>},
+    mine: {title: t("my_topics"), icon: <RectangleGroup/>},
+    following: {title: t("following"), icon: <RectangleGroup/>},
+  };
+
+  const sections: EntityListSection[] = TOPICS_FACETS
+    .filter(facet => selectedFacet === null || facet === selectedFacet)
+    .map(facet => ({
+      key: facet,
+      title: facetDetails[facet].title,
+      icon: facetDetails[facet].icon,
+      items: filteredTopics.filter(topic => belongsToFacet(topic, facet)).map(renderCard),
+    }));
+
+  const facetOptions: EntityListFacet[] = TOPICS_FACETS.map(facet => ({
+    key: facet,
+    label: facetDetails[facet].title,
+    icon: facet === "favorites" ? facetDetails[facet].icon : undefined,
+    count: topics.filter(topic => belongsToFacet(topic, facet)).length,
+  }));
 
   return (
     <>
-      <PageHeader title={t("topics")} icon={<RectangleGroup/>}/>
-      <div className="flex flex-col h-full bg-base-300 overflow-y-auto overflow-x-hidden pb-mobile-nav">
-        <div className="flex flex-col gap-6 p-4 max-w-7xl w-full mx-auto">
-          <div className="flex flex-row gap-2 w-full items-center justify-center">
-            <Button fitContent={true} clickAction={openDiscoverModal} primary={false}>
-              <MagnifyingGlassIcon/>
-              {t("discover")}
-            </Button>
-            <div className="w-full max-w-sm">
-              <SearchBar
-                placeholder={t("filter_topics_placeholder")}
-                value={filterText}
-                handleChange={setFilterText}
-                icon="filter"
-              />
-            </div>
-            {profile && (
-              <Button fitContent={true} clickAction={openNewModal} primary={false}>
-                <AddIcon/>
-                {t("create")}
-              </Button>
-            )}
-          </div>
-
-          {topicsAreLoading && <EntityCardGridSkeleton/>}
-
-          {!topicsAreLoading && profile && !hasAnyTopics && (
-            <EmptyStateNoTopics/>
-          )}
-
-          {!topicsAreLoading && hasNoMatches && (
-            <EmptyStateNoMatches/>
-          )}
-
-          {renderSection("favorites", t("favorites"), <StarIcon/>, favoriteTopics)}
-          {renderSection("my_topics", t("my_topics"), <RectangleGroup/>, myTopics)}
-          {renderSection("other_topics", t("other_topics"), <RectangleGroup/>, otherTopics)}
-        </div>
-      </div>
+      <EntityListLayout
+        title={t("topics")}
+        icon={<RectangleGroup/>}
+        subtitle={t("topics_count", {count: topics.length})}
+        discoverFilter="topics"
+        mainAction={profile ? {label: t("create"), icon: <AddIcon/>, onClick: () => openModal(NewTopicModalId)} : undefined}
+        filterPlaceholder={t("filter_topics_placeholder")}
+        filterText={filterText}
+        onFilterTextChange={setFilterText}
+        facets={{options: facetOptions, selected: selectedFacet, onSelect: setFacetParam}}
+        totalCount={topics.length}
+        isLoading={topicsAreLoading}
+        emptyState={profile ? <EmptyStateNoTopics/> : null}
+        sections={sections}
+      />
 
       {editingTopic && (
         <TopicEditorModal

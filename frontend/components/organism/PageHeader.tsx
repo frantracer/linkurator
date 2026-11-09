@@ -1,4 +1,5 @@
 import React from "react";
+import classNames from "classnames";
 import useProfile from "../../hooks/useProfile";
 import NotificationsDropdown from "./NotificationsDropdown";
 
@@ -9,15 +10,21 @@ type PageHeaderProps = {
   subtitle?: React.ReactNode;
   actions?: React.ReactNode;
   showNotifications?: boolean;
+  reserveScrollbarSpace?: boolean;
 }
 
-const PageHeader = ({title, icon, media, subtitle, actions, showNotifications = false}: PageHeaderProps) => {
+const PageHeader = (
+  {title, icon, media, subtitle, actions, showNotifications = false, reserveScrollbarSpace = false}: PageHeaderProps
+) => {
   const {profile} = useProfile();
   const showBell = showNotifications && !!profile;
 
   return (
-    <header className="sticky top-0 z-10 shrink-0 flex flex-row items-center gap-3 px-4 h-16
-      bg-base-100 text-base-content border-b border-neutral">
+    <header className={classNames(`sticky top-0 z-10 shrink-0 flex flex-row items-center gap-3 px-4 h-16
+      bg-base-100 text-base-content border-b border-neutral`, {
+      // Keeps the actions in line with a scrolling list below, while the background still reaches the edge
+      "overflow-hidden [scrollbar-gutter:stable]": reserveScrollbarSpace,
+    })}>
       {media && <div className="shrink-0">{media}</div>}
       <div className="flex flex-col flex-1 min-w-0">
         <h1 className="flex flex-row items-center gap-2 text-xl font-semibold leading-tight min-w-0">

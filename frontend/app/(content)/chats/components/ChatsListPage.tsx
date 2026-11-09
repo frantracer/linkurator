@@ -9,6 +9,7 @@ import {v4 as uuidv4} from 'uuid';
 import Button from "../../../../components/atoms/Button";
 import {Spinner} from "../../../../components/atoms/Spinner";
 import {AddIcon, ChatBubbleIcon} from "../../../../components/atoms/Icons";
+import PageFilterBar from "../../../../components/molecules/PageFilterBar";
 import SearchBar from "../../../../components/molecules/SearchBar";
 import PageHeader from "../../../../components/organism/PageHeader";
 import EmptyStateNoMatches from "../../../../components/organism/EmptyStateNoMatches";
@@ -24,6 +25,8 @@ const ChatsListPageComponent = () => {
   const [filterText, setFilterText] = useState("");
   const debouncedFilter = useDebounce(filterText.trim(), 300);
   const {conversations, isLoading, isFinished, fetchMoreConversations} = useChatConversations(debouncedFilter);
+  // The unfiltered list is the same cached query the page shows without a filter, so it costs no extra request
+  const {conversations: allConversations, isFinished: allConversationsLoaded} = useChatConversations();
   const containerRef = useRef<HTMLDivElement>(null);
 
   const handleContainerScroll = (event: React.UIEvent<HTMLDivElement>) => {
@@ -57,30 +60,43 @@ const ChatsListPageComponent = () => {
   }
 
   const hasAnyConversations = conversations.length > 0;
+
+  // Chats load a page at a time, so until the last page arrives the count is only a lower bound
+  const chatsCountSubtitle = allConversations.length === 0
+    ? undefined
+    : allConversationsLoaded
+      ? t("chats_count", {count: allConversations.length})
+      : t("chats_count_lower_bound", {count: allConversations.length});
   const isFiltering = debouncedFilter !== "";
 
   return (
     <>
-      <PageHeader title={t("chats")} icon={<ChatBubbleIcon/>}/>
+      <PageHeader
+        title={t("chats")}
+        icon={<ChatBubbleIcon/>}
+        subtitle={chatsCountSubtitle}
+        reserveScrollbarSpace={true}
+        actions={
+          <Button clickAction={goToNewChat} tooltip={t("new_chat")}>
+            <AddIcon/>
+            <span className="hidden sm:inline">{t("new_chat")}</span>
+          </Button>
+        }
+      />
+      <PageFilterBar width="narrow">
+        <SearchBar
+          placeholder={t("filter_chats_placeholder")}
+          value={filterText}
+          handleChange={setFilterText}
+          icon="filter"
+        />
+      </PageFilterBar>
       <div
         ref={containerRef}
         onScroll={handleContainerScroll}
-        className="flex flex-col h-full bg-base-300 overflow-y-auto overflow-x-hidden pb-mobile-nav"
+        className="flex flex-col flex-1 min-h-0 bg-base-300 overflow-y-auto overflow-x-hidden [scrollbar-gutter:stable] pb-mobile-nav"
       >
         <div className="flex flex-col gap-6 p-4 max-w-2xl w-full mx-auto">
-          <div className="flex flex-row gap-2 w-full items-center">
-            <Button fitContent={true} clickAction={goToNewChat} primary={false}>
-              <AddIcon/>
-              {t("new_chat")}
-            </Button>
-            <SearchBar
-              placeholder={t("filter_chats_placeholder")}
-              value={filterText}
-              handleChange={setFilterText}
-              icon="filter"
-            />
-          </div>
-
           {!isLoading && !hasAnyConversations && !isFiltering && (
             <EmptyStateBox icon={<ChatBubbleIcon/>} title={t("no_conversations_yet")} message={t("start_conversation")}/>
           )}
