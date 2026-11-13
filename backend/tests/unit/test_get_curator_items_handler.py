@@ -131,3 +131,49 @@ async def test_get_curator_items_returns_no_curator_interactions_if_no_user() ->
     assert response[0].item.uuid == item.uuid
     assert len(response[0].interactions) == 0
     assert len(response[0].curator_interactions) == 0
+
+
+@pytest.mark.asyncio()
+async def test_get_curator_items_filters_by_user_interactions() -> None:
+    curator = mock_user()
+    user = mock_user()
+    sub = mock_sub()
+    viewed_item = mock_item(sub_uuid=sub.uuid)
+    untouched_item = mock_item(sub_uuid=sub.uuid)
+
+    item_repo = InMemoryItemRepository()
+    await item_repo.upsert_items([viewed_item, untouched_item])
+    await item_repo.add_interaction(mock_interaction(user_id=curator.uuid, item_id=viewed_item.uuid,
+                                                     interaction_type=InteractionType.RECOMMENDED))
+    await item_repo.add_interaction(mock_interaction(user_id=curator.uuid, item_id=untouched_item.uuid,
+                                                     interaction_type=InteractionType.RECOMMENDED))
+    await item_repo.add_interaction(mock_interaction(user_id=user.uuid, item_id=viewed_item.uuid,
+                                                     interaction_type=InteractionType.VIEWED))
+
+    sub_repo = InMemorySubscriptionRepository()
+    await sub_repo.add(sub)
+
+    user_repo = InMemoryUserRepository()
+    await user_repo.add(user)
+    await user_repo.add(curator)
+
+    handler = GetCuratorItemsHandler(
+        item_repository=item_repo,
+        subscription_repository=sub_repo,
+        user_repository=user_repo,
+    )
+
+    response = await handler.handle(
+        created_before=datetime.now(tz=timezone.utc),
+        page_number=0,
+        page_size=10,
+        user_id=user.uuid,
+        curator_id=curator.uuid,
+        include_items_without_interactions=False,
+        include_recommended_items=False,
+        include_discouraged_items=False,
+        include_viewed_items=True,
+        include_hidden_items=False,
+    )
+
+    assert [item.item.uuid for item in response] == [viewed_item.uuid]

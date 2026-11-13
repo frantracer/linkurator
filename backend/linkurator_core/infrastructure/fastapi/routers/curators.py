@@ -2,10 +2,10 @@ from __future__ import annotations
 
 import asyncio
 from datetime import datetime, timezone
-from typing import Any, Callable, Coroutine
+from typing import Annotated, Any, Callable, Coroutine
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, Request, status
+from fastapi import APIRouter, Depends, Query, Request, status
 from pydantic import NonNegativeInt, PositiveInt
 
 from linkurator_core.application.items.get_curator_items_handler import GetCuratorItemsHandler
@@ -23,7 +23,7 @@ from linkurator_core.domain.users.user import User, Username
 from linkurator_core.infrastructure.fastapi.models import default_responses
 from linkurator_core.infrastructure.fastapi.models.curator import CuratorSchema
 from linkurator_core.infrastructure.fastapi.models.default_responses import EmptyResponse
-from linkurator_core.infrastructure.fastapi.models.item import ItemSchema
+from linkurator_core.infrastructure.fastapi.models.item import VALID_INTERACTIONS, InteractionFilterSchema, ItemSchema
 from linkurator_core.infrastructure.fastapi.models.page import FullPage, Page
 from linkurator_core.infrastructure.fastapi.models.subscription import SubscriptionSchema
 from linkurator_core.infrastructure.fastapi.models.topic import TopicSchema
@@ -261,10 +261,23 @@ def get_router(
         search: str | None = None,
         min_duration: int | None = None,
         max_duration: int | None = None,
+        include_interactions: Annotated[str | None, Query(
+            description=f"Comma separated values. Valid values: {VALID_INTERACTIONS}")] = None,
         session: Session | None = Depends(get_session),
     ) -> Page[ItemSchema]:
         if created_before_ts is None:
             created_before_ts = datetime.now(tz=timezone.utc).timestamp()
+
+        try:
+            interactions = None
+            if include_interactions is not None:
+                interactions = [InteractionFilterSchema(interaction) for interaction in include_interactions.split(",")]
+        except ValueError as error:
+            msg = "Invalid interaction filter"
+            raise default_responses.bad_request(msg) from error
+
+        def _include_interaction(interaction: InteractionFilterSchema) -> bool:
+            return interactions is None or interaction in interactions
 
         response = await get_curator_items_handler.handle(
             user_id=session.user_id if session is not None else None,
@@ -275,6 +288,11 @@ def get_router(
             text_filter=search,
             min_duration=min_duration,
             max_duration=max_duration,
+            include_items_without_interactions=_include_interaction(InteractionFilterSchema.WITHOUT_INTERACTIONS),
+            include_recommended_items=_include_interaction(InteractionFilterSchema.RECOMMENDED),
+            include_discouraged_items=_include_interaction(InteractionFilterSchema.DISCOURAGED),
+            include_viewed_items=_include_interaction(InteractionFilterSchema.VIEWED),
+            include_hidden_items=_include_interaction(InteractionFilterSchema.HIDDEN),
         )
 
         current_url = request.url.include_query_params(

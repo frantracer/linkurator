@@ -11,6 +11,7 @@ from linkurator_core.domain.items.item import Item, ItemProvider
 from linkurator_core.domain.items.item_creation_cursor import ItemCreationCursor
 from linkurator_core.domain.items.item_embedding import ItemEmbedding
 from linkurator_core.domain.items.item_repository import (
+    AnyItemInteraction,
     InteractionFilterCriteria,
     ItemFilterCriteria,
     ItemRepository,
@@ -106,28 +107,29 @@ class InMemoryItemRepository(ItemRepository):
                 if criteria.max_duration is not None and item.duration > criteria.max_duration:
                     continue
 
-            if criteria.interactions_from_user is not None:
-                is_filtered = True
-                interactions = await self.get_user_interactions_by_item_id(criteria.interactions_from_user, [item.uuid])
-                interactions_types = [interaction.type for interaction in interactions[item.uuid]]
-                if criteria.interactions.without_interactions and len(interactions[item.uuid]) == 0:
-                    is_filtered = False
-                if criteria.interactions.hidden and InteractionType.HIDDEN in interactions_types:
-                    is_filtered = False
-                if criteria.interactions.viewed and InteractionType.VIEWED in interactions_types:
-                    is_filtered = False
-                if criteria.interactions.recommended and InteractionType.RECOMMENDED in interactions_types:
-                    is_filtered = False
-                if criteria.interactions.discouraged and InteractionType.DISCOURAGED in interactions_types:
-                    is_filtered = False
-
-                if is_filtered:
-                    continue
+            if not await self._matches_user_interactions(
+                    item.uuid, criteria.interactions_from_user, criteria.interactions):
+                continue
 
             found_items.append(item)
 
         sorted_items = sorted(found_items, key=lambda found_item: found_item.published_at, reverse=True)
         return sorted_items[page_number * limit: (page_number + 1) * limit]
+
+    async def _matches_user_interactions(
+            self, item_id: UUID, user_id: UUID | None, interactions: AnyItemInteraction,
+    ) -> bool:
+        if user_id is None:
+            return True
+        user_interactions = (await self.get_user_interactions_by_item_id(user_id, [item_id]))[item_id]
+        interactions_types = [interaction.type for interaction in user_interactions]
+        return bool(
+            (interactions.without_interactions and len(user_interactions) == 0)
+            or (interactions.hidden and InteractionType.HIDDEN in interactions_types)
+            or (interactions.viewed and InteractionType.VIEWED in interactions_types)
+            or (interactions.recommended and InteractionType.RECOMMENDED in interactions_types)
+            or (interactions.discouraged and InteractionType.DISCOURAGED in interactions_types),
+        )
 
     async def delete_all_items(self) -> None:
         self.items.clear()
@@ -166,6 +168,9 @@ class InMemoryItemRepository(ItemRepository):
             if criteria.interaction_types is not None and interaction.type not in criteria.interaction_types:
                 continue
             if criteria.created_before and criteria.created_before <= interaction.created_at:
+                continue
+            if not await self._matches_user_interactions(
+                    interaction.item_uuid, criteria.interactions_from_user, criteria.interactions):
                 continue
 
             item = self.items.get(interaction.item_uuid)

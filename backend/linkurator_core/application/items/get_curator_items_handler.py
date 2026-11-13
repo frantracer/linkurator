@@ -5,7 +5,12 @@ from datetime import datetime
 from uuid import UUID
 
 from linkurator_core.domain.items.interaction import Interaction, InteractionType
-from linkurator_core.domain.items.item_repository import InteractionFilterCriteria, ItemFilterCriteria, ItemRepository
+from linkurator_core.domain.items.item_repository import (
+    AnyItemInteraction,
+    InteractionFilterCriteria,
+    ItemFilterCriteria,
+    ItemRepository,
+)
 from linkurator_core.domain.items.item_with_interactions import CuratorInteractions, ItemWithInteractions
 from linkurator_core.domain.subscriptions.subscription_repository import SubscriptionRepository
 from linkurator_core.domain.users.user_repository import UserRepository
@@ -32,6 +37,11 @@ class GetCuratorItemsHandler:
             text_filter: str | None = None,
             min_duration: int | None = None,
             max_duration: int | None = None,
+            include_items_without_interactions: bool = True,
+            include_recommended_items: bool = True,
+            include_discouraged_items: bool = True,
+            include_viewed_items: bool = True,
+            include_hidden_items: bool = True,
     ) -> list[ItemWithInteractions]:
         curator_items_interactions = await self.item_repository.find_interactions(
             criteria=InteractionFilterCriteria(
@@ -41,6 +51,14 @@ class GetCuratorItemsHandler:
                 text=text_filter,
                 min_duration=min_duration,
                 max_duration=max_duration,
+                interactions_from_user=user_id,
+                interactions=AnyItemInteraction(
+                    without_interactions=include_items_without_interactions,
+                    recommended=include_recommended_items,
+                    discouraged=include_discouraged_items,
+                    viewed=include_viewed_items,
+                    hidden=include_hidden_items,
+                ),
             ),
             page_number=page_number,
             limit=page_size,

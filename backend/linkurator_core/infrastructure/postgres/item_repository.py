@@ -13,6 +13,7 @@ from linkurator_core.domain.items.item import Item, ItemProvider
 from linkurator_core.domain.items.item_creation_cursor import ItemCreationCursor
 from linkurator_core.domain.items.item_embedding import ItemEmbedding
 from linkurator_core.domain.items.item_repository import (
+    AnyItemInteraction,
     InteractionFilterCriteria,
     ItemFilterCriteria,
     ItemRepository,
@@ -125,26 +126,27 @@ def _build_duration_condition(
     return None
 
 
-def _build_interaction_condition(criteria: ItemFilterCriteria) -> SqlFragment | None:
-    if criteria.interactions_from_user is None:
+def _build_interaction_condition(
+        user_id: UUID | None, interactions: AnyItemInteraction, item_column: str,
+) -> SqlFragment | None:
+    if user_id is None:
         return None
-    user_id = criteria.interactions_from_user
     or_fragments: list[SqlFragment] = []
-    if criteria.interactions.without_interactions:
+    if interactions.without_interactions:
         or_fragments.append(SqlFragment(
-            "NOT EXISTS (SELECT 1 FROM interactions ix WHERE ix.item_uuid = items.uuid "
+            f"NOT EXISTS (SELECT 1 FROM interactions ix WHERE ix.item_uuid = {item_column} "  # noqa: S608
             "AND ix.user_uuid = %s)",
             (user_id,),
         ))
     for flag, interaction_type in (
-        (criteria.interactions.recommended, InteractionType.RECOMMENDED),
-        (criteria.interactions.discouraged, InteractionType.DISCOURAGED),
-        (criteria.interactions.viewed, InteractionType.VIEWED),
-        (criteria.interactions.hidden, InteractionType.HIDDEN),
+        (interactions.recommended, InteractionType.RECOMMENDED),
+        (interactions.discouraged, InteractionType.DISCOURAGED),
+        (interactions.viewed, InteractionType.VIEWED),
+        (interactions.hidden, InteractionType.HIDDEN),
     ):
         if flag:
             or_fragments.append(SqlFragment(
-                "EXISTS (SELECT 1 FROM interactions ix WHERE ix.item_uuid = items.uuid "
+                f"EXISTS (SELECT 1 FROM interactions ix WHERE ix.item_uuid = {item_column} "  # noqa: S608
                 "AND ix.user_uuid = %s AND ix.type = %s)",
                 (user_id, interaction_type.value),
             ))
@@ -257,7 +259,9 @@ class PostgresItemRepository(ItemRepository):  # noqa: PLR0904
     async def find_items(self, criteria: ItemFilterCriteria, page_number: int, limit: int) -> list[Item]:
         pool = await self._connector.pool()
         fragments = _build_item_conditions(criteria)
-        interaction_fragment = _build_interaction_condition(criteria)
+        interaction_fragment = _build_interaction_condition(
+            criteria.interactions_from_user, criteria.interactions, "items.uuid",
+        )
         if interaction_fragment is not None:
             fragments = [*fragments, interaction_fragment]
 
@@ -322,6 +326,11 @@ class PostgresItemRepository(ItemRepository):  # noqa: PLR0904
             fragments.append(SqlFragment("i.type = ANY(%s::text[])", (types,)))
         if criteria.created_before is not None:
             fragments.append(_comparison("i.created_at", "<", criteria.created_before))
+        interaction_fragment = _build_interaction_condition(
+            criteria.interactions_from_user, criteria.interactions, "i.item_uuid",
+        )
+        if interaction_fragment is not None:
+            fragments.append(interaction_fragment)
 
         join_clause = ""
         if any(value is not None for value in (criteria.text, criteria.min_duration, criteria.max_duration)):

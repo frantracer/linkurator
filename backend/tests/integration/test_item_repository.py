@@ -6,7 +6,7 @@ from uuid import UUID, uuid4
 import pytest
 
 from linkurator_core.domain.common import utils
-from linkurator_core.domain.common.mock_factory import mock_item, mock_user
+from linkurator_core.domain.common.mock_factory import mock_interaction, mock_item, mock_user
 from linkurator_core.domain.items.interaction import Interaction, InteractionType
 from linkurator_core.domain.items.item import Item
 from linkurator_core.domain.items.item_repository import (
@@ -1159,6 +1159,51 @@ async def test_find_interactions(item_repo: ItemRepository) -> None:
     assert len(found_interactions) == 2
     assert interaction1 in found_interactions
     assert interaction2 in found_interactions
+
+
+@pytest.mark.asyncio()
+async def test_find_interactions_filtered_by_interactions_of_another_user(item_repo: ItemRepository) -> None:
+    await item_repo.delete_all_items()
+    await item_repo.delete_all_interactions()
+
+    curator = mock_user()
+    user = mock_user()
+    viewed_item = mock_item()
+    untouched_item = mock_item()
+    await item_repo.upsert_items([viewed_item, untouched_item])
+
+    viewed_item_recommendation = mock_interaction(
+        user_id=curator.uuid, item_id=viewed_item.uuid, interaction_type=InteractionType.RECOMMENDED)
+    untouched_item_recommendation = mock_interaction(
+        user_id=curator.uuid, item_id=untouched_item.uuid, interaction_type=InteractionType.RECOMMENDED)
+    await item_repo.add_interaction(viewed_item_recommendation)
+    await item_repo.add_interaction(untouched_item_recommendation)
+    await item_repo.add_interaction(mock_interaction(
+        user_id=user.uuid, item_id=viewed_item.uuid, interaction_type=InteractionType.VIEWED))
+
+    viewed_by_user = await item_repo.find_interactions(
+        criteria=InteractionFilterCriteria(
+            user_ids=[curator.uuid],
+            interaction_types=[InteractionType.RECOMMENDED],
+            interactions_from_user=user.uuid,
+            interactions=AnyItemInteraction(viewed=True),
+        ),
+        page_number=0,
+        limit=10,
+    )
+    assert viewed_by_user == [viewed_item_recommendation]
+
+    not_seen_by_user = await item_repo.find_interactions(
+        criteria=InteractionFilterCriteria(
+            user_ids=[curator.uuid],
+            interaction_types=[InteractionType.RECOMMENDED],
+            interactions_from_user=user.uuid,
+            interactions=AnyItemInteraction(without_interactions=True),
+        ),
+        page_number=0,
+        limit=10,
+    )
+    assert not_seen_by_user == [untouched_item_recommendation]
 
 
 @pytest.mark.asyncio()

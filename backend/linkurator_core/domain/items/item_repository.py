@@ -49,6 +49,8 @@ class InteractionFilterCriteria:
     text: str | None = None
     min_duration: int | None = None
     max_duration: int | None = None
+    interactions_from_user: UUID | None = None
+    interactions: AnyItemInteraction = field(default_factory=AnyItemInteraction)
 
 
 @dataclass
