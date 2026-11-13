@@ -1,13 +1,17 @@
 import React from "react";
-import EntityCardGridSkeleton from "../molecules/EntityCardGridSkeleton";
 import {Topic} from "../../entities/Topic";
 import {useTranslations} from "next-intl";
+import EntityList from "./EntityList";
 import TopicCard from "./TopicCard";
 import {useFavoriteTopics} from "../../hooks/useFavoriteTopics";
+import useTopicListGroups from "../../hooks/useTopicListGroups";
 import {followTopic, unfollowTopic} from "../../services/topicService";
 
 type CuratorTopicsListProps = {
   topics: Topic[];
+  showFilterBar: boolean;
+  filterText: string;
+  onFilterTextChange: (value: string) => void;
   isUserLoggedIn: boolean;
   isLoading: boolean;
   refreshTopics: () => void;
@@ -16,6 +20,9 @@ type CuratorTopicsListProps = {
 const CuratorTopicsList = (
   {
     topics,
+    showFilterBar,
+    filterText,
+    onFilterTextChange,
     isUserLoggedIn,
     isLoading,
     refreshTopics,
@@ -36,26 +43,30 @@ const CuratorTopicsList = (
     unfollowTopic(topic.uuid).then(() => refreshTopics());
   }
 
+  const renderCard = (topic: Topic) => (
+    <TopicCard
+      key={topic.uuid}
+      topic={topic}
+      onToggleFavorite={handleToggleFavorite}
+      onFollow={isUserLoggedIn ? handleFollow : undefined}
+      onUnfollow={isUserLoggedIn ? handleUnfollow : undefined}
+    />
+  );
+
+  const {facets, sections} = useTopicListGroups(topics, filterText, renderCard);
+
   return (
-    <div className="w-full">
-      {isLoading && <EntityCardGridSkeleton/>}
-      {!isLoading && topics.length === 0 && (
-        <p className="py-10 text-center text-sm text-base-content/60">{t("no_topics_found")}</p>
-      )}
-      {!isLoading && topics.length > 0 && (
-        <div className="grid grid-cols-[repeat(auto-fill,minmax(275px,1fr))] gap-4 justify-items-center">
-          {topics.map((topic) => (
-            <TopicCard
-              key={topic.uuid}
-              topic={topic}
-              onToggleFavorite={handleToggleFavorite}
-              onFollow={isUserLoggedIn ? handleFollow : undefined}
-              onUnfollow={isUserLoggedIn ? handleUnfollow : undefined}
-            />
-          ))}
-        </div>
-      )}
-    </div>
+    <EntityList
+      showFilterBar={showFilterBar}
+      filterPlaceholder={t("filter_topics_placeholder")}
+      filterText={filterText}
+      onFilterTextChange={onFilterTextChange}
+      facets={facets}
+      totalCount={topics.length}
+      isLoading={isLoading}
+      emptyState={<p className="py-10 text-center text-sm text-base-content/60">{t("no_topics_found")}</p>}
+      sections={sections}
+    />
   );
 };
 

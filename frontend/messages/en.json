@@ -25,6 +25,7 @@
     "unfollow": "Unfollow",
     "follow": "Follow",
     "following": "Following",
+    "not_following": "Not following",
     "add_to_favorites": "Add to favorites",
     "remove_from_favorites": "Remove from favorites",
     "favorites": "Favorites",

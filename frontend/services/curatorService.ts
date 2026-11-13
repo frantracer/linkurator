@@ -5,6 +5,7 @@ import {Topic} from "../entities/Topic";
 import {SubscriptionItem} from "../entities/SubscriptionItem";
 import {replaceBaseUrl} from "../utilities/replaceBaseUrl";
 import {isBeingScanned, Subscription} from "../entities/Subscription";
+import {InteractionFilter} from "./common";
 
 export type CuratorItemsResponse = {
   elements: SubscriptionItem[];
@@ -130,6 +131,7 @@ export async function getCuratorItems(
   minDuration: number | undefined,
   maxDuration: number | undefined,
   searchText: string = "",
+  interactionsToInclude: InteractionFilter[] = [],
 ): Promise<CuratorItemsResponse> {
   if (curatorId === null) {
     return {elements: [], nextPage: undefined};
@@ -137,7 +139,9 @@ export async function getCuratorItems(
   const searchParam = searchText ? "&search=" + searchText : "";
   const minDurationParam = minDuration !== undefined ? "&min_duration=" + minDuration : "";
   const maxDurationParam = maxDuration !== undefined ? "&max_duration=" + maxDuration : "";
-  const url = configuration.CURATORS_URL + curatorId + "/items?" + searchParam + minDurationParam + maxDurationParam;
+  const interactionsParam = interactionsToInclude.length > 0 ? "&include_interactions=" + interactionsToInclude.join(",") : "";
+  const url = configuration.CURATORS_URL + curatorId + "/items?" + searchParam + minDurationParam + maxDurationParam +
+    interactionsParam;
 
   const {
     data,

@@ -1,11 +1,12 @@
 import React, {useState} from "react";
-import EntityCardGridSkeleton from "../molecules/EntityCardGridSkeleton";
 import {flushSync} from "react-dom";
 import {useTranslations} from "next-intl";
 import {Subscription} from "../../entities/Subscription";
+import EntityList from "./EntityList";
 import SubscriptionCard from "./SubscriptionCard";
 import AssignTopicModal, {AssignTopicModalId} from "./AssignTopicModal";
 import useProfile from "../../hooks/useProfile";
+import useSubscriptionListGroups from "../../hooks/useSubscriptionListGroups";
 import useSubscriptions from "../../hooks/useSubscriptions";
 import {useTopics} from "../../hooks/useTopics";
 import {followSubscription, unfollowSubscription} from "../../services/subscriptionService";
@@ -14,6 +15,9 @@ import {useToast} from "../../contexts/ToastContext";
 
 type CuratorSubscriptionsListProps = {
   subscriptions: Subscription[];
+  showFilterBar: boolean;
+  filterText: string;
+  onFilterTextChange: (value: string) => void;
   isLoading: boolean;
   refreshSubscriptions: () => void;
 }
@@ -21,6 +25,9 @@ type CuratorSubscriptionsListProps = {
 const CuratorSubscriptionsList = (
   {
     subscriptions,
+    showFilterBar,
+    filterText,
+    onFilterTextChange,
     isLoading,
     refreshSubscriptions,
   }: CuratorSubscriptionsListProps
@@ -67,26 +74,32 @@ const CuratorSubscriptionsList = (
     });
   }
 
+  const renderCard = (subscription: Subscription) => (
+    <SubscriptionCard
+      key={subscription.uuid}
+      subscription={subscription}
+      topicsCount={topicsCountBySubscription.get(subscription.uuid) ?? 0}
+      onAssign={profile ? handleAssign : undefined}
+      onFollow={profile ? handleFollow : undefined}
+      onUnfollow={profile ? handleUnfollow : undefined}
+    />
+  );
+
+  const {facets, sections} = useSubscriptionListGroups(subscriptions, filterText, renderCard);
+
   return (
-    <div className="w-full">
-      {isLoading && <EntityCardGridSkeleton/>}
-      {!isLoading && subscriptions.length === 0 && (
-        <p className="py-10 text-center text-sm text-base-content/60">{t("no_subscriptions_found")}</p>
-      )}
-      {!isLoading && subscriptions.length > 0 && (
-        <div className="grid grid-cols-[repeat(auto-fill,minmax(275px,1fr))] gap-4 justify-items-center">
-          {subscriptions.map((subscription) => (
-            <SubscriptionCard
-              key={subscription.uuid}
-              subscription={subscription}
-              topicsCount={topicsCountBySubscription.get(subscription.uuid) ?? 0}
-              onAssign={profile ? handleAssign : undefined}
-              onFollow={profile ? handleFollow : undefined}
-              onUnfollow={profile ? handleUnfollow : undefined}
-            />
-          ))}
-        </div>
-      )}
+    <>
+      <EntityList
+        showFilterBar={showFilterBar}
+        filterPlaceholder={t("filter_subscriptions_placeholder")}
+        filterText={filterText}
+        onFilterTextChange={onFilterTextChange}
+        facets={facets}
+        totalCount={subscriptions.length}
+        isLoading={isLoading}
+        emptyState={<p className="py-10 text-center text-sm text-base-content/60">{t("no_subscriptions_found")}</p>}
+        sections={sections}
+      />
 
       {assigningSubscription && (
         <AssignTopicModal
@@ -95,7 +108,7 @@ const CuratorSubscriptionsList = (
           refreshTopics={refreshTopics}
         />
       )}
-    </div>
+    </>
   );
 };
 

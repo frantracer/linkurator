@@ -100,3 +100,17 @@ export const defaultFilters: Filters = {
   maxDuration: undefined,
   excludedSubscriptions: [],
 }
+
+// Baseline for feeds that start unfiltered: any duration and any interaction
+export const showEverythingFilters: Filters = {
+  textSearch: "",
+  displayHidden: true,
+  displayViewed: true,
+  displayDiscouraged: true,
+  displayRecommended: true,
+  displayWithoutInteraction: true,
+  durationGroup: "all",
+  minDuration: undefined,
+  maxDuration: undefined,
+  excludedSubscriptions: [],
+}

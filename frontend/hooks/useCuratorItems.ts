@@ -2,6 +2,7 @@ import {CuratorItemsResponse, getCuratorItems, getCuratorItemsFromUrl} from "../
 import {SubscriptionItem} from "../entities/SubscriptionItem";
 import {InfiniteData, useInfiniteQuery} from "@tanstack/react-query";
 import {Filters, getFilterDuration} from "../entities/Filters";
+import {mapFiltersToInteractionParams} from "../services/common";
 
 type OptionalCuratorId = string | null;
 
@@ -31,7 +32,8 @@ const useCuratorItems = (curatorId: OptionalCuratorId, filters: Filters): UseCur
       }
       if (pageParam === undefined) {
         const filterDuration = getFilterDuration(filters);
-        return await getCuratorItems(curatorId, filterDuration.min, filterDuration.max, filters.textSearch);
+        return await getCuratorItems(curatorId, filterDuration.min, filterDuration.max, filters.textSearch,
+          mapFiltersToInteractionParams(filters));
       }
       return await getCuratorItemsFromUrl(pageParam);
     },

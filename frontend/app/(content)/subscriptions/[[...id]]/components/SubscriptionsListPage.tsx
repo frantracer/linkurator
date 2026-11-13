@@ -4,23 +4,20 @@ import React, {useEffect, useRef, useState} from "react";
 import {flushSync} from "react-dom";
 import {useTranslations} from "next-intl";
 import {ImportIcon, SubscriptionIcon} from "../../../../../components/atoms/Icons";
-import Miniature from "../../../../../components/atoms/Miniature";
 import AssignTopicModal, {AssignTopicModalId} from "../../../../../components/organism/AssignTopicModal";
 import EmptyStateImportSubscriptions from "../../../../../components/organism/EmptyStateImportSubscriptions";
-import EntityListLayout, {EntityListFacet, EntityListSection} from "../../../../../components/organism/EntityListLayout";
+import EntityListLayout from "../../../../../components/organism/EntityListLayout";
 import SubscriptionCard from "../../../../../components/organism/SubscriptionCard";
 import {openImportModal} from "../../../../../utilities/importModalAction";
-import {getProviderIcon} from "../../../../../entities/Provider";
-import {Subscription, subscriptionFiltering, subscriptionSorting} from "../../../../../entities/Subscription";
+import {Subscription} from "../../../../../entities/Subscription";
 import useProfile from "../../../../../hooks/useProfile";
-import useProviders from "../../../../../hooks/useProviders";
 import useSearchParam from "../../../../../hooks/useSearchParam";
+import useSubscriptionListGroups from "../../../../../hooks/useSubscriptionListGroups";
 import useSubscriptions from "../../../../../hooks/useSubscriptions";
 import {useTopics} from "../../../../../hooks/useTopics";
 import {followSubscription, unfollowSubscription} from "../../../../../services/subscriptionService";
 import {openModal} from "../../../../../utilities/modalAction";
 import {useToast} from "../../../../../contexts/ToastContext";
-import {SUBSCRIPTIONS_PROVIDER_PARAM} from "../../../../../configuration";
 
 const IMPORTED_SUBSCRIPTIONS_PARAM = "imported_subscriptions";
 
@@ -28,12 +25,10 @@ const SubscriptionsListPageComponent = () => {
   const t = useTranslations("common");
   const {showToast} = useToast();
   const importToastShown = useRef(false);
-  const {value: providerFilter, setValue: setProviderFilter} = useSearchParam(SUBSCRIPTIONS_PROVIDER_PARAM);
   const {value: importedSubscriptions, setValue: setImportedSubscriptions} = useSearchParam(IMPORTED_SUBSCRIPTIONS_PARAM);
   const {profile, profileIsLoading} = useProfile();
   const {subscriptions, subscriptionsAreLoading, refreshSubscriptions} = useSubscriptions(profile);
   const {topics, refreshTopics} = useTopics(profile, profileIsLoading);
-  const {providers} = useProviders();
   const [filterText, setFilterText] = useState("");
   const [assigningSubscription, setAssigningSubscription] = useState<Subscription | null>(null);
 
@@ -83,35 +78,7 @@ const SubscriptionsListPageComponent = () => {
     />
   );
 
-  const filteredSubscriptions = filterText.trim() === ""
-    ? subscriptions
-    : subscriptions.filter(subscription => subscriptionFiltering(subscription, filterText.trim()));
-
-  const providerIcon = (providerName: string) => (
-    <Miniature src={getProviderIcon(providers, providerName)} alt=""/>
-  );
-
-  // A provider without subscriptions only gets a tag when the URL asks for it, so it can still be cleared
-  const providerFacets: EntityListFacet[] = providers
-    .map(provider => ({
-      key: provider.name,
-      label: provider.prettyName,
-      icon: providerIcon(provider.name),
-      count: subscriptions.filter(subscription => subscription.provider === provider.name).length,
-    }))
-    .filter(facet => facet.count > 0 || facet.key === providerFilter);
-
-  const sections: EntityListSection[] = providers
-    .filter(provider => providerFilter === null || provider.name === providerFilter)
-    .map(provider => ({
-      key: provider.name,
-      title: provider.prettyName,
-      icon: providerIcon(provider.name),
-      items: filteredSubscriptions
-        .filter(subscription => subscription.provider === provider.name)
-        .sort(subscriptionSorting)
-        .map(renderCard),
-    }));
+  const {facets, sections} = useSubscriptionListGroups(subscriptions, filterText, renderCard);
 
   return (
     <>
@@ -124,7 +91,7 @@ const SubscriptionsListPageComponent = () => {
         filterPlaceholder={t("filter_subscriptions_placeholder")}
         filterText={filterText}
         onFilterTextChange={setFilterText}
-        facets={{options: providerFacets, selected: providerFilter, onSelect: setProviderFilter}}
+        facets={facets}
         totalCount={subscriptions.length}
         isLoading={subscriptionsAreLoading}
         emptyState={profile ? <EmptyStateImportSubscriptions/> : null}

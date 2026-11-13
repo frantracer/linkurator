@@ -24,14 +24,13 @@ import Avatar from "../../../../../components/atoms/Avatar";
 import FilterToggleButton from "../../../../../components/molecules/FilterToggleButton";
 import useFilterBarVisibility from "../../../../../hooks/useFilterBarVisibility";
 import ContentFilterBar from "../../../../../components/organism/ContentFilterBar";
-import SearchBar from "../../../../../components/molecules/SearchBar";
 import ContentItemCardGrid from "../../../../../components/organism/ContentItemCardGrid";
-import {paths} from "../../../../../configuration";
+import {paths, SUBSCRIPTIONS_PROVIDER_PARAM} from "../../../../../configuration";
+import {areFiltersEqual, Filters, showEverythingFilters} from "../../../../../entities/Filters";
 import {useCurator} from "../../../../../hooks/useCurator";
 import useCuratorItems from "../../../../../hooks/useCuratorItems";
 import {useCurators} from "../../../../../hooks/useCurators";
 import {useCuratorTopics} from "../../../../../hooks/useCuratorTopics";
-import useFilters from "../../../../../hooks/useFilters";
 import useProfile from "../../../../../hooks/useProfile";
 import {followCurator, unfollowCurator} from "../../../../../services/curatorService";
 import {newScopedChatPath, scopeFromFilters} from "../../../../../utilities/chatScope";
@@ -39,6 +38,7 @@ import CuratorTopicsList from "../../../../../components/organism/CuratorTopicsL
 import CuratorSubscriptionsList from "../../../../../components/organism/CuratorSubscriptionsList";
 import {useCuratorSubscriptions} from "../../../../../hooks/useCuratorSubscriptions";
 import {useTopics} from "../../../../../hooks/useTopics";
+import {TOPICS_FACET_PARAM} from "../../../../../hooks/useTopicListGroups";
 import ShareCuratorModal, {ShareCuratorModalId} from "../../../../../components/organism/ShareCuratorModal";
 import {openModal} from "../../../../../utilities/modalAction";
 import useProviders from "../../../../../hooks/useProviders";
@@ -53,7 +53,9 @@ const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const {providers} = useProviders();
-  const {filters, setFilters, resetFilters, isModified: areFiltersModified, savedFilters} = useFilters();
+  // Unlike the user's own feeds, a curator's recommendations ignore the saved filters and start unfiltered
+  const [filters, setFilters] = useState<Filters>(showEverythingFilters);
+  const areFiltersModified = !areFiltersEqual(filters, showEverythingFilters);
   const {showFilters, toggleFilters} = useFilterBarVisibility();
   const [debouncedFilters, setDebouncedFilters] = useState(filters);
   const [selectedSection, setSelectedSection] = useState<SectionKey>(DEFAULT_SECTION);
@@ -94,10 +96,9 @@ const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
     refetchSubscriptions
   } = useCuratorSubscriptions(curatorId);
 
-  const matchesNameFilter = (name: string) => name.toLowerCase().includes(nameFilter.trim().toLowerCase());
-  const filteredTopics = topics.filter(topic => matchesNameFilter(topic.name));
-  const filteredSubscriptions = subscriptions.filter(subscription => matchesNameFilter(subscription.name));
   const isRecommendationsSection = selectedSection === "recommendations";
+  const facetParam = selectedSection === "topics" ? TOPICS_FACET_PARAM : SUBSCRIPTIONS_PROVIDER_PARAM;
+  const isListFilterModified = nameFilter.trim() !== "" || searchParams.get(facetParam) !== null;
 
   const isLoggedIn = !!(profile)
   const isOwnCuratorProfile = isLoggedIn && !!(curator) && profile.username === curator.username;
@@ -188,7 +189,7 @@ const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
       <div className="flex flex-col flex-1 min-h-0 bg-base-300 overflow-hidden">
         <TagsRow leading={
           <FilterToggleButton isOpen={showFilters}
-                              isModified={isRecommendationsSection ? areFiltersModified : nameFilter.trim() !== ""}
+                              isModified={isRecommendationsSection ? areFiltersModified : isListFilterModified}
                               onClick={toggleFilters}/>
         }>
           {sections.map(section => (
@@ -206,20 +207,9 @@ const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
         </TagsRow>
 
         {isRecommendationsSection && showFilters && (
-          <ContentFilterBar savedFilters={savedFilters} filters={filters} setFilters={setFilters} resetFilters={resetFilters}/>
-        )}
-
-        {!isRecommendationsSection && showFilters && (
-          <div className="shrink-0 px-4 py-3 border-b border-neutral bg-base-300">
-            <div className="sm:max-w-md">
-              <SearchBar
-                placeholder={selectedSection === "topics" ? t("filter_topics_placeholder") : t("filter_subscriptions_placeholder")}
-                value={nameFilter}
-                handleChange={setNameFilter}
-                icon="filter"
-              />
-            </div>
-          </div>
+          <ContentFilterBar savedFilters={showEverythingFilters} filters={filters} setFilters={setFilters}
+                            resetFilters={() => setFilters(showEverythingFilters)}
+                            showInteractions={isLoggedIn}/>
         )}
 
         {selectedSection === "recommendations" && (
@@ -237,26 +227,24 @@ const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
         )}
 
         {selectedSection === "topics" && (
-          <div className="flex-1 min-h-0 overflow-x-hidden overflow-y-auto pb-mobile-nav">
-            <div className="flex flex-col gap-6 p-4 max-w-7xl w-full mx-auto">
-              <CuratorTopicsList
-                topics={filteredTopics}
-                isUserLoggedIn={isLoggedIn}
-                isLoading={isMainDataLoading}
-                refreshTopics={refreshAllTopics}/>
-            </div>
-          </div>
+          <CuratorTopicsList
+            topics={topics}
+            showFilterBar={showFilters}
+            filterText={nameFilter}
+            onFilterTextChange={setNameFilter}
+            isUserLoggedIn={isLoggedIn}
+            isLoading={isMainDataLoading}
+            refreshTopics={refreshAllTopics}/>
         )}
 
         {selectedSection === "subscriptions" && (
-          <div className="flex-1 min-h-0 overflow-x-hidden overflow-y-auto pb-mobile-nav">
-            <div className="flex flex-col gap-6 p-4 max-w-7xl w-full mx-auto">
-              <CuratorSubscriptionsList
-                subscriptions={filteredSubscriptions}
-                isLoading={isMainDataLoading || isSubscriptionsLoading}
-                refreshSubscriptions={() => refetchSubscriptions()}/>
-            </div>
-          </div>
+          <CuratorSubscriptionsList
+            subscriptions={subscriptions}
+            showFilterBar={showFilters}
+            filterText={nameFilter}
+            onFilterTextChange={setNameFilter}
+            isLoading={isMainDataLoading || isSubscriptionsLoading}
+            refreshSubscriptions={() => refetchSubscriptions()}/>
         )}
       </div>
       {curator && (

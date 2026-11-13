@@ -2,18 +2,18 @@
 
 import React, {useState} from "react";
 import {useTranslations} from "next-intl";
-import {AddIcon, RectangleGroup, StarIcon} from "../../../../../components/atoms/Icons";
+import {AddIcon, RectangleGroup} from "../../../../../components/atoms/Icons";
 import ConfirmDialog from "../../../../../components/organism/ConfirmDialog";
 import EmptyStateNoTopics from "../../../../../components/organism/EmptyStateNoTopics";
-import EntityListLayout, {EntityListFacet, EntityListSection} from "../../../../../components/organism/EntityListLayout";
+import EntityListLayout from "../../../../../components/organism/EntityListLayout";
 import TopicCard from "../../../../../components/organism/TopicCard";
 import TopicEditorModal, {EditTopicModalId, NewTopicModalId} from "../../../../../components/organism/TopicEditorModal";
 import {Topic} from "../../../../../entities/Topic";
 import {useFavoriteTopics} from "../../../../../hooks/useFavoriteTopics";
 import useProfile from "../../../../../hooks/useProfile";
 import useProviders from "../../../../../hooks/useProviders";
-import useSearchParam from "../../../../../hooks/useSearchParam";
 import useSubscriptions from "../../../../../hooks/useSubscriptions";
+import useTopicListGroups from "../../../../../hooks/useTopicListGroups";
 import {useTopics} from "../../../../../hooks/useTopics";
 import {deleteTopic, followTopic, unfollowTopic} from "../../../../../services/topicService";
 import {openModal} from "../../../../../utilities/modalAction";
@@ -21,30 +21,6 @@ import {flushSync} from "react-dom";
 import {useToast} from "../../../../../contexts/ToastContext";
 
 const DeleteTopicDialogId = "delete-topic-dialog";
-const TOPICS_FACET_PARAM = "show";
-
-type TopicsFacet = "favorites" | "mine" | "following";
-
-const TOPICS_FACETS: TopicsFacet[] = ["favorites", "mine", "following"];
-
-const parseTopicsFacet = (value: string | null): TopicsFacet | null => {
-  if (value === "favorites" || value === "mine" || value === "following") {
-    return value;
-  }
-  return null;
-}
-
-// Every topic belongs to exactly one facet, so the facet counts add up to the total
-const belongsToFacet = (topic: Topic, facet: TopicsFacet): boolean => {
-  switch (facet) {
-    case "favorites":
-      return topic.is_favorite;
-    case "mine":
-      return topic.is_owner && !topic.is_favorite;
-    case "following":
-      return !topic.is_owner && !topic.is_favorite;
-  }
-}
 
 const TopicsListPageComponent = () => {
   const t = useTranslations("common");
@@ -53,13 +29,10 @@ const TopicsListPageComponent = () => {
   const {subscriptions, refreshSubscriptions} = useSubscriptions(profile);
   const {providers} = useProviders();
   const {toggleFavorite} = useFavoriteTopics();
-  const {value: facetParam, setValue: setFacetParam} = useSearchParam(TOPICS_FACET_PARAM);
   const [editingTopic, setEditingTopic] = useState<Topic | null>(null);
   const [deletingTopic, setDeletingTopic] = useState<Topic | null>(null);
   const [filterText, setFilterText] = useState("");
   const {showToast} = useToast();
-
-  const selectedFacet = parseTopicsFacet(facetParam);
 
   const handleToggleFavorite = (topic: Topic) => {
     toggleFavorite(topic.uuid, topic.is_favorite);
@@ -106,32 +79,7 @@ const TopicsListPageComponent = () => {
     />
   );
 
-  const normalizedFilter = filterText.trim().toLowerCase();
-  const filteredTopics = normalizedFilter === ""
-    ? topics
-    : topics.filter(topic => topic.name.toLowerCase().includes(normalizedFilter));
-
-  const facetDetails: Record<TopicsFacet, { title: string, icon: React.ReactNode }> = {
-    favorites: {title: t("favorites"), icon: <StarIcon/>},
-    mine: {title: t("my_topics"), icon: <RectangleGroup/>},
-    following: {title: t("following"), icon: <RectangleGroup/>},
-  };
-
-  const sections: EntityListSection[] = TOPICS_FACETS
-    .filter(facet => selectedFacet === null || facet === selectedFacet)
-    .map(facet => ({
-      key: facet,
-      title: facetDetails[facet].title,
-      icon: facetDetails[facet].icon,
-      items: filteredTopics.filter(topic => belongsToFacet(topic, facet)).map(renderCard),
-    }));
-
-  const facetOptions: EntityListFacet[] = TOPICS_FACETS.map(facet => ({
-    key: facet,
-    label: facetDetails[facet].title,
-    icon: facet === "favorites" ? facetDetails[facet].icon : undefined,
-    count: topics.filter(topic => belongsToFacet(topic, facet)).length,
-  }));
+  const {facets, sections} = useTopicListGroups(topics, filterText, renderCard);
 
   return (
     <>
@@ -144,7 +92,7 @@ const TopicsListPageComponent = () => {
         filterPlaceholder={t("filter_topics_placeholder")}
         filterText={filterText}
         onFilterTextChange={setFilterText}
-        facets={{options: facetOptions, selected: selectedFacet, onSelect: setFacetParam}}
+        facets={facets}
         totalCount={topics.length}
         isLoading={topicsAreLoading}
         emptyState={profile ? <EmptyStateNoTopics/> : null}
