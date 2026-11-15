@@ -16,6 +16,7 @@ import Dropdown from "../atoms/Dropdown";
 import NumberInput from "../atoms/NumberInput";
 import Miniature from "../atoms/Miniature";
 import SearchBar from "../molecules/SearchBar";
+import DropdownOptionRow from "../molecules/DropdownOptionRow";
 
 type ContentFilterBarProps = {
   filters: Filters,
@@ -121,7 +122,6 @@ const ContentFilterBar = (
     });
   }
 
-  const optionRowClass = "flex flex-row gap-2 items-center min-w-0 px-2 py-1.5 rounded-md cursor-pointer hover:bg-base-content/5 text-sm";
 
   return (
     <div className="shrink-0 flex flex-col sm:flex-row gap-2 sm:items-center px-4 py-3 border-b border-neutral bg-base-300">
@@ -135,13 +135,13 @@ const ContentFilterBar = (
                   button={<FilterChip active={durationIsActive}>{durationLabel}</FilterChip>}>
           <li role="radiogroup" aria-label={t("duration")} className="flex flex-col p-1">
             {durationOptions.map(option => (
-              <label key={option.key} className={optionRowClass}>
+              <DropdownOptionRow key={option.key}>
                 <input type="radio" name={idPrefix + "-duration"} className="radio radio-primary radio-xs"
                        checked={filters.durationGroup === option.key}
                        onChange={() => handleDurationChange(option.key)}/>
                 {t(option.label)}
                 {option.range && <span className="text-base-content/60">· {option.range}</span>}
-              </label>
+              </DropdownOptionRow>
             ))}
             {filters.durationGroup === "custom" &&
                 <div className="grid grid-cols-2 gap-2 px-2 pt-2">
@@ -164,11 +164,11 @@ const ContentFilterBar = (
                       button={<FilterChip active={interactionsAreActive}>{interactionsLabel}</FilterChip>}>
               {interactionOptions.map(option => (
                 <li key={option.key}>
-                  <label className={optionRowClass}>
+                  <DropdownOptionRow>
                     <Checkbox small={true} checked={option.checked} onChange={option.onChange}/>
                     {option.icon}
                     {t(option.key)}
-                  </label>
+                  </DropdownOptionRow>
                 </li>
               ))}
             </Dropdown>
@@ -194,14 +194,14 @@ const ContentFilterBar = (
                 </li>
               {sortedSubscriptions.map(subscription => (
                 <li key={subscription.uuid}>
-                  <label className={optionRowClass}>
+                  <DropdownOptionRow>
                     <Checkbox small={true}
                               checked={!filters.excludedSubscriptions.includes(subscription.uuid)}
                               onChange={() => toggleSubscription(subscription.uuid)}/>
                     <Miniature src={subscription.thumbnail} alt=""
                                badgeImage={getProviderIcon(providers, subscription.provider)}/>
                     <span className="flex-1 min-w-0 break-words">{subscription.name}</span>
-                  </label>
+                  </DropdownOptionRow>
                 </li>
               ))}
             </Dropdown>

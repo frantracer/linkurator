@@ -40,20 +40,7 @@ export async function getTopic(uuid: string): Promise<Topic | null> {
     configuration.TOPICS_URL + uuid,
     {withCredentials: true});
   if (status === 200) {
-    return {
-      uuid: data.uuid,
-      name: data.name,
-      subscriptions_ids: data.subscriptions_ids,
-      is_owner: data.is_owner,
-      followed: data.followed,
-      is_favorite: data.is_favorite,
-      curator: {
-        id: data.curator.id,
-        username: data.curator.username,
-        avatar_url: data.curator.avatar_url,
-        followed: data.curator.followed,
-      }
-    };
+    return mapJsonToTopic(data);
   } else {
     console.error("Error retrieving topic", data);
     return null;
@@ -244,6 +231,21 @@ export async function unfavoriteTopic(uuid: string): Promise<void> {
   }
 }
 
+export const mapJsonToTopic = (json: Record<string, any>): Topic => ({
+  uuid: json.uuid,
+  name: json.name,
+  subscriptions_ids: json.subscriptions_ids,
+  is_owner: json.is_owner,
+  followed: json.followed,
+  is_favorite: json.is_favorite,
+  curator: {
+    id: json.curator.id,
+    username: json.curator.username,
+    avatar_url: json.curator.avatar_url,
+    followed: json.curator.followed,
+  }
+});
+
 const mapJsonToTopicResponse = (json: Record<string, any>): TopicResponse => {
   let nextPage: URL | undefined = undefined;
   if (json.next_page) {
@@ -251,22 +253,7 @@ const mapJsonToTopicResponse = (json: Record<string, any>): TopicResponse => {
   }
 
   return {
-    elements: json.elements.map((element: Record<string, any>) => {
-      return {
-        uuid: element.uuid,
-        name: element.name,
-        subscriptions_ids: element.subscriptions_ids,
-        is_owner: element.is_owner,
-        followed: element.followed,
-        is_favorite: element.is_favorite,
-        curator: {
-          id: element.curator.id,
-          username: element.curator.username,
-          avatar_url: element.curator.avatar_url,
-          followed: element.curator.followed,
-        }
-      };
-    }),
+    elements: json.elements.map(mapJsonToTopic),
     next_page: nextPage,
   };
 }

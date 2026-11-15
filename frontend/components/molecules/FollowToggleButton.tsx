@@ -10,10 +10,11 @@ type FollowToggleButtonProps = {
   onFollow: () => void;
   onUnfollow: () => void;
   iconOnlyOnMobile?: boolean;
+  primary?: boolean;
 }
 
 const FollowToggleButton = (
-  {followed, isLoggedIn, onFollow, onUnfollow, iconOnlyOnMobile = false}: FollowToggleButtonProps
+  {followed, isLoggedIn, onFollow, onUnfollow, iconOnlyOnMobile = false, primary = true}: FollowToggleButtonProps
 ) => {
   const t = useTranslations("common");
   const labelClass = iconOnlyOnMobile ? "hidden sm:inline" : undefined;
@@ -38,7 +39,7 @@ const FollowToggleButton = (
   }
 
   return (
-    <Button ariaPressed={false} clickAction={onFollow} tooltip={t("follow")} ariaLabel={t("follow")}>
+    <Button primary={primary} ariaPressed={false} clickAction={onFollow} tooltip={t("follow")} ariaLabel={t("follow")}>
       <AddIcon/>
       <span className={labelClass}>{t("follow")}</span>
     </Button>

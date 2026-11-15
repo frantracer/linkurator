@@ -1,9 +1,10 @@
-import React, {useCallback, useEffect, useId, useRef, useState} from "react";
+import React, {useCallback, useEffect, useId, useLayoutEffect, useRef, useState} from "react";
 import classNames from "classnames";
 
 export type DropdownTriggerStyle = "outline" | "ghost" | "overlay" | "bare";
 
 export type DropdownWidth = "narrow" | "medium" | "wide";
+
 
 type DropdownProps = {
   button: React.ReactNode
@@ -14,6 +15,7 @@ type DropdownProps = {
   bottom?: boolean
   position?: "start" | "center" | "end"
   closeOnClickInside?: boolean
+  fitAvailableSpace?: boolean
   children?: React.ReactNode
 }
 
@@ -27,9 +29,11 @@ const Dropdown = (
     bottom = true,
     position = "start",
     closeOnClickInside = false,
+    fitAvailableSpace = false,
     children
   }: DropdownProps) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [opensDownward, setOpensDownward] = useState(bottom);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const menuContentRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
@@ -59,6 +63,28 @@ const Dropdown = (
       document.removeEventListener('click', handleClick, true);
     };
   }, [closeOnClickInside]);
+
+  // Opens the menu towards the side with more room inside the scrolling area that holds the dropdown
+  useLayoutEffect(() => {
+    if (!isOpen || !fitAvailableSpace || !triggerRef.current) {
+      return;
+    }
+    let scrollArea = triggerRef.current.parentElement;
+    while (scrollArea && !["auto", "scroll"].includes(getComputedStyle(scrollArea).overflowY)) {
+      scrollArea = scrollArea.parentElement;
+    }
+    const areaTop = scrollArea ? scrollArea.getBoundingClientRect().top : 0;
+    // The bottom padding keeps room for overlays such as the mobile navigation bar
+    const areaBottom = scrollArea
+      ? scrollArea.getBoundingClientRect().bottom - parseFloat(getComputedStyle(scrollArea).paddingBottom)
+      : window.innerHeight;
+    const triggerRect = triggerRef.current.getBoundingClientRect();
+    const spaceBelow = areaBottom - triggerRect.bottom;
+    const spaceAbove = triggerRect.top - areaTop;
+    setOpensDownward(spaceBelow >= spaceAbove);
+  }, [isOpen, fitAvailableSpace]);
+
+  const isDownward = fitAvailableSpace ? opensDownward : bottom;
 
   const focusableItems = useCallback((): HTMLElement[] => {
     if (!menuContentRef.current) {
@@ -137,8 +163,8 @@ const Dropdown = (
   const contentPositionClass = classNames(
     "absolute z-50 mt-1",
     {
-      "top-full": bottom,
-      "bottom-full mb-1": !bottom,
+      "top-full": isDownward,
+      "bottom-full mb-1": !isDownward,
       "left-0": position === "start",
       "left-1/2 -translate-x-1/2": position === "center",
       "right-0": position === "end",
@@ -182,7 +208,8 @@ const Dropdown = (
           className={classNames(
             contentPositionClass,
             sizeClass,
-            "bg-base-100 rounded-lg p-1 shadow-lg max-h-96 overflow-y-auto overflow-x-hidden border border-neutral"
+            "bg-base-100 rounded-lg p-1 shadow-lg overflow-y-auto overflow-x-hidden border border-neutral",
+            fitAvailableSpace ? "max-h-60" : "max-h-96"
           )}
           ref={menuContentRef}
         >

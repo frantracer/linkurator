@@ -31,6 +31,11 @@ const useSubscriptions = (profile: Profile | null | undefined): subscriptionStat
 
   const refreshSubscriptions = useCallback(() => {
     queryClient.invalidateQueries({queryKey: ['latestSubscriptionItems']});
+    // Curator lists show whether the user follows each subscription
+    queryClient.invalidateQueries({
+      predicate: query => query.queryKey[0] === 'curator' &&
+        (query.queryKey[2] === 'suggestions' || query.queryKey[2] === 'subscriptions'),
+    });
     refetch();
   }, [queryClient, refetch]);
 

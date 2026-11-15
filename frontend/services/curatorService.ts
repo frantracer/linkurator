@@ -6,6 +6,8 @@ import {SubscriptionItem} from "../entities/SubscriptionItem";
 import {replaceBaseUrl} from "../utilities/replaceBaseUrl";
 import {isBeingScanned, Subscription} from "../entities/Subscription";
 import {InteractionFilter} from "./common";
+import {CuratorSuggestions, emptyCuratorSuggestions} from "../entities/CuratorSuggestions";
+import {mapJsonToTopic} from "./topicService";
 
 export type CuratorItemsResponse = {
   elements: SubscriptionItem[];
@@ -110,21 +112,48 @@ export async function getCuratorSubscriptions(curatorId: string | null): Promise
     status
   } = await axios.get(configuration.CURATORS_URL + curatorId + "/subscriptions", {withCredentials: true});
   if (status === 200) {
-    return (data.elements || []).map((element: Record<string, any>) => ({
-      uuid: element.uuid,
-      name: element.name,
-      url: element.url,
-      thumbnail: element.thumbnail,
-      provider: element.provider,
-      topicUuid: element.topic_uuid,
-      followed: element.followed,
-      isBeingScanned: isBeingScanned(element.scanned_at),
-    }));
+    return (data.elements || []).map(mapJsonToSubscription);
   } else {
     console.error("Error retrieving curator subscriptions", data);
     return [];
   }
 }
+
+export async function getCuratorSuggestions(curatorId: string | null): Promise<CuratorSuggestions> {
+  if (curatorId === null) {
+    return emptyCuratorSuggestions;
+  }
+
+  const {
+    data,
+    status
+  } = await axios.get(configuration.CURATORS_URL + curatorId + "/suggestions", {withCredentials: true});
+  if (status !== 200) {
+    throw new Error("Error retrieving curator suggestions");
+  }
+
+  return {
+    commonSubscriptionIds: data.common_subscription_ids,
+    topics: data.topics.map((suggestion: Record<string, any>) => ({
+      topic: mapJsonToTopic(suggestion.topic),
+      sharedSubscriptionIds: suggestion.shared_subscription_ids,
+      candidateSubscriptionIds: suggestion.candidate_subscription_ids,
+      matchingUserTopicId: suggestion.matching_user_topic_id,
+    })),
+    subscriptions: data.subscriptions.map(mapJsonToSubscription),
+  };
+}
+
+const mapJsonToSubscription = (json: Record<string, any>): Subscription => ({
+  uuid: json.uuid,
+  name: json.name,
+  url: json.url,
+  thumbnail: json.thumbnail,
+  provider: json.provider,
+  topicUuid: json.topic_uuid,
+  followed: json.followed,
+  isBeingScanned: isBeingScanned(json.scanned_at),
+});
 
 export async function getCuratorItems(
   curatorId: string | null,

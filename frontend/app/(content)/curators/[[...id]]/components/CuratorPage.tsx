@@ -7,6 +7,7 @@ import Button from "../../../../../components/atoms/Button";
 import {
   ChatBubbleIcon,
   EllipsisHorizontalIcon,
+  LinkIcon,
   RectangleGroup,
   ShareIcon,
   SubscriptionIcon,
@@ -36,16 +37,18 @@ import {followCurator, unfollowCurator} from "../../../../../services/curatorSer
 import {newScopedChatPath, scopeFromFilters} from "../../../../../utilities/chatScope";
 import CuratorTopicsList from "../../../../../components/organism/CuratorTopicsList";
 import CuratorSubscriptionsList from "../../../../../components/organism/CuratorSubscriptionsList";
+import CuratorCommonList from "../../../../../components/organism/CuratorCommonList";
 import {useCuratorSubscriptions} from "../../../../../hooks/useCuratorSubscriptions";
+import {useCuratorSuggestions} from "../../../../../hooks/useCuratorSuggestions";
 import {useTopics} from "../../../../../hooks/useTopics";
 import {TOPICS_FACET_PARAM} from "../../../../../hooks/useTopicListGroups";
 import ShareCuratorModal, {ShareCuratorModalId} from "../../../../../components/organism/ShareCuratorModal";
 import {openModal} from "../../../../../utilities/modalAction";
 import useProviders from "../../../../../hooks/useProviders";
 
-type SectionKey = "recommendations" | "topics" | "subscriptions";
+type SectionKey = "recommendations" | "topics" | "subscriptions" | "common";
 
-const SECTION_KEYS: SectionKey[] = ["recommendations", "topics", "subscriptions"];
+const SECTION_KEYS: SectionKey[] = ["recommendations", "topics", "subscriptions", "common"];
 const DEFAULT_SECTION: SectionKey = "recommendations";
 
 const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
@@ -96,12 +99,29 @@ const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
     refetchSubscriptions
   } = useCuratorSubscriptions(curatorId);
 
+
+  const isLoggedIn = !!(profile)
+  const isOwnCuratorProfile = isLoggedIn && !!(curator) && profile.username === curator.username;
+  const canSeeCommonSection = isLoggedIn && !isOwnCuratorProfile;
+  const {
+    suggestions,
+    suggestionsIsLoading: isSuggestionsLoading,
+    suggestionsIsError: isSuggestionsError,
+    refetchSuggestions
+  } = useCuratorSuggestions(curatorId, canSeeCommonSection);
+
+  const isCommonSectionUnavailable = selectedSection === "common" && !canSeeCommonSection &&
+    !isProfileLoading && !isCuratorLoading;
+  useEffect(() => {
+    if (isCommonSectionUnavailable) {
+      setSelectedSection(DEFAULT_SECTION);
+    }
+  }, [isCommonSectionUnavailable]);
+
   const isRecommendationsSection = selectedSection === "recommendations";
   const facetParam = selectedSection === "topics" ? TOPICS_FACET_PARAM : SUBSCRIPTIONS_PROVIDER_PARAM;
   const isListFilterModified = nameFilter.trim() !== "" || searchParams.get(facetParam) !== null;
 
-  const isLoggedIn = !!(profile)
-  const isOwnCuratorProfile = isLoggedIn && !!(curator) && profile.username === curator.username;
   const isMainDataLoading = isCuratorLoading || isCuratorsLoading || isProfileLoading || isTopicsLoading;
   const isItemsLoading = isCuratorItemsLoading || isCuratorLoading;
   const curatorThumbnail = curator ? curator.avatar_url : "";
@@ -150,6 +170,11 @@ const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
     {key: "recommendations", title: t("recommendations"), icon: <ThumbsUpIcon/>},
     {key: "topics", title: t("topics"), icon: <RectangleGroup/>},
     {key: "subscriptions", title: t("subscriptions"), icon: <SubscriptionIcon/>},
+    ...(canSeeCommonSection ? [{
+      key: "common" as const,
+      title: t("in_common"),
+      icon: <LinkIcon/>,
+    }] : []),
   ];
 
   return (
@@ -245,6 +270,22 @@ const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
             onFilterTextChange={setNameFilter}
             isLoading={isMainDataLoading || isSubscriptionsLoading}
             refreshSubscriptions={() => refetchSubscriptions()}/>
+        )}
+
+        {selectedSection === "common" && canSeeCommonSection && (
+          <CuratorCommonList
+            suggestions={suggestions}
+            showFilterBar={showFilters}
+            filterText={nameFilter}
+            onFilterTextChange={setNameFilter}
+            isLoading={isMainDataLoading || isSuggestionsLoading}
+            isError={isSuggestionsError}
+            refreshSuggestions={() => {
+              refetchSuggestions();
+              refetchSubscriptions();
+            }}
+            refreshTopics={refreshAllTopics}
+            onBrowseSubscriptions={() => selectSection("subscriptions")}/>
         )}
       </div>
       {curator && (
