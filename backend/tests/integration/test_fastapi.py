@@ -27,6 +27,10 @@ from linkurator_core.application.notifications.mark_all_notifications_as_read_ha
     MarkAllNotificationsAsReadHandler,
 )
 from linkurator_core.application.subscriptions.import_opml_subscriptions_handler import ImportOpmlResult
+from linkurator_core.application.topics.get_curator_suggestions_handler import (
+    GetCuratorSuggestionsHandler,
+    GetCuratorSuggestionsResponse,
+)
 from linkurator_core.application.topics.get_curator_topics_as_user_handler import (
     GetCuratorTopicsHandler,
     GetCuratorTopicsResponse,
@@ -42,6 +46,7 @@ from linkurator_core.domain.common.exceptions import (
     SubscriptionNotFoundError,
     TopicNotFoundError,
     UsernameAlreadyInUseError,
+    UserNotFoundError,
 )
 from linkurator_core.domain.common.mock_factory import (
     mock_chat,
@@ -53,6 +58,7 @@ from linkurator_core.domain.common.mock_factory import (
 )
 from linkurator_core.domain.items.item import Item
 from linkurator_core.domain.items.item_with_interactions import ItemWithInteractions
+from linkurator_core.domain.topics.subscription_suggestions import SubscriptionSuggestions, TopicSuggestion
 from linkurator_core.domain.users.session import Session
 from linkurator_core.domain.users.user import User, Username
 from linkurator_core.infrastructure.fastapi.create_app import Handlers, create_app_from_handlers
@@ -100,6 +106,7 @@ def dummy_handlers() -> Handlers:
         get_user_topics_handler=AsyncMock(),
         find_topics_by_name_handler=AsyncMock(),
         get_curator_topics_handler=AsyncMock(),
+        get_curator_suggestions_handler=AsyncMock(),
         get_curator_items_handler=AsyncMock(),
         get_followed_curators_items_handler=AsyncMock(),
         create_topic_handler=AsyncMock(),
@@ -1053,6 +1060,67 @@ def test_get_curator_topics_without_authentication_returns_200(handlers: Handler
     assert topics[0]["uuid"] == str(topic.uuid)
     assert topics[0]["followed"] is False
     assert topics[0]["is_owner"] is False
+
+
+def test_get_curator_suggestions_returns_topics_and_subscriptions(handlers: Handlers) -> None:
+    user = mock_user(uuid=USER_UUID)
+    curator = mock_user()
+    shared_sub = mock_sub()
+    candidate_sub = mock_sub()
+    curator_topic = mock_topic(user_uuid=curator.uuid, subscription_uuids=[shared_sub.uuid, candidate_sub.uuid])
+    user_topic_id = uuid.uuid4()
+    user.follow_subscription(shared_sub.uuid)
+
+    dummy_handler = AsyncMock(spec=GetCuratorSuggestionsHandler)
+    dummy_handler.handle.return_value = GetCuratorSuggestionsResponse(
+        suggestions=SubscriptionSuggestions(
+            common_subscription_ids=[shared_sub.uuid],
+            topics=[TopicSuggestion(
+                topic=curator_topic,
+                shared_subscription_ids=[shared_sub.uuid],
+                candidate_subscription_ids=[candidate_sub.uuid],
+                affinity=0.5,
+                matching_user_topic_id=user_topic_id,
+            )],
+            candidate_scores={candidate_sub.uuid: 0.5},
+        ),
+        subscriptions=[shared_sub, candidate_sub],
+        curator=curator,
+        user=user,
+    )
+    handlers.get_curator_suggestions_handler = dummy_handler
+
+    client = TestClient(create_app_from_handlers(handlers), cookies={"token": "token"})
+
+    response = client.get(f"/curators/{curator.uuid}/suggestions")
+    assert response.status_code == 200
+    body = response.json()
+    assert body["common_subscription_ids"] == [str(shared_sub.uuid)]
+    assert body["topics"][0]["topic"]["uuid"] == str(curator_topic.uuid)
+    assert body["topics"][0]["candidate_subscription_ids"] == [str(candidate_sub.uuid)]
+    assert body["topics"][0]["matching_user_topic_id"] == str(user_topic_id)
+    assert body["candidate_scores"] == {str(candidate_sub.uuid): 0.5}
+    followed_by_sub = {sub["uuid"]: sub["followed"] for sub in body["subscriptions"]}
+    assert followed_by_sub == {str(shared_sub.uuid): True, str(candidate_sub.uuid): False}
+
+
+def test_get_curator_suggestions_without_authentication_returns_401(handlers: Handlers) -> None:
+    client = TestClient(create_app_from_handlers(handlers))
+
+    response = client.get(f"/curators/{uuid.uuid4()}/suggestions")
+    assert response.status_code == 401
+
+
+def test_get_curator_suggestions_for_unknown_curator_returns_404(handlers: Handlers) -> None:
+    curator_id = uuid.uuid4()
+    dummy_handler = AsyncMock(spec=GetCuratorSuggestionsHandler)
+    dummy_handler.handle.side_effect = UserNotFoundError(curator_id)
+    handlers.get_curator_suggestions_handler = dummy_handler
+
+    client = TestClient(create_app_from_handlers(handlers), cookies={"token": "token"})
+
+    response = client.get(f"/curators/{curator_id}/suggestions")
+    assert response.status_code == 404
 
 
 def test_get_notifications_returns_curator_and_item(handlers: Handlers) -> None:

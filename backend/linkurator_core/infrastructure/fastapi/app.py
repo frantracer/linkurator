@@ -57,6 +57,7 @@ from linkurator_core.application.topics.delete_user_topic_handler import DeleteU
 from linkurator_core.application.topics.favorite_topic_handler import FavoriteTopicHandler
 from linkurator_core.application.topics.find_topics_by_name_handler import FindTopicsByNameHandler
 from linkurator_core.application.topics.follow_topic_handler import FollowTopicHandler
+from linkurator_core.application.topics.get_curator_suggestions_handler import GetCuratorSuggestionsHandler
 from linkurator_core.application.topics.get_curator_topics_as_user_handler import GetCuratorTopicsHandler
 from linkurator_core.application.topics.get_topic_handler import GetTopicHandler
 from linkurator_core.application.topics.get_user_topics_handler import GetUserTopicsHandler
@@ -355,6 +356,11 @@ def app_handlers() -> Handlers:
         get_curator_topics_handler=GetCuratorTopicsHandler(
             user_repository=user_repository,
             topic_repository=topic_repository),
+        get_curator_suggestions_handler=GetCuratorSuggestionsHandler(
+            topic_repository=topic_repository,
+            user_repository=user_repository,
+            subscription_repository=subscription_repository,
+        ),
         find_topics_by_name_handler=FindTopicsByNameHandler(
             topic_repository=topic_repository,
             user_repository=user_repository,

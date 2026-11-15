@@ -65,6 +65,7 @@ from linkurator_core.application.topics.delete_user_topic_handler import DeleteU
 from linkurator_core.application.topics.favorite_topic_handler import FavoriteTopicHandler
 from linkurator_core.application.topics.find_topics_by_name_handler import FindTopicsByNameHandler
 from linkurator_core.application.topics.follow_topic_handler import FollowTopicHandler
+from linkurator_core.application.topics.get_curator_suggestions_handler import GetCuratorSuggestionsHandler
 from linkurator_core.application.topics.get_curator_topics_as_user_handler import GetCuratorTopicsHandler
 from linkurator_core.application.topics.get_topic_handler import GetTopicHandler
 from linkurator_core.application.topics.get_user_topics_handler import GetUserTopicsHandler
@@ -137,6 +138,7 @@ class Handlers:  # pylint: disable=too-many-instance-attributes
     create_topic_handler: CreateTopicHandler
     get_user_topics_handler: GetUserTopicsHandler
     get_curator_topics_handler: GetCuratorTopicsHandler
+    get_curator_suggestions_handler: GetCuratorSuggestionsHandler
     get_curator_items_handler: GetCuratorItemsHandler
     get_followed_curators_items_handler: GetFollowedCuratorsItemsHandler
     get_topic_handler: GetTopicHandler
@@ -234,6 +236,7 @@ def create_app_from_handlers(handlers: Handlers, cors_origins: list[str] | None 
             find_user_handler=handlers.find_user_handler,
             get_curator_topics_handler=handlers.get_curator_topics_handler,
             get_curator_subscriptions_handler=handlers.get_user_subscriptions,
+            get_curator_suggestions_handler=handlers.get_curator_suggestions_handler,
             get_curator_items_handler=handlers.get_curator_items_handler,
             get_followed_curators_items_handler=handlers.get_followed_curators_items_handler,
         ),

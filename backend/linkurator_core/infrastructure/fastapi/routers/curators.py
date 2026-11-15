@@ -11,6 +11,7 @@ from pydantic import NonNegativeInt, PositiveInt
 from linkurator_core.application.items.get_curator_items_handler import GetCuratorItemsHandler
 from linkurator_core.application.items.get_followed_curators_items_handler import GetFollowedCuratorsItemsHandler
 from linkurator_core.application.subscriptions.get_user_subscriptions_handler import GetUserSubscriptionsHandler
+from linkurator_core.application.topics.get_curator_suggestions_handler import GetCuratorSuggestionsHandler
 from linkurator_core.application.topics.get_curator_topics_as_user_handler import GetCuratorTopicsHandler
 from linkurator_core.application.users.find_user_handler import FindCuratorHandler
 from linkurator_core.application.users.follow_curator_handler import FollowCuratorHandler
@@ -22,6 +23,7 @@ from linkurator_core.domain.users.session import Session
 from linkurator_core.domain.users.user import User, Username
 from linkurator_core.infrastructure.fastapi.models import default_responses
 from linkurator_core.infrastructure.fastapi.models.curator import CuratorSchema
+from linkurator_core.infrastructure.fastapi.models.curator_suggestions import CuratorSuggestionsSchema
 from linkurator_core.infrastructure.fastapi.models.default_responses import EmptyResponse
 from linkurator_core.infrastructure.fastapi.models.item import VALID_INTERACTIONS, InteractionFilterSchema, ItemSchema
 from linkurator_core.infrastructure.fastapi.models.page import FullPage, Page
@@ -38,6 +40,7 @@ def get_router(
     unfollow_curator_handler: UnfollowCuratorHandler,
     get_curator_topics_handler: GetCuratorTopicsHandler,
     get_curator_subscriptions_handler: GetUserSubscriptionsHandler,
+    get_curator_suggestions_handler: GetCuratorSuggestionsHandler,
     get_curator_items_handler: GetCuratorItemsHandler,
     get_followed_curators_items_handler: GetFollowedCuratorsItemsHandler,
 ) -> APIRouter:
@@ -244,6 +247,27 @@ def get_router(
         user = results[1]
 
         return FullPage.create([SubscriptionSchema.from_domain_subscription(sub, user) for sub in curator_subs])
+
+    @router.get(
+        "/{curator_id}/suggestions",
+        responses={
+            status.HTTP_401_UNAUTHORIZED: {"model": None},
+            status.HTTP_404_NOT_FOUND: {"model": None},
+        },
+    )
+    async def find_curator_suggestions(
+        curator_id: UUID,
+        session: Session | None = Depends(get_session),
+    ) -> CuratorSuggestionsSchema:
+        if session is None:
+            raise default_responses.not_authenticated()
+
+        try:
+            response = await get_curator_suggestions_handler.handle(user_id=session.user_id, curator_id=curator_id)
+        except UserNotFoundError as exc:
+            raise default_responses.not_found(str(exc))
+
+        return CuratorSuggestionsSchema.from_domain(response)
 
     @router.get(
         "/{curator_id}/items",
