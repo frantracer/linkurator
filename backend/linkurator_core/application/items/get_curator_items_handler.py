@@ -37,6 +37,7 @@ class GetCuratorItemsHandler:
             text_filter: str | None = None,
             min_duration: int | None = None,
             max_duration: int | None = None,
+            included_subscriptions: set[UUID] | None = None,
             include_items_without_interactions: bool = True,
             include_recommended_items: bool = True,
             include_discouraged_items: bool = True,
@@ -51,6 +52,7 @@ class GetCuratorItemsHandler:
                 text=text_filter,
                 min_duration=min_duration,
                 max_duration=max_duration,
+                subscription_ids=included_subscriptions,
                 interactions_from_user=user_id,
                 interactions=AnyItemInteraction(
                     without_interactions=include_items_without_interactions,

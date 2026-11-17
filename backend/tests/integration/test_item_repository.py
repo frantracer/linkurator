@@ -1207,6 +1207,35 @@ async def test_find_interactions_filtered_by_interactions_of_another_user(item_r
 
 
 @pytest.mark.asyncio()
+async def test_find_interactions_filtered_by_subscriptions(item_repo: ItemRepository) -> None:
+    await item_repo.delete_all_items()
+    await item_repo.delete_all_interactions()
+
+    curator = mock_user()
+    included_sub_id = uuid4()
+    included_item = mock_item(sub_uuid=included_sub_id)
+    other_item = mock_item(sub_uuid=uuid4())
+    await item_repo.upsert_items([included_item, other_item])
+
+    included_item_recommendation = mock_interaction(
+        user_id=curator.uuid, item_id=included_item.uuid, interaction_type=InteractionType.RECOMMENDED)
+    await item_repo.add_interaction(included_item_recommendation)
+    await item_repo.add_interaction(mock_interaction(
+        user_id=curator.uuid, item_id=other_item.uuid, interaction_type=InteractionType.RECOMMENDED))
+
+    found_interactions = await item_repo.find_interactions(
+        criteria=InteractionFilterCriteria(
+            user_ids=[curator.uuid],
+            subscription_ids={included_sub_id},
+        ),
+        page_number=0,
+        limit=10,
+    )
+
+    assert found_interactions == [included_item_recommendation]
+
+
+@pytest.mark.asyncio()
 async def test_find_interactions_filtered_by_text(item_repo: ItemRepository) -> None:
     await item_repo.delete_all_items()
     await item_repo.delete_all_interactions()

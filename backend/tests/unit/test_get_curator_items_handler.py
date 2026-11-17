@@ -177,3 +177,42 @@ async def test_get_curator_items_filters_by_user_interactions() -> None:
     )
 
     assert [item.item.uuid for item in response] == [viewed_item.uuid]
+
+
+@pytest.mark.asyncio()
+async def test_get_curator_items_only_returns_items_from_included_subscriptions() -> None:
+    curator = mock_user()
+    included_sub = mock_sub()
+    other_sub = mock_sub()
+    included_item = mock_item(sub_uuid=included_sub.uuid)
+    other_item = mock_item(sub_uuid=other_sub.uuid)
+
+    item_repo = InMemoryItemRepository()
+    await item_repo.upsert_items([included_item, other_item])
+    await item_repo.add_interaction(mock_interaction(user_id=curator.uuid, item_id=included_item.uuid,
+                                                     interaction_type=InteractionType.RECOMMENDED))
+    await item_repo.add_interaction(mock_interaction(user_id=curator.uuid, item_id=other_item.uuid,
+                                                     interaction_type=InteractionType.RECOMMENDED))
+
+    sub_repo = InMemorySubscriptionRepository()
+    await sub_repo.add(included_sub)
+    await sub_repo.add(other_sub)
+
+    user_repo = InMemoryUserRepository()
+    await user_repo.add(curator)
+
+    handler = GetCuratorItemsHandler(
+        item_repository=item_repo,
+        subscription_repository=sub_repo,
+        user_repository=user_repo,
+    )
+
+    response = await handler.handle(
+        created_before=datetime.now(tz=timezone.utc),
+        page_number=0,
+        page_size=10,
+        curator_id=curator.uuid,
+        included_subscriptions={included_sub.uuid},
+    )
+
+    assert [item.item.uuid for item in response] == [included_item.uuid]

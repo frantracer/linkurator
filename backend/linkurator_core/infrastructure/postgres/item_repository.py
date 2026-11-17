@@ -333,7 +333,8 @@ class PostgresItemRepository(ItemRepository):  # noqa: PLR0904
             fragments.append(interaction_fragment)
 
         join_clause = ""
-        if any(value is not None for value in (criteria.text, criteria.min_duration, criteria.max_duration)):
+        if any(value is not None for value in (
+                criteria.text, criteria.min_duration, criteria.max_duration, criteria.subscription_ids)):
             join_clause = "JOIN items it ON it.uuid = i.item_uuid"
             fragments.append(SqlFragment("it.deleted_at IS NULL"))
             if criteria.text is not None and len(criteria.text) > 0:
@@ -341,6 +342,8 @@ class PostgresItemRepository(ItemRepository):  # noqa: PLR0904
             duration_fragment = _build_duration_condition("it.duration", criteria.min_duration, criteria.max_duration)
             if duration_fragment is not None:
                 fragments.append(duration_fragment)
+            if criteria.subscription_ids is not None:
+                fragments.append(_uuid_array_condition("it.subscription_uuid", list(criteria.subscription_ids)))
 
         where = _join(fragments, " AND ")
         where_clause = f" WHERE {where.placeholders}" if fragments else ""

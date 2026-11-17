@@ -174,6 +174,9 @@ class InMemoryItemRepository(ItemRepository):
                 continue
 
             item = self.items.get(interaction.item_uuid)
+            if criteria.subscription_ids is not None and (
+                    item is None or item.subscription_uuid not in criteria.subscription_ids):
+                continue
             if item is not None:
                 if criteria.text is not None and criteria.text.lower() not in item.name.lower():
                     continue

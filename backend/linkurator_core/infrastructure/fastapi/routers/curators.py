@@ -287,6 +287,8 @@ def get_router(
         max_duration: int | None = None,
         include_interactions: Annotated[str | None, Query(
             description=f"Comma separated values. Valid values: {VALID_INTERACTIONS}")] = None,
+        included_subscriptions: Annotated[str | None, Query(
+            description="Comma separated subscriptions UUIDs. Only their items are returned")] = None,
         session: Session | None = Depends(get_session),
     ) -> Page[ItemSchema]:
         if created_before_ts is None:
@@ -303,6 +305,10 @@ def get_router(
         def _include_interaction(interaction: InteractionFilterSchema) -> bool:
             return interactions is None or interaction in interactions
 
+        included_subscriptions_uuids: set[UUID] | None = None
+        if included_subscriptions is not None:
+            included_subscriptions_uuids = {UUID(sub_id) for sub_id in included_subscriptions.split(",")}
+
         response = await get_curator_items_handler.handle(
             user_id=session.user_id if session is not None else None,
             curator_id=curator_id,
@@ -312,6 +318,7 @@ def get_router(
             text_filter=search,
             min_duration=min_duration,
             max_duration=max_duration,
+            included_subscriptions=included_subscriptions_uuids,
             include_items_without_interactions=_include_interaction(InteractionFilterSchema.WITHOUT_INTERACTIONS),
             include_recommended_items=_include_interaction(InteractionFilterSchema.RECOMMENDED),
             include_discouraged_items=_include_interaction(InteractionFilterSchema.DISCOURAGED),
