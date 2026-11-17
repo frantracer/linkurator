@@ -2,7 +2,8 @@
   "$schema": "https://github.com/IBM/audit-ci/raw/main/docs/schema.json",
   "low": true,
   "allowlist": [
-    // deepmerge prototype poisoning: no patched release exists; only reached through jest (dev only).
-    "GHSA-gcqx-w48m-w2h4"
+    // picomatch ReDoS through crafted extglobs: no patched release exists; only reached through build and dev tools
+    // (tailwindcss, jest, eslint, next-intl's watcher) whose glob patterns come from our own config.
+    "GHSA-fc5q-39xc-vjpf"
   ]
 }
