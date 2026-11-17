@@ -78,7 +78,7 @@ const SubscriptionsListPageComponent = () => {
     />
   );
 
-  const {facets, sections} = useSubscriptionListGroups(subscriptions, filterText, renderCard);
+  const {facets, sections} = useSubscriptionListGroups(subscriptions, filterText, false, renderCard);
 
   return (
     <>

@@ -34,18 +34,35 @@ type EntityListProps = {
   filterText: string;
   onFilterTextChange: (value: string) => void;
   facets?: EntityListFacets;
+  toggleFacets?: EntityListFacets;
+  onClearFacets?: () => void;
   totalCount: number;
   isLoading: boolean;
   emptyState: React.ReactNode;
   sections: EntityListSection[];
 }
 
+type FacetTagProps = {
+  facet: EntityListFacet;
+  selected: boolean;
+  onClick: () => void;
+}
+
+const FacetTag = ({facet, selected, onClick}: FacetTagProps) => (
+  <Tag selected={selected} onClick={onClick}>
+    {facet.icon}
+    <span className="whitespace-nowrap">{facet.label}</span>
+    <span className="font-normal opacity-70">{facet.count}</span>
+  </Tag>
+);
+
 type FacetTagsProps = {
-  facets: EntityListFacets;
+  facets?: EntityListFacets;
+  toggleFacets?: EntityListFacets;
   totalCount: number;
 }
 
-const FacetTags = ({facets, totalCount}: FacetTagsProps) => {
+const FacetTags = ({facets, toggleFacets, totalCount}: FacetTagsProps) => {
   const t = useTranslations("common");
   const stripRef = useRef<HTMLDivElement>(null);
   useWheelScrollsHorizontally(stripRef);
@@ -53,23 +70,25 @@ const FacetTags = ({facets, totalCount}: FacetTagsProps) => {
   return (
     <div ref={stripRef} role="group" aria-label={t("filters")}
          className="flex flex-row flex-nowrap items-center gap-2 overflow-x-auto scrollbar-hide min-w-0">
-      <Tag selected={facets.selected === null} onClick={() => facets.onSelect(null)}>
-        {t("all")}
-        <span className="font-normal opacity-70">{totalCount}</span>
-      </Tag>
-      {facets.options.map(facet => (
-        <Tag key={facet.key} selected={facets.selected === facet.key} onClick={() => facets.onSelect(facet.key)}>
-          {facet.icon}
-          {facet.label}
-          <span className="font-normal opacity-70">{facet.count}</span>
+      {facets && <>
+        <Tag selected={facets.selected === null} onClick={() => facets.onSelect(null)}>
+          {t("all")}
+          <span className="font-normal opacity-70">{totalCount}</span>
         </Tag>
+        {facets.options.map(facet => (
+          <FacetTag key={facet.key} facet={facet} selected={facets.selected === facet.key}
+                    onClick={() => facets.onSelect(facet.key)}/>
+        ))}
+      </>}
+      {facets && toggleFacets && <div className="divider divider-horizontal mx-0 shrink-0"/>}
+      {toggleFacets && toggleFacets.options.map(facet => (
+        <FacetTag key={facet.key} facet={facet} selected={toggleFacets.selected === facet.key}
+                  onClick={() => toggleFacets.onSelect(toggleFacets.selected === facet.key ? null : facet.key)}/>
       ))}
     </div>
   );
 }
 
-// The filter bar and the list keep room for the scrollbar, so the margins stay the same whether or not the list
-// is long enough to scroll
 const EntityList = (
   {
     showFilterBar,
@@ -77,6 +96,8 @@ const EntityList = (
     filterText,
     onFilterTextChange,
     facets,
+    toggleFacets,
+    onClearFacets,
     totalCount,
     isLoading,
     emptyState,
@@ -91,7 +112,11 @@ const EntityList = (
 
   const clearFilters = () => {
     onFilterTextChange("");
-    facets?.onSelect(null);
+    if (onClearFacets) {
+      onClearFacets();
+    } else {
+      facets?.onSelect(null);
+    }
   }
 
   return (
@@ -102,7 +127,8 @@ const EntityList = (
             <SearchBar placeholder={filterPlaceholder} value={filterText} handleChange={onFilterTextChange}
                        icon="filter"/>
           </div>
-          {facets && <FacetTags facets={facets} totalCount={totalCount}/>}
+          {(facets || toggleFacets) &&
+              <FacetTags facets={facets} toggleFacets={toggleFacets} totalCount={totalCount}/>}
         </PageFilterBar>
       )}
       <div

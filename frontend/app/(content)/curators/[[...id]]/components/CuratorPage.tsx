@@ -43,6 +43,7 @@ import {useCuratorSubscriptions} from "../../../../../hooks/useCuratorSubscripti
 import {useCuratorSuggestions} from "../../../../../hooks/useCuratorSuggestions";
 import {useTopics} from "../../../../../hooks/useTopics";
 import {TOPICS_FACET_PARAM} from "../../../../../hooks/useTopicListGroups";
+import {SUBSCRIPTIONS_FOLLOW_PARAM} from "../../../../../hooks/useSubscriptionListGroups";
 import ShareCuratorModal, {ShareCuratorModalId} from "../../../../../components/organism/ShareCuratorModal";
 import {openModal} from "../../../../../utilities/modalAction";
 import useProviders from "../../../../../hooks/useProviders";
@@ -124,8 +125,11 @@ const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
   }, [isCommonSectionUnavailable]);
 
   const isRecommendationsSection = selectedSection === "recommendations";
-  const facetParam = selectedSection === "topics" ? TOPICS_FACET_PARAM : SUBSCRIPTIONS_PROVIDER_PARAM;
-  const isListFilterModified = nameFilter.trim() !== "" || searchParams.get(facetParam) !== null;
+  const facetParams = selectedSection === "topics"
+    ? [TOPICS_FACET_PARAM]
+    : [SUBSCRIPTIONS_PROVIDER_PARAM, SUBSCRIPTIONS_FOLLOW_PARAM];
+  const isListFilterModified = nameFilter.trim() !== "" ||
+    facetParams.some(facetParam => searchParams.get(facetParam) !== null);
 
   const isMainDataLoading = isCuratorLoading || isCuratorsLoading || isProfileLoading || isTopicsLoading;
   const isItemsLoading = isCuratorItemsLoading || isCuratorLoading;

@@ -1,5 +1,6 @@
 import {useCallback} from "react";
-import {usePathname, useRouter, useSearchParams} from "next/navigation";
+import {useSearchParams} from "next/navigation";
+import useSearchParamsUpdate from "./useSearchParamsUpdate";
 
 type UseSearchParam = {
   value: string | null;
@@ -8,20 +9,12 @@ type UseSearchParam = {
 
 // Keeps a piece of page state in the URL so it survives reloads and can be linked to
 const useSearchParam = (name: string): UseSearchParam => {
-  const router = useRouter();
-  const pathname = usePathname();
   const searchParams = useSearchParams();
+  const updateSearchParams = useSearchParamsUpdate();
 
   const setValue = useCallback((value: string | null) => {
-    const params = new URLSearchParams(searchParams.toString());
-    if (value === null) {
-      params.delete(name);
-    } else {
-      params.set(name, value);
-    }
-    const query = params.toString();
-    router.replace(query ? `${pathname}?${query}` : pathname);
-  }, [name, searchParams, pathname, router]);
+    updateSearchParams({[name]: value});
+  }, [name, updateSearchParams]);
 
   return {value: searchParams.get(name), setValue};
 }

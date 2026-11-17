@@ -85,7 +85,8 @@ const CuratorSubscriptionsList = (
     />
   );
 
-  const {facets, sections} = useSubscriptionListGroups(subscriptions, filterText, renderCard);
+  const {facets, followFacets, clearFacets, sections} =
+    useSubscriptionListGroups(subscriptions, filterText, !!profile, renderCard);
 
   return (
     <>
@@ -95,6 +96,8 @@ const CuratorSubscriptionsList = (
         filterText={filterText}
         onFilterTextChange={onFilterTextChange}
         facets={facets}
+        toggleFacets={followFacets}
+        onClearFacets={clearFacets}
         totalCount={subscriptions.length}
         isLoading={isLoading}
         emptyState={<p className="py-10 text-center text-sm text-base-content/60">{t("no_subscriptions_found")}</p>}
