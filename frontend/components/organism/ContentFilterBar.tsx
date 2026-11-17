@@ -174,11 +174,11 @@ const ContentFilterBar = (
             </Dropdown>
         }
         {sortedSubscriptions.length > 0 &&
-            <Dropdown label={t("sources")} position="start" bottom={true}
+            <Dropdown label={t("sources")} height="short" position="start" bottom={true}
                       button={<FilterChip active={sourcesAreActive}>
                         {t("sources")} {includedSubscriptionsCount}/{sortedSubscriptions.length}
                       </FilterChip>}>
-                <li className="flex flex-row gap-2 px-2 py-1.5 text-xs">
+                <li className="sticky -top-1 z-10 flex flex-row gap-2 px-2 py-1.5 text-xs bg-base-100">
                     <button type="button" className="link link-hover text-primary"
                             onClick={() => setFilters({...filters, excludedSubscriptions: []})}>
                       {t("select_all")}

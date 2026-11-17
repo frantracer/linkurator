@@ -27,9 +27,10 @@ import useFilterBarVisibility from "../../../../../hooks/useFilterBarVisibility"
 import ContentFilterBar from "../../../../../components/organism/ContentFilterBar";
 import ContentItemCardGrid from "../../../../../components/organism/ContentItemCardGrid";
 import {paths, SUBSCRIPTIONS_PROVIDER_PARAM} from "../../../../../configuration";
-import {areFiltersEqual, Filters, showEverythingFilters} from "../../../../../entities/Filters";
+import {showEverythingFilters} from "../../../../../entities/Filters";
 import {useCurator} from "../../../../../hooks/useCurator";
 import useCuratorItems from "../../../../../hooks/useCuratorItems";
+import useCuratorRecommendationsFilters from "../../../../../hooks/useCuratorRecommendationsFilters";
 import {useCurators} from "../../../../../hooks/useCurators";
 import {useCuratorTopics} from "../../../../../hooks/useCuratorTopics";
 import useProfile from "../../../../../hooks/useProfile";
@@ -56,11 +57,7 @@ const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const {providers} = useProviders();
-  // Unlike the user's own feeds, a curator's recommendations ignore the saved filters and start unfiltered
-  const [filters, setFilters] = useState<Filters>(showEverythingFilters);
-  const areFiltersModified = !areFiltersEqual(filters, showEverythingFilters);
   const {showFilters, toggleFilters} = useFilterBarVisibility();
-  const [debouncedFilters, setDebouncedFilters] = useState(filters);
   const [selectedSection, setSelectedSection] = useState<SectionKey>(DEFAULT_SECTION);
   const [nameFilter, setNameFilter] = useState("");
 
@@ -85,19 +82,27 @@ const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
   const {curators, refreshCurators, curatorsAreLoading: isCuratorsLoading} = useCurators(profile, isProfileLoading);
   const {curator, curatorIsLoading: isCuratorLoading} = useCurator(curatorName, curators);
   const curatorId = curator ? curator.id : null;
-  const {
-    curatorItems,
-    fetchMoreItems,
-    refreshCuratorItem,
-    isLoading: isCuratorItemsLoading,
-    isFinished: isCuratorItemsFinished
-  } = useCuratorItems(curatorId, debouncedFilters);
   const {topics, topicsIsLoading: isTopicsLoading, refetchTopics} = useCuratorTopics(curatorId);
   const {
     subscriptions,
     subscriptionsIsLoading: isSubscriptionsLoading,
     refetchSubscriptions
   } = useCuratorSubscriptions(curatorId);
+  // Unlike the user's own feeds, a curator's recommendations ignore the saved filters and start unfiltered
+  const {
+    filters,
+    appliedFilters,
+    areFiltersModified,
+    setFilters,
+    resetFilters
+  } = useCuratorRecommendationsFilters(curatorName, subscriptions.map(subscription => subscription.uuid));
+  const {
+    curatorItems,
+    fetchMoreItems,
+    refreshCuratorItem,
+    isLoading: isCuratorItemsLoading,
+    isFinished: isCuratorItemsFinished
+  } = useCuratorItems(curatorId, appliedFilters.filters, appliedFilters.includedSubscriptions);
 
 
   const isLoggedIn = !!(profile)
@@ -152,17 +157,6 @@ const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
   const handleShareCurator = () => {
     openModal(ShareCuratorModalId);
   }
-
-  useEffect(() => {
-    if (filters.textSearch === debouncedFilters.textSearch) {
-      setDebouncedFilters(filters)
-    } else {
-      const timer = setTimeout(() => {
-        setDebouncedFilters(filters)
-      }, 500)
-      return () => clearTimeout(timer)
-    }
-  }, [debouncedFilters.textSearch, filters]);
 
   const shareCuratorLink = useShareLink(curatorName);
 
@@ -233,8 +227,10 @@ const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
 
         {isRecommendationsSection && showFilters && (
           <ContentFilterBar savedFilters={showEverythingFilters} filters={filters} setFilters={setFilters}
-                            resetFilters={() => setFilters(showEverythingFilters)}
-                            showInteractions={isLoggedIn}/>
+                            resetFilters={resetFilters}
+                            showInteractions={isLoggedIn}
+                            subscriptions={subscriptions}
+                            providers={providers}/>
         )}
 
         {selectedSection === "recommendations" && (
@@ -274,6 +270,7 @@ const CuratorPageComponent = ({curatorName}: { curatorName: string }) => {
 
         {selectedSection === "common" && canSeeCommonSection && (
           <CuratorCommonList
+            curatorName={curatorName}
             suggestions={suggestions}
             showFilterBar={showFilters}
             filterText={nameFilter}

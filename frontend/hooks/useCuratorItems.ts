@@ -15,7 +15,12 @@ type UseCuratorItems = {
   fetchMoreItems: () => void,
 }
 
-const useCuratorItems = (curatorId: OptionalCuratorId, filters: Filters): UseCuratorItems => {
+// undefined included subscriptions shows the items of every subscription
+const useCuratorItems = (
+  curatorId: OptionalCuratorId,
+  filters: Filters,
+  includedSubscriptions: string[] | undefined
+): UseCuratorItems => {
   const {
     data,
     refetch,
@@ -24,16 +29,16 @@ const useCuratorItems = (curatorId: OptionalCuratorId, filters: Filters): UseCur
     isFetching,
     isFetchingNextPage
   } = useInfiniteQuery<CuratorItemsResponse, Error, InfiniteData<CuratorItemsResponse>, readonly unknown[], URL | undefined>({
-    queryKey: ["curatorItems", curatorId, filters],
+    queryKey: ["curatorItems", curatorId, filters, includedSubscriptions],
     queryFn: async ({pageParam}) => {
-      if (curatorId === null) {
+      if (curatorId === null || (includedSubscriptions !== undefined && includedSubscriptions.length === 0)) {
         const emptyResponse: CuratorItemsResponse = {elements: [], nextPage: undefined};
         return emptyResponse;
       }
       if (pageParam === undefined) {
         const filterDuration = getFilterDuration(filters);
         return await getCuratorItems(curatorId, filterDuration.min, filterDuration.max, filters.textSearch,
-          mapFiltersToInteractionParams(filters));
+          mapFiltersToInteractionParams(filters), includedSubscriptions);
       }
       return await getCuratorItemsFromUrl(pageParam);
     },

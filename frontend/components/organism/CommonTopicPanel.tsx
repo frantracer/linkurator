@@ -6,13 +6,15 @@ import {getProviderIcon, getProviderPrettyName} from "../../entities/Provider";
 import {Subscription} from "../../entities/Subscription";
 import {Topic} from "../../entities/Topic";
 import useProviders from "../../hooks/useProviders";
-import {RectangleGroup} from "../atoms/Icons";
+import Button from "../atoms/Button";
+import {RectangleGroup, ThumbsUpIcon} from "../atoms/Icons";
 import FollowToggleButton from "../molecules/FollowToggleButton";
 import Miniature from "../atoms/Miniature";
 import SuggestedSubscriptionBox from "./SuggestedSubscriptionBox";
 
 type CommonTopicPanelProps = {
   topic: Topic;
+  recommendationsHref: string;
   sharedSubscriptions: Subscription[];
   candidates: Subscription[];
   totalSubscriptionsCount: number;
@@ -29,6 +31,7 @@ type CommonTopicPanelProps = {
 const CommonTopicPanel = (
   {
     topic,
+    recommendationsHref,
     sharedSubscriptions,
     candidates,
     totalSubscriptionsCount,
@@ -59,6 +62,12 @@ const CommonTopicPanel = (
           <span className="text-xs text-base-content/60 whitespace-nowrap">
             {t("common_overlap", {shared: sharedSubscriptions.length, total: totalSubscriptionsCount})}
           </span>
+        </div>
+        <div className="sm:ml-auto">
+          <Button primary={false} href={recommendationsHref}>
+            <ThumbsUpIcon/>
+            {t("view_recommendations")}
+          </Button>
         </div>
       </header>
 

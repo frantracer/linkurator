@@ -22,8 +22,13 @@ import {
   unfollowTopic
 } from "../../services/topicService";
 import {useToast} from "../../contexts/ToastContext";
+import {
+  curatorRecommendationsPath,
+  unfilteredCuratorRecommendations
+} from "../../utilities/curatorRecommendationsUrl";
 
 type CuratorCommonListProps = {
+  curatorName: string;
   suggestions: CuratorSuggestions;
   showFilterBar: boolean;
   filterText: string;
@@ -37,6 +42,7 @@ type CuratorCommonListProps = {
 
 const CuratorCommonList = (
   {
+    curatorName,
     suggestions,
     showFilterBar,
     filterText,
@@ -194,6 +200,11 @@ const CuratorCommonList = (
             <CommonTopicPanel
               key={panel.suggestion.topic.uuid}
               topic={panel.suggestion.topic}
+              recommendationsHref={curatorRecommendationsPath(curatorName, {
+                filters: unfilteredCuratorRecommendations.filters,
+                includedSubscriptions: panel.sharedSubscriptions.concat(panel.candidates)
+                  .map(subscription => subscription.uuid),
+              })}
               sharedSubscriptions={panel.sharedSubscriptions}
               candidates={panel.candidates}
               totalSubscriptionsCount={

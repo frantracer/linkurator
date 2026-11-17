@@ -5,6 +5,8 @@ export type DropdownTriggerStyle = "outline" | "ghost" | "overlay" | "bare";
 
 export type DropdownWidth = "narrow" | "medium" | "wide";
 
+export type DropdownHeight = "short" | "tall";
+
 
 type DropdownProps = {
   button: React.ReactNode
@@ -12,6 +14,7 @@ type DropdownProps = {
   triggerStyle?: DropdownTriggerStyle
   fullWidth?: boolean
   width?: DropdownWidth
+  height?: DropdownHeight
   bottom?: boolean
   position?: "start" | "center" | "end"
   closeOnClickInside?: boolean
@@ -26,6 +29,7 @@ const Dropdown = (
     triggerStyle = "outline",
     fullWidth = false,
     width = "wide",
+    height = "tall",
     bottom = true,
     position = "start",
     closeOnClickInside = false,
@@ -209,7 +213,7 @@ const Dropdown = (
             contentPositionClass,
             sizeClass,
             "bg-base-100 rounded-lg p-1 shadow-lg overflow-y-auto overflow-x-hidden border border-neutral",
-            fitAvailableSpace ? "max-h-60" : "max-h-96"
+            fitAvailableSpace || height === "short" ? "max-h-60" : "max-h-96"
           )}
           ref={menuContentRef}
         >

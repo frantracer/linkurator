@@ -161,6 +161,7 @@ export async function getCuratorItems(
   maxDuration: number | undefined,
   searchText: string = "",
   interactionsToInclude: InteractionFilter[] = [],
+  includedSubscriptions: string[] | undefined = undefined,
 ): Promise<CuratorItemsResponse> {
   if (curatorId === null) {
     return {elements: [], nextPage: undefined};
@@ -169,8 +170,9 @@ export async function getCuratorItems(
   const minDurationParam = minDuration !== undefined ? "&min_duration=" + minDuration : "";
   const maxDurationParam = maxDuration !== undefined ? "&max_duration=" + maxDuration : "";
   const interactionsParam = interactionsToInclude.length > 0 ? "&include_interactions=" + interactionsToInclude.join(",") : "";
+  const includedSubscriptionsParam = includedSubscriptions !== undefined ? "&included_subscriptions=" + includedSubscriptions.join(",") : "";
   const url = configuration.CURATORS_URL + curatorId + "/items?" + searchParam + minDurationParam + maxDurationParam +
-    interactionsParam;
+    interactionsParam + includedSubscriptionsParam;
 
   const {
     data,
